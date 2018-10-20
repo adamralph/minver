@@ -49,4 +49,4 @@
 * ' (tag: v/0.0.0-alpha.1, tag: 0.0.0-alpha.1)'
 * ' (tag: v/0.0.0-alpha.0.2)'
 * ' (tag: v/0.0.0-alpha.0.1)'
-* ' (tag: v/0.0.0-alpha.0, tag: root)'
+* ' (tag: v/0.0.0-alpha.0)'

@@ -10,6 +10,7 @@ namespace MinVerTests
     using MinVerTests.Infra;
     using Xbehave;
     using Xunit;
+    using static MinVerTests.Infra.Git;
     using static SimpleExec.Command;
 
     public static class Versioning
@@ -93,42 +94,17 @@ git tag 1.1.0
             $"Given a git repository in `{path = Path.Combine(Path.GetTempPath(), name)}` with a history of branches and/or tags"
                 .x(async () =>
                 {
-                    if (!Directory.Exists(path))
-                    {
-                        Directory.CreateDirectory(path);
-                    }
+                    await EnsureEmptyRepository(path);
 
-                    if (Directory.Exists(Path.Combine(path, ".git")))
-                    {
-                        await RunAsync("git", "checkout master", path);
-                        await RunAsync("git", "reset root --hard", path);
-                        using (var repo = new Repository(path))
-                        {
-                            foreach (var branch in repo.Branches.Where(b => b.FriendlyName != "master"))
-                            {
-                                repo.Branches.Remove(branch);
-                            }
-
-                            foreach (var tag in repo.Tags.Where(b => b.FriendlyName != "root"))
-                            {
-                                repo.Tags.Remove(tag);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        await RunAsync("git", "init", path);
-                        await RunAsync("git", @"config user.email ""johndoe @tempuri.org""", path);
-                        await RunAsync("git", @"config user.name ""John Doe""", path);
-                        await RunAsync("git", @"commit --allow-empty -m "".""", path);
-                        await RunAsync("git", "tag root", path);
-                    }
+                    await RunAsync("git", @"config user.email ""johndoe @tempuri.org""", path);
+                    await RunAsync("git", @"config user.name ""John Doe""", path);
+                    await RunAsync("git", @"commit --allow-empty -m "".""", path);
 
                     foreach (var command in historicalCommands.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
                     {
                         var nameAndArgs = command.Split(" ", 2);
                         await RunAsync(nameAndArgs[0], nameAndArgs[1], path);
-                        await Task.Delay(100);
+                        await Task.Delay(200);
                     }
                 });
 
@@ -173,18 +149,7 @@ git tag 1.1.0
         public static void EmptyRepo(string name, string path, MinVer.Version version)
         {
             $"Given an empty repo git repository in `{path = Path.Combine(Path.GetTempPath(), name = "empty-repo")}`"
-                .x(async () =>
-                {
-                    if (!Directory.Exists(path))
-                    {
-                        Directory.CreateDirectory(path);
-                    }
-
-                    if (!Directory.Exists(Path.Combine(path, ".git")))
-                    {
-                        await RunAsync("git", "init", path);
-                    }
-                });
+                .x(async () => await EnsureEmptyRepository(path));
 
             "When the version is determined"
                 .x(() => version = Versioner.GetVersion(path));

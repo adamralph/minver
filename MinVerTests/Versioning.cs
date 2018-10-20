@@ -98,6 +98,7 @@ git tag 1.1.0
 
                     await RunAsync("git", @"config user.email ""johndoe @tempuri.org""", path);
                     await RunAsync("git", @"config user.name ""John Doe""", path);
+                    await RunAsync("git", @"config commit.gpgsign false", path);
                     await RunAsync("git", @"commit --allow-empty -m "".""", path);
 
                     foreach (var command in historicalCommands.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))

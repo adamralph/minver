@@ -1,5 +1,6 @@
 namespace MinVer
 {
+    using System.Collections.Generic;
     using System.Linq;
     using LibGit2Sharp;
 
@@ -9,15 +10,20 @@ namespace MinVer
         {
             using (var repo = new Repository(path))
             {
-                return GetVersion(repo.Commits.FirstOrDefault(), 0, repo.Tags);
+                return GetVersion(repo.Commits.FirstOrDefault(), 0, repo.Tags, new HashSet<string>());
             }
         }
 
-        private static Version GetVersion(Commit commit, int height, TagCollection tags)
+        private static Version GetVersion(Commit commit, int height, TagCollection tags, HashSet<string> commitsChecked)
         {
             if (commit == default)
             {
                 return new Version();
+            }
+
+            if (!commitsChecked.Add(commit.Sha))
+            {
+                return null;
             }
 
             var version = GetVersionOrDefault(tags, commit);
@@ -28,7 +34,7 @@ namespace MinVer
             }
 
             return commit.Parents
-                    .Select(parent => GetVersion(parent, height + 1, tags))
+                    .Select(parent => GetVersion(parent, height + 1, tags, commitsChecked))
                     .Where(_ => _ != default)
                     .OrderByDescending(_ => _)
                     .FirstOrDefault() ??

@@ -15,10 +15,11 @@ namespace MinVerTests
 
     public static class Versioning
     {
-        [Scenario]
-        [Example(
-            "general",
-            @"
+        private static readonly Dictionary<string, string> historicalCommands = new Dictionary<string, string>
+        {
+            {
+                "general",
+@"
 git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
@@ -88,8 +89,13 @@ git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
 git tag 1.1.0-rc.1
 git tag 1.1.0
-")]
-        public static void RepoWithHistory(string name, string historicalCommands, string path)
+"
+            }
+        };
+
+        [Scenario]
+        [Example("general")]
+        public static void RepoWithHistory(string name, string path)
         {
             $"Given a git repository in `{path = Path.Combine(Path.GetTempPath(), name)}` with a history of branches and/or tags"
                 .x(async () =>
@@ -101,7 +107,7 @@ git tag 1.1.0
                     await RunAsync("git", @"config commit.gpgsign false", path);
                     await RunAsync("git", @"commit --allow-empty -m '.'", path);
 
-                    foreach (var command in historicalCommands.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+                    foreach (var command in historicalCommands[name].Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
                     {
                         var nameAndArgs = command.Split(" ", 2);
                         await RunAsync(nameAndArgs[0], nameAndArgs[1], path);

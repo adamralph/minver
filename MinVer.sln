@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinVerTests", "MinVerTests\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinVer", "MinVer\MinVer.csproj", "{EE44EA11-CEBE-49C7-9F23-EE8AE6FDFCFB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "targets", "targets\Targets.csproj", "{0F266E8B-E818-41A8-B93C-9E80E9446AC6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Targets", "targets\Targets.csproj", "{0F266E8B-E818-41A8-B93C-9E80E9446AC6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

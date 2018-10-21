@@ -20,10 +20,12 @@ Platform support: [.NET Standard 1.3 and upwards](https://docs.microsoft.com/en-
 
 ### Inputs
 
-- The last tag on HEAD or it's ancestors which represents a [SemVer](https://semver.org) version number.*
-- By how many commits HEAD is ahead of the tag (known as "height").
+- The last tag on HEAD or it's ancestors which represents a [SemVer](https://semver.org) version number._\*_
+- By how many commits HEAD is ahead of the tag (known as "height")._\*\*_
 
-\* _Each time the history diverges, each branch is followed, and the last tag is found on each. The tag with the latest version number is used. If the history converges back to the same tag, the height on the first branch followed is used._
+\* _Each time the history diverges, the last tag is found on each path and the tag with the latest version number is used._
+
+\*\* _Each time the history converges, the height on the first path followed is used._
 
 ### Algorithm
 

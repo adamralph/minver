@@ -1,3 +1,5 @@
+🚧 **_This is currently a work in progress. There is no NuGet package available yet. For progress updates, subscribe to the repository, or follow me on [Twitter](https://twitter.com/adamralph) or [GitHub](https://github.com/adamralph)._**
+
 <img src="assets/min-ver.png" width="100" />
 
 # MinVer

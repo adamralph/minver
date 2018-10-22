@@ -44,7 +44,7 @@ That means MinVer is compatible with [Git Flow](https://nvie.com/posts/a-success
 
 ### What if it all goes wrong?
 
-If your tags get into a mess and you can't find a way out, you can temporarily switch off MinVer and switch back to the old way of doing things by simply adding a `Version` or `VersionPrefix` element to your project. When you've figure out the problem, remove the element and MinVer will resume active duty.
+If your tags get into a mess and you can't find a way out, you can temporarily switch off MinVer and switch back to the old way of doing things by simply adding a `Version` or `VersionPrefix` element to your project. When you've figured out the problem, remove the element and MinVer will resume active duty.
 
 The same applies if you find a bug in MinVer (consider that a challenge!) and you're waiting for a fix, but you need to ship your software in the meantime.
 

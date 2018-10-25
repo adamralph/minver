@@ -6,7 +6,7 @@ internal class Program
 {
     public static Task Main(string[] args)
     {
-        Target("default", DependsOn("test"));
+        Target("default", DependsOn("test", "publish"));
 
         Target("build", () => RunAsync("dotnet", "build MinVer.sln --configuration Release"));
 
@@ -14,6 +14,11 @@ internal class Program
             "test",
             DependsOn("build"),
             () => RunAsync("dotnet", $"test ./MinVerTests/MinVerTests.csproj --configuration Release --no-build --verbosity=normal"));
+
+        Target(
+            "publish",
+            DependsOn("build"),
+            () => RunAsync("dotnet", $"publish ./MinVer.Cli/MinVer.Cli.csproj --configuration Release --no-build"));
 
         return RunTargetsAsync(args);
     }

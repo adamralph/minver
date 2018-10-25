@@ -13,7 +13,7 @@ Platform support: [.NET Standard 1.3 and upwards](https://docs.microsoft.com/en-
 
 ## Quick start
 
-1. Remove any `Version` or `VersionPrefix` elements from your project. (You can keep `VersionSuffix`, but it should be restricted to [build metadata](https://semver.org/#spec-item-10) only.)
+1. Remove the `Version` element (or `VersionPrefix` and `VersionSuffix` elements) from your project.
 1. `dotnet add package MinVer`
 2. `dotnet build`
 3. Your project will be versioned according to the latest tag found in the commit history.
@@ -46,7 +46,7 @@ That means MinVer is compatible with [Git Flow](https://nvie.com/posts/a-success
 
 ### What if it all goes wrong?
 
-If your tags get into a mess and you can't find a way out, you can temporarily switch off MinVer and switch back to the old way of doing things by simply adding a `Version` or `VersionPrefix` element to your project. When you've figured out the problem, remove the element and MinVer will resume active duty.
+If your tags get into a mess and you can't find a way out, you can temporarily switch off MinVer and switch back to the old way of doing things by simply adding a `Version` element (or `VersionPrefix` and `VersionSuffix` elements) to your project. When you've figured out the problem, remove the element and MinVer will resume active duty.
 
 The same applies if you find a bug in MinVer (consider that a challenge!) and you're waiting for a fix, but you need to ship your software in the meantime.
 

@@ -13,10 +13,10 @@ Platform support: [.NET Standard 1.3 and upwards](https://docs.microsoft.com/en-
 
 ## Quick start
 
-1. Remove the `Version` element (or `VersionPrefix` and `VersionSuffix` elements) from your project.
 1. `dotnet add package MinVer`
 2. `dotnet build`
-3. Your project will be versioned according to the latest tag found in the commit history.
+
+Your project will be versioned according to the latest tag found in the commit history.
 
 ## How it works
 
@@ -44,9 +44,13 @@ Yes! MinVer doesn't care about branches. It's all about the tags!
 
 That means MinVer is compatible with [Git Flow](https://nvie.com/posts/a-successful-git-branching-model/), [GitHub Flow](https://guides.github.com/introduction/flow/), [Release Flow](https://docs.microsoft.com/en-us/azure/devops/learn/devops-at-microsoft/release-flow), and any other exotic flow.
 
+### Can I include build metadata in the version?
+
+Yes, you can specify [build metadata](https://semver.org/#spec-item-10) in an environment variable or MSBuild property named `MINVER_BUILD_METADATA` or `MinVerBuildMetadata`.
+
 ### What if it all goes wrong?
 
-If your tags get into a mess and you can't find a way out, you can temporarily switch off MinVer and switch back to the old way of doing things by simply adding a `Version` element (or `VersionPrefix` and `VersionSuffix` elements) to your project. When you've figured out the problem, remove the element and MinVer will resume active duty.
+If your tags get into a mess and you can't find a way out, you can specify a version override in an environment variable or MSBuild property named `MINVER_VERSION` or `MinVerVersion` until you've figured out the problem.
 
 The same applies if you find a bug in MinVer (consider that a challenge!) and you're waiting for a fix, but you need to ship your software in the meantime.
 

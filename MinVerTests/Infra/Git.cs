@@ -8,8 +8,7 @@ namespace MinVerTests.Infra
     {
         public static async Task EnsureEmptyRepository(string path)
         {
-            EnsureDirectoryDeleted(path);
-            EnsureDirectoryCreated(path);
+            EnsureEmptyDirectory(path);
 
             await RunAsync("git", "init", path);
         }

@@ -11,6 +11,7 @@ namespace MinVerTests
     using Xbehave;
     using Xunit;
     using static MinVerTests.Infra.Git;
+    using static MinVerTests.Infra.FileSystem;
     using static SimpleExec.Command;
 
     public static class Versioning
@@ -131,6 +132,19 @@ git tag 1.1.0
         {
             $"Given an empty repo git repository in `{path = Path.Combine(Path.GetTempPath(), name = "empty-repo")}`"
                 .x(async () => await EnsureEmptyRepository(path));
+
+            "When the version is determined"
+                .x(() => version = Versioner.GetVersion(path));
+
+            "Then the version is 0.0.0-alpha.0"
+                .x(() => Assert.Equal("0.0.0-alpha.0", version.ToString()));
+        }
+
+        [Scenario]
+        public static void NoRepo(string path, MinVer.Version version)
+        {
+            $"Given an empty folder `{path = Path.Combine(Path.GetTempPath(), "no-repo")}`"
+                .x(() => EnsureEmptyDirectory(path));
 
             "When the version is determined"
                 .x(() => version = Versioner.GetVersion(path));

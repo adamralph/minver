@@ -8,7 +8,13 @@ namespace MinVerTests.Infra
     {
         private static readonly int millisecondsTimeout = 50;
 
-        public static void EnsureDirectoryCreated(string path)
+        public static void EnsureEmptyDirectory(string path)
+        {
+            EnsureDirectoryDeleted(path);
+            EnsureDirectoryCreated(path);
+        }
+
+        private static void EnsureDirectoryCreated(string path)
         {
             if (SpinWait.SpinUntil(() => !Directory.Exists(path), millisecondsTimeout))
             {
@@ -16,7 +22,7 @@ namespace MinVerTests.Infra
             }
         }
 
-        public static void EnsureDirectoryDeleted(string path)
+        private static void EnsureDirectoryDeleted(string path)
         {
             if (SpinWait.SpinUntil(() => Directory.Exists(path), millisecondsTimeout))
             {

@@ -138,5 +138,21 @@ git tag 1.1.0
             "Then the version is 0.0.0-alpha.0"
                 .x(() => Assert.Equal("0.0.0-alpha.0", version.ToString()));
         }
+
+        [Scenario]
+        public static void NoFolder(string path, Exception ex)
+        {
+            "Given a non-existent folder"
+                .x(() => path = Guid.NewGuid().ToString());
+
+            "When the version is determined"
+                .x(() => ex = Record.Exception(() => Versioner.GetVersion(path)));
+
+            "Then an exception is thrown"
+                .x(() => Assert.NotNull(ex));
+
+            "And the exception message contains the path"
+                .x(() => Assert.Contains(path, ex.Message));
+        }
     }
 }

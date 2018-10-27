@@ -17,19 +17,25 @@ namespace MinVer
                 throw new Exception($"Path '{path}' doesn't point at a valid workdir.");
             }
 
-            try
+            var testPath = path;
+            while (testPath != null)
             {
-                using (var repo = new Repository(path))
+                try
                 {
-                    return GetVersion(repo.Commits.FirstOrDefault(), repo.Tags.ToList());
+                    using (var repo = new Repository(testPath))
+                    {
+                        return GetVersion(repo.Commits.FirstOrDefault(), repo.Tags.ToList());
+                    }
+                }
+                catch (RepositoryNotFoundException)
+                {
+                    testPath = Directory.GetParent(testPath)?.FullName;
                 }
             }
-            catch (RepositoryNotFoundException)
-            {
-                // Includes substring of RepositoryNotFoundException.Message $"Path '{path}' doesn't point at a valid Git repository or workdir."
-                Log($"WARNING: Using default version. Path '{path}' doesn't point at a valid Git repository.");
-                return new Version();
-            }
+
+            // Includes substring of RepositoryNotFoundException.Message $"Path '{path}' doesn't point at a valid Git repository or workdir."
+            Log($"WARNING: Using default version. Path '{path}' doesn't point at a valid Git repository.");
+            return new Version();
         }
 
         private static Version GetVersion(Commit commit, List<Tag> tags)

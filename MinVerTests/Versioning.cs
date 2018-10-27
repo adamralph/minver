@@ -74,12 +74,7 @@ git tag 1.1.0
             $"Given a git repository in '{path = GetScenarioDirectory("versioning-repo-with-history-" + name)}' with a history of branches and/or tags"
                 .x(async () =>
                 {
-                    await EnsureEmptyRepository(path);
-
-                    await RunAsync("git", @"config user.email 'johndoe @tempuri.org'", path);
-                    await RunAsync("git", @"config user.name 'John Doe'", path);
-                    await RunAsync("git", @"config commit.gpgsign false", path);
-                    await RunAsync("git", @"commit --allow-empty -m '.'", path);
+                    await EnsureRepositoryWithACommit(path);
 
                     foreach (var command in historicalCommands[name].Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
                     {
@@ -129,7 +124,7 @@ git tag 1.1.0
         [Scenario]
         public static void EmptyRepo(string path, MinVer.Version version)
         {
-            $"Given an empty repo git repository in '{path = GetScenarioDirectory("versioning-empty-repo")}'"
+            $"Given an empty git repository in '{path = GetScenarioDirectory("versioning-empty-repo")}'"
                 .x(async () => await EnsureEmptyRepository(path));
 
             "When the version is determined"

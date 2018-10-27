@@ -143,7 +143,7 @@ git tag 1.1.0
         [Scenario]
         public static void NoRepo(string path, MinVer.Version version)
         {
-            $"Given an empty folder `{path = Path.Combine(Path.GetTempPath(), "no-repo")}`"
+            $"Given an empty directory `{path = Path.Combine(Path.GetTempPath(), "no-repo")}`"
                 .x(() => EnsureEmptyDirectory(path));
 
             "When the version is determined"
@@ -154,9 +154,9 @@ git tag 1.1.0
         }
 
         [Scenario]
-        public static void NoFolder(string path, Exception ex)
+        public static void NoDirectory(string path, Exception ex)
         {
-            "Given a non-existent folder"
+            "Given a non-existent directory"
                 .x(() => path = Guid.NewGuid().ToString());
 
             "When the version is determined"

@@ -8,6 +8,7 @@ branches:
   only:
   - master
   - /release-.*/
+  - /^\d+\.\d+\.\d+(-\S*)?$/
 build_script:
 - cmd: ./build.cmd
 - sh: ./build.sh

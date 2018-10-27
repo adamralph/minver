@@ -36,6 +36,7 @@
 
   <ItemGroup>
     <Content Include="$(OutputPath)\publish\**\*" PackagePath="build" />
+    <Content Include="buildMultiTargeting\**\*" PackagePath="buildMultiTargeting" />
   </ItemGroup>
 
 </Project>

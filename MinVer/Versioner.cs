@@ -57,13 +57,11 @@ namespace MinVer
                 {
                     ++count;
 
-                    var commitVersion = GetVersionOrDefault(tags, commit);
+                    var (tag, commitVersion) = GetVersionOrDefault(tags, commit);
 
                     if (commitVersion != default)
                     {
-                        var candidate = new Candidate { Version = commitVersion, Commit = commit, Height = height };
-                        Log($"Detected {candidate}.");
-                        candidates.Add(candidate);
+                        candidates.Add(new Candidate { Sha = commit.Sha, Height = height, Tag = tag, Version = commitVersion, });
                     }
                     else
                     {
@@ -74,9 +72,7 @@ namespace MinVer
 
                         if (commitsToCheck.Count == 0 || commitsToCheck.Peek().Item2 <= height)
                         {
-                            var candidate = new Candidate { Version = new Version(), Commit = commit, Height = height };
-                            Log($"Inferred {candidate}.");
-                            candidates.Add(candidate);
+                            candidates.Add(new Candidate { Sha = commit.Sha, Height = height, Tag = "(none)", Version = new Version(), });
                         }
                     }
                 }
@@ -93,38 +89,44 @@ namespace MinVer
 
             var orderedCandidates = candidates.OrderBy(candidate => candidate.Version).ToList();
 
+            var heightWidth = orderedCandidates.Max(candidate => candidate.Height).ToString().Length;
+            var tagWidth = orderedCandidates.Max(candidate => candidate.Tag.Length);
+
             foreach (var candidate in orderedCandidates.Take(orderedCandidates.Count - 1))
             {
-                Log($"Ignoring {candidate}...");
+                Log($"Ignoring commit {candidate.ToString(heightWidth, tagWidth)}");
             }
 
             var selectedCandidate = orderedCandidates.Last();
-            Log($"Using {selectedCandidate}.");
+            Log($"Using commit    {selectedCandidate.ToString(heightWidth, tagWidth)}");
 
             var calculatedVersion = selectedCandidate.Version.AddHeight(selectedCandidate.Height);
-            Log($"Calculated {calculatedVersion}.");
+            Log($"Calculated version {calculatedVersion}");
 
             return calculatedVersion;
         }
 
         private class Candidate
         {
-            public Version Version { get; set; }
-
-            public Commit Commit { get; set; }
+            public string Sha { get; set; }
 
             public int Height { get; set; }
 
-            public override string ToString() => $"{{ {nameof(this.Version)}: {this.Version}, {nameof(this.Commit)}: {this.Commit}, {nameof(this.Height)}: {this.Height} }}";
+            public string Tag { get; set; }
+
+            public Version Version { get; set; }
+
+            public string ToString(int heightWidth, int tagWidth) =>
+                $"{{ {nameof(this.Sha)}: {this.Sha}, {nameof(this.Height)}: {this.Height.ToString().PadLeft(heightWidth)}, {nameof(this.Tag)}: {$"'{this.Tag}'".PadLeft(tagWidth + 2)}, {nameof(this.Version)}: {this.Version.ToString()} }}";
         }
 
         private static void Log(string message) => Console.Error.WriteLine($"MinVer: {message}");
 
-        private static Version GetVersionOrDefault(List<Tag> tags, Commit commit) => tags
+        private static (string, Version) GetVersionOrDefault(List<Tag> tags, Commit commit) => tags
             .Where(tag => tag.Target.Sha == commit.Sha)
-            .Select(tag => Version.ParseOrDefault(tag.FriendlyName))
-            .Where(_ => _ != default)
-            .OrderByDescending(_ => _)
+            .Select(tag => (tag.FriendlyName, Version.ParseOrDefault(tag.FriendlyName)))
+            .Where(tuple => tuple.Item2 != default)
+            .OrderByDescending(tuple => tuple.Item2)
             .FirstOrDefault();
     }
 }

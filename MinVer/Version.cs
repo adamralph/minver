@@ -96,7 +96,7 @@ namespace MinVer
             height == 0
                 ? new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers)
                 : this.preReleaseIdentifiers.Count == 0
-                    ? new Version(this.major, this.minor + 1, 0, new[] { "alpha", "0", height.ToString(CultureInfo.InvariantCulture) })
+                    ? new Version(this.major, this.minor, this.patch + 1, new[] { "alpha", "0", height.ToString(CultureInfo.InvariantCulture) })
                     : new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers.Concat(new[] { height.ToString(CultureInfo.InvariantCulture) }));
 
         public static Version ParseOrDefault(string text)

@@ -26,65 +26,39 @@ git commit --allow-empty -m '.'
 git tag 0.0.0-alpha.1
 git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
-git commit --allow-empty -m '.'
 git tag 0.0.0
-git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
 git tag 0.1.0-beta.1
 git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
-git commit --allow-empty -m '.'
 git tag 0.1.0
-git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
 git tag 1.0.0-alpha.1
 git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
-git commit --allow-empty -m '.'
-git tag 1.0.0-alpha.2
-git commit --allow-empty -m '.'
-git commit --allow-empty -m '.'
-git commit --allow-empty -m '.'
-git tag 1.0.0-beta.1
-git commit --allow-empty -m '.'
-git commit --allow-empty -m '.'
-git commit --allow-empty -m '.'
-git tag 1.0.0-beta.2
-git commit --allow-empty -m '.'
-git commit --allow-empty -m '.'
-git commit --allow-empty -m '.'
 git tag 1.0.0-rc.1
-git commit --allow-empty -m '.'
-git commit --allow-empty -m '.'
-git commit --allow-empty -m '.'
-git tag 1.0.0-rc.2
 git tag 1.0.0
 git checkout -b foo
 git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
-git tag 1.1.0-alpha.1
+git tag 1.0.1-alpha.1
+git commit --allow-empty -m '.'
+git commit --allow-empty -m '.'
+git tag 1.0.1
+git commit --allow-empty -m '.'
 git checkout master
 git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
-git tag 1.1.0-alpha.2
-git commit --allow-empty -m '.'
-git commit --allow-empty -m '.'
+git tag 1.1.0-alpha.1
 git commit --allow-empty -m '.'
 git merge foo --no-edit
 git commit --allow-empty -m '.'
-git commit --allow-empty -m '.'
-git commit --allow-empty -m '.'
-git tag 1.1.0-beta.1
-git commit --allow-empty -m '.'
-git commit --allow-empty -m '.'
-git commit --allow-empty -m '.'
 git tag 1.1.0-beta.2
 git tag 1.1.0-beta.10
-git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
 git tag 1.1.0-rc.1

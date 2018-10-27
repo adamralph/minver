@@ -33,7 +33,7 @@ Your project will be versioned according to the latest tag found in the commit h
 
 - If the height is zero (i.e. the tag is on HEAD), then the HEAD version matches the tag.
 - If the height is non-zero (i.e. the tag is on an older commit), then:
-  - If the last tag is an RTM version, `MAJOR.MINOR.PATCH`, then the HEAD version is `MAJOR.MINOR+1.PATCH-alpha.0.{height}`.
+  - If the last tag is an RTM version, `MAJOR.MINOR.PATCH`, then the HEAD version is `MAJOR.MINOR.PATCH+1-alpha.0.{height}`.
   - If the last tag is a pre-release version, `MAJOR.MINOR.PATCH-{pre-release identifiers}`, then the HEAD version is `MAJOR.MINOR.PATCH-{pre-release identifiers}.{height}`.
 
 ## FAQ

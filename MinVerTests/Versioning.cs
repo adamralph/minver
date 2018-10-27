@@ -2,7 +2,6 @@ namespace MinVerTests
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
     using LibGit2Sharp;
@@ -72,7 +71,7 @@ git tag 1.1.0
         [Example("general")]
         public static void RepoWithHistory(string name, string path)
         {
-            $"Given a git repository in '{path = Path.Combine(Path.GetTempPath(), name)}' with a history of branches and/or tags"
+            $"Given a git repository in '{path = GetScenarioDirectory("versioning-repo-with-history-" + name)}' with a history of branches and/or tags"
                 .x(async () =>
                 {
                     await EnsureEmptyRepository(path);
@@ -130,7 +129,7 @@ git tag 1.1.0
         [Scenario]
         public static void EmptyRepo(string path, MinVer.Version version)
         {
-            $"Given an empty repo git repository in '{path = Path.Combine(Path.GetTempPath(), "empty-repo")}'"
+            $"Given an empty repo git repository in '{path = GetScenarioDirectory("versioning-empty-repo")}'"
                 .x(async () => await EnsureEmptyRepository(path));
 
             "When the version is determined"
@@ -143,7 +142,7 @@ git tag 1.1.0
         [Scenario]
         public static void NoRepo(string path, MinVer.Version version)
         {
-            $"Given an empty directory '{path = Path.Combine(Path.GetTempPath(), "no-repo")}'"
+            $"Given an empty directory '{path = GetScenarioDirectory("versioning-no-repo")}'"
                 .x(() => EnsureEmptyDirectory(path));
 
             "When the version is determined"

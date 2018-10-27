@@ -8,6 +8,8 @@ namespace MinVerTests.Infra
     {
         private static readonly int millisecondsTimeout = 50;
 
+        public static string GetScenarioDirectory(string scenarioName) => Path.Combine(Path.GetTempPath(), $"min-ver-tests-{scenarioName}");
+
         public static void EnsureEmptyDirectory(string path)
         {
             EnsureDirectoryDeleted(path);

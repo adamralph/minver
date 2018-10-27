@@ -2,6 +2,7 @@ namespace MinVer
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using LibGit2Sharp;
 
@@ -9,9 +10,25 @@ namespace MinVer
     {
         public static Version GetVersion(string path)
         {
-            using (var repo = new Repository(path))
+            // Repository.ctor(string) throws RepositoryNotFoundException in this case
+            if (!Directory.Exists(path))
             {
-                return GetVersion(repo.Commits.FirstOrDefault(), repo.Tags.ToList());
+                // Substring of RepositoryNotFoundException.Message $"Path '{path}' doesn't point at a valid Git repository or workdir."
+                throw new Exception($"Path '{path}' doesn't point at a valid workdir.");
+            }
+
+            try
+            {
+                using (var repo = new Repository(path))
+                {
+                    return GetVersion(repo.Commits.FirstOrDefault(), repo.Tags.ToList());
+                }
+            }
+            catch (RepositoryNotFoundException)
+            {
+                // Includes substring of RepositoryNotFoundException.Message $"Path '{path}' doesn't point at a valid Git repository or workdir."
+                Log($"WARNING: Using default version. Path '{path}' doesn't point at a valid Git repository.");
+                return new Version();
             }
         }
 

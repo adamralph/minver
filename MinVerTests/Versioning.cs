@@ -11,6 +11,7 @@ namespace MinVerTests
     using Xbehave;
     using Xunit;
     using static MinVerTests.Infra.Git;
+    using static MinVerTests.Infra.FileSystem;
     using static SimpleExec.Command;
 
     public static class Versioning
@@ -71,7 +72,7 @@ git tag 1.1.0
         [Example("general")]
         public static void RepoWithHistory(string name, string path)
         {
-            $"Given a git repository in `{path = Path.Combine(Path.GetTempPath(), name)}` with a history of branches and/or tags"
+            $"Given a git repository in '{path = Path.Combine(Path.GetTempPath(), name)}' with a history of branches and/or tags"
                 .x(async () =>
                 {
                     await EnsureEmptyRepository(path);
@@ -127,9 +128,9 @@ git tag 1.1.0
         }
 
         [Scenario]
-        public static void EmptyRepo(string name, string path, MinVer.Version version)
+        public static void EmptyRepo(string path, MinVer.Version version)
         {
-            $"Given an empty repo git repository in `{path = Path.Combine(Path.GetTempPath(), name = "empty-repo")}`"
+            $"Given an empty repo git repository in '{path = Path.Combine(Path.GetTempPath(), "empty-repo")}'"
                 .x(async () => await EnsureEmptyRepository(path));
 
             "When the version is determined"
@@ -137,6 +138,35 @@ git tag 1.1.0
 
             "Then the version is 0.0.0-alpha.0"
                 .x(() => Assert.Equal("0.0.0-alpha.0", version.ToString()));
+        }
+
+        [Scenario]
+        public static void NoRepo(string path, MinVer.Version version)
+        {
+            $"Given an empty directory '{path = Path.Combine(Path.GetTempPath(), "no-repo")}'"
+                .x(() => EnsureEmptyDirectory(path));
+
+            "When the version is determined"
+                .x(() => version = Versioner.GetVersion(path));
+
+            "Then the version is 0.0.0-alpha.0"
+                .x(() => Assert.Equal("0.0.0-alpha.0", version.ToString()));
+        }
+
+        [Scenario]
+        public static void NoDirectory(string path, Exception ex)
+        {
+            "Given a non-existent directory"
+                .x(() => path = Guid.NewGuid().ToString());
+
+            "When the version is determined"
+                .x(() => ex = Record.Exception(() => Versioner.GetVersion(path)));
+
+            "Then an exception is thrown"
+                .x(() => Assert.NotNull(ex));
+
+            "And the exception message contains the path"
+                .x(() => Assert.Contains(path, ex.Message));
         }
     }
 }

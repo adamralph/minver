@@ -72,7 +72,7 @@ git tag 1.1.0
         [Example("general")]
         public static void RepoWithHistory(string name, string path)
         {
-            $"Given a git repository in `{path = Path.Combine(Path.GetTempPath(), name)}` with a history of branches and/or tags"
+            $"Given a git repository in '{path = Path.Combine(Path.GetTempPath(), name)}' with a history of branches and/or tags"
                 .x(async () =>
                 {
                     await EnsureEmptyRepository(path);
@@ -130,7 +130,7 @@ git tag 1.1.0
         [Scenario]
         public static void EmptyRepo(string path, MinVer.Version version)
         {
-            $"Given an empty repo git repository in `{path = Path.Combine(Path.GetTempPath(), "empty-repo")}`"
+            $"Given an empty repo git repository in '{path = Path.Combine(Path.GetTempPath(), "empty-repo")}'"
                 .x(async () => await EnsureEmptyRepository(path));
 
             "When the version is determined"
@@ -143,7 +143,7 @@ git tag 1.1.0
         [Scenario]
         public static void NoRepo(string path, MinVer.Version version)
         {
-            $"Given an empty directory `{path = Path.Combine(Path.GetTempPath(), "no-repo")}`"
+            $"Given an empty directory '{path = Path.Combine(Path.GetTempPath(), "no-repo")}'"
                 .x(() => EnsureEmptyDirectory(path));
 
             "When the version is determined"

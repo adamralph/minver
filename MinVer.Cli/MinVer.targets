@@ -1,0 +1,28 @@
+﻿<Project>
+
+  <PropertyGroup>
+    <MinVerVersion Condition=" '$(MinVerVersion)' == '' ">$(MINVER_VERSION)</MinVerVersion>
+    <MinVerBuildMetadata Condition=" '$(MinVerBuildMetadata)' == '' ">$(MINVER_BUILD_METADATA)</MinVerBuildMetadata>
+  </PropertyGroup>
+
+  <Target Name="MinVer_GetVersion" Condition=" '$(MinVerVersion)' == '' ">
+    <PropertyGroup>
+      <OutputFile>$(IntermediateOutputPath)$([System.Guid]::NewGuid()).txt</OutputFile>
+    </PropertyGroup>
+    <Exec Command="dotnet $(MSBuildThisFileDirectory)MinVer.Cli.dll $(MSBuildProjectDirectory) &gt; &quot;$(OutputFile)&quot;" />
+    <PropertyGroup>
+      <MinVerVersion>$([System.IO.File]::ReadAllText($(OutputFile)).Trim())</MinVerVersion>
+    </PropertyGroup>
+    <Delete Files="$(OutputFile)"/>
+  </Target>
+
+  <Target Name="MinVer" BeforeTargets="CoreCompile;GenerateNuspec" DependsOnTargets="MinVer_GetVersion">
+    <PropertyGroup>
+      <MinVerVersion Condition=" '$(MinVerBuildMetadata)' == '' ">$(MinVerVersion)</MinVerVersion>
+      <MinVerVersion Condition=" '$(MinVerBuildMetadata)' != '' ">$(MinVerVersion)+$(MinVerBuildMetadata)</MinVerVersion>
+      <Version>$(MinVerVersion)</Version>
+      <PackageVersion>$(MinVerVersion)</PackageVersion>
+    </PropertyGroup>
+  </Target>
+
+</Project>

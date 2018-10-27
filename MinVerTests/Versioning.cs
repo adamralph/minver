@@ -129,7 +129,7 @@ git tag 1.1.0
         [Scenario]
         public static void EmptyRepo(string path, MinVer.Version version)
         {
-            $"Given an empty repo git repository in '{path = GetScenarioDirectory("versioning-empty-repo")}'"
+            $"Given an empty git repository in '{path = GetScenarioDirectory("versioning-empty-repo")}'"
                 .x(async () => await EnsureEmptyRepository(path));
 
             "When the version is determined"

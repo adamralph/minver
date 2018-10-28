@@ -38,7 +38,7 @@ internal class Program
                 var version = Path.GetFileNameWithoutExtension(Directory.EnumerateFiles(source, "*.nupkg").First()).Split("MinVer.", 2)[1];
 
                 var path = FileSystem.GetScenarioDirectory("package");
-                await Git.EnsureEmptyRepository(path);
+                await Git.EnsureRepositoryWithACommit(path);
 
                 await RunAsync("dotnet", "new classlib", path);
                 await RunAsync("dotnet", $"add package MinVer --version {version} --source {source} --package-directory packages", path);

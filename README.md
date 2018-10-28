@@ -52,6 +52,16 @@ If your tags get into a mess and you can't find a way out, you can specify a ver
 
 The same applies if you find a bug in MinVer (consider that a challenge!) and you're waiting for a fix, but you need to ship your software in the meantime.
 
+### Why does MinVer fail with `LibGit2Sharp.NotFoundException`?
+
+You may see an exception of this form:
+
+> Unhandled Exception: LibGit2Sharp.NotFoundException: object not found - no match for id (...)
+
+This is because you are using a [shallow clone](https://www.git-scm.com/docs/git-clone#git-clone---depthltdepthgt). MinVer uses [libgit2](https://github.com/libgit2/libgit2) to interrogate the repo and [libgit2 does not support shallow clones](https://github.com/libgit2/libgit2/issues/3058). To resolve this problem, use a regular (deep) clone.
+
+Note that, by default, [Travis CI](https://travis-ci.org/) uses shallow clones with a depth of 50 commits. To build on Travis CI, [remove the `--depth` flag](https://docs.travis-ci.com/user/customizing-the-build#git-clone-depth).
+
 ---
 
 <sub>[Tag](https://thenounproject.com/term/tag/938952) by [Ananth](https://thenounproject.com/ananthshas/) from [the Noun Project](https://thenounproject.com/).</sub>

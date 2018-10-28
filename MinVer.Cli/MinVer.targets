@@ -1,4 +1,4 @@
-﻿<Project>
+<Project>
 
   <PropertyGroup>
     <MinVerVersion Condition=" '$(MinVerVersion)' == '' ">$(MINVER_VERSION)</MinVerVersion>
@@ -7,7 +7,7 @@
 
   <Target Name="MinVer_GetVersion" Condition=" '$(MinVerVersion)' == '' ">
     <PropertyGroup>
-      <OutputFile>$(IntermediateOutputPath)$([System.Guid]::NewGuid()).txt</OutputFile>
+      <OutputFile>$(IntermediateOutputPath)min-ver-$([System.Guid]::NewGuid().ToString().Substring(0, 5)).txt</OutputFile>
     </PropertyGroup>
     <Exec Command="dotnet $(MSBuildThisFileDirectory)MinVer.Cli.dll $(MSBuildProjectDirectory) &gt; &quot;$(OutputFile)&quot;" />
     <PropertyGroup>

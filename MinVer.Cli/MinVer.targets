@@ -1,6 +1,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
+    <GetPackageVersionDependsOn>$(GetPackageVersionDependsOn);MinVer</GetPackageVersionDependsOn>
     <MinVerVersion Condition=" '$(MinVerVersion)' == '' ">$(MINVER_VERSION)</MinVerVersion>
     <MinVerBuildMetadata Condition=" '$(MinVerBuildMetadata)' == '' ">$(MINVER_BUILD_METADATA)</MinVerBuildMetadata>
   </PropertyGroup>

@@ -1,42 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>Minimalistic versioning for .NET projects.</Description>
-    <DevelopmentDependency>true</DevelopmentDependency>
-    <IncludeBuildOutput>false</IncludeBuildOutput>
     <LangVersion>latest</LangVersion>
-    <NoWarn>$(NoWarn);NU5105</NoWarn>
     <OutputType>Exe</OutputType>
-    <PackageIconUrl>https://raw.githubusercontent.com/adamralph/min-ver/master/assets/min-ver.png</PackageIconUrl>
-    <PackageId>MinVer</PackageId>
-    <PackageLicenseUrl>https://github.com/adamralph/min-ver/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/adamralph/min-ver</PackageProjectUrl>
-    <PackageReleaseNotes>https://github.com/adamralph/min-ver/milestones?state=closed</PackageReleaseNotes>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <VersionPrefix>1.0.0</VersionPrefix>
-    <VersionSuffix>$(VERSION_SUFFIX)</VersionSuffix>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="LibGit2Sharp" Version="0.25.3" />
     <PackageReference Include="Microsoft.CodeQuality.Analyzers" Version="2.6.2" PrivateAssets="All" />
-    <PackageReference Update="Microsoft.NETCore.App" Version="2.1.0" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MinVer\MinVer.csproj" PrivateAssets="All" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="MinVer.targets">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="$(OutputPath)\publish\**\*" PackagePath="build" />
-    <Content Include="buildMultiTargeting\**\*" PackagePath="buildMultiTargeting" />
+    <ProjectReference Include="..\MinVer\MinVer.csproj" />
   </ItemGroup>
 
 </Project>

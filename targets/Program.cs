@@ -27,14 +27,14 @@ internal class Program
         Target(
             "pack",
             DependsOn("publish"),
-            () => RunAsync("dotnet", $"pack ./MinVer.Cli/MinVer.Cli.csproj --configuration Release --no-build"));
+            () => RunAsync("dotnet", $"pack ./MinVer/MinVer.csproj --configuration Release --no-build"));
 
         Target(
             "test-package",
             DependsOn("pack"),
             async () =>
             {
-                var source = Path.GetFullPath("./MinVer.Cli/bin/Release/");
+                var source = Path.GetFullPath("./MinVer/bin/Release/");
                 var version = Path.GetFileNameWithoutExtension(Directory.EnumerateFiles(source, "*.nupkg").First()).Split("MinVer.", 2)[1];
 
                 var path = FileSystem.GetScenarioDirectory("package");

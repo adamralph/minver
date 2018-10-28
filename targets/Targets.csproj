@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\MinVerTests\Infra\FileSystem.cs" Link="FileSystem.cs" />
+    <Compile Include="..\MinVerTests\Infra\Git.cs" Link="Git.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Bullseye" Version="2.2.0" />
     <PackageReference Include="SimpleExec" Version="3.0.0" />
   </ItemGroup>

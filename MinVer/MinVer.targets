@@ -7,14 +7,15 @@
   </PropertyGroup>
 
   <Target Name="MinVer_GetVersion" Condition=" '$(MinVerVersion)' == '' ">
+    <Exec Command="dotnet &quot;$(MSBuildThisFileDirectory)MinVer.Cli.dll&quot; &quot;$(MSBuildProjectDirectory)&quot;" ConsoleToMSBuild="true">
+      <Output TaskParameter="ConsoleOutput" ItemName="MinVerConsoleOutputItems" />
+    </Exec>
+    <ItemGroup>
+      <MinVerConsoleOutputVersion Include="@(MinVerConsoleOutputItems)" Condition="'$([System.String]::new(`%(Identity)`).StartsWith(`MinVer:`))' != 'true'" />
+    </ItemGroup>
     <PropertyGroup>
-      <OutputFile>$(IntermediateOutputPath)min-ver-$([System.Guid]::NewGuid().ToString().Substring(0, 5)).txt</OutputFile>
+      <MinVerVersion>@(MinVerConsoleOutputVersion)</MinVerVersion>
     </PropertyGroup>
-    <Exec Command="dotnet &quot;$(MSBuildThisFileDirectory)MinVer.Cli.dll&quot; &quot;$(MSBuildProjectDirectory)&quot; &gt; &quot;$(OutputFile)&quot;" />
-    <PropertyGroup>
-      <MinVerVersion>$([System.IO.File]::ReadAllText($(OutputFile)).Trim())</MinVerVersion>
-    </PropertyGroup>
-    <Delete Files="$(OutputFile)"/>
   </Target>
 
   <Target Name="MinVer" BeforeTargets="CoreCompile;GenerateNuspec" DependsOnTargets="MinVer_GetVersion">

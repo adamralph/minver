@@ -9,7 +9,7 @@
     <PropertyGroup>
       <OutputFile>$(IntermediateOutputPath)min-ver-$([System.Guid]::NewGuid().ToString().Substring(0, 5)).txt</OutputFile>
     </PropertyGroup>
-    <Exec Command="dotnet $(MSBuildThisFileDirectory)MinVer.Cli.dll $(MSBuildProjectDirectory) &gt; &quot;$(OutputFile)&quot;" />
+    <Exec Command="dotnet &quot;$(MSBuildThisFileDirectory)MinVer.Cli.dll&quot; &quot;$(MSBuildProjectDirectory)&quot; &gt; &quot;$(OutputFile)&quot;" />
     <PropertyGroup>
       <MinVerVersion>$([System.IO.File]::ReadAllText($(OutputFile)).Trim())</MinVerVersion>
     </PropertyGroup>

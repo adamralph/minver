@@ -5,6 +5,7 @@
     <DevelopmentDependency>true</DevelopmentDependency>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <LangVersion>latest</LangVersion>
+    <NoWarn>$(NoWarn);NU5105</NoWarn>
     <OutputType>Exe</OutputType>
     <PackageIconUrl>https://raw.githubusercontent.com/adamralph/min-ver/master/assets/min-ver.png</PackageIconUrl>
     <PackageId>MinVer</PackageId>

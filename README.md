@@ -7,8 +7,6 @@ _[![Build status](https://ci.appveyor.com/api/projects/status/0ai8j3x4tg6w3ima/b
 
 A minimalistic [.NET package](https://www.nuget.org/packages/MinVer) for versioning .NET projects using Git tags.
 
-Platform support: [.NET Standard 1.3 and upwards](https://docs.microsoft.com/en-us/dotnet/standard/net-standard).
-
 ## Quick start
 
 1. `dotnet add package MinVer`

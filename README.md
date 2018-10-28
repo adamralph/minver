@@ -44,6 +44,19 @@ That means MinVer is compatible with [Git Flow](https://nvie.com/posts/a-success
 
 Yes, you can specify [build metadata](https://semver.org/#spec-item-10) in an environment variable or MSBuild property named `MINVER_BUILD_METADATA` or `MinVerBuildMetadata`.
 
+### Can I use the version calculated by MinVer for other purposes?
+
+Yes, but you need to move your usage of the `Version` or `PackageVersion` elements to a target which runs after MinVer. E.g.
+
+```xml
+<Target Name="MyTarget" AfterTargets="MinVer">
+  <PropertyGroup>
+    <Foo>$(Version)</Foo>
+    <Bar>$(PackageVersion)</Bar>
+  </PropertyGroup>
+</Target>
+```
+
 ### What if it all goes wrong?
 
 If your tags get into a mess and you can't find a way out, you can specify a version override in an environment variable or MSBuild property named `MINVER_VERSION` or `MinVerVersion` until you've figured out the problem.

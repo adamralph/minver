@@ -16,17 +16,17 @@ namespace MinVerTests
             $"Given a git repository with a commit in '{path = GetScenarioDirectory("msbuild-integration-subdirectory")}'"
                 .x(async () => await EnsureRepositoryWithACommit(path));
 
-            "And the git repository has a subdirectory"
-                .x(() => EnsureEmptyDirectory(path = Path.Combine(path, "subdirectory")));
+            "And the commit is tagged 2.0.0"
+                .x(async () => await RunAsync("git", "tag 2.0.0", path));
 
-            "And the current commit is tagged 1.0.0"
-                .x(async () => await RunAsync("git", @"tag 1.0.0", path));
+            "And the repository has a subdirectory"
+                .x(() => EnsureEmptyDirectory(path = Path.Combine(path, "subdirectory")));
 
             "When the version is determined using the subdirectory"
                 .x(() => version = Versioner.GetVersion(path, null));
 
-            "Then the version is 1.0.0"
-                .x(() => Assert.Equal("1.0.0", version.ToString()));
+            "Then the version is 2.0.0"
+                .x(() => Assert.Equal("2.0.0", version.ToString()));
         }
     }
 }

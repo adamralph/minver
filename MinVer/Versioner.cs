@@ -17,19 +17,30 @@ namespace MinVer
                 throw new Exception($"Path '{path}' doesn't point at a valid workdir.");
             }
 
+            Repository repo = null;
             var testPath = path;
             while (testPath != null)
             {
                 try
                 {
-                    using (var repo = new Repository(testPath))
-                    {
-                        return GetVersion(repo, tagPrefix);
-                    }
+                    repo = new Repository(testPath);
+                    break;
                 }
                 catch (RepositoryNotFoundException)
                 {
                     testPath = Directory.GetParent(testPath)?.FullName;
+                }
+            }
+
+            if (repo != null)
+            {
+                try
+                {
+                    return GetVersion(repo, tagPrefix);
+                }
+                finally
+                {
+                    repo.Dispose();
                 }
             }
 

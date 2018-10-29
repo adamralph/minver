@@ -46,7 +46,7 @@ Yes, you can specify [build metadata](https://semver.org/#spec-item-10) in an en
 
 ### Can I use the version calculated by MinVer for other purposes?
 
-Yes, but you need to move your usage of the `Version` or `PackageVersion` elements to a target which runs after MinVer. E.g.
+Yes, but you need to move your usage of the `Version` or `PackageVersion` properties to a target which runs after MinVer. E.g.
 
 ```xml
 <Target Name="MyTarget" AfterTargets="MinVer">

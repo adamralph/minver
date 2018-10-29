@@ -34,6 +34,18 @@ Your project will be versioned according to the latest tag found in the commit h
 
 ## FAQ
 
+### Can I prefix my tag names?
+
+Yes! You can specify a prefix in an environment variable or MSBuild property named `MINVER_TAG_PREFIX` or `MinVerTagPrefix`.
+
+For example, if you prefix your tag names with "v", e.g. `v1.2.3`:
+
+```xml
+<PropertyGroup>
+  <MinVerTagPrefix>v</MinVerTagPrefix>
+</PropertyGroup>
+```
+
 ### Does MinVer work with my chosen branching strategy?
 
 Yes! MinVer doesn't care about branches. It's all about the tags!

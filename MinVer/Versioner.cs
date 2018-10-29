@@ -8,7 +8,7 @@ namespace MinVer
 
     public static class Versioner
     {
-        public static Version GetVersion(string path)
+        public static Version GetVersion(string path, string tagPrefix)
         {
             // Repository.ctor(string) throws RepositoryNotFoundException in this case
             if (!Directory.Exists(path))
@@ -24,7 +24,7 @@ namespace MinVer
                 {
                     using (var repo = new Repository(testPath))
                     {
-                        return GetVersion(repo.Commits.FirstOrDefault(), repo.Tags.ToList());
+                        return GetVersion(repo, tagPrefix);
                     }
                 }
                 catch (RepositoryNotFoundException)
@@ -38,18 +38,26 @@ namespace MinVer
             return new Version();
         }
 
-        private static Version GetVersion(Commit commit, List<Tag> tags)
+        private static Version GetVersion(Repository repo, string tagPrefix)
         {
+            var commit = repo.Commits.FirstOrDefault();
+
             if (commit == default)
             {
                 return new Version();
             }
 
+            var tagsAndVersions = repo.Tags
+                .Select(tag => (tag, Version.ParseOrDefault(tag.FriendlyName, tagPrefix)))
+                .Where(tagAndVersion => tagAndVersion.Item2 != null)
+                .OrderByDescending(tagAndVersion => tagAndVersion.Item2)
+                .ToList();
+
             var commitsChecked = new HashSet<string>();
             var count = 0;
             var height = 0;
             var candidates = new List<Candidate>();
-            var commitsToCheck = new Stack<Tuple<Commit, int>>();
+            var commitsToCheck = new Stack<(Commit, int)>();
 
             while (true)
             {
@@ -57,17 +65,17 @@ namespace MinVer
                 {
                     ++count;
 
-                    var (tag, commitVersion) = GetVersionOrDefault(tags, commit);
+                    var (tag, commitVersion) = tagsAndVersions.FirstOrDefault(tagAndVersion => tagAndVersion.tag.Target.Sha == commit.Sha);
 
                     if (commitVersion != default)
                     {
-                        candidates.Add(new Candidate { Sha = commit.Sha, Height = height, Tag = tag, Version = commitVersion, });
+                        candidates.Add(new Candidate { Sha = commit.Sha, Height = height, Tag = tag.FriendlyName, Version = commitVersion, });
                     }
                     else
                     {
                         foreach (var parent in commit.Parents.Reverse())
                         {
-                            commitsToCheck.Push(Tuple.Create(parent, height + 1));
+                            commitsToCheck.Push((parent, height + 1));
                         }
 
                         if (commitsToCheck.Count == 0 || commitsToCheck.Peek().Item2 <= height)
@@ -121,12 +129,5 @@ namespace MinVer
         }
 
         private static void Log(string message) => Console.Error.WriteLine($"MinVer: {message}");
-
-        private static (string, Version) GetVersionOrDefault(List<Tag> tags, Commit commit) => tags
-            .Where(tag => tag.Target.Sha == commit.Sha)
-            .Select(tag => (tag.FriendlyName, Version.ParseOrDefault(tag.FriendlyName)))
-            .Where(tuple => tuple.Item2 != default)
-            .OrderByDescending(tuple => tuple.Item2)
-            .FirstOrDefault();
     }
 }

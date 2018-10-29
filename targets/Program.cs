@@ -40,6 +40,9 @@ internal class Program
                 var path = FileSystem.GetScenarioDirectory("package");
                 await Git.EnsureRepositoryWithACommit(path);
 
+                await RunAsync("git", "tag v1.2.3", path);
+                Environment.SetEnvironmentVariable("MINVER_TAG_PREFIX", "v", EnvironmentVariableTarget.Process);
+
                 await RunAsync("dotnet", "new classlib", path);
                 await RunAsync("dotnet", $"add package MinVer --version {version} --source {source} --package-directory packages", path);
                 await RunAsync("dotnet", $"restore --source {source} --packages packages", path);
@@ -47,7 +50,7 @@ internal class Program
                 await RunAsync("dotnet", "pack --no-build", path);
 
                 var package = Directory.EnumerateFiles(path, "*.nupkg", new EnumerationOptions { RecurseSubdirectories = true }).First();
-                var expected = "0.0.0-alpha.0";
+                var expected = "1.2.3";
                 if (!package.Contains(expected))
                 {
                     throw new Exception($"'{package}' does not contain '{expected}'.");

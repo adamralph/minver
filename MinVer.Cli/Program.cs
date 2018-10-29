@@ -1,6 +1,7 @@
 namespace MinVer.Cli
 {
     using System;
+    using System.Linq;
 
     class Program
     {
@@ -11,7 +12,7 @@ namespace MinVer.Cli
                 throw new ArgumentException("Path not specified.");
             }
 
-            Console.WriteLine(Versioner.GetVersion(args[0]));
+            Console.WriteLine(Versioner.GetVersion(args[0], args.ElementAtOrDefault(1)));
         }
     }
 }

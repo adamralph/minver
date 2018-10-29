@@ -99,7 +99,7 @@ namespace MinVer
                     ? new Version(this.major, this.minor, this.patch + 1, new[] { "alpha", "0", height.ToString(CultureInfo.InvariantCulture) })
                     : new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers.Concat(new[] { height.ToString(CultureInfo.InvariantCulture) }));
 
-        public static Version ParseOrDefault(string text)
+        public static Version ParseOrDefault(string text, string tagPrefix)
         {
             if (text == default)
             {
@@ -111,7 +111,8 @@ namespace MinVer
 
             return
                 numbers.Length == 3 &&
-                    int.TryParse(numbers[0], out var major) &&
+                    numbers[0].StartsWith(tagPrefix ?? "") &&
+                    int.TryParse(numbers[0].Substring(tagPrefix?.Length ?? 0), out var major) &&
                     int.TryParse(numbers[1], out var minor) &&
                     int.TryParse(numbers[2], out var patch)
                 ? new Version(major, minor, patch, numbersAndPreRelease.Length == 2 ? numbersAndPreRelease[1].Split('.') : null)

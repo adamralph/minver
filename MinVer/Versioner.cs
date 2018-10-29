@@ -8,7 +8,7 @@ namespace MinVer
 
     public static class Versioner
     {
-        public static Version GetVersion(string path)
+        public static Version GetVersion(string path, string tagPrefix)
         {
             // Repository.ctor(string) throws RepositoryNotFoundException in this case
             if (!Directory.Exists(path))
@@ -24,7 +24,7 @@ namespace MinVer
                 {
                     using (var repo = new Repository(testPath))
                     {
-                        return GetVersion(repo.Commits.FirstOrDefault(), repo.Tags.ToList());
+                        return GetVersion(repo.Commits.FirstOrDefault(), repo.Tags.ToList(), tagPrefix);
                     }
                 }
                 catch (RepositoryNotFoundException)
@@ -38,7 +38,7 @@ namespace MinVer
             return new Version();
         }
 
-        private static Version GetVersion(Commit commit, List<Tag> tags)
+        private static Version GetVersion(Commit commit, List<Tag> tags, string tagPrefix)
         {
             if (commit == default)
             {
@@ -57,7 +57,7 @@ namespace MinVer
                 {
                     ++count;
 
-                    var (tag, commitVersion) = GetVersionOrDefault(tags, commit);
+                    var (tag, commitVersion) = GetVersionOrDefault(tags, commit, tagPrefix);
 
                     if (commitVersion != default)
                     {
@@ -122,9 +122,9 @@ namespace MinVer
 
         private static void Log(string message) => Console.Error.WriteLine($"MinVer: {message}");
 
-        private static (string, Version) GetVersionOrDefault(List<Tag> tags, Commit commit) => tags
+        private static (string, Version) GetVersionOrDefault(List<Tag> tags, Commit commit, string tagPrefix) => tags
             .Where(tag => tag.Target.Sha == commit.Sha)
-            .Select(tag => (tag.FriendlyName, Version.ParseOrDefault(tag.FriendlyName)))
+            .Select(tag => (tag.FriendlyName, Version.ParseOrDefault(tag.FriendlyName, tagPrefix)))
             .Where(tuple => tuple.Item2 != default)
             .OrderByDescending(tuple => tuple.Item2)
             .FirstOrDefault();

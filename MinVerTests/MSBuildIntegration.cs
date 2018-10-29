@@ -23,7 +23,7 @@ namespace MinVerTests
                 .x(async () => await RunAsync("git", @"tag 1.0.0", path));
 
             "When the version is determined using the subdirectory"
-                .x(() => version = Versioner.GetVersion(path));
+                .x(() => version = Versioner.GetVersion(path, null));
 
             "Then the version is 1.0.0"
                 .x(() => Assert.Equal("1.0.0", version.ToString()));

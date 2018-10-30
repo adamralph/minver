@@ -108,16 +108,17 @@ namespace MinVer
 
             var orderedCandidates = candidates.OrderBy(candidate => candidate.Version).ToList();
 
-            var heightWidth = orderedCandidates.Max(candidate => candidate.Height).ToString().Length;
             var tagWidth = orderedCandidates.Max(candidate => candidate.Tag.Length);
+            var versionWidth = orderedCandidates.Max(candidate => candidate.Version.ToString().Length);
+            var heightWidth = orderedCandidates.Max(candidate => candidate.Height).ToString().Length;
 
             foreach (var candidate in orderedCandidates.Take(orderedCandidates.Count - 1))
             {
-                Log($"Ignoring commit {candidate.ToString(heightWidth, tagWidth)}");
+                Log($"Ignoring {candidate.ToString(tagWidth, versionWidth, heightWidth)}");
             }
 
             var selectedCandidate = orderedCandidates.Last();
-            Log($"Using commit    {selectedCandidate.ToString(heightWidth, tagWidth)}");
+            Log($"Using{(orderedCandidates.Count > 1 ? "    " : " ")}{selectedCandidate.ToString(tagWidth, versionWidth, heightWidth)}");
 
             var calculatedVersion = selectedCandidate.Version.AddHeight(selectedCandidate.Height);
             Log($"Calculated version {calculatedVersion}");
@@ -135,8 +136,8 @@ namespace MinVer
 
             public Version Version { get; set; }
 
-            public string ToString(int heightWidth, int tagWidth) =>
-                $"{{ {nameof(this.Sha)}: {this.Sha}, {nameof(this.Height)}: {this.Height.ToString().PadLeft(heightWidth)}, {nameof(this.Tag)}: {$"'{this.Tag}'".PadLeft(tagWidth + 2)}, {nameof(this.Version)}: {this.Version.ToString()} }}";
+            public string ToString(int tagWidth, int versionWidth, int heightWidth) =>
+                $"{{ {nameof(this.Sha)}: {this.Sha.Substring(0, 7)}, {nameof(this.Tag)}: {$"'{this.Tag}',".PadRight(tagWidth + 3)} {nameof(this.Version)}: {$"{this.Version.ToString()},".PadRight(versionWidth + 1)} {nameof(this.Height)}: {this.Height.ToString().PadLeft(heightWidth)} }}";
         }
 
         private static void Log(string message) => Console.Error.WriteLine($"MinVer: {message}");

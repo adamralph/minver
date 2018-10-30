@@ -22,7 +22,6 @@
 
   <Target Name="MinVer" BeforeTargets="CoreCompile;GenerateNuspec" DependsOnTargets="MinVer_GetVersion">
     <PropertyGroup>
-      <MinVerVersion Condition=" '$(MinVerBuildMetadata)' == '' ">$(MinVerVersion)</MinVerVersion>
       <MinVerVersion Condition=" '$(MinVerBuildMetadata)' != '' ">$(MinVerVersion)+$(MinVerBuildMetadata)</MinVerVersion>
       <Version>$(MinVerVersion)</Version>
       <PackageVersion>$(MinVerVersion)</PackageVersion>

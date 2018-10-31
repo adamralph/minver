@@ -5,11 +5,11 @@
 _[![nuget](https://img.shields.io/nuget/v/MinVer.svg?style=flat)](https://www.nuget.org/packages/MinVer)_
 _[![Build status](https://ci.appveyor.com/api/projects/status/0ai8j3x4tg6w3ima/branch/master?svg=true)](https://ci.appveyor.com/project/adamralph/min-ver/branch/master)_
 
-A minimalistic [.NET package](https://www.nuget.org/packages/MinVer) for versioning .NET projects using Git tags.
+A minimalistic [.NET package](https://www.nuget.org/packages/MinVer) for versioning .NET SDK-style projects using Git tags.
 
 ## Prerequisites
 
-- [.NET Core SDK](https://www.microsoft.com/net/download)
+- [.NET Core SDK 2.1.300 or later](https://www.microsoft.com/net/download)
 - [libcurl](https://curl.haxx.se/libcurl/) (Linux only)
 
 ## Quick start

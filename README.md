@@ -59,11 +59,11 @@ That means MinVer is compatible with [Git Flow](https://nvie.com/posts/a-success
 
 ### Can I include build metadata in the version?
 
-Yes, you can specify [build metadata](https://semver.org/#spec-item-10) in an environment variable or MSBuild property named `MINVER_BUILD_METADATA` or `MinVerBuildMetadata`.
+Yes! You can specify [build metadata](https://semver.org/#spec-item-10) in an environment variable or MSBuild property named `MINVER_BUILD_METADATA` or `MinVerBuildMetadata`.
 
 ### Can I use the version calculated by MinVer for other purposes?
 
-Yes, but you need to move your usage of the `Version` or `PackageVersion` properties to a target which runs after MinVer. E.g.
+Yes! But you need to move your usage of the `Version` or `PackageVersion` properties to a target which runs after MinVer. E.g.
 
 ```xml
 <Target Name="MyTarget" AfterTargets="MinVer">
@@ -76,7 +76,7 @@ Yes, but you need to move your usage of the `Version` or `PackageVersion` proper
 
 ### Can I get more detailed logs?
 
-Yes, you can set an environment variable or MSBuild property named `MINVER_VERBOSE` or `MinVerVerbose` to `true` to get more detailed logs showing how many commits were examined, which version tags were found but ignored, which version was calculated, etc.
+Yes! You can set an environment variable or MSBuild property named `MINVER_VERBOSE` or `MinVerVerbose` to `true` to get more detailed logs showing how many commits were examined, which version tags were found but ignored, which version was calculated, etc.
 
 ### What if it all goes wrong?
 

@@ -95,7 +95,7 @@ git tag 1.1.0
                         {
                             Commands.Checkout(repo, commit);
 
-                            var version = Versioner.GetVersion(path, null);
+                            var version = Versioner.GetVersion(path, false, null);
                             var versionString = version.ToString();
                             var tagName = $"v/{versionString}";
 
@@ -128,7 +128,7 @@ git tag 1.1.0
                 .x(async () => await EnsureEmptyRepository(path));
 
             "When the version is determined"
-                .x(() => version = Versioner.GetVersion(path, null));
+                .x(() => version = Versioner.GetVersion(path, false, null));
 
             "Then the version is 0.0.0-alpha.0"
                 .x(() => Assert.Equal("0.0.0-alpha.0", version.ToString()));
@@ -141,7 +141,7 @@ git tag 1.1.0
                 .x(() => EnsureEmptyDirectory(path));
 
             "When the version is determined"
-                .x(() => version = Versioner.GetVersion(path, null));
+                .x(() => version = Versioner.GetVersion(path, false, null));
 
             "Then the version is 0.0.0-alpha.0"
                 .x(() => Assert.Equal("0.0.0-alpha.0", version.ToString()));
@@ -154,7 +154,7 @@ git tag 1.1.0
                 .x(() => path = Guid.NewGuid().ToString());
 
             "When the version is determined"
-                .x(() => ex = Record.Exception(() => Versioner.GetVersion(path, null)));
+                .x(() => ex = Record.Exception(() => Versioner.GetVersion(path, false, null)));
 
             "Then an exception is thrown"
                 .x(() => Assert.NotNull(ex));

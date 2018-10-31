@@ -8,7 +8,7 @@ namespace MinVer
 
     public static class Versioner
     {
-        public static Version GetVersion(string path, string tagPrefix)
+        public static Version GetVersion(string path, bool verbose, string tagPrefix)
         {
             // Repository.ctor(string) throws RepositoryNotFoundException in this case
             if (!Directory.Exists(path))
@@ -36,7 +36,7 @@ namespace MinVer
             {
                 try
                 {
-                    return GetVersion(repo, tagPrefix);
+                    return GetVersion(repo, verbose, tagPrefix);
                 }
                 finally
                 {
@@ -49,7 +49,7 @@ namespace MinVer
             return new Version();
         }
 
-        private static Version GetVersion(Repository repo, string tagPrefix)
+        private static Version GetVersion(Repository repo, bool verbose, string tagPrefix)
         {
             var commit = repo.Commits.FirstOrDefault();
 
@@ -104,24 +104,33 @@ namespace MinVer
                 (commit, height) = commitsToCheck.Pop();
             }
 
-            Log($"{count:N0} commits checked.");
+            if (verbose)
+            {
+                Log($"{count:N0} commits checked.");
+            }
 
             var orderedCandidates = candidates.OrderBy(candidate => candidate.Version).ToList();
 
-            var tagWidth = orderedCandidates.Max(candidate => candidate.Tag.Length);
-            var versionWidth = orderedCandidates.Max(candidate => candidate.Version.ToString().Length);
-            var heightWidth = orderedCandidates.Max(candidate => candidate.Height).ToString().Length;
+            var tagWidth = verbose ? orderedCandidates.Max(candidate => candidate.Tag.Length) : 0;
+            var versionWidth = verbose ? orderedCandidates.Max(candidate => candidate.Version.ToString().Length) : 0;
+            var heightWidth = verbose ? orderedCandidates.Max(candidate => candidate.Height).ToString().Length : 0;
 
-            foreach (var candidate in orderedCandidates.Take(orderedCandidates.Count - 1))
+            if (verbose)
             {
-                Log($"Ignoring {candidate.ToString(tagWidth, versionWidth, heightWidth)}");
+                foreach (var candidate in orderedCandidates.Take(orderedCandidates.Count - 1))
+                {
+                    Log($"Ignoring {candidate.ToString(tagWidth, versionWidth, heightWidth)}");
+                }
             }
 
             var selectedCandidate = orderedCandidates.Last();
-            Log($"Using{(orderedCandidates.Count > 1 ? "    " : " ")}{selectedCandidate.ToString(tagWidth, versionWidth, heightWidth)}");
+            Log($"Using{(verbose && orderedCandidates.Count > 1 ? "    " : " ")}{selectedCandidate.ToString(tagWidth, versionWidth, heightWidth)}");
 
             var calculatedVersion = selectedCandidate.Version.AddHeight(selectedCandidate.Height);
-            Log($"Calculated version {calculatedVersion}");
+            if (verbose)
+            {
+                Log($"Calculated version {calculatedVersion}");
+            }
 
             return calculatedVersion;
         }

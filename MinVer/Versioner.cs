@@ -45,7 +45,7 @@ namespace MinVer
             }
 
             // Includes substring of RepositoryNotFoundException.Message $"Path '{path}' doesn't point at a valid Git repository or workdir."
-            Log($"WARNING: Using default version. Path '{path}' doesn't point at a valid Git repository.");
+            Log($"warning MINVER0001: Path '{path}' doesn't point at a valid Git repository. Using default version.");
             return new Version();
         }
 

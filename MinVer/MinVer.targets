@@ -6,10 +6,11 @@
     <MinVerVersion Condition=" '$(MinVerVersion)' == '' ">$(MINVER_VERSION)</MinVerVersion>
     <MinVerBuildMetadata Condition=" '$(MinVerBuildMetadata)' == '' ">$(MINVER_BUILD_METADATA)</MinVerBuildMetadata>
     <MinVerTagPrefix Condition=" '$(MinVerTagPrefix)' == '' ">$(MINVER_TAG_PREFIX)</MinVerTagPrefix>
+    <MinVerVerbose Condition=" '$(MinVerVerbose)' == '' ">$(MINVER_VERBOSE)</MinVerVerbose>
   </PropertyGroup>
 
   <Target Name="MinVer_GetVersion" Condition=" '$(MinVerVersion)' == '' ">
-    <Exec Command="dotnet &quot;$(MSBuildThisFileDirectory)MinVer.Cli.dll&quot; &quot;$(MSBuildProjectDirectory)&quot; &quot;$(MinVerTagPrefix)&quot;" ConsoleToMSBuild="true">
+    <Exec Command="dotnet &quot;$(MSBuildThisFileDirectory)MinVer.Cli.dll&quot; &quot;$(MSBuildProjectDirectory)&quot; &quot;$(MinVerVerbose)&quot; &quot;$(MinVerTagPrefix)&quot;" ConsoleToMSBuild="true">
       <Output TaskParameter="ConsoleOutput" ItemName="MinVerConsoleOutputItems" />
     </Exec>
     <ItemGroup>

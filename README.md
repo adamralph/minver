@@ -74,6 +74,10 @@ Yes, but you need to move your usage of the `Version` or `PackageVersion` proper
 </Target>
 ```
 
+### Can I get more detailed logs?
+
+Yes, you can set an environment variable or MSBuild property named `MINVER_VERBOSE` or `MinVerVerbose` to `true` to get more detailed logs showing how many commits were examined, which version tags were found but ignored, which version was calculated, etc.
+
 ### What if it all goes wrong?
 
 If your tags get into a mess and you can't find a way out, you can specify a version override in an environment variable or MSBuild property named `MINVER_VERSION` or `MinVerVersion` until you've figured out the problem.

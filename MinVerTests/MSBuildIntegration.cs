@@ -23,7 +23,7 @@ namespace MinVerTests
                 .x(() => EnsureEmptyDirectory(path = Path.Combine(path, "subdirectory")));
 
             "When the version is determined using the subdirectory"
-                .x(() => version = Versioner.GetVersion(path, null));
+                .x(() => version = Versioner.GetVersion(path, false, null));
 
             "Then the version is 2.0.0"
                 .x(() => Assert.Equal("2.0.0", version.ToString()));

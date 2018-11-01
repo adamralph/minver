@@ -21,12 +21,16 @@
     </PropertyGroup>
   </Target>
 
-  <Target Name="MinVer" BeforeTargets="CoreCompile;GenerateNuspec" DependsOnTargets="MinVer_GetVersion" Condition="'$(DesignTimeBuild)' != 'true'">
+  <Target Name="MinVer" BeforeTargets="CoreCompile;GenerateNuspec" DependsOnTargets="MinVer_GetVersion" Condition="'$(UsingMicrosoftNETSdk)' == 'true' And '$(DesignTimeBuild)' != 'true'">
     <PropertyGroup>
       <MinVerVersion Condition=" '$(MinVerBuildMetadata)' != '' ">$(MinVerVersion)+$(MinVerBuildMetadata)</MinVerVersion>
       <Version>$(MinVerVersion)</Version>
       <PackageVersion>$(MinVerVersion)</PackageVersion>
     </PropertyGroup>
+  </Target>
+
+  <Target Name="MinVer_Warnings" BeforeTargets="MinVer" Condition="'$(DesignTimeBuild)' != 'true'">
+    <Error Condition="'$(UsingMicrosoftNETSdk)' != 'true'" Code="MINVER0002" Text="MinVer only works in SDK-style projects." />
   </Target>
 
 </Project>

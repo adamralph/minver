@@ -11,11 +11,40 @@ namespace MinVer.Cli
 
             app.HelpOption();
 
+            var minimumMajorMinor = app.Option<string>("-m|--minimum-major-minor <MINIMUM_MAJOR_MINOR>", "The minimum major and minor version range. E.g. '2.0'.", CommandOptionType.SingleValue);
             var path = app.Option("-p|--path <PATH>", "The path of the repository.", CommandOptionType.SingleValue);
             var tagPrefix = app.Option("-t|--tag-prefix <TAG-PREFIX>", "The tag prefix.", CommandOptionType.SingleValue);
             var verbose = app.Option("-v|--verbose", "Enable verbose logging.", CommandOptionType.NoValue);
 
-            app.OnExecute(() => Console.WriteLine(Versioner.GetVersion(path.Value() ?? ".", verbose.HasValue(), tagPrefix.Value())));
+            app.OnExecute(() =>
+            {
+                var minimumMajor = 0;
+                var minimumMinor = 0;
+
+                var minimumMajorMinorValue = minimumMajorMinor.Value();
+
+                if (!string.IsNullOrEmpty(minimumMajorMinorValue))
+                {
+                    var numbers = minimumMajorMinorValue.Split('.');
+
+                    if (numbers.Length > 2)
+                    {
+                        throw new Exception($"More than one dot in minimum major and minor version range '{minimumMajorMinorValue}'.");
+                    }
+
+                    if (!int.TryParse(numbers[0], out minimumMajor))
+                    {
+                        throw new Exception($"Invalid major version '{numbers[0]}' in minimum major and minor version range '{minimumMajorMinorValue}'.");
+                    }
+
+                    if (numbers.Length > 1 && !int.TryParse(numbers[1], out minimumMinor))
+                    {
+                        throw new Exception($"Invalid minor version '{numbers[1]}' in minimum major and minor version range '{minimumMajorMinorValue}'.");
+                    }
+                }
+
+                Console.WriteLine(Versioner.GetVersion(path.Value() ?? ".", verbose.HasValue(), tagPrefix.Value(), minimumMajor, minimumMinor));
+            });
 
             app.Execute(args);
         }

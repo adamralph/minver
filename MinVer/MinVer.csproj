@@ -23,14 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="MinVer.targets">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="$(MSBuildThisFileDirectory)..\MinVer.Cli\bin\Release\netcoreapp2.1\publish\**\*" PackagePath="build" />
+    <Content Include="build\**\*" PackagePath="build" />
     <Content Include="buildMultiTargeting\**\*" PackagePath="buildMultiTargeting" />
+    <Content Include="$(MSBuildThisFileDirectory)..\MinVer.Cli\bin\Release\netcoreapp2.1\publish\**\*" PackagePath="tools" />
   </ItemGroup>
 
 </Project>

@@ -15,7 +15,9 @@ namespace MinVer
         private readonly int patch;
         private readonly List<string> preReleaseIdentifiers;
 
-        public Version() => this.preReleaseIdentifiers = new List<string> { "alpha", "0" };
+        public Version() : this(default, default) { }
+
+        public Version(int major, int minor) : this(major, minor, default, new List<string> { "alpha", "0" }) { }
 
         public Version(int major, int minor, int patch, IEnumerable<string> preReleaseIdentifiers)
         {
@@ -98,6 +100,8 @@ namespace MinVer
                 : this.preReleaseIdentifiers.Count == 0
                     ? new Version(this.major, this.minor, this.patch + 1, new[] { "alpha", "0", height.ToString(CultureInfo.InvariantCulture) })
                     : new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers.Concat(new[] { height.ToString(CultureInfo.InvariantCulture) }));
+
+        public bool IsBefore(int major, int minor) => this.major < major || (this.major == major && this.minor < minor);
 
         public static Version ParseOrDefault(string text, string prefix)
         {

@@ -8,7 +8,7 @@ namespace MinVer
 
     public static class Versioner
     {
-        public static Version GetVersion(string path, bool verbose, string tagPrefix)
+        public static Version GetVersion(string path, bool verbose, string tagPrefix, int minimumMajor, int minimumMinor)
         {
             // Repository.ctor(string) throws RepositoryNotFoundException in this case
             if (!Directory.Exists(path))
@@ -36,7 +36,7 @@ namespace MinVer
             {
                 try
                 {
-                    return GetVersion(repo, verbose, tagPrefix);
+                    return GetVersion(repo, verbose, tagPrefix, minimumMajor, minimumMinor);
                 }
                 finally
                 {
@@ -49,7 +49,7 @@ namespace MinVer
             return new Version();
         }
 
-        private static Version GetVersion(Repository repo, bool verbose, string tagPrefix)
+        private static Version GetVersion(Repository repo, bool verbose, string tagPrefix, int minimumMajor, int minimumMinor)
         {
             var commit = repo.Commits.FirstOrDefault();
 
@@ -115,18 +115,33 @@ namespace MinVer
             var versionWidth = verbose ? orderedCandidates.Max(candidate => candidate.Version.ToString().Length) : 0;
             var heightWidth = verbose ? orderedCandidates.Max(candidate => candidate.Height).ToString().Length : 0;
 
+            var ignoredCandidates = orderedCandidates.Take(orderedCandidates.Count - 1).ToList();
+
+            var selectedCandidate = orderedCandidates.Last();
+            if (selectedCandidate.Version.IsBefore(minimumMajor, minimumMinor))
+            {
+                ignoredCandidates.Add(selectedCandidate);
+                selectedCandidate = null;
+            }
+
             if (verbose)
             {
-                foreach (var candidate in orderedCandidates.Take(orderedCandidates.Count - 1))
+                foreach (var candidate in ignoredCandidates)
                 {
                     Log($"Ignoring {candidate.ToString(tagWidth, versionWidth, heightWidth)}");
                 }
             }
 
-            var selectedCandidate = orderedCandidates.Last();
-            Log($"Using{(verbose && orderedCandidates.Count > 1 ? "    " : " ")}{selectedCandidate.ToString(tagWidth, versionWidth, heightWidth)}");
+            if (selectedCandidate != null)
+            {
+                Log($"Using{(verbose && orderedCandidates.Count > 1 ? "    " : " ")}{selectedCandidate.ToString(tagWidth, versionWidth, heightWidth)}");
+            }
+            else
+            {
+                Log($"No commit found with a tag in the '{minimumMajor}.{minimumMinor}.x' version range.");
+            }
 
-            var calculatedVersion = selectedCandidate.Version.AddHeight(selectedCandidate.Height);
+            var calculatedVersion = selectedCandidate?.Version.AddHeight(selectedCandidate.Height) ?? new Version(minimumMajor, minimumMinor);
             if (verbose)
             {
                 Log($"Calculated version {calculatedVersion}");

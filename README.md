@@ -24,7 +24,8 @@ Your project will be versioned according to the latest tag found in the commit h
 ### Inputs
 
 - The last tag on HEAD or it's ancestors which represents a [SemVer](https://semver.org) version number._\*_
-- By how many commits HEAD is ahead of the tag (known as "height")._\*\*_
+- By how many commits HEAD is ahead of the tag (known as "height"). Or if no tag is found, by how commits HEAD is ahead of the first root commit found._\*\*_
+- An optional `MINVER_MINIMUM_MAJOR_MINOR` or `MinVerMinimumMajorMinor` environment variable or MSBuild property.
 
 \* _Each time the history diverges, the last tag is found on each path and the tag with the latest version number is used._
 
@@ -32,10 +33,19 @@ Your project will be versioned according to the latest tag found in the commit h
 
 ### Algorithm
 
-- If the height is zero (i.e. the tag is on HEAD), then the HEAD version matches the tag.
+#### Candidate version (interim)
+
+- If the height is zero (i.e. the tag is on HEAD), then the candidate version matches the tag.
 - If the height is non-zero (i.e. the tag is on an older commit), then:
-  - If the last tag is an RTM version, `MAJOR.MINOR.PATCH`, then the HEAD version is `MAJOR.MINOR.PATCH+1-alpha.0.{height}`.
-  - If the last tag is a pre-release version, `MAJOR.MINOR.PATCH-{pre-release identifiers}`, then the HEAD version is `MAJOR.MINOR.PATCH-{pre-release identifiers}.{height}`.
+  - If the last tag is an RTM version, `MAJOR.MINOR.PATCH`, then the candidate version is `MAJOR.MINOR.PATCH+1-alpha.0.{height}`.
+  - If the last tag is a pre-release version, `MAJOR.MINOR.PATCH-{pre-release identifiers}`, then the candidate version is `MAJOR.MINOR.PATCH-{pre-release identifiers}.{height}`.
+
+#### HEAD version (final)
+
+- If a `MINVER_MINIMUM_MAJOR_MINOR` or `MinVerMinimumMajorMinor` environment variable or MSBuild property is not set, then the HEAD version matches the candidate version.
+- If a `MINVER_MINIMUM_MAJOR_MINOR` or `MinVerMinimumMajorMinor` environment variable or MSBuild property is set to `MAJOR.MINOR` or `MAJOR` (`MINOR` defaults to `0`), then:
+  - If the candidate version is in the `MAJOR.MINOR` version range or later, then the HEAD version matches the candidate version.
+  - If the candidate version is in an earlier version range than `MAJOR.MINOR`, then the HEAD version is `MAJOR.MINOR.0-alpha.0.{height}`.
 
 ## FAQ
 

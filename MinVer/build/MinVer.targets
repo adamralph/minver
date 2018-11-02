@@ -1,16 +1,24 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <MSBuildAllProjects Condition="'$(MSBuildAssemblyVersion)' == '' Or '$(MSBuildAssemblyVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
-    <GetPackageVersionDependsOn>$(GetPackageVersionDependsOn);MinVer</GetPackageVersionDependsOn>
-    <MinVerVersion Condition=" '$(MinVerVersion)' == '' ">$(MINVER_VERSION)</MinVerVersion>
     <MinVerBuildMetadata Condition=" '$(MinVerBuildMetadata)' == '' ">$(MINVER_BUILD_METADATA)</MinVerBuildMetadata>
     <MinVerTagPrefix Condition=" '$(MinVerTagPrefix)' == '' ">$(MINVER_TAG_PREFIX)</MinVerTagPrefix>
     <MinVerVerbose Condition=" '$(MinVerVerbose)' == '' ">$(MINVER_VERBOSE)</MinVerVerbose>
+    <MinVerVerbose Condition=" '$(MinVerVerbose)' == '' ">false</MinVerVerbose>
+    <MinVerVersion Condition=" '$(MinVerVersion)' == '' ">$(MINVER_VERSION)</MinVerVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildAssemblyVersion)' == '' Or '$(MSBuildAssemblyVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <GetPackageVersionDependsOn>$(GetPackageVersionDependsOn);MinVer</GetPackageVersionDependsOn>
   </PropertyGroup>
 
   <Target Name="MinVer_GetVersion" Condition=" '$(MinVerVersion)' == '' ">
-    <Exec Command="dotnet &quot;$(MSBuildThisFileDirectory)../tools/MinVer.Cli.dll&quot; &quot;$(MSBuildProjectDirectory)&quot; &quot;$(MinVerVerbose)&quot; &quot;$(MinVerTagPrefix)&quot;" ConsoleToMSBuild="true">
+    <Error Condition="'$(MinVerVerbose)' != 'true' And '$(MinVerVerbose)' != 'false'" Code="MINVER0003" Text="MinVerVerbose/MINVER_VERBOSE value '$(MinVerVerbose)' cannot be converted to a Boolean value." />
+    <PropertyGroup>
+      <MinVerVerboseOption Condition="'$(MinVerVerbose)' == 'true'"> --verbose</MinVerVerboseOption>
+    </PropertyGroup>
+    <Exec Command="dotnet &quot;$(MSBuildThisFileDirectory)../tools/MinVer.Cli.dll&quot; --path &quot;$(MSBuildProjectDirectory)&quot; --tag-prefix &quot;$(MinVerTagPrefix)&quot;$(MinVerVerboseOption)" ConsoleToMSBuild="true">
       <Output TaskParameter="ConsoleOutput" ItemName="MinVerConsoleOutputItems" />
     </Exec>
     <ItemGroup>

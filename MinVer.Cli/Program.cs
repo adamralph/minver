@@ -1,25 +1,23 @@
 namespace MinVer.Cli
 {
     using System;
-    using System.Linq;
+    using McMaster.Extensions.CommandLineUtils;
 
     class Program
     {
         static void Main(string[] args)
         {
-            if (args.Length == 0)
-            {
-                throw new ArgumentException("Path not specified.");
-            }
+            var app = new CommandLineApplication();
 
-            var verbose = false;
-            var verboseString = args.ElementAtOrDefault(1);
-            if (!string.IsNullOrEmpty(verboseString) && !bool.TryParse(verboseString, out verbose))
-            {
-                throw new Exception($"MinVer verbose string '{verboseString}' cannot be converted to a Boolean value.");
-            }
+            app.HelpOption();
 
-            Console.WriteLine(Versioner.GetVersion(args[0], verbose, args.ElementAtOrDefault(2)));
+            var path = app.Option("-p|--path <PATH>", "The path of the repository.", CommandOptionType.SingleValue);
+            var tagPrefix = app.Option("-t|--tag-prefix <TAG-PREFIX>", "The tag prefix.", CommandOptionType.SingleValue);
+            var verbose = app.Option("-v|--verbose", "Enable verbose logging.", CommandOptionType.NoValue);
+
+            app.OnExecute(() => Console.WriteLine(Versioner.GetVersion(path.Value() ?? ".", verbose.HasValue(), tagPrefix.Value())));
+
+            app.Execute(args);
         }
     }
 }

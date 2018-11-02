@@ -46,6 +46,9 @@ internal class Program
                 await RunAsync("dotnet", "new classlib", path);
                 await RunAsync("dotnet", $"add package MinVer --version {version} --source {source} --package-directory packages", path);
                 await RunAsync("dotnet", $"restore --source {source} --packages packages", path);
+
+                DeletePackages();
+
                 await RunAsync("dotnet", "build --no-restore", path);
                 await RunAsync("dotnet", "pack --no-build", path);
 
@@ -54,6 +57,28 @@ internal class Program
                 if (!package.Contains(expected))
                 {
                     throw new Exception($"'{package}' does not contain '{expected}'.");
+                }
+
+                Environment.SetEnvironmentVariable("MINVER_MINIMUM_MAJOR_MINOR", "2.0", EnvironmentVariableTarget.Process);
+
+                DeletePackages();
+
+                await RunAsync("dotnet", "build --no-restore", path);
+                await RunAsync("dotnet", "pack --no-build", path);
+
+                package = Directory.EnumerateFiles(path, "*.nupkg", new EnumerationOptions { RecurseSubdirectories = true }).First();
+                expected = "2.0.0-alpha.0";
+                if (!package.Contains(expected))
+                {
+                    throw new Exception($"'{package}' does not contain '{expected}'.");
+                }
+
+                void DeletePackages()
+                {
+                    foreach (var file in Directory.EnumerateFiles(path, "*.nupkg", new EnumerationOptions { RecurseSubdirectories = true }))
+                    {
+                        File.Delete(file);
+                    }
                 }
             });
 

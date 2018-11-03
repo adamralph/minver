@@ -20,7 +20,7 @@
     <PropertyGroup>
       <MinVerVerboseOption Condition="'$(MinVerVerbose)' == 'true'"> --verbose</MinVerVerboseOption>
     </PropertyGroup>
-    <Exec Command="dotnet &quot;$(MSBuildThisFileDirectory)../tools/MinVer.Cli.dll&quot; --path &quot;$(MSBuildProjectDirectory)&quot; --minimum-major-minor &quot;$(MinVerMinimumMajorMinor)&quot; --tag-prefix &quot;$(MinVerTagPrefix)&quot;$(MinVerVerboseOption)" ConsoleToMSBuild="true">
+    <Exec Command="dotnet &quot;$(MSBuildThisFileDirectory)../MinVer/MinVer.Cli.dll&quot; --path &quot;$(MSBuildProjectDirectory)&quot; --minimum-major-minor &quot;$(MinVerMinimumMajorMinor)&quot; --tag-prefix &quot;$(MinVerTagPrefix)&quot;$(MinVerVerboseOption)" ConsoleToMSBuild="true">
       <Output TaskParameter="ConsoleOutput" ItemName="MinVerConsoleOutputItems" />
     </Exec>
     <ItemGroup>

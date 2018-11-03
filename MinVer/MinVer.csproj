@@ -5,7 +5,7 @@
     <DevelopmentDependency>true</DevelopmentDependency>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <LangVersion>latest</LangVersion>
-    <NoWarn>$(NoWarn);NU5105</NoWarn>
+    <NoWarn>$(NoWarn);NU5100;NU5105</NoWarn>
     <PackageIconUrl>https://raw.githubusercontent.com/adamralph/min-ver/master/assets/min-ver.png</PackageIconUrl>
     <PackageLicenseUrl>https://github.com/adamralph/min-ver/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/adamralph/min-ver</PackageProjectUrl>
@@ -25,7 +25,7 @@
   <ItemGroup>
     <Content Include="build\**\*" PackagePath="build" />
     <Content Include="buildMultiTargeting\**\*" PackagePath="buildMultiTargeting" />
-    <Content Include="$(MSBuildThisFileDirectory)..\MinVer.Cli\bin\Release\netcoreapp2.1\publish\**\*" PackagePath="tools" />
+    <Content Include="$(MSBuildThisFileDirectory)..\MinVer.Cli\bin\Release\netcoreapp2.1\publish\**\*" PackagePath="MinVer" />
   </ItemGroup>
 
 </Project>

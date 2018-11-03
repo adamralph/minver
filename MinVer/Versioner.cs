@@ -115,33 +115,27 @@ namespace MinVer
             var versionWidth = verbose ? orderedCandidates.Max(candidate => candidate.Version.ToString().Length) : 0;
             var heightWidth = verbose ? orderedCandidates.Max(candidate => candidate.Height).ToString().Length : 0;
 
-            var ignoredCandidates = orderedCandidates.Take(orderedCandidates.Count - 1).ToList();
-
-            var selectedCandidate = orderedCandidates.Last();
-            if (selectedCandidate.Version.IsBefore(minimumMajor, minimumMinor))
-            {
-                ignoredCandidates.Add(selectedCandidate);
-                selectedCandidate = null;
-            }
-
             if (verbose)
             {
-                foreach (var candidate in ignoredCandidates)
+                foreach (var candidate in orderedCandidates.Take(orderedCandidates.Count - 1))
                 {
                     Log($"Ignoring {candidate.ToString(tagWidth, versionWidth, heightWidth)}");
                 }
             }
 
-            if (selectedCandidate != null)
+            var selectedCandidate = orderedCandidates.Last();
+            Log($"Using{(verbose && orderedCandidates.Count > 1 ? "    " : " ")}{selectedCandidate.ToString(tagWidth, versionWidth, heightWidth)}");
+
+            var baseVersion = selectedCandidate.Version.IsBefore(minimumMajor, minimumMinor) ?
+                new Version(minimumMajor, minimumMinor)
+                : selectedCandidate.Version;
+
+            if (baseVersion != selectedCandidate.Version)
             {
-                Log($"Using{(verbose && orderedCandidates.Count > 1 ? "    " : " ")}{selectedCandidate.ToString(tagWidth, versionWidth, heightWidth)}");
-            }
-            else
-            {
-                Log($"No commit found with a tag in the '{minimumMajor}.{minimumMinor}.x' version range.");
+                Log($"Bumping version to {baseVersion} to satisify minimum major minor {minimumMajor}.{minimumMinor}");
             }
 
-            var calculatedVersion = selectedCandidate?.Version.AddHeight(selectedCandidate.Height) ?? new Version(minimumMajor, minimumMinor);
+            var calculatedVersion = baseVersion.AddHeight(selectedCandidate.Height);
             if (verbose)
             {
                 Log($"Calculated version {calculatedVersion}");

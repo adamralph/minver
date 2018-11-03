@@ -34,6 +34,9 @@ internal class Program
             DependsOn("pack"),
             async () =>
             {
+                Environment.SetEnvironmentVariable("MINVER_TAG_PREFIX", "v", EnvironmentVariableTarget.Process);
+                Environment.SetEnvironmentVariable("NoPackageAnalysis", "true", EnvironmentVariableTarget.Process);
+
                 var source = Path.GetFullPath("./MinVer/bin/Release/");
                 var version = Path.GetFileNameWithoutExtension(Directory.EnumerateFiles(source, "*.nupkg").First()).Split("MinVer.", 2)[1];
 
@@ -41,15 +44,12 @@ internal class Program
                 await Git.EnsureRepositoryWithACommit(path);
 
                 await RunAsync("git", "tag v1.2.3", path);
-                Environment.SetEnvironmentVariable("MINVER_TAG_PREFIX", "v", EnvironmentVariableTarget.Process);
 
                 await RunAsync("git", "commit --allow-empty -m '.'", path);
 
                 await RunAsync("dotnet", "new classlib", path);
                 await RunAsync("dotnet", $"add package MinVer --version {version} --source {source} --package-directory packages", path);
                 await RunAsync("dotnet", $"restore --source {source} --packages packages", path);
-
-                Environment.SetEnvironmentVariable("NoPackageAnalysis", "true", EnvironmentVariableTarget.Process);
 
                 DeletePackages();
 
@@ -63,6 +63,7 @@ internal class Program
                     throw new Exception($"'{package}' does not contain '{expected}'.");
                 }
 
+                Environment.SetEnvironmentVariable("MINVER_BUILD_METADATA", "build.42", EnvironmentVariableTarget.Process);
                 Environment.SetEnvironmentVariable("MINVER_MINIMUM_MAJOR_MINOR", "2.0", EnvironmentVariableTarget.Process);
                 Environment.SetEnvironmentVariable("MINVER_VERBOSE", "true", EnvironmentVariableTarget.Process);
 
@@ -73,6 +74,20 @@ internal class Program
 
                 package = Directory.EnumerateFiles(path, "*.nupkg", new EnumerationOptions { RecurseSubdirectories = true }).First();
                 expected = "2.0.0-alpha.0.1";
+                if (!package.Contains(expected))
+                {
+                    throw new Exception($"'{package}' does not contain '{expected}'.");
+                }
+
+                Environment.SetEnvironmentVariable("MINVER_VERSION", "3.0.0", EnvironmentVariableTarget.Process);
+
+                DeletePackages();
+
+                await RunAsync("dotnet", "build --no-restore", path);
+                await RunAsync("dotnet", "pack --no-build", path);
+
+                package = Directory.EnumerateFiles(path, "*.nupkg", new EnumerationOptions { RecurseSubdirectories = true }).First();
+                expected = "3.0.0.nupkg";
                 if (!package.Contains(expected))
                 {
                     throw new Exception($"'{package}' does not contain '{expected}'.");

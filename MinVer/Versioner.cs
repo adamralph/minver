@@ -135,7 +135,7 @@ namespace MinVer
                 Log($"Bumping version to {baseVersion} to satisify minimum major minor {minimumMajor}.{minimumMinor}");
             }
 
-            var calculatedVersion = baseVersion.AddHeight(selectedCandidate.Height).AddBuildMetadata(buildMetadata);
+            var calculatedVersion = baseVersion.WithHeight(selectedCandidate.Height).WithBuildMetadata(buildMetadata);
             if (verbose)
             {
                 Log($"Calculated version {calculatedVersion}");

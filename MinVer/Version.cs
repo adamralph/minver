@@ -98,14 +98,14 @@ namespace MinVer
             return 0;
         }
 
-        public Version AddHeight(int height) =>
+        public Version WithHeight(int height) =>
             height == 0
                 ? new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers)
                 : this.preReleaseIdentifiers.Count == 0
                     ? new Version(this.major, this.minor, this.patch + 1, new[] { "alpha", "0", height.ToString(CultureInfo.InvariantCulture) })
                     : new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers.Concat(new[] { height.ToString(CultureInfo.InvariantCulture) }));
 
-        public Version AddBuildMetadata(string buildMetadata) =>
+        public Version WithBuildMetadata(string buildMetadata) =>
             new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, buildMetadata);
 
         public bool IsBefore(int major, int minor) => this.major < major || (this.major == major && this.minor < minor);

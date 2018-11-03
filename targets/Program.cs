@@ -64,6 +64,7 @@ internal class Program
                 }
 
                 Environment.SetEnvironmentVariable("MINVER_MINIMUM_MAJOR_MINOR", "2.0", EnvironmentVariableTarget.Process);
+                Environment.SetEnvironmentVariable("MINVER_VERBOSE", "true", EnvironmentVariableTarget.Process);
 
                 DeletePackages();
 

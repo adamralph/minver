@@ -4,7 +4,6 @@
     <Description>Minimalistic versioning for .NET SDK-style projects.</Description>
     <DevelopmentDependency>true</DevelopmentDependency>
     <IncludeBuildOutput>false</IncludeBuildOutput>
-    <LangVersion>latest</LangVersion>
     <NoWarn>$(NoWarn);NU5100;NU5105</NoWarn>
     <PackageIconUrl>https://raw.githubusercontent.com/adamralph/min-ver/master/assets/min-ver.png</PackageIconUrl>
     <PackageLicenseUrl>https://github.com/adamralph/min-ver/blob/master/LICENSE</PackageLicenseUrl>
@@ -12,8 +11,6 @@
     <PackageReleaseNotes>https://github.com/adamralph/min-ver/milestones?state=closed</PackageReleaseNotes>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <VersionPrefix>1.0.0</VersionPrefix>
-    <VersionSuffix>$(VERSION_SUFFIX)</VersionSuffix>
   </PropertyGroup>
 
   <ItemGroup>

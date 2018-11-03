@@ -8,7 +8,7 @@ namespace MinVer
 
     public static class Versioner
     {
-        public static Version GetVersion(string path, bool verbose, string tagPrefix)
+        public static Version GetVersion(string path, bool verbose, string tagPrefix, int minimumMajor, int minimumMinor)
         {
             // Repository.ctor(string) throws RepositoryNotFoundException in this case
             if (!Directory.Exists(path))
@@ -36,7 +36,7 @@ namespace MinVer
             {
                 try
                 {
-                    return GetVersion(repo, verbose, tagPrefix);
+                    return GetVersion(repo, verbose, tagPrefix, minimumMajor, minimumMinor);
                 }
                 finally
                 {
@@ -49,7 +49,7 @@ namespace MinVer
             return new Version();
         }
 
-        private static Version GetVersion(Repository repo, bool verbose, string tagPrefix)
+        private static Version GetVersion(Repository repo, bool verbose, string tagPrefix, int minimumMajor, int minimumMinor)
         {
             var commit = repo.Commits.FirstOrDefault();
 
@@ -126,7 +126,16 @@ namespace MinVer
             var selectedCandidate = orderedCandidates.Last();
             Log($"Using{(verbose && orderedCandidates.Count > 1 ? "    " : " ")}{selectedCandidate.ToString(tagWidth, versionWidth, heightWidth)}");
 
-            var calculatedVersion = selectedCandidate.Version.AddHeight(selectedCandidate.Height);
+            var baseVersion = selectedCandidate.Version.IsBefore(minimumMajor, minimumMinor) ?
+                new Version(minimumMajor, minimumMinor)
+                : selectedCandidate.Version;
+
+            if (baseVersion != selectedCandidate.Version)
+            {
+                Log($"Bumping version to {baseVersion} to satisify minimum major minor {minimumMajor}.{minimumMinor}");
+            }
+
+            var calculatedVersion = baseVersion.AddHeight(selectedCandidate.Height);
             if (verbose)
             {
                 Log($"Calculated version {calculatedVersion}");

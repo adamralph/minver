@@ -23,7 +23,7 @@ namespace MinVerTests
                 .x(async () => await RunAsync("git", $"tag {tag}", path));
 
             $"When the version is determined using the tag prefix '{prefix}'"
-                .x(() => actualVersion = Versioner.GetVersion(path, default, prefix, default, default));
+                .x(() => actualVersion = Versioner.GetVersion(path, default, prefix, default, default, default));
 
             $"Then the version is '{expectedVersion}'"
                 .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));

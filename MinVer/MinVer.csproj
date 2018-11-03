@@ -12,8 +12,6 @@
     <PackageReleaseNotes>https://github.com/adamralph/min-ver/milestones?state=closed</PackageReleaseNotes>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <VersionPrefix>1.0.0</VersionPrefix>
-    <VersionSuffix>$(VERSION_SUFFIX)</VersionSuffix>
   </PropertyGroup>
 
   <ItemGroup>

@@ -57,7 +57,7 @@ internal class Program
                 await RunAsync("dotnet", "pack --no-build", path);
 
                 var package = Directory.EnumerateFiles(path, "*.nupkg", new EnumerationOptions { RecurseSubdirectories = true }).First();
-                var expected = "1.2.4-alpha.0.1";
+                var expected = "1.2.4-alpha.0.1.nupkg";
                 if (!package.Contains(expected))
                 {
                     throw new Exception($"'{package}' does not contain '{expected}'.");
@@ -73,13 +73,13 @@ internal class Program
                 await RunAsync("dotnet", "pack --no-build", path);
 
                 package = Directory.EnumerateFiles(path, "*.nupkg", new EnumerationOptions { RecurseSubdirectories = true }).First();
-                expected = "2.0.0-alpha.0.1";
+                expected = "2.0.0-alpha.0.1.nupkg";
                 if (!package.Contains(expected))
                 {
                     throw new Exception($"'{package}' does not contain '{expected}'.");
                 }
 
-                Environment.SetEnvironmentVariable("MINVER_VERSION", "3.0.0", EnvironmentVariableTarget.Process);
+                Environment.SetEnvironmentVariable("MINVER_VERSION", "3.0.0-beta.2+build.52", EnvironmentVariableTarget.Process);
 
                 DeletePackages();
 
@@ -87,7 +87,7 @@ internal class Program
                 await RunAsync("dotnet", "pack --no-build", path);
 
                 package = Directory.EnumerateFiles(path, "*.nupkg", new EnumerationOptions { RecurseSubdirectories = true }).First();
-                expected = "3.0.0.nupkg";
+                expected = "3.0.0-beta.2.nupkg";
                 if (!package.Contains(expected))
                 {
                     throw new Exception($"'{package}' does not contain '{expected}'.");

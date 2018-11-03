@@ -1,6 +1,8 @@
 namespace MinVer.Cli
 {
     using System;
+    using System.Linq;
+    using System.Reflection;
     using McMaster.Extensions.CommandLineUtils;
 
     class Program
@@ -19,6 +21,11 @@ namespace MinVer.Cli
 
             app.OnExecute(() =>
             {
+                if (verbose.HasValue())
+                {
+                    Console.Error.WriteLine($"MinVer: MinVer CLI {typeof(Program).Assembly.GetCustomAttributes<AssemblyInformationalVersionAttribute>().Single().InformationalVersion}");
+                }
+
                 var minimumMajor = 0;
                 var minimumMinor = 0;
 
@@ -44,7 +51,7 @@ namespace MinVer.Cli
                     }
                 }
 
-                Console.WriteLine(Versioner.GetVersion(path.Value() ?? ".", verbose.HasValue(), tagPrefix.Value(), minimumMajor, minimumMinor, buildMetadata.Value()));
+                Console.Out.WriteLine(Versioner.GetVersion(path.Value() ?? ".", verbose.HasValue(), tagPrefix.Value(), minimumMajor, minimumMinor, buildMetadata.Value()));
             });
 
             app.Execute(args);

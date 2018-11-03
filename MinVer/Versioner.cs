@@ -8,7 +8,7 @@ namespace MinVer
 
     public static class Versioner
     {
-        public static Version GetVersion(string path, bool verbose, string tagPrefix, int minimumMajor, int minimumMinor)
+        public static Version GetVersion(string path, bool verbose, string tagPrefix, int minimumMajor, int minimumMinor, string buildMetadata)
         {
             // Repository.ctor(string) throws RepositoryNotFoundException in this case
             if (!Directory.Exists(path))
@@ -36,7 +36,7 @@ namespace MinVer
             {
                 try
                 {
-                    return GetVersion(repo, verbose, tagPrefix, minimumMajor, minimumMinor);
+                    return GetVersion(repo, verbose, tagPrefix, minimumMajor, minimumMinor, buildMetadata);
                 }
                 finally
                 {
@@ -49,7 +49,7 @@ namespace MinVer
             return new Version();
         }
 
-        private static Version GetVersion(Repository repo, bool verbose, string tagPrefix, int minimumMajor, int minimumMinor)
+        private static Version GetVersion(Repository repo, bool verbose, string tagPrefix, int minimumMajor, int minimumMinor, string buildMetadata)
         {
             var commit = repo.Commits.FirstOrDefault();
 
@@ -135,7 +135,7 @@ namespace MinVer
                 Log($"Bumping version to {baseVersion} to satisify minimum major minor {minimumMajor}.{minimumMinor}");
             }
 
-            var calculatedVersion = baseVersion.AddHeight(selectedCandidate.Height);
+            var calculatedVersion = baseVersion.AddHeight(selectedCandidate.Height).AddBuildMetadata(buildMetadata);
             if (verbose)
             {
                 Log($"Calculated version {calculatedVersion}");

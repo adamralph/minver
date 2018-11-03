@@ -14,21 +14,25 @@ namespace MinVer
         private readonly int minor;
         private readonly int patch;
         private readonly List<string> preReleaseIdentifiers;
+        private readonly string buildMetadata;
 
         public Version() : this(default, default) { }
 
         public Version(int major, int minor) : this(major, minor, default, new List<string> { "alpha", "0" }) { }
 
-        public Version(int major, int minor, int patch, IEnumerable<string> preReleaseIdentifiers)
+        public Version(int major, int minor, int patch, IEnumerable<string> preReleaseIdentifiers) : this(major, minor, patch, preReleaseIdentifiers, default) { }
+
+        private Version(int major, int minor, int patch, IEnumerable<string> preReleaseIdentifiers, string buildMetadata)
         {
             this.major = major;
             this.minor = minor;
             this.patch = patch;
             this.preReleaseIdentifiers = preReleaseIdentifiers?.ToList() ?? new List<string>();
+            this.buildMetadata = buildMetadata;
         }
 
         public override string ToString() =>
-            $"{this.major}.{this.minor}.{this.patch}{(this.preReleaseIdentifiers.Count == 0 ? "" : $"-{string.Join(".", this.preReleaseIdentifiers)}")}";
+            $"{this.major}.{this.minor}.{this.patch}{(this.preReleaseIdentifiers.Count == 0 ? "" : $"-{string.Join(".", this.preReleaseIdentifiers)}")}{(string.IsNullOrEmpty(this.buildMetadata) ? "" : $"+{this.buildMetadata}")}";
 
         public int CompareTo(Version other)
         {
@@ -100,6 +104,9 @@ namespace MinVer
                 : this.preReleaseIdentifiers.Count == 0
                     ? new Version(this.major, this.minor, this.patch + 1, new[] { "alpha", "0", height.ToString(CultureInfo.InvariantCulture) })
                     : new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers.Concat(new[] { height.ToString(CultureInfo.InvariantCulture) }));
+
+        public Version AddBuildMetadata(string buildMetadata) =>
+            new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, buildMetadata);
 
         public bool IsBefore(int major, int minor) => this.major < major || (this.major == major && this.minor < minor);
 

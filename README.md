@@ -101,6 +101,8 @@ environment:
   MINVER_BUILD_METADATA: build.%APPVEYOR_BUILD_NUMBER%
 ```
 
+You can also specify build metadata in a version tag. If the tag is on the current commit, its build metadata will be used. If the tag is on an older commit, its build metadata will be ignored. Build metadata in the environment variable will be appended to build metadata in the tag.
+
 ### Can I use the version calculated by MinVer for other purposes?
 
 Yes! MinVer sets the `MinVerVersion`, `Version`, and `PackageVersion` MSBuild properties identically. Use them in a target which runs after MinVer. E.g.

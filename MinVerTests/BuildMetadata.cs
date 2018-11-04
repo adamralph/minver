@@ -10,8 +10,12 @@ namespace MinVerTests
     public static class BuildMetadata
     {
         [Scenario]
+        [Example("1.2.3+a", default, "1.2.3+a")]
         [Example("1.2.3", "b", "1.2.3+b")]
+        [Example("1.2.3+a", "b", "1.2.3+a.b")]
+        [Example("1.2.3-pre+a", default, "1.2.3-pre+a")]
         [Example("1.2.3-pre", "b", "1.2.3-pre+b")]
+        [Example("1.2.3-pre+a", "b", "1.2.3-pre+a.b")]
         public static void CurrentTag(string tag, string buildMetadata, string expectedVersion, string path, Version actualVersion)
         {
             $"Given a git repository with a commit in '{path = GetScenarioDirectory($"build-metadata-current-tag-{tag}-{buildMetadata}")}'"
@@ -28,8 +32,12 @@ namespace MinVerTests
         }
 
         [Scenario]
+        [Example("1.2.3+a", default, "1.2.4-alpha.0.1")]
         [Example("1.2.3", "b", "1.2.4-alpha.0.1+b")]
+        [Example("1.2.3+a", "b", "1.2.4-alpha.0.1+b")]
+        [Example("1.2.3-pre+a", default, "1.2.3-pre.1")]
         [Example("1.2.3-pre", "b", "1.2.3-pre.1+b")]
+        [Example("1.2.3-pre+a", "b", "1.2.3-pre.1+b")]
         public static void PreviousTag(string tag, string buildMetadata, string expectedVersion, string path, Version actualVersion)
         {
             $"Given a git repository with a commit in '{path = GetScenarioDirectory($"build-metadata-current-tag-{tag}-{buildMetadata}")}'"

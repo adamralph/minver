@@ -86,7 +86,7 @@ namespace MinVer
 
                     if (commitVersion != default)
                     {
-                        candidates.Add(new Candidate { Sha = commit.Sha, Height = height, Tag = tag.FriendlyName, Version = commitVersion, });
+                        candidates.Add(new Candidate { Commit = commit.Sha, Height = height, Tag = tag.FriendlyName, Version = commitVersion, });
                     }
                     else
                     {
@@ -97,7 +97,7 @@ namespace MinVer
 
                         if (commitsToCheck.Count == 0 || commitsToCheck.Peek().Item2 <= height)
                         {
-                            candidates.Add(new Candidate { Sha = commit.Sha, Height = height, Tag = "(none)", Version = new Version(), });
+                            candidates.Add(new Candidate { Commit = commit.Sha, Height = height, Tag = "(none)", Version = new Version(), });
                         }
                     }
                 }
@@ -152,7 +152,7 @@ namespace MinVer
 
         private class Candidate
         {
-            public string Sha { get; set; }
+            public string Commit { get; set; }
 
             public int Height { get; set; }
 
@@ -161,7 +161,7 @@ namespace MinVer
             public Version Version { get; set; }
 
             public string ToString(int tagWidth, int versionWidth, int heightWidth) =>
-                $"{{ {nameof(this.Sha)}: {this.Sha.Substring(0, 7)}, {nameof(this.Tag)}: {$"'{this.Tag}',".PadRight(tagWidth + 3)} {nameof(this.Version)}: {$"{this.Version.ToString()},".PadRight(versionWidth + 1)} {nameof(this.Height)}: {this.Height.ToString().PadLeft(heightWidth)} }}";
+                $"{{ {nameof(this.Commit)}: {this.Commit.Substring(0, 7)}, {nameof(this.Tag)}: {$"'{this.Tag}',".PadRight(tagWidth + 3)} {nameof(this.Version)}: {$"{this.Version.ToString()},".PadRight(versionWidth + 1)} {nameof(this.Height)}: {this.Height.ToString().PadLeft(heightWidth)} }}";
         }
 
         private static void Log(string message) => Console.Error.WriteLine($"MinVer: {message}");

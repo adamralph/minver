@@ -10,7 +10,7 @@ namespace MinVerTests
     public static class TagPrefixes
     {
         [Scenario]
-        [Example("1.2.3", null, "1.2.3")]
+        [Example("1.2.3", default, "1.2.3")]
         [Example("2.3.4", "", "2.3.4")]
         [Example("v3.4.5", "v", "3.4.5")]
         [Example("version5.6.7", "version", "5.6.7")]

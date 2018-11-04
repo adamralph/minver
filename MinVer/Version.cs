@@ -2,7 +2,6 @@ namespace MinVer
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Linq;
     using static System.Math;
 

@@ -9,7 +9,7 @@ namespace MinVer
 
     public static class Versioner
     {
-        public static Version GetVersion(string path, bool verbose, string tagPrefix, int minimumMajor, int minimumMinor, string buildMetadata)
+        public static Version GetVersion(string path, bool verbose, string tagPrefix, int major, int minor, string buildMetadata)
         {
             if (verbose)
             {
@@ -42,7 +42,7 @@ namespace MinVer
             {
                 try
                 {
-                    return GetVersion(repo, verbose, tagPrefix, minimumMajor, minimumMinor, buildMetadata);
+                    return GetVersion(repo, verbose, tagPrefix, major, minor, buildMetadata);
                 }
                 finally
                 {
@@ -55,7 +55,7 @@ namespace MinVer
             return new Version();
         }
 
-        private static Version GetVersion(Repository repo, bool verbose, string tagPrefix, int minimumMajor, int minimumMinor, string buildMetadata)
+        private static Version GetVersion(Repository repo, bool verbose, string tagPrefix, int major, int minor, string buildMetadata)
         {
             var commit = repo.Commits.FirstOrDefault();
 
@@ -132,13 +132,13 @@ namespace MinVer
             var selectedCandidate = orderedCandidates.Last();
             Log($"Using{(verbose && orderedCandidates.Count > 1 ? "    " : " ")}{selectedCandidate.ToString(tagWidth, versionWidth, heightWidth)}.");
 
-            var baseVersion = selectedCandidate.Version.IsBefore(minimumMajor, minimumMinor) ?
-                new Version(minimumMajor, minimumMinor)
+            var baseVersion = selectedCandidate.Version.IsBefore(major, minor) ?
+                new Version(major, minor)
                 : selectedCandidate.Version;
 
             if (baseVersion != selectedCandidate.Version)
             {
-                Log($"Bumping version to {baseVersion} to satisify minimum major minor {minimumMajor}.{minimumMinor}.");
+                Log($"Bumping version to {baseVersion} to satisfy {major}.{minor} range.");
             }
 
             var calculatedVersion = baseVersion.WithHeight(selectedCandidate.Height).WithBuildMetadata(buildMetadata);

@@ -64,8 +64,10 @@ internal class Program
                 }
 
                 Environment.SetEnvironmentVariable("MINVER_BUILD_METADATA", "build.42", EnvironmentVariableTarget.Process);
-                Environment.SetEnvironmentVariable("MINVER_MINIMUM_MAJOR_MINOR", "2.0", EnvironmentVariableTarget.Process);
                 Environment.SetEnvironmentVariable("MINVER_VERBOSE", "true", EnvironmentVariableTarget.Process);
+
+                // normally set via an MSBuild property
+                Environment.SetEnvironmentVariable("MinVerMajorMinor", "2.0", EnvironmentVariableTarget.Process);
 
                 DeletePackages();
 

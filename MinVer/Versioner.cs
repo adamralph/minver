@@ -4,12 +4,18 @@ namespace MinVer
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Reflection;
     using LibGit2Sharp;
 
     public static class Versioner
     {
         public static Version GetVersion(string path, bool verbose, string tagPrefix, int minimumMajor, int minimumMinor, string buildMetadata)
         {
+            if (verbose)
+            {
+                Log($"MinVer {typeof(Versioner).Assembly.GetCustomAttributes<AssemblyInformationalVersionAttribute>().Single().InformationalVersion}");
+            }
+
             // Repository.ctor(string) throws RepositoryNotFoundException in this case
             if (!Directory.Exists(path))
             {

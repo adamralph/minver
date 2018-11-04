@@ -14,25 +14,27 @@ namespace MinVer
         private readonly int minor;
         private readonly int patch;
         private readonly List<string> preReleaseIdentifiers;
+        private readonly int height;
         private readonly string buildMetadata;
 
         public Version() : this(default, default) { }
 
-        public Version(int major, int minor) : this(major, minor, default, new List<string> { "alpha", "0" }) { }
+        public Version(int major, int minor) : this(major, minor, default, new List<string> { "alpha", "0" }, default) { }
 
-        public Version(int major, int minor, int patch, IEnumerable<string> preReleaseIdentifiers) : this(major, minor, patch, preReleaseIdentifiers, default) { }
+        public Version(int major, int minor, int patch, IEnumerable<string> preReleaseIdentifiers, int height) : this(major, minor, patch, preReleaseIdentifiers, height, default) { }
 
-        private Version(int major, int minor, int patch, IEnumerable<string> preReleaseIdentifiers, string buildMetadata)
+        private Version(int major, int minor, int patch, IEnumerable<string> preReleaseIdentifiers, int height, string buildMetadata)
         {
             this.major = major;
             this.minor = minor;
             this.patch = patch;
             this.preReleaseIdentifiers = preReleaseIdentifiers?.ToList() ?? new List<string>();
+            this.height = height;
             this.buildMetadata = buildMetadata;
         }
 
         public override string ToString() =>
-            $"{this.major}.{this.minor}.{this.patch}{(this.preReleaseIdentifiers.Count == 0 ? "" : $"-{string.Join(".", this.preReleaseIdentifiers)}")}{(string.IsNullOrEmpty(this.buildMetadata) ? "" : $"+{this.buildMetadata}")}";
+            $"{this.major}.{this.minor}.{this.patch}{(this.preReleaseIdentifiers.Count == 0 ? "" : $"-{string.Join(".", this.preReleaseIdentifiers)}")}{(this.height == 0 ? "" : $".{this.height}")}{(string.IsNullOrEmpty(this.buildMetadata) ? "" : $"+{this.buildMetadata}")}";
 
         public int CompareTo(Version other)
         {
@@ -95,18 +97,18 @@ namespace MinVer
                 }
             }
 
-            return 0;
+            return this.height.CompareTo(other.height);
         }
 
         public Version WithHeight(int height) =>
             height == 0
-                ? new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers)
+                ? new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, height)
                 : this.preReleaseIdentifiers.Count == 0
-                    ? new Version(this.major, this.minor, this.patch + 1, new[] { "alpha", "0", height.ToString(CultureInfo.InvariantCulture) })
-                    : new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers.Concat(new[] { height.ToString(CultureInfo.InvariantCulture) }));
+                    ? new Version(this.major, this.minor, this.patch + 1, new[] { "alpha", "0" }, height)
+                    : new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, height);
 
         public Version WithBuildMetadata(string buildMetadata) =>
-            new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, buildMetadata);
+            new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, this.height, buildMetadata);
 
         public bool IsBefore(int major, int minor) => this.major < major || (this.major == major && this.minor < minor);
 
@@ -126,7 +128,7 @@ namespace MinVer
                     int.TryParse(numbers[0].Substring(prefix?.Length ?? 0), out var major) &&
                     int.TryParse(numbers[1], out var minor) &&
                     int.TryParse(numbers[2], out var patch)
-                ? new Version(major, minor, patch, numbersAndPreRelease.Length == 2 ? numbersAndPreRelease[1].Split('.') : null)
+                ? new Version(major, minor, patch, numbersAndPreRelease.Length == 2 ? numbersAndPreRelease[1].Split('.') : null, default)
                 : null;
         }
     }

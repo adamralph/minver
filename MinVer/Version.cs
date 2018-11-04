@@ -111,7 +111,7 @@ namespace MinVer
         {
             if (text == default)
             {
-                return null;
+                return default;
             }
 
             var numbersAndPreRelease = text.Split(new[] { '-' }, 2);
@@ -123,8 +123,8 @@ namespace MinVer
                     int.TryParse(numbers[0].Substring(prefix?.Length ?? 0), out var major) &&
                     int.TryParse(numbers[1], out var minor) &&
                     int.TryParse(numbers[2], out var patch)
-                ? new Version(major, minor, patch, numbersAndPreRelease.Length == 2 ? numbersAndPreRelease[1].Split('.') : null, default, default)
-                : null;
+                ? new Version(major, minor, patch, numbersAndPreRelease.Length == 2 ? numbersAndPreRelease[1].Split('.') : default, default, default)
+                : default;
         }
     }
 }

@@ -23,9 +23,9 @@ namespace MinVer
                 throw new Exception($"Path '{path}' doesn't point at a valid workdir.");
             }
 
-            Repository repo = null;
+            Repository repo = default;
             var testPath = path;
-            while (testPath != null)
+            while (testPath != default)
             {
                 try
                 {
@@ -38,7 +38,7 @@ namespace MinVer
                 }
             }
 
-            if (repo != null)
+            if (repo != default)
             {
                 try
                 {
@@ -66,7 +66,7 @@ namespace MinVer
 
             var tagsAndVersions = repo.Tags
                 .Select(tag => (tag, Version.ParseOrDefault(tag.FriendlyName, tagPrefix)))
-                .Where(tagAndVersion => tagAndVersion.Item2 != null)
+                .Where(tagAndVersion => tagAndVersion.Item2 != default)
                 .OrderByDescending(tagAndVersion => tagAndVersion.Item2)
                 .ToList();
 

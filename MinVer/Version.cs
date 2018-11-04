@@ -109,18 +109,19 @@ namespace MinVer
 
         public static Version ParseOrDefault(string text, string prefix)
         {
-            if (text == default)
+            if (text == default || !text.StartsWith(prefix ?? ""))
             {
                 return default;
             }
+
+            text = text.Substring(prefix?.Length ?? 0);
 
             var numbersAndPreRelease = text.Split(new[] { '-' }, 2);
             var numbers = numbersAndPreRelease[0].Split('.');
 
             return
                 numbers.Length == 3 &&
-                    numbers[0].StartsWith(prefix ?? "") &&
-                    int.TryParse(numbers[0].Substring(prefix?.Length ?? 0), out var major) &&
+                    int.TryParse(numbers[0], out var major) &&
                     int.TryParse(numbers[1], out var minor) &&
                     int.TryParse(numbers[2], out var patch)
                 ? new Version(major, minor, patch, numbersAndPreRelease.Length == 2 ? numbersAndPreRelease[1].Split('.') : default, default, default)

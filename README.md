@@ -25,7 +25,7 @@ Your project will be versioned according to the latest tag found in the commit h
 
 - The last tag on HEAD or it's ancestors which represents a [SemVer](https://semver.org) version number._\*_
 - By how many commits HEAD is ahead of the tag (known as "height"). Or if no tag is found, by how commits HEAD is ahead of the first root commit found._\*\*_
-- An optional `MINVER_MINIMUM_MAJOR_MINOR` or `MinVerMinimumMajorMinor` environment variable or MSBuild property.
+- An optional `MinVerMajorMinor` MSBuild property.
 
 \* _Each time the history diverges, the last tag is found on each path and the tag with the latest version number is used._
 
@@ -42,8 +42,8 @@ Your project will be versioned according to the latest tag found in the commit h
 
 #### HEAD version (final)
 
-- If a `MINVER_MINIMUM_MAJOR_MINOR` or `MinVerMinimumMajorMinor` environment variable or MSBuild property is not set, then the HEAD version matches the candidate version.
-- If a `MINVER_MINIMUM_MAJOR_MINOR` or `MinVerMinimumMajorMinor` environment variable or MSBuild property is set to `MAJOR.MINOR` or `MAJOR` (`MINOR` defaults to `0`), then:
+- If a `MinVerMajorMinor` MSBuild property is not set, then the HEAD version matches the candidate version.
+- If a `MinVerMajorMinor` MSBuild property is set to `MAJOR.MINOR` or `MAJOR` (`MINOR` defaults to `0`), then:
   - If the candidate version is in the `MAJOR.MINOR` version range or later, then the HEAD version matches the candidate version.
   - If the candidate version is in an earlier version range than `MAJOR.MINOR`, then the HEAD version is `MAJOR.MINOR.0-alpha.0.{height}`.
 
@@ -69,7 +69,7 @@ That means MinVer is compatible with [Git Flow](https://nvie.com/posts/a-success
 
 ### Can I include build metadata in the version?
 
-Yes! You can specify [build metadata](https://semver.org/#spec-item-10) in an environment variable or MSBuild property named `MINVER_BUILD_METADATA` or `MinVerBuildMetadata`.
+Yes! You can specify [build metadata](https://semver.org/#spec-item-10) in an environment variable named `MINVER_BUILD_METADATA`.
 
 ### Can I use the version calculated by MinVer for other purposes?
 

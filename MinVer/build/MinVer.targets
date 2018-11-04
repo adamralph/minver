@@ -32,7 +32,7 @@
   </Target>
 
   <Target Name="MinVer_UsingOverride" BeforeTargets="MinVer_GetVersion" Condition=" '$(MinVerVersion)' != '' ">
-    <Message Text="MinVer: Using version override $(MinVerVersion)" Importance="high" />
+    <Message Text="MinVer: Using version override $(MinVerVersion)." Importance="high" />
   </Target>
 
   <Target Name="MinVer" BeforeTargets="CoreCompile;GenerateNuspec" DependsOnTargets="MinVer_GetVersion" Condition="'$(UsingMicrosoftNETSdk)' == 'true' And '$(DesignTimeBuild)' != 'true'">

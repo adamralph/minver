@@ -125,12 +125,12 @@ namespace MinVer
             {
                 foreach (var candidate in orderedCandidates.Take(orderedCandidates.Count - 1))
                 {
-                    Log($"Ignoring {candidate.ToString(tagWidth, versionWidth, heightWidth)}");
+                    Log($"Ignoring {candidate.ToString(tagWidth, versionWidth, heightWidth)}.");
                 }
             }
 
             var selectedCandidate = orderedCandidates.Last();
-            Log($"Using{(verbose && orderedCandidates.Count > 1 ? "    " : " ")}{selectedCandidate.ToString(tagWidth, versionWidth, heightWidth)}");
+            Log($"Using{(verbose && orderedCandidates.Count > 1 ? "    " : " ")}{selectedCandidate.ToString(tagWidth, versionWidth, heightWidth)}.");
 
             var baseVersion = selectedCandidate.Version.IsBefore(minimumMajor, minimumMinor) ?
                 new Version(minimumMajor, minimumMinor)
@@ -138,13 +138,13 @@ namespace MinVer
 
             if (baseVersion != selectedCandidate.Version)
             {
-                Log($"Bumping version to {baseVersion} to satisify minimum major minor {minimumMajor}.{minimumMinor}");
+                Log($"Bumping version to {baseVersion} to satisify minimum major minor {minimumMajor}.{minimumMinor}.");
             }
 
             var calculatedVersion = baseVersion.WithHeight(selectedCandidate.Height).WithBuildMetadata(buildMetadata);
             if (verbose)
             {
-                Log($"Calculated version {calculatedVersion}");
+                Log($"Calculated version {calculatedVersion}.");
             }
 
             return calculatedVersion;

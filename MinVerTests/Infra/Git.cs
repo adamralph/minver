@@ -13,8 +13,10 @@ namespace MinVerTests.Infra
             await RunAsync("git", "config user.email 'johndoe @tempuri.org'", path);
             await RunAsync("git", "config user.name 'John Doe'", path);
             await RunAsync("git", "config commit.gpgsign false", path);
-            await RunAsync("git", "commit --allow-empty -m '.'", path);
+            await Commit(path);
         }
+
+        public static Task Commit(string path) => RunAsync("git", "commit --allow-empty -m '.'", path);
 
         public static async Task EnsureEmptyRepository(string path)
         {

@@ -99,33 +99,37 @@ namespace MinVer
 
         public Version WithHeight(int height) =>
             this.preReleaseIdentifiers.Count == 0 && height > 0
-                ? new Version(this.major, this.minor, this.patch + 1, new[] { "alpha", "0" }, height, this.buildMetadata)
-                : new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, height, this.buildMetadata);
+                ? new Version(this.major, this.minor, this.patch + 1, new[] { "alpha", "0" }, height, default)
+                : new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, height, height == 0 ? this.buildMetadata : default);
 
-        public Version WithBuildMetadata(string buildMetadata) =>
-            new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, this.height, buildMetadata);
+        public Version AddBuildMetadata(string buildMetadata)
+        {
+            var separator = !string.IsNullOrEmpty(this.buildMetadata) && !string.IsNullOrEmpty(buildMetadata) ? "." : "";
+            return new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, this.height, $"{this.buildMetadata}{separator}{buildMetadata}");
+        }
 
         public bool IsBefore(int major, int minor) => this.major < major || (this.major == major && this.minor < minor);
 
-        public static Version ParseOrDefault(string text, string prefix)
+        public static Version ParseOrDefault(string text, string prefix) =>
+            text == default || !text.StartsWith(prefix ?? "") ? default : ParseOrDefault(text.Substring(prefix?.Length ?? 0));
+
+        private static Version ParseOrDefault(string text)
         {
-            if (text == default || !text.StartsWith(prefix ?? ""))
-            {
-                return default;
-            }
+            var dash = text.IndexOf('-');
+            var plus = text.IndexOf('+');
 
-            text = text.Substring(prefix?.Length ?? 0);
+            var meta = plus >= 0 ? plus : default(int?);
+            var pre = dash >= 0 && (!meta.HasValue || dash < meta.Value) ? dash : default(int?);
 
-            var numbersAndPreRelease = text.Split(new[] { '-' }, 2);
-            var numbers = numbersAndPreRelease[0].Split('.');
-
-            return
-                numbers.Length == 3 &&
-                    int.TryParse(numbers[0], out var major) &&
-                    int.TryParse(numbers[1], out var minor) &&
-                    int.TryParse(numbers[2], out var patch)
-                ? new Version(major, minor, patch, numbersAndPreRelease.Length == 2 ? numbersAndPreRelease[1].Split('.') : default, default, default)
-                : default;
+            return ParseOrDefault(text.Before(meta).Before(pre).Split('.'), text.Before(meta).After(pre)?.Split('.'), text.After(meta));
         }
+
+        private static Version ParseOrDefault(string[] numbers, IEnumerable<string> pre, string meta) =>
+            numbers?.Length == 3 &&
+                    int.TryParse(numbers?[0], out var major) &&
+                    int.TryParse(numbers?[1], out var minor) &&
+                    int.TryParse(numbers?[2], out var patch)
+                ? new Version(major, minor, patch, pre, default, meta)
+                : default;
     }
 }

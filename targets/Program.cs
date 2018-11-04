@@ -34,7 +34,7 @@ internal class Program
             DependsOn("pack"),
             async () =>
             {
-                Environment.SetEnvironmentVariable("MINVER_TAG_PREFIX", "v", EnvironmentVariableTarget.Process);
+                Environment.SetEnvironmentVariable("MINVER_TAG_PREFIX", "v.", EnvironmentVariableTarget.Process);
                 Environment.SetEnvironmentVariable("NoPackageAnalysis", "true", EnvironmentVariableTarget.Process);
 
                 var source = Path.GetFullPath("./MinVer/bin/Release/");
@@ -43,7 +43,7 @@ internal class Program
                 var path = FileSystem.GetScenarioDirectory("package");
                 await Git.EnsureRepositoryWithACommit(path);
 
-                await RunAsync("git", "tag v1.2.3", path);
+                await RunAsync("git", "tag v.1.2.3", path);
 
                 await RunAsync("git", "commit --allow-empty -m '.'", path);
 

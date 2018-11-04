@@ -100,8 +100,8 @@ namespace MinVer
 
         public Version WithHeight(int height) =>
             this.preReleaseIdentifiers.Count == 0 && height > 0
-                ? new Version(this.major, this.minor, this.patch + 1, new[] { "alpha", "0" }, height, default)
-                : new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, height, default);
+                ? new Version(this.major, this.minor, this.patch + 1, new[] { "alpha", "0" }, height, this.buildMetadata)
+                : new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, height, this.buildMetadata);
 
         public Version WithBuildMetadata(string buildMetadata) =>
             new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, this.height, buildMetadata);

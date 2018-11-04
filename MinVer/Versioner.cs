@@ -4,12 +4,18 @@ namespace MinVer
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Reflection;
     using LibGit2Sharp;
 
     public static class Versioner
     {
         public static Version GetVersion(string path, bool verbose, string tagPrefix, int minimumMajor, int minimumMinor, string buildMetadata)
         {
+            if (verbose)
+            {
+                Log($"MinVer {typeof(Versioner).Assembly.GetCustomAttributes<AssemblyInformationalVersionAttribute>().Single().InformationalVersion}");
+            }
+
             // Repository.ctor(string) throws RepositoryNotFoundException in this case
             if (!Directory.Exists(path))
             {
@@ -80,7 +86,7 @@ namespace MinVer
 
                     if (commitVersion != default)
                     {
-                        candidates.Add(new Candidate { Sha = commit.Sha, Height = height, Tag = tag.FriendlyName, Version = commitVersion, });
+                        candidates.Add(new Candidate { Commit = commit.Sha, Height = height, Tag = tag.FriendlyName, Version = commitVersion, });
                     }
                     else
                     {
@@ -91,7 +97,7 @@ namespace MinVer
 
                         if (commitsToCheck.Count == 0 || commitsToCheck.Peek().Item2 <= height)
                         {
-                            candidates.Add(new Candidate { Sha = commit.Sha, Height = height, Tag = "(none)", Version = new Version(), });
+                            candidates.Add(new Candidate { Commit = commit.Sha, Height = height, Tag = "(none)", Version = new Version(), });
                         }
                     }
                 }
@@ -119,12 +125,12 @@ namespace MinVer
             {
                 foreach (var candidate in orderedCandidates.Take(orderedCandidates.Count - 1))
                 {
-                    Log($"Ignoring {candidate.ToString(tagWidth, versionWidth, heightWidth)}");
+                    Log($"Ignoring {candidate.ToString(tagWidth, versionWidth, heightWidth)}.");
                 }
             }
 
             var selectedCandidate = orderedCandidates.Last();
-            Log($"Using{(verbose && orderedCandidates.Count > 1 ? "    " : " ")}{selectedCandidate.ToString(tagWidth, versionWidth, heightWidth)}");
+            Log($"Using{(verbose && orderedCandidates.Count > 1 ? "    " : " ")}{selectedCandidate.ToString(tagWidth, versionWidth, heightWidth)}.");
 
             var baseVersion = selectedCandidate.Version.IsBefore(minimumMajor, minimumMinor) ?
                 new Version(minimumMajor, minimumMinor)
@@ -132,13 +138,13 @@ namespace MinVer
 
             if (baseVersion != selectedCandidate.Version)
             {
-                Log($"Bumping version to {baseVersion} to satisify minimum major minor {minimumMajor}.{minimumMinor}");
+                Log($"Bumping version to {baseVersion} to satisify minimum major minor {minimumMajor}.{minimumMinor}.");
             }
 
             var calculatedVersion = baseVersion.WithHeight(selectedCandidate.Height).WithBuildMetadata(buildMetadata);
             if (verbose)
             {
-                Log($"Calculated version {calculatedVersion}");
+                Log($"Calculated version {calculatedVersion}.");
             }
 
             return calculatedVersion;
@@ -146,7 +152,7 @@ namespace MinVer
 
         private class Candidate
         {
-            public string Sha { get; set; }
+            public string Commit { get; set; }
 
             public int Height { get; set; }
 
@@ -155,7 +161,7 @@ namespace MinVer
             public Version Version { get; set; }
 
             public string ToString(int tagWidth, int versionWidth, int heightWidth) =>
-                $"{{ {nameof(this.Sha)}: {this.Sha.Substring(0, 7)}, {nameof(this.Tag)}: {$"'{this.Tag}',".PadRight(tagWidth + 3)} {nameof(this.Version)}: {$"{this.Version.ToString()},".PadRight(versionWidth + 1)} {nameof(this.Height)}: {this.Height.ToString().PadLeft(heightWidth)} }}";
+                $"{{ {nameof(this.Commit)}: {this.Commit.Substring(0, 7)}, {nameof(this.Tag)}: {$"'{this.Tag}',".PadRight(tagWidth + 3)} {nameof(this.Version)}: {$"{this.Version.ToString()},".PadRight(versionWidth + 1)} {nameof(this.Height)}: {this.Height.ToString().PadLeft(heightWidth)} }}";
         }
 
         private static void Log(string message) => Console.Error.WriteLine($"MinVer: {message}");

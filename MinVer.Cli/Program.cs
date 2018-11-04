@@ -14,7 +14,7 @@ namespace MinVer.Cli
             app.HelpOption();
 
             var buildMetadata = app.Option("-b|--build-metadata <BUILD_METADATA>", "The build metadata to append to the version.", CommandOptionType.SingleValue);
-            var minimumMajorMinor = app.Option<string>("-m|--minimum-major-minor <MINIMUM_MAJOR_MINOR>", "The minimum major and minor version range. E.g. '2.0'.", CommandOptionType.SingleValue);
+            var minimumMajorMinor = app.Option("-m|--minimum-major-minor <MINIMUM_MAJOR_MINOR>", "The minimum major and minor version range. E.g. '2.0'.", CommandOptionType.SingleValue);
             var path = app.Option("-p|--path <PATH>", "The path of the repository.", CommandOptionType.SingleValue);
             var tagPrefix = app.Option("-t|--tag-prefix <TAG_PREFIX>", "The tag prefix.", CommandOptionType.SingleValue);
             var verbose = app.Option("-v|--verbose", "Enable verbose logging.", CommandOptionType.NoValue);

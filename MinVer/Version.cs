@@ -19,9 +19,7 @@ namespace MinVer
 
         public Version() : this(default, default) { }
 
-        public Version(int major, int minor) : this(major, minor, default, new List<string> { "alpha", "0" }, default) { }
-
-        public Version(int major, int minor, int patch, IEnumerable<string> preReleaseIdentifiers, int height) : this(major, minor, patch, preReleaseIdentifiers, height, default) { }
+        public Version(int major, int minor) : this(major, minor, default, new List<string> { "alpha", "0" }, default, default) { }
 
         private Version(int major, int minor, int patch, IEnumerable<string> preReleaseIdentifiers, int height, string buildMetadata)
         {
@@ -101,11 +99,9 @@ namespace MinVer
         }
 
         public Version WithHeight(int height) =>
-            height == 0
-                ? new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, height)
-                : this.preReleaseIdentifiers.Count == 0
-                    ? new Version(this.major, this.minor, this.patch + 1, new[] { "alpha", "0" }, height)
-                    : new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, height);
+            this.preReleaseIdentifiers.Count == 0 && height > 0
+                ? new Version(this.major, this.minor, this.patch + 1, new[] { "alpha", "0" }, height, default)
+                : new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, height, default);
 
         public Version WithBuildMetadata(string buildMetadata) =>
             new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, this.height, buildMetadata);
@@ -128,7 +124,7 @@ namespace MinVer
                     int.TryParse(numbers[0].Substring(prefix?.Length ?? 0), out var major) &&
                     int.TryParse(numbers[1], out var minor) &&
                     int.TryParse(numbers[2], out var patch)
-                ? new Version(major, minor, patch, numbersAndPreRelease.Length == 2 ? numbersAndPreRelease[1].Split('.') : null, default)
+                ? new Version(major, minor, patch, numbersAndPreRelease.Length == 2 ? numbersAndPreRelease[1].Split('.') : null, default, default)
                 : null;
         }
     }

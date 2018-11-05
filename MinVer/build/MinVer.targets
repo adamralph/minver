@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <MinVerVerbose Condition=" '$(MinVerVerbose)' == '' ">$(MINVER_VERBOSE)</MinVerVerbose>
+    <MinVerVerbose Condition=" '$(MinVerVerbose)' == '' ">false</MinVerVerbose>
     <MinVerVersion Condition=" '$(MinVerVersion)' == '' ">$(MINVER_VERSION)</MinVerVersion>
   </PropertyGroup>
 
@@ -11,11 +12,7 @@
   </PropertyGroup>
 
   <Target Name="MinVer_GetVersion" Condition=" '$(MinVerVersion)' == '' ">
-    <Error Condition="'$(MinVerVerbose)' != '' And '$(MinVerVerbose)' != 'true' And '$(MinVerVerbose)' != 'false'" Code="MINVER0003" Text="MinVerVerbose/MINVER_VERBOSE value '$(MinVerVerbose)' cannot be converted to a Boolean value." />
-    <PropertyGroup>
-      <MinVerVerboseOption Condition="'$(MinVerVerbose)' == 'true'"> --verbose</MinVerVerboseOption>
-    </PropertyGroup>
-    <Exec Command="dotnet &quot;$(MSBuildThisFileDirectory)../MinVer/MinVer.Cli.dll&quot; --build-metadata &quot;$(MINVER_BUILD_METADATA)&quot; --path &quot;$(MSBuildProjectDirectory)&quot; --major-minor &quot;$(MinVerMajorMinor)&quot; --tag-prefix &quot;$(MinVerTagPrefix)&quot;$(MinVerVerboseOption)" ConsoleToMSBuild="true">
+    <Exec Command="dotnet &quot;$(MSBuildThisFileDirectory)../MinVer/MinVer.Cli.dll&quot; --build-metadata &quot;$(MINVER_BUILD_METADATA)&quot; --path &quot;$(MSBuildProjectDirectory)&quot; --major-minor &quot;$(MinVerMajorMinor)&quot; --tag-prefix &quot;$(MinVerTagPrefix)&quot; --verbose &quot;$(MinVerVerbose)&quot;" ConsoleToMSBuild="true">
       <Output TaskParameter="ConsoleOutput" ItemName="MinVerConsoleOutputItems" />
     </Exec>
     <ItemGroup>

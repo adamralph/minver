@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <MinVerMajorMinor Condition=" '$(MinVerMajorMinor)' == '' ">0.0</MinVerMajorMinor>
-    <MinVerTagPrefix Condition=" '$(MinVerTagPrefix)' == '' ">$(MINVER_TAG_PREFIX)</MinVerTagPrefix>
     <MinVerVerbose Condition=" '$(MinVerVerbose)' == '' ">$(MINVER_VERBOSE)</MinVerVerbose>
     <MinVerVerbose Condition=" '$(MinVerVerbose)' == '' ">false</MinVerVerbose>
     <MinVerVersion Condition=" '$(MinVerVersion)' == '' ">$(MINVER_VERSION)</MinVerVersion>

@@ -34,7 +34,7 @@ internal class Program
             DependsOn("pack"),
             async () =>
             {
-                Environment.SetEnvironmentVariable("MINVER_TAG_PREFIX", "v.", EnvironmentVariableTarget.Process);
+                Environment.SetEnvironmentVariable("MinVerTagPrefix", "v.", EnvironmentVariableTarget.Process);
                 Environment.SetEnvironmentVariable("NoPackageAnalysis", "true", EnvironmentVariableTarget.Process);
 
                 var source = Path.GetFullPath("./MinVer/bin/Release/");

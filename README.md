@@ -11,6 +11,7 @@ A minimalistic [.NET package](https://www.nuget.org/packages/MinVer) for version
 - [Quick start](#quick-start)
 - [Usage](#usage)
 - [FAQ](#faq)
+- [Settings reference](#settings-reference)
 
 ## Prerequisites
 
@@ -54,7 +55,6 @@ _(With TL;DR answers inline.)_
 - [Can I include build metadata in the version?](#can-i-include-build-metadata-in-the-version) _(yes)_
 - [Can I use the version calculated by MinVer for other purposes?](#can-i-use-the-version-calculated-by-minver-for-other-purposes) _(yes)_
 - [Can I get more detailed logs?](#can-i-get-more-detailed-logs) _(yes)_
-- [What takes precedence? The environment variable, or the MSBuild property?](#what-takes-precedence-the-environment-variable-or-the-msbuild-property) _(the env var)_
 - [What if the history diverges, and more than one tag is found?](#what-if-the-history-diverges-and-more-than-one-tag-is-found) _(nothing bad)_
 - [What if the history diverges, and then converges again, before the last tag (or root commit) is found?](#what-if-the-history-diverges-and-then-converges-again-before-the-last-tag-or-root-commit-is-found) _(nothing bad)_
 - [Why does MinVer fail with `LibGit2Sharp.NotFoundException`?](#why-does-minver-fail-with-libgit2sharpnotfoundexception) _(easy to fix)_
@@ -74,7 +74,7 @@ For example, all these versions work with MinVer:
 
 ### Can I prefix my tag names?
 
-Yes! Set the prefix in the MSBuild property `MinVerTagPrefix` (or environment variable `MINVER_TAG_PREFIX`).
+Yes! Set the prefix in the MSBuild property `MinVerTagPrefix`.
 
 For example, if you prefix your tag names with "v", e.g. `v1.2.3`:
 
@@ -105,15 +105,18 @@ You can also specify build metadata in a version tag. If the tag is on the curre
 
 ### Can I use the version calculated by MinVer for other purposes?
 
-Yes! MinVer sets the `MinVerVersion`, `Version`, and `PackageVersion` MSBuild properties identically. Use them in a target which runs after MinVer. E.g.
+Yes! MinVer sets both the `Version` and `PackageVersion` MSBuild properties. Use them in a target which runs after MinVer. E.g.
 
 ```xml
 <Target Name="MyTarget" AfterTargets="MinVer">
-  <Message Text="MinVerVersion=$(MinVerVersion)" Importance="high" />
   <Message Text="Version=$(Version)" Importance="high" />
   <Message Text="PackageVersion=$(PackageVersion)" Importance="high" />
 </Target>
 ```
+
+### Can I get more detailed logs?
+
+Yes! Set the MSBuild property `MinVerVerbose` (or environment variable `MINVER_VERBOSE`) to `true`. You will see how many commits were examined, which version tags were found but ignored, which version was calculated, etc.
 
 ### What if the history diverges, and more than one tag is found?
 
@@ -122,14 +125,6 @@ The tag with the higher version is used.
 ### What if the history diverges, and then converges again, before the last tag (or root commit) is found?
 
 The height on the first branch followed is used. The first branch followed is the one with the older parent.
-
-### Can I get more detailed logs?
-
-Yes! Set the MSBuild property `MinVerVerbose` (or environment variable `MINVER_VERBOSE`) to `true`. You will see how many commits were examined, which version tags were found but ignored, which version was calculated, etc.
-
-### What takes precedence? The environment variable, or the MSBuild property?
-
-Some values described here can be set by either an environment variable or an MSBuild property. The environment variable always takes precedence. This allows you to temporarily change those settings by altering your build server config.
 
 ### Why does MinVer fail with `LibGit2Sharp.NotFoundException`?
 
@@ -151,20 +146,30 @@ This is probably because you are running on Linux, and you do not have libcurl i
 
 ### What if it all goes wrong?
 
-If MinVer calculates an unexpected version and you can't figure out why, but you need to ship your software in the meantime, set a temporary version override in the environment variable `MINVER_VERSION` (or MSBuild property `MinVerVersion`) and build your project again.
+If MinVer calculates an unexpected version and you can't figure out why, but you need to ship your software in the meantime, set a temporary version override in the environment variable `MINVER_VERSION`.
 
 **Important:** This is a _complete_ override which disables _all_ versioning logic in MinVer. It must include the full version, including any required [pre-release identifiers](https://semver.org/#spec-item-9) and [build metadata](https://semver.org/#spec-item-10).
 
-For example, in [Appveyor](https://www.appveyor.com/):
+For example, in the [Appveyor](https://www.appveyor.com/) UI:
 
-```
-1.2.3-beta.4+build.%APPVEYOR_BUILD_NUMBER%  // pre-release with build metadata
-1.2.3-beta.4                                // pre-release without build metadata
-1.2.3+build.%APPVEYOR_BUILD_NUMBER%         // RTM with build metadata
-1.2.3                                       // RTM without build metadata
-```
+| Version                            | Environment variable                         |
+|------------------------------------|----------------------------------------------|
+| Pre-release with build metadata    | `1.2.3-beta.4+build.%APPVEYOR_BUILD_NUMBER%` |
+| Pre-release without build metadata | `1.2.3-beta.4`                               |
+| RTM with build metadata            | `1.2.3+build.%APPVEYOR_BUILD_NUMBER%`        |
+| RTM without build metadata         | `1.2.3`                                      |
 
 The same applies if you find a bug in MinVer (consider that a challenge!) and you're waiting for a fix.
+
+## Settings reference
+
+| Setting                                                        | Environment variable    | MSBuild property   |
+|----------------------------------------------------------------|-------------------------|--------------------|
+| [Build metadata](#can-i-include-build-metadata-in-the-version) | `MINVER_BUILD_METADATA` | _n/a_              |
+| [Major minor range](#usage)                                    | _n/a_                   | `MinVerMajorMinor` |
+| [Tag prefix](#can-i-prefix-my-tag-names)                       | _n/a_                   | `MinVerTagPrefix`  |
+| [Verbose logging](#can-i-get-more-detailed-logs)               | `MINVER_VERBOSE`        | `MinVerVerbose`    |
+| [Version override](#what-if-it-all-goes-wrong)                 | `MINVER_VERSION`        | _n/a_              |
 
 ---
 

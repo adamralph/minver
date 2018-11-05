@@ -16,13 +16,13 @@
       <MinVerVerboseOption Condition="'$(MinVerVerbose)' == 'true'"> --verbose</MinVerVerboseOption>
     </PropertyGroup>
     <Exec Command="dotnet &quot;$(MSBuildThisFileDirectory)../MinVer/MinVer.Cli.dll&quot; --build-metadata &quot;$(MINVER_BUILD_METADATA)&quot; --path &quot;$(MSBuildProjectDirectory)&quot; --major-minor &quot;$(MinVerMajorMinor)&quot; --tag-prefix &quot;$(MinVerTagPrefix)&quot;$(MinVerVerboseOption)" ConsoleToMSBuild="true">
-      <Output TaskParameter="ConsoleOutput" ItemName="MinVerConsoleOutputItems" />
+      <Output TaskParameter="ConsoleOutput" ItemName="MinVerOutput" />
     </Exec>
     <ItemGroup>
-      <MinVerConsoleOutputVersion Include="@(MinVerConsoleOutputItems)" Condition="'$([System.String]::new(`%(Identity)`).StartsWith(`MinVer:`))' != 'true'" />
+      <MinVerStdout Include="@(MinVerOutput)" Condition="'$([System.String]::new(`%(Identity)`).StartsWith(`MinVer:`))' != 'true'" />
     </ItemGroup>
     <PropertyGroup>
-      <MinVerVersion>@(MinVerConsoleOutputVersion)</MinVerVersion>
+      <MinVerVersion>@(MinVerStdout)</MinVerVersion>
     </PropertyGroup>
   </Target>
 

@@ -26,7 +26,7 @@
     </PropertyGroup>
   </Target>
 
-  <Target Name="MinVer_UsingOverride" BeforeTargets="MinVer_GetVersion" Condition=" '$(MinVerVersion)' != '' ">
+  <Target Name="MinVer_LogOverride" BeforeTargets="MinVer_GetVersion" Condition=" '$(MinVerVersion)' != '' ">
     <Message Text="MinVer: Using version override $(MinVerVersion)." Importance="high" />
   </Target>
 
@@ -37,7 +37,7 @@
     </PropertyGroup>
   </Target>
 
-  <Target Name="MinVer_Warnings" BeforeTargets="MinVer" Condition="'$(DesignTimeBuild)' != 'true'">
+  <Target Name="MinVer_EnsureSdk" BeforeTargets="MinVer" Condition="'$(DesignTimeBuild)' != 'true'">
     <Error Condition="'$(UsingMicrosoftNETSdk)' != 'true'" Code="MINVER0002" Text="MinVer only works in SDK-style projects." />
   </Target>
 

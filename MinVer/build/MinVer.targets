@@ -12,21 +12,25 @@
 
   <Target Name="MinVer_GetVersion" Condition=" '$(MinVerVersion)' == '' ">
     <Error Condition="'$(MinVerVerbose)' != '' And '$(MinVerVerbose)' != 'true' And '$(MinVerVerbose)' != 'false'" Code="MINVER0003" Text="MinVerVerbose/MINVER_VERBOSE value '$(MinVerVerbose)' cannot be converted to a Boolean value." />
-    <PropertyGroup>
-      <MinVerVerboseOption Condition="'$(MinVerVerbose)' == 'true'"> --verbose</MinVerVerboseOption>
-    </PropertyGroup>
-    <Exec Command="dotnet &quot;$(MSBuildThisFileDirectory)../MinVer/MinVer.Cli.dll&quot; --build-metadata &quot;$(MINVER_BUILD_METADATA)&quot; --path &quot;$(MSBuildProjectDirectory)&quot; --major-minor &quot;$(MinVerMajorMinor)&quot; --tag-prefix &quot;$(MinVerTagPrefix)&quot;$(MinVerVerboseOption)" ConsoleToMSBuild="true">
-      <Output TaskParameter="ConsoleOutput" ItemName="MinVerConsoleOutputItems" />
+    <ItemGroup>
+      <MinVerOptions Include="--build-metadata &quot;$(MINVER_BUILD_METADATA)&quot;" />
+      <MinVerOptions Include="--major-minor &quot;$(MinVerMajorMinor)&quot;" />
+      <MinVerOptions Include="--path &quot;$(MSBuildProjectDirectory)&quot;" />
+      <MinVerOptions Include="--tag-prefix &quot;$(MinVerTagPrefix)&quot;" />
+      <MinVerOptions Include="--verbose" Condition="'$(MinVerVerbose)' == 'true'" />
+    </ItemGroup>
+    <Exec Command="dotnet &quot;$(MSBuildThisFileDirectory)../MinVer/MinVer.Cli.dll&quot; @(MinVerOptions->'%(Identity)', ' ')" ConsoleToMSBuild="true">
+      <Output TaskParameter="ConsoleOutput" ItemName="MinVerOutput" />
     </Exec>
     <ItemGroup>
-      <MinVerConsoleOutputVersion Include="@(MinVerConsoleOutputItems)" Condition="'$([System.String]::new(`%(Identity)`).StartsWith(`MinVer:`))' != 'true'" />
+      <MinVerStdout Include="@(MinVerOutput)" Condition="'$([System.String]::new(`%(Identity)`).StartsWith(`MinVer:`))' != 'true'" />
     </ItemGroup>
     <PropertyGroup>
-      <MinVerVersion>@(MinVerConsoleOutputVersion)</MinVerVersion>
+      <MinVerVersion>@(MinVerStdout)</MinVerVersion>
     </PropertyGroup>
   </Target>
 
-  <Target Name="MinVer_UsingOverride" BeforeTargets="MinVer_GetVersion" Condition=" '$(MinVerVersion)' != '' ">
+  <Target Name="MinVer_LogOverride" BeforeTargets="MinVer_GetVersion" Condition=" '$(MinVerVersion)' != '' ">
     <Message Text="MinVer: Using version override $(MinVerVersion)." Importance="high" />
   </Target>
 
@@ -37,7 +41,7 @@
     </PropertyGroup>
   </Target>
 
-  <Target Name="MinVer_Warnings" BeforeTargets="MinVer" Condition="'$(DesignTimeBuild)' != 'true'">
+  <Target Name="MinVer_EnsureSdk" BeforeTargets="MinVer" Condition="'$(DesignTimeBuild)' != 'true'">
     <Error Condition="'$(UsingMicrosoftNETSdk)' != 'true'" Code="MINVER0002" Text="MinVer only works in SDK-style projects." />
   </Target>
 

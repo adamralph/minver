@@ -5,7 +5,7 @@ namespace MinVer.Cli
 
     class Program
     {
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
             var app = new CommandLineApplication();
 
@@ -30,24 +30,28 @@ namespace MinVer.Cli
 
                     if (numbers.Length > 2)
                     {
-                        throw new Exception($"More than one dot in MAJOR.MINOR range '{majorMinorValue}'.");
+                        Console.Out.WriteLine($"MinVer: error MINVER0004 : More than one dot in MAJOR.MINOR range '{majorMinorValue}'.");
+                        return 2;
                     }
 
                     if (!int.TryParse(numbers[0], out major))
                     {
-                        throw new Exception($"Invalid MAJOR '{numbers[0]}' in MAJOR.MINOR range '{majorMinorValue}'.");
+                        Console.Out.WriteLine($"MinVer: error MINVER0005 : Invalid MAJOR '{numbers[0]}' in MAJOR.MINOR range '{majorMinorValue}'.");
+                        return 2;
                     }
 
                     if (numbers.Length > 1 && !int.TryParse(numbers[1], out minor))
                     {
-                        throw new Exception($"Invalid MINOR '{numbers[1]}' in MAJOR.MINOR range '{majorMinorValue}'.");
+                        Console.Out.WriteLine($"MinVer: error MINVER0006 : Invalid MINOR '{numbers[1]}' in MAJOR.MINOR range '{majorMinorValue}'.");
+                        return 2;
                     }
                 }
 
                 Console.Out.WriteLine(Versioner.GetVersion(path.Value() ?? ".", verbose.HasValue(), tagPrefix.Value(), major, minor, buildMetadata.Value()));
+                return 0;
             });
 
-            app.Execute(args);
+            return app.Execute(args);
         }
     }
 }

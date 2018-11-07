@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinVer", "MinVer\MinVer.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "minver-cli", "minver-cli\minver-cli.csproj", "{34A5ECB1-400C-462A-B2B8-2B7136BE162A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinVer.Tasks", "MinVer.Tasks\MinVer.Tasks.csproj", "{F6E8158B-2C6C-4998-A5B2-AE6CBCC84790}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{34A5ECB1-400C-462A-B2B8-2B7136BE162A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{34A5ECB1-400C-462A-B2B8-2B7136BE162A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{34A5ECB1-400C-462A-B2B8-2B7136BE162A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6E8158B-2C6C-4998-A5B2-AE6CBCC84790}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6E8158B-2C6C-4998-A5B2-AE6CBCC84790}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6E8158B-2C6C-4998-A5B2-AE6CBCC84790}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6E8158B-2C6C-4998-A5B2-AE6CBCC84790}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

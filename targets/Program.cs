@@ -27,7 +27,11 @@ internal class Program
         Target(
             "pack",
             DependsOn("publish"),
-            () => RunAsync("dotnet", $"pack ./MinVer/MinVer.csproj --configuration Release --no-build"));
+            async () =>
+            {
+                await RunAsync("dotnet", $"pack ./MinVer/MinVer.csproj --configuration Release --no-build");
+                await RunAsync("dotnet", $"pack ./MinVer.Cli/MinVer.Cli.csproj --configuration Release --no-build");
+            });
 
         Target(
             "test-package",

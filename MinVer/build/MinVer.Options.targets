@@ -22,11 +22,11 @@
     </PropertyGroup>
     <Error Condition="'$(MINVER_VERBOSE)' != '' And '$(MINVER_VERBOSE)' != 'true' And '$(MINVER_VERBOSE)' != 'false'" Code="MINVER0003" Text="MINVER_VERBOSE value '$(MinVerVerbose)' cannot be converted to a Boolean value." />
     <PropertyGroup>
-      <MinVerBuildMetadata Condition=" '$(MinVerBuildMetadata)' == '' ">$(MINVER_BUILD_METADATA)</MinVerBuildMetadata>
-      <MinVerMajorMinor Condition=" '$(MinVerMajorMinor)' == '' ">$(MINVER_MAJOR_MINOR)</MinVerMajorMinor>
-      <MinVerTagPrefix Condition=" '$(MinVerTagPrefix)' == '' ">$(MINVER_TAG_PREFIX)</MinVerTagPrefix>
-      <MinVerVerbose Condition=" '$(MinVerVerbose)' == '' ">$(MINVER_VERBOSE)</MinVerVerbose>
-      <MinVerVersionOverride Condition=" '$(MinVerVersionOverride)' == '' ">$(MINVER_VERSION_OVERRIDE)</MinVerVersionOverride>
+      <MinVerBuildMetadata Condition="'$(MINVER_BUILD_METADATA)' != ''">$(MINVER_BUILD_METADATA)</MinVerBuildMetadata>
+      <MinVerMajorMinor Condition="'$(MINVER_MAJOR_MINOR)' != ''">$(MINVER_MAJOR_MINOR)</MinVerMajorMinor>
+      <MinVerTagPrefix Condition="'$(MINVER_TAG_PREFIX)' != ''">$(MINVER_TAG_PREFIX)</MinVerTagPrefix>
+      <MinVerVerbose Condition="'$(MINVER_VERBOSE)' != ''">$(MINVER_VERBOSE)</MinVerVerbose>
+      <MinVerVersionOverride Condition="'$(MINVER_VERSION_OVERRIDE)' != ''">$(MINVER_VERSION_OVERRIDE)</MinVerVersionOverride>
     </PropertyGroup>
     <Error Condition="'$(MinVerVerbose)' != '' And '$(MinVerVerbose)' != 'true' And '$(MinVerVerbose)' != 'false'" Code="MINVER0008" Text="MinVerVerbose value '$(MinVerVerbose)' cannot be converted to a Boolean value." />
   </Target>

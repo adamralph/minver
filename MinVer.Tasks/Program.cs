@@ -1,6 +1,7 @@
 namespace MinVer
 {
     using System;
+    using System.Linq;
     using System.IO;
     using McMaster.Extensions.CommandLineUtils;
 
@@ -12,11 +13,13 @@ namespace MinVer
 
             app.HelpOption();
 
-            var buildMetadata = app.Option("--build-metadata <BUILD_METADATA>", "", CommandOptionType.SingleValue);
-            var majorMinor = app.Option("--major-minor <RANGE>", "", CommandOptionType.SingleValue);
-            var repo = app.Option("--repo <PATH>", "", CommandOptionType.SingleValue);
-            var tagPrefix = app.Option("--tag-prefix <TAG_PREFIX>", "", CommandOptionType.SingleValue);
-            var verbosity = app.Option("--verbosity <LEVEL>", "", CommandOptionType.SingleValue);
+            var levels = Enum.GetValues(typeof(Verbosity)).Cast<Verbosity>().OrderBy(_ => _).Select(level => level.ToString().ToLowerInvariant()).ToList();
+
+            var buildMetadata = app.Option("-b|--build-metadata <BUILD_METADATA>", "", CommandOptionType.SingleValue);
+            var majorMinor = app.Option("-m|--major-minor <RANGE>", "", CommandOptionType.SingleValue);
+            var repo = app.Option("-r|--repo <PATH>", "Repository or working directory.", CommandOptionType.SingleValue);
+            var tagPrefix = app.Option("-t|--tag-prefix <TAG_PREFIX>", "", CommandOptionType.SingleValue);
+            var verbosity = app.Option("-v|--verbosity <LEVEL>", $"{string.Join(", ", levels.Take(levels.Count - 1))}, or {levels.Last()}", CommandOptionType.SingleValue);
 
             app.OnExecute(() =>
             {
@@ -64,18 +67,20 @@ namespace MinVer
 
         public static Version GetVersion(string path, string tagPrefix, MajorMinor range, string buildMetadata, Verbosity level)
         {
+            var log = new Logger(level);
+
             if (!RepositoryEx.TryCreateRepo(path, out var repo))
             {
                 var version = new Version();
 
-                Logger.WarnInvalidRepoPath(path, version);
+                log.WarnInvalidRepoPath(path, version);
 
                 return version;
             }
 
             try
             {
-                return Versioner.GetVersion(repo, tagPrefix, range, buildMetadata, new Logger(level));
+                return Versioner.GetVersion(repo, tagPrefix, range, buildMetadata, log);
             }
             finally
             {

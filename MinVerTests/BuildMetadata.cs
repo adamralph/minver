@@ -1,11 +1,14 @@
 namespace MinVerTests
 {
+    using LibGit2Sharp;
     using MinVer;
+    using MinVerTests.Infra;
     using Xbehave;
     using Xunit;
-    using static MinVerTests.Infra.Git;
     using static MinVerTests.Infra.FileSystem;
+    using static MinVerTests.Infra.Git;
     using static SimpleExec.Command;
+    using Version = MinVer.Version;
 
     public static class BuildMetadata
     {
@@ -25,7 +28,7 @@ namespace MinVerTests
                 .x(async () => await RunAsync("git", $"tag {tag}", path));
 
             $"When the version is determined using build metadata '{buildMetadata}'"
-                .x(() => actualVersion = Versioner.GetVersion(path, default, default, default, default, buildMetadata));
+                .x(() => actualVersion = Versioner.GetVersion(new Repository(path), default, default, buildMetadata, new TestLogger()));
 
             $"Then the version is '{expectedVersion}'"
                 .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));
@@ -50,7 +53,7 @@ namespace MinVerTests
                 .x(async () => await Commit(path));
 
             $"When the version is determined using build metadata '{buildMetadata}'"
-                .x(() => actualVersion = Versioner.GetVersion(path, default, default, default, default, buildMetadata));
+                .x(() => actualVersion = Versioner.GetVersion(new Repository(path), default, default, buildMetadata, new TestLogger()));
 
             $"Then the version is '{expectedVersion}'"
                 .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));

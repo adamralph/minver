@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinVer", "MinVer\MinVer.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Targets", "targets\Targets.csproj", "{0F266E8B-E818-41A8-B93C-9E80E9446AC6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinVer.Cli", "MinVer.Cli\MinVer.Cli.csproj", "{EE9A19AA-0EDC-446F-8FD8-78A066E27B71}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinVer.Tasks", "MinVer.Tasks\MinVer.Tasks.csproj", "{EE9A19AA-0EDC-446F-8FD8-78A066E27B71}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

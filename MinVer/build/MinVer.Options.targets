@@ -9,26 +9,24 @@
       <MinVerPropertiesAsEnvVars Include="MinVerBuildMetadata" Condition="'$([System.Environment]::GetEnvironmentVariable(`MinVerBuildMetadata`))' != ''" />
       <MinVerPropertiesAsEnvVars Include="MinVerMajorMinor" Condition="'$([System.Environment]::GetEnvironmentVariable(`MinVerMajorMinor`))' != ''" />
       <MinVerPropertiesAsEnvVars Include="MinVerTagPrefix" Condition="'$([System.Environment]::GetEnvironmentVariable(`MinVerTagPrefix`))' != ''" />
-      <MinVerPropertiesAsEnvVars Include="MinVerVerbose" Condition="'$([System.Environment]::GetEnvironmentVariable(`MinVerVerbose`))' != ''" />
+      <MinVerPropertiesAsEnvVars Include="MinVerVerbosity" Condition="'$([System.Environment]::GetEnvironmentVariable(`MinVerVerbosity`))' != ''" />
       <MinVerPropertiesAsEnvVars Include="MinVerVersionOverride" Condition="'$([System.Environment]::GetEnvironmentVariable(`MinVerVersionOverride`))' != ''" />
     </ItemGroup>
-    <Error Condition="'@(MinVerPropertiesAsEnvVars)' != ''" Code="MINVER0007" Text="Options specified as environment variables instead of MSBuild properties: @(MinVerPropertiesAsEnvVars->'%(Identity)', ', ')." />
+    <Error Condition="'@(MinVerPropertiesAsEnvVars)' != ''" Code="MINVER0002" Text="Options specified as environment variables instead of MSBuild properties: @(MinVerPropertiesAsEnvVars->'%(Identity)', ', ')." />
     <PropertyGroup>
       <MINVER_BUILD_METADATA>$([System.Environment]::GetEnvironmentVariable(`MINVER_BUILD_METADATA`))</MINVER_BUILD_METADATA>
       <MINVER_MAJOR_MINOR>$([System.Environment]::GetEnvironmentVariable(`MINVER_MAJOR_MINOR`))</MINVER_MAJOR_MINOR>
       <MINVER_TAG_PREFIX>$([System.Environment]::GetEnvironmentVariable(`MINVER_TAG_PREFIX`))</MINVER_TAG_PREFIX>
-      <MINVER_VERBOSE>$([System.Environment]::GetEnvironmentVariable(`MINVER_VERBOSE`))</MINVER_VERBOSE>
+      <MINVER_VERBOSITY>$([System.Environment]::GetEnvironmentVariable(`MINVER_VERBOSITY`))</MINVER_VERBOSITY>
       <MINVER_VERSION_OVERRIDE>$([System.Environment]::GetEnvironmentVariable(`MINVER_VERSION_OVERRIDE`))</MINVER_VERSION_OVERRIDE>
     </PropertyGroup>
-    <Error Condition="'$(MINVER_VERBOSE)' != '' And '$(MINVER_VERBOSE)' != 'true' And '$(MINVER_VERBOSE)' != 'false'" Code="MINVER0003" Text="MINVER_VERBOSE value '$(MinVerVerbose)' cannot be converted to a Boolean value." />
     <PropertyGroup>
       <MinVerBuildMetadata Condition="'$(MINVER_BUILD_METADATA)' != ''">$(MINVER_BUILD_METADATA)</MinVerBuildMetadata>
       <MinVerMajorMinor Condition="'$(MINVER_MAJOR_MINOR)' != ''">$(MINVER_MAJOR_MINOR)</MinVerMajorMinor>
       <MinVerTagPrefix Condition="'$(MINVER_TAG_PREFIX)' != ''">$(MINVER_TAG_PREFIX)</MinVerTagPrefix>
-      <MinVerVerbose Condition="'$(MINVER_VERBOSE)' != ''">$(MINVER_VERBOSE)</MinVerVerbose>
+      <MinVerVerbosity Condition="'$(MINVER_VERBOSITY)' != ''">$(MINVER_VERBOSITY)</MinVerVerbosity>
       <MinVerVersionOverride Condition="'$(MINVER_VERSION_OVERRIDE)' != ''">$(MINVER_VERSION_OVERRIDE)</MinVerVersionOverride>
     </PropertyGroup>
-    <Error Condition="'$(MinVerVerbose)' != '' And '$(MinVerVerbose)' != 'true' And '$(MinVerVerbose)' != 'false'" Code="MINVER0008" Text="MinVerVerbose value '$(MinVerVerbose)' cannot be converted to a Boolean value." />
   </Target>
 
 </Project>

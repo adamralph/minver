@@ -22,13 +22,12 @@ internal class Program
         Target(
             "publish",
             DependsOn("build"),
-            () => RunAsync("dotnet", $"publish ./MinVer.Cli/MinVer.Cli.csproj --configuration Release --no-build"));
+            () => RunAsync("dotnet", $"publish ./MinVer.Tasks/MinVer.Tasks.csproj --configuration Release --no-build"));
 
         Target(
             "pack",
             DependsOn("publish"),
-            ForEach("./MinVer/MinVer.csproj", "./MinVer.Cli/MinVer.Cli.csproj"),
-            project => RunAsync("dotnet", $"pack {project} --configuration Release --no-build"));
+            () => RunAsync("dotnet", $"pack ./MinVer/MinVer.csproj --configuration Release --no-build"));
 
         Target(
             "test-package",
@@ -79,7 +78,7 @@ internal class Program
                 }
 
                 Environment.SetEnvironmentVariable("MINVER_BUILD_METADATA", "build.42", EnvironmentVariableTarget.Process);
-                Environment.SetEnvironmentVariable("MINVER_VERBOSE", "true", EnvironmentVariableTarget.Process);
+                Environment.SetEnvironmentVariable("MINVER_VERBOSITY", "detailed", EnvironmentVariableTarget.Process);
                 Environment.SetEnvironmentVariable("MINVER_MAJOR_MINOR", "2.0", EnvironmentVariableTarget.Process);
 
                 DeletePackages();

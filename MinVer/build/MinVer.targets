@@ -1,19 +1,15 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <PropertyGroup>
-    <MinVerVerbose Condition=" '$(MinVerVerbose)' == '' ">$(MINVER_VERBOSE)</MinVerVerbose>
-    <MinVerVersion Condition=" '$(MinVerVersion)' == '' ">$(MINVER_VERSION)</MinVerVersion>
-  </PropertyGroup>
+  <Import Project="MinVer.Options.targets" />
 
   <PropertyGroup>
     <MSBuildAllProjects Condition="'$(MSBuildAssemblyVersion)' == '' Or '$(MSBuildAssemblyVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <GetPackageVersionDependsOn>$(GetPackageVersionDependsOn);MinVer</GetPackageVersionDependsOn>
   </PropertyGroup>
 
-  <Target Name="MinVer_GetVersion" Condition=" '$(MinVerVersion)' == '' ">
-    <Error Condition="'$(MinVerVerbose)' != '' And '$(MinVerVerbose)' != 'true' And '$(MinVerVerbose)' != 'false'" Code="MINVER0003" Text="MinVerVerbose/MINVER_VERBOSE value '$(MinVerVerbose)' cannot be converted to a Boolean value." />
+  <Target Name="MinVer_GetVersion" Condition="'$(MinVerVersionOverride)' == ''">
     <ItemGroup>
-      <MinVerOptions Include="--build-metadata &quot;$(MINVER_BUILD_METADATA)&quot;" />
+      <MinVerOptions Include="--build-metadata &quot;$(MinVerBuildMetadata)&quot;" />
       <MinVerOptions Include="--major-minor &quot;$(MinVerMajorMinor)&quot;" />
       <MinVerOptions Include="--path &quot;$(MSBuildProjectDirectory)&quot;" />
       <MinVerOptions Include="--tag-prefix &quot;$(MinVerTagPrefix)&quot;" />
@@ -30,11 +26,14 @@
     </PropertyGroup>
   </Target>
 
-  <Target Name="MinVer_LogOverride" BeforeTargets="MinVer_GetVersion" Condition=" '$(MinVerVersion)' != '' ">
-    <Message Text="MinVer: Using version override $(MinVerVersion)." Importance="high" />
+  <Target Name="MinVer_OverrideVersion" BeforeTargets="MinVer_GetVersion" Condition="'$(MinVerVersionOverride)' != ''">
+    <Message Text="MinVer: Using version override $(MinVerVersionOverride)." Importance="high" />
+    <PropertyGroup>
+      <MinVerVersion>$(MinVerVersionOverride)</MinVerVersion>
+    </PropertyGroup>
   </Target>
 
-  <Target Name="MinVer" BeforeTargets="CoreCompile;GenerateNuspec" DependsOnTargets="MinVer_GetVersion" Condition="'$(UsingMicrosoftNETSdk)' == 'true' And '$(DesignTimeBuild)' != 'true'">
+  <Target Name="MinVer" BeforeTargets="CoreCompile;GenerateNuspec" DependsOnTargets="MinVer_GetOptions;MinVer_GetVersion" Condition="'$(UsingMicrosoftNETSdk)' == 'true' And '$(DesignTimeBuild)' != 'true'">
     <PropertyGroup>
       <Version>$(MinVerVersion)</Version>
       <PackageVersion>$(MinVerVersion)</PackageVersion>

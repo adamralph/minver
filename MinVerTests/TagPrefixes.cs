@@ -1,11 +1,14 @@
 namespace MinVerTests
 {
+    using LibGit2Sharp;
     using MinVer;
+    using MinVerTests.Infra;
     using Xbehave;
     using Xunit;
     using static MinVerTests.Infra.Git;
     using static MinVerTests.Infra.FileSystem;
     using static SimpleExec.Command;
+    using Version = MinVer.Version;
 
     public static class TagPrefixes
     {
@@ -23,7 +26,7 @@ namespace MinVerTests
                 .x(async () => await RunAsync("git", $"tag {tag}", path));
 
             $"When the version is determined using the tag prefix '{prefix}'"
-                .x(() => actualVersion = Versioner.GetVersion(path, default, prefix, default, default, default));
+                .x(() => actualVersion = Versioner.GetVersion(new Repository(path), prefix, default, default, new TestLogger()));
 
             $"Then the version is '{expectedVersion}'"
                 .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));

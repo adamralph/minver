@@ -54,7 +54,7 @@ _(With TL;DR answers inline.)_
 - [Does MinVer work with my chosen branching strategy?](#does-minver-work-with-my-chosen-branching-strategy) _(yes)_
 - [Can I include build metadata in the version?](#can-i-include-build-metadata-in-the-version) _(yes)_
 - [Can I use the version calculated by MinVer for other purposes?](#can-i-use-the-version-calculated-by-minver-for-other-purposes) _(yes)_
-- [Can I get more detailed logs?](#can-i-get-more-detailed-logs) _(yes)_
+- [Can I control the logging verbosity?](#can-i-control-the-logging-verbosity) _(yes)_
 - [What if the history diverges, and more than one tag is found?](#what-if-the-history-diverges-and-more-than-one-tag-is-found) _(nothing bad)_
 - [What if the history diverges, and then converges again, before the last tag (or root commit) is found?](#what-if-the-history-diverges-and-then-converges-again-before-the-last-tag-or-root-commit-is-found) _(nothing bad)_
 - [Why does MinVer fail with `LibGit2Sharp.NotFoundException`?](#why-does-minver-fail-with-libgit2sharpnotfoundexception) _(easy to fix)_
@@ -114,9 +114,11 @@ Yes! MinVer sets both the `Version` and `PackageVersion` MSBuild properties. Use
 </Target>
 ```
 
-### Can I get more detailed logs?
+### Can I control the logging verbosity?
 
-Yes! Set the MSBuild property `MinVerVerbose` (or environment variable `MINVER_VERBOSE`) to `true`. You will see how many commits were examined, which version tags were found but ignored, which version was calculated, etc.
+Yes! Set the MSBuild property `MinVerVerbosity` (or environment variable `MINVER_VERBOSITY`) to `quiet`, `minimal`, `normal` (default), `detailed`, or `diagnostic`. At the `quiet` and `miminal` levels, you will see only warnings and errors. At the `detailed` and `diagnostic` levels you will see how many commits were examined, which version tags were found but ignored, which version was calculated, etc.
+
+The verbosity levels reflect those supported by MSBuild and therefore `dotnet build`, `dotnet pack`, etc. In a future version of MinVer, these verbosity levels will be inherited from MSBuild and the MinVer verbosity option will be deprecated. Currently this is not possible due to technical restrictions related to [libgit2](https://github.com/libgit2/libgit2).
 
 ### What if the history diverges, and more than one tag is found?
 
@@ -168,7 +170,7 @@ The same applies if you find a bug in MinVer (consider that a challenge!) and yo
 | [Build metadata](#can-i-include-build-metadata-in-the-version) | `MINVER_BUILD_METADATA`   | `MinVerBuildMetadata`   | Environment variable |
 | [Major minor range](#usage)                                    | `MINVER_MAJOR_MINOR`      | `MinVerMajorMinor`      | MSBuild property     |
 | [Tag prefix](#can-i-prefix-my-tag-names)                       | `MINVER_TAG_PREFIX`       | `MinVerTagPrefix`       | MSBuild property     |
-| [Verbose logging](#can-i-get-more-detailed-logs)               | `MINVER_VERBOSE`          | `MinVerVerbose`         | Either               |
+| [Logging verbosity](#can-i-control-the-logging-verbosity)      | `MINVER_VERBOSITY`        | `MinVerVerbosity`       | Either               |
 | [Version override](#what-if-it-all-goes-wrong)                 | `MINVER_VERSION_OVERRIDE` | `MinVerVersionOverride` | Environment variable |
 
 - Environment variables take precedence over MSBuild properties. This allows temporary overrides on the build server.

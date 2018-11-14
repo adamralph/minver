@@ -9,20 +9,20 @@
 
   <Target Name="MinVer_GetVersion" Condition="'$(MinVerVersionOverride)' == ''">
     <ItemGroup>
-      <MinVerOptions Include="--build-metadata &quot;$(MinVerBuildMetadata)&quot;" />
-      <MinVerOptions Include="--major-minor &quot;$(MinVerMajorMinor)&quot;" />
-      <MinVerOptions Include="--path &quot;$(MSBuildProjectDirectory)&quot;" />
-      <MinVerOptions Include="--tag-prefix &quot;$(MinVerTagPrefix)&quot;" />
-      <MinVerOptions Include="--verbose" Condition="'$(MinVerVerbose)' == 'true'" />
+      <MinVerInputs Include="--build-metadata &quot;$(MinVerBuildMetadata)&quot;" Condition="'$(MinVerBuildMetadata)' != ''" />
+      <MinVerInputs Include="--major-minor &quot;$(MinVerMajorMinor)&quot;" Condition="'$(MinVerMajorMinor)' != ''" />
+      <MinVerInputs Include="--repo &quot;$(MSBuildProjectDirectory)&quot;" Condition="'$(MSBuildProjectDirectory)' != ''" />
+      <MinVerInputs Include="--tag-prefix &quot;$(MinVerTagPrefix)&quot;" Condition="'$(MinVerTagPrefix)' != ''" />
+      <MinVerInputs Include="--verbosity &quot;$(MinVerVerbosity)&quot;" Condition="'$(MinVerVerbosity)' != ''" />
     </ItemGroup>
-    <Exec Command="dotnet &quot;$(MSBuildThisFileDirectory)../MinVer/MinVer.Cli.dll&quot; @(MinVerOptions->'%(Identity)', ' ')" ConsoleToMSBuild="true">
-      <Output TaskParameter="ConsoleOutput" ItemName="MinVerOutput" />
+    <Exec Command="dotnet &quot;$(MSBuildThisFileDirectory)../minver-tasks/MinVer.Tasks.dll&quot; @(MinVerInputs->'%(Identity)', ' ')" ConsoleToMSBuild="true">
+      <Output TaskParameter="ConsoleOutput" ItemName="MinVerConsoleOutput" />
     </Exec>
     <ItemGroup>
-      <MinVerStdout Include="@(MinVerOutput)" Condition="'$([System.String]::new(`%(Identity)`).StartsWith(`MinVer:`))' != 'true'" />
+      <MinVerOutput Include="@(MinVerConsoleOutput)" Condition="'$([System.String]::new(`%(Identity)`).StartsWith(`MinVer:`))' != 'true'" />
     </ItemGroup>
     <PropertyGroup>
-      <MinVerVersion>@(MinVerStdout)</MinVerVersion>
+      <MinVerVersion>@(MinVerOutput)</MinVerVersion>
     </PropertyGroup>
   </Target>
 
@@ -41,7 +41,7 @@
   </Target>
 
   <Target Name="MinVer_EnsureSdk" BeforeTargets="MinVer" Condition="'$(DesignTimeBuild)' != 'true'">
-    <Error Condition="'$(UsingMicrosoftNETSdk)' != 'true'" Code="MINVER0002" Text="MinVer only works in SDK-style projects." />
+    <Error Condition="'$(UsingMicrosoftNETSdk)' != 'true'" Code="MINVER0001" Text="MinVer only works in SDK-style projects." />
   </Target>
 
 </Project>

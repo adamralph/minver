@@ -1,62 +1,17 @@
 namespace MinVer
 {
-    using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
     using System.Reflection;
     using LibGit2Sharp;
 
     public static class Versioner
     {
-        public static Version GetVersion(string path, bool verbose, string tagPrefix, int major, int minor, string buildMetadata)
+        public static Version GetVersion(Repository repo, string tagPrefix, MajorMinor range, string buildMetadata, ILogger log)
         {
-            if (verbose)
-            {
-                Log($"MinVer {typeof(Versioner).Assembly.GetCustomAttributes<AssemblyInformationalVersionAttribute>().Single().InformationalVersion}");
-            }
+            log.Debug(() => $"MinVer {typeof(Versioner).Assembly.GetCustomAttributes<AssemblyInformationalVersionAttribute>().Single().InformationalVersion}");
 
-            // Repository.ctor(string) throws RepositoryNotFoundException in this case
-            if (!Directory.Exists(path))
-            {
-                // Substring of RepositoryNotFoundException.Message $"Path '{path}' doesn't point at a valid Git repository or workdir."
-                throw new Exception($"Path '{path}' doesn't point at a valid workdir.");
-            }
 
-            Repository repo = default;
-            var testPath = path;
-            while (testPath != default)
-            {
-                try
-                {
-                    repo = new Repository(testPath);
-                    break;
-                }
-                catch (RepositoryNotFoundException)
-                {
-                    testPath = Directory.GetParent(testPath)?.FullName;
-                }
-            }
-
-            if (repo != default)
-            {
-                try
-                {
-                    return GetVersion(repo, verbose, tagPrefix, major, minor, buildMetadata);
-                }
-                finally
-                {
-                    repo.Dispose();
-                }
-            }
-
-            // Includes substring of RepositoryNotFoundException.Message $"Path '{path}' doesn't point at a valid Git repository or workdir."
-            Log($"warning MINVER0001: Path '{path}' doesn't point at a valid Git repository. Using default version.");
-            return new Version();
-        }
-
-        private static Version GetVersion(Repository repo, bool verbose, string tagPrefix, int major, int minor, string buildMetadata)
-        {
             var commit = repo.Commits.FirstOrDefault();
 
             if (commit == default)
@@ -110,42 +65,36 @@ namespace MinVer
                 (commit, height) = commitsToCheck.Pop();
             }
 
-            if (verbose)
-            {
-                Log($"{count:N0} commits checked.");
-            }
+            log.Debug($"{count:N0} commits checked.");
 
             var orderedCandidates = candidates.OrderBy(candidate => candidate.Version).ToList();
 
-            var tagWidth = verbose ? orderedCandidates.Max(candidate => candidate.Tag.Length) : 0;
-            var versionWidth = verbose ? orderedCandidates.Max(candidate => candidate.Version.ToString().Length) : 0;
-            var heightWidth = verbose ? orderedCandidates.Max(candidate => candidate.Height).ToString().Length : 0;
+            var tagWidth = log.IsDebugEnabled ? orderedCandidates.Max(candidate => candidate.Tag.Length) : 0;
+            var versionWidth = log.IsDebugEnabled ? orderedCandidates.Max(candidate => candidate.Version.ToString().Length) : 0;
+            var heightWidth = log.IsDebugEnabled ? orderedCandidates.Max(candidate => candidate.Height).ToString().Length : 0;
 
-            if (verbose)
+            if (log.IsDebugEnabled)
             {
                 foreach (var candidate in orderedCandidates.Take(orderedCandidates.Count - 1))
                 {
-                    Log($"Ignoring {candidate.ToString(tagWidth, versionWidth, heightWidth)}.");
+                    log.Debug($"Ignoring {candidate.ToString(tagWidth, versionWidth, heightWidth)}.");
                 }
             }
 
             var selectedCandidate = orderedCandidates.Last();
-            Log($"Using{(verbose && orderedCandidates.Count > 1 ? "    " : " ")}{selectedCandidate.ToString(tagWidth, versionWidth, heightWidth)}.");
+            log.Info($"Using{(log.IsDebugEnabled && orderedCandidates.Count > 1 ? "    " : " ")}{selectedCandidate.ToString(tagWidth, versionWidth, heightWidth)}.");
 
-            var baseVersion = selectedCandidate.Version.IsBefore(major, minor) ?
-                new Version(major, minor)
+            var baseVersion = range != default && selectedCandidate.Version.IsBefore(range.Major, range.Minor)
+                ? new Version(range.Major, range.Minor)
                 : selectedCandidate.Version;
 
             if (baseVersion != selectedCandidate.Version)
             {
-                Log($"Bumping version to {baseVersion} to satisfy {major}.{minor} range.");
+                log.Info($"Bumping version to {baseVersion} to satisfy {range} range.");
             }
 
             var calculatedVersion = baseVersion.WithHeight(selectedCandidate.Height).AddBuildMetadata(buildMetadata);
-            if (verbose)
-            {
-                Log($"Calculated version {calculatedVersion}.");
-            }
+            log.Debug($"Calculated version {calculatedVersion}.");
 
             return calculatedVersion;
         }
@@ -163,7 +112,5 @@ namespace MinVer
             public string ToString(int tagWidth, int versionWidth, int heightWidth) =>
                 $"{{ {nameof(this.Commit)}: {this.Commit.Substring(0, 7)}, {nameof(this.Tag)}: {$"'{this.Tag}',".PadRight(tagWidth + 3)} {nameof(this.Version)}: {$"{this.Version.ToString()},".PadRight(versionWidth + 1)} {nameof(this.Height)}: {this.Height.ToString().PadLeft(heightWidth)} }}";
         }
-
-        private static void Log(string message) => Console.Error.WriteLine($"MinVer: {message}");
     }
 }

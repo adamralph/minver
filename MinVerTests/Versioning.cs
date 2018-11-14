@@ -9,8 +9,8 @@ namespace MinVerTests
     using MinVerTests.Infra;
     using Xbehave;
     using Xunit;
-    using static MinVerTests.Infra.Git;
     using static MinVerTests.Infra.FileSystem;
+    using static MinVerTests.Infra.Git;
     using static SimpleExec.Command;
 
     public static class Versioning
@@ -95,7 +95,7 @@ git tag 1.1.0
                         {
                             Commands.Checkout(repo, commit);
 
-                            var version = Versioner.GetVersion(path, default, default, default, default, default);
+                            var version = Versioner.GetVersion(new Repository(path), default, default, default, new TestLogger());
                             var versionString = version.ToString();
                             var tagName = $"v/{versionString}";
 
@@ -128,20 +128,7 @@ git tag 1.1.0
                 .x(async () => await EnsureEmptyRepository(path));
 
             "When the version is determined"
-                .x(() => version = Versioner.GetVersion(path, default, default, default, default, default));
-
-            "Then the version is 0.0.0-alpha.0"
-                .x(() => Assert.Equal("0.0.0-alpha.0", version.ToString()));
-        }
-
-        [Scenario]
-        public static void NoRepo(string path, MinVer.Version version)
-        {
-            $"Given an empty directory '{path = GetScenarioDirectory("versioning-no-repo")}'"
-                .x(() => EnsureEmptyDirectory(path));
-
-            "When the version is determined"
-                .x(() => version = Versioner.GetVersion(path, default, default, default, default, default));
+                .x(() => version = Versioner.GetVersion(new Repository(path), default, default, default, new TestLogger()));
 
             "Then the version is 0.0.0-alpha.0"
                 .x(() => Assert.Equal("0.0.0-alpha.0", version.ToString()));
@@ -154,7 +141,7 @@ git tag 1.1.0
                 .x(() => path = Guid.NewGuid().ToString());
 
             "When the version is determined"
-                .x(() => ex = Record.Exception(() => Versioner.GetVersion(path, default, default, default, default, default)));
+                .x(() => ex = Record.Exception(() => Versioner.GetVersion(new Repository(path), default, default, default, new TestLogger())));
 
             "Then an exception is thrown"
                 .x(() => Assert.NotNull(ex));

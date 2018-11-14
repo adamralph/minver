@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\MinVerTests\Infra\FileSystem.cs" Link="FileSystem.cs" />
-    <Compile Include="..\MinVerTests\Infra\Git.cs" Link="Git.cs" />
+    <Compile Include="..\MinVerTests\Infra\FileSystem.cs" />
+    <Compile Include="..\MinVerTests\Infra\Git.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -35,7 +35,7 @@ internal class Program
             DependsOn("pack"),
             async () =>
             {
-                Environment.SetEnvironmentVariable("MinVerTagPrefix", "v.", EnvironmentVariableTarget.Process);
+                Environment.SetEnvironmentVariable("MINVER_TAG_PREFIX", "v.", EnvironmentVariableTarget.Process);
                 Environment.SetEnvironmentVariable("NoPackageAnalysis", "true", EnvironmentVariableTarget.Process);
 
                 var source = Path.GetFullPath("./MinVer/bin/Release/");
@@ -80,9 +80,7 @@ internal class Program
 
                 Environment.SetEnvironmentVariable("MINVER_BUILD_METADATA", "build.42", EnvironmentVariableTarget.Process);
                 Environment.SetEnvironmentVariable("MINVER_VERBOSE", "true", EnvironmentVariableTarget.Process);
-
-                // normally set via an MSBuild property
-                Environment.SetEnvironmentVariable("MinVerMajorMinor", "2.0", EnvironmentVariableTarget.Process);
+                Environment.SetEnvironmentVariable("MINVER_MAJOR_MINOR", "2.0", EnvironmentVariableTarget.Process);
 
                 DeletePackages();
 
@@ -96,7 +94,7 @@ internal class Program
                     throw new Exception($"'{package}' does not contain '{expected}'.");
                 }
 
-                Environment.SetEnvironmentVariable("MINVER_VERSION", "3.0.0-beta.2+build.52", EnvironmentVariableTarget.Process);
+                Environment.SetEnvironmentVariable("MINVER_VERSION_OVERRIDE", "3.0.0-beta.2+build.52", EnvironmentVariableTarget.Process);
 
                 DeletePackages();
 

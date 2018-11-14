@@ -11,7 +11,7 @@ A minimalistic [.NET package](https://www.nuget.org/packages/MinVer) for version
 - [Quick start](#quick-start)
 - [Usage](#usage)
 - [FAQ](#faq)
-- [Settings reference](#settings-reference)
+- [Options reference](#options-reference)
 
 ## Prerequisites
 
@@ -161,15 +161,19 @@ For example, in the [Appveyor](https://www.appveyor.com/) UI:
 
 The same applies if you find a bug in MinVer (consider that a challenge!) and you're waiting for a fix.
 
-## Settings reference
+## Options reference
 
-| Setting                                                        | Environment variable    | MSBuild property   |
-|----------------------------------------------------------------|-------------------------|--------------------|
-| [Build metadata](#can-i-include-build-metadata-in-the-version) | `MINVER_BUILD_METADATA` | _n/a_              |
-| [Major minor range](#usage)                                    | _n/a_                   | `MinVerMajorMinor` |
-| [Tag prefix](#can-i-prefix-my-tag-names)                       | _n/a_                   | `MinVerTagPrefix`  |
-| [Verbose logging](#can-i-get-more-detailed-logs)               | `MINVER_VERBOSE`        | `MinVerVerbose`    |
-| [Version override](#what-if-it-all-goes-wrong)                 | `MINVER_VERSION`        | _n/a_              |
+| Option                                                         | Environment variable      | MSBuild property        | Recommended usage    |
+|----------------------------------------------------------------|---------------------------|-------------------------|----------------------|
+| [Build metadata](#can-i-include-build-metadata-in-the-version) | `MINVER_BUILD_METADATA`   | `MinVerBuildMetadata`   | Environment variable |
+| [Major minor range](#usage)                                    | `MINVER_MAJOR_MINOR`      | `MinVerMajorMinor`      | MSBuild property     |
+| [Tag prefix](#can-i-prefix-my-tag-names)                       | `MINVER_TAG_PREFIX`       | `MinVerTagPrefix`       | MSBuild property     |
+| [Verbose logging](#can-i-get-more-detailed-logs)               | `MINVER_VERBOSE`          | `MinVerVerbose`         | Either               |
+| [Version override](#what-if-it-all-goes-wrong)                 | `MINVER_VERSION_OVERRIDE` | `MinVerVersionOverride` | Environment variable |
+
+- Environment variables take precedence over MSBuild properties. This allows temporary overrides on the build server.
+- Environment variables specified as MSBuild properties are ignored.
+- An error occurs if any MSBuild properties are specified as environment variables.
 
 ---
 

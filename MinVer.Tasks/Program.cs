@@ -41,19 +41,19 @@ namespace MinVer
             range = default;
             level = default;
 
-            if (repo != default && !Directory.Exists(path = repo))
+            if (!string.IsNullOrEmpty(repo) && !Directory.Exists(path = repo))
             {
                 Logger.ErrorInvalidRepoPath(path);
                 return false;
             }
 
-            if (majorMinor != default && !MajorMinor.TryParse(majorMinor, out range))
+            if (!string.IsNullOrEmpty(majorMinor) && !MajorMinor.TryParse(majorMinor, out range))
             {
                 Logger.ErrorInvalidMajorMinorRange(majorMinor);
                 return false;
             }
 
-            if (verbosity != default && !Enum.TryParse(verbosity, true, out level))
+            if (!string.IsNullOrEmpty(verbosity) && !Enum.TryParse(verbosity, true, out level))
             {
                 Logger.ErrorInvalidVerbosityLevel(verbosity);
                 return false;

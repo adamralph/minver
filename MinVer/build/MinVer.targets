@@ -9,11 +9,11 @@
 
   <Target Name="MinVer_GetVersion" Condition="'$(MinVerVersionOverride)' == ''">
     <ItemGroup>
-      <MinVerInputs Include="--build-metadata &quot;$(MinVerBuildMetadata)&quot;" Condition="'$(MinVerBuildMetadata)' != ''" />
-      <MinVerInputs Include="--major-minor &quot;$(MinVerMajorMinor)&quot;" Condition="'$(MinVerMajorMinor)' != ''" />
-      <MinVerInputs Include="--repo &quot;$(MSBuildProjectDirectory)&quot;" Condition="'$(MSBuildProjectDirectory)' != ''" />
-      <MinVerInputs Include="--tag-prefix &quot;$(MinVerTagPrefix)&quot;" Condition="'$(MinVerTagPrefix)' != ''" />
-      <MinVerInputs Include="--verbosity &quot;$(MinVerVerbosity)&quot;" Condition="'$(MinVerVerbosity)' != ''" />
+      <MinVerInputs Include="--build-metadata &quot;$(MinVerBuildMetadata)&quot;" />
+      <MinVerInputs Include="--major-minor &quot;$(MinVerMajorMinor)&quot;" />
+      <MinVerInputs Include="--repo &quot;$(MSBuildProjectDirectory)&quot;" />
+      <MinVerInputs Include="--tag-prefix &quot;$(MinVerTagPrefix)&quot;" />
+      <MinVerInputs Include="--verbosity &quot;$(MinVerVerbosity)&quot;" />
     </ItemGroup>
     <Exec Command="dotnet &quot;$(MSBuildThisFileDirectory)../minver-tasks/MinVer.Tasks.dll&quot; @(MinVerInputs->'%(Identity)', ' ')" ConsoleToMSBuild="true">
       <Output TaskParameter="ConsoleOutput" ItemName="MinVerConsoleOutput" />

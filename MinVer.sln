@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Targets", "targets\Targets.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinVer.Tasks", "MinVer.Tasks\MinVer.Tasks.csproj", "{EE9A19AA-0EDC-446F-8FD8-78A066E27B71}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dotnet-minver", "dotnet-minver\dotnet-minver.csproj", "{34A5ECB1-400C-462A-B2B8-2B7136BE162A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{EE9A19AA-0EDC-446F-8FD8-78A066E27B71}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE9A19AA-0EDC-446F-8FD8-78A066E27B71}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE9A19AA-0EDC-446F-8FD8-78A066E27B71}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34A5ECB1-400C-462A-B2B8-2B7136BE162A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34A5ECB1-400C-462A-B2B8-2B7136BE162A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34A5ECB1-400C-462A-B2B8-2B7136BE162A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34A5ECB1-400C-462A-B2B8-2B7136BE162A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -27,7 +27,8 @@ internal class Program
         Target(
             "pack",
             DependsOn("publish"),
-            () => RunAsync("dotnet", $"pack ./MinVer/MinVer.csproj --configuration Release --no-build"));
+            ForEach("./MinVer/MinVer.csproj", "./dotnet-minver/dotnet-minver.csproj"),
+            project => RunAsync("dotnet", $"pack {project} --configuration Release --no-build"));
 
         Target(
             "test-package",

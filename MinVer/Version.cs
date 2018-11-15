@@ -16,9 +16,9 @@ namespace MinVer
         private readonly int height;
         private readonly string buildMetadata;
 
-        public Version() : this(default, default) { }
+        public Version(IEnumerable<string> preReleaseIdentifiers) : this(default, default, preReleaseIdentifiers) { }
 
-        public Version(int major, int minor) : this(major, minor, default, new List<string> { "alpha", "0" }, default, default) { }
+        public Version(int major, int minor, IEnumerable<string> preReleaseIdentifiers) : this(major, minor, default, preReleaseIdentifiers, default, default) { }
 
         private Version(int major, int minor, int patch, IEnumerable<string> preReleaseIdentifiers, int height, string buildMetadata)
         {
@@ -97,9 +97,9 @@ namespace MinVer
             return this.height.CompareTo(other.height);
         }
 
-        public Version WithHeight(int height) =>
+        public Version WithHeight(int height, IEnumerable<string> defaultPreReleaseIdentifiers) =>
             this.preReleaseIdentifiers.Count == 0 && height > 0
-                ? new Version(this.major, this.minor, this.patch + 1, new[] { "alpha", "0" }, height, default)
+                ? new Version(this.major, this.minor, this.patch + 1, defaultPreReleaseIdentifiers, height, default)
                 : new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, height, height == 0 ? this.buildMetadata : default);
 
         public Version AddBuildMetadata(string buildMetadata)

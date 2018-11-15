@@ -11,12 +11,13 @@ namespace MinVer
         {
             log.Debug(() => $"MinVer {typeof(Versioner).Assembly.GetCustomAttributes<AssemblyInformationalVersionAttribute>().Single().InformationalVersion}");
 
+            var defaultPreReleaseIdentifiers = new[] { "alpha", "0" };
 
             var commit = repo.Commits.FirstOrDefault();
 
             if (commit == default)
             {
-                return new Version();
+                return new Version(defaultPreReleaseIdentifiers);
             }
 
             var tagsAndVersions = repo.Tags
@@ -52,7 +53,7 @@ namespace MinVer
 
                         if (commitsToCheck.Count == 0 || commitsToCheck.Peek().Item2 <= height)
                         {
-                            candidates.Add(new Candidate { Commit = commit.Sha, Height = height, Tag = "(none)", Version = new Version(), });
+                            candidates.Add(new Candidate { Commit = commit.Sha, Height = height, Tag = "(none)", Version = new Version(defaultPreReleaseIdentifiers), });
                         }
                     }
                 }
@@ -85,7 +86,7 @@ namespace MinVer
             log.Info($"Using{(log.IsDebugEnabled && orderedCandidates.Count > 1 ? "    " : " ")}{selectedCandidate.ToString(tagWidth, versionWidth, heightWidth)}.");
 
             var baseVersion = range != default && selectedCandidate.Version.IsBefore(range.Major, range.Minor)
-                ? new Version(range.Major, range.Minor)
+                ? new Version(range.Major, range.Minor, defaultPreReleaseIdentifiers)
                 : selectedCandidate.Version;
 
             if (baseVersion != selectedCandidate.Version)
@@ -93,7 +94,7 @@ namespace MinVer
                 log.Info($"Bumping version to {baseVersion} to satisfy {range} range.");
             }
 
-            var calculatedVersion = baseVersion.WithHeight(selectedCandidate.Height).AddBuildMetadata(buildMetadata);
+            var calculatedVersion = baseVersion.WithHeight(selectedCandidate.Height, defaultPreReleaseIdentifiers).AddBuildMetadata(buildMetadata);
             log.Debug($"Calculated version {calculatedVersion}.");
 
             return calculatedVersion;

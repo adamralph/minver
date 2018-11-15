@@ -35,7 +35,7 @@ internal class Program
             DependsOn("pack"),
             async () =>
             {
-                Environment.SetEnvironmentVariable("MINVER_TAG_PREFIX", "v.", EnvironmentVariableTarget.Process);
+                Environment.SetEnvironmentVariable("MinVerTagPrefix", "v.", EnvironmentVariableTarget.Process);
                 Environment.SetEnvironmentVariable("NoPackageAnalysis", "true", EnvironmentVariableTarget.Process);
 
                 var source = Path.GetFullPath("./MinVer/bin/Release/");
@@ -50,7 +50,7 @@ internal class Program
 
                 await RunAsync("git", "tag v.1.2.3+foo", path);
 
-                Environment.SetEnvironmentVariable("MINVER_BUILD_METADATA", "build.1", EnvironmentVariableTarget.Process);
+                Environment.SetEnvironmentVariable("MinVerBuildMetadata", "build.1", EnvironmentVariableTarget.Process);
 
                 DeletePackages();
 
@@ -78,9 +78,9 @@ internal class Program
                     throw new Exception($"'{package}' does not contain '{expected}'.");
                 }
 
-                Environment.SetEnvironmentVariable("MINVER_BUILD_METADATA", "build.42", EnvironmentVariableTarget.Process);
-                Environment.SetEnvironmentVariable("MINVER_VERBOSITY", "detailed", EnvironmentVariableTarget.Process);
-                Environment.SetEnvironmentVariable("MINVER_MAJOR_MINOR", "2.0", EnvironmentVariableTarget.Process);
+                Environment.SetEnvironmentVariable("MinVerBuildMetadata", "build.42", EnvironmentVariableTarget.Process);
+                Environment.SetEnvironmentVariable("MinVerVerbosity", "detailed", EnvironmentVariableTarget.Process);
+                Environment.SetEnvironmentVariable("MinVerMajorMinor", "2.0", EnvironmentVariableTarget.Process);
 
                 DeletePackages();
 
@@ -94,7 +94,7 @@ internal class Program
                     throw new Exception($"'{package}' does not contain '{expected}'.");
                 }
 
-                Environment.SetEnvironmentVariable("MINVER_VERSION_OVERRIDE", "3.0.0-beta.2+build.52", EnvironmentVariableTarget.Process);
+                Environment.SetEnvironmentVariable("MinVerVersionOverride", "3.0.0-beta.2+build.52", EnvironmentVariableTarget.Process);
 
                 DeletePackages();
 

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Description>Minimalistic versioning for .NET SDK-style projects.</Description>
@@ -20,9 +20,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="build\**\*" />
+    <None Remove="buildMultiTargeting\**\*" />
     <Content Include="build\**\*" PackagePath="build" />
     <Content Include="buildMultiTargeting\**\*" PackagePath="buildMultiTargeting" />
-    <Content Include="$(MSBuildThisFileDirectory)..\MinVer.Tasks\bin\Release\netcoreapp2.1\publish\**\*" PackagePath="minver-tasks" />
+    <Content Include="$(MSBuildThisFileDirectory)..\MinVer.Tasks\bin\Release\netcoreapp2.1\publish\**\*" PackagePath="minver-tasks" Visible="false" Link="hidden" />
   </ItemGroup>
 
 </Project>

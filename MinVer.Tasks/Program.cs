@@ -69,9 +69,11 @@ namespace MinVer
         {
             var log = new Logger(level);
 
+            var defaultPreReleaseIdentifiers = new[] { "alpha", "0" };
+
             if (!RepositoryEx.TryCreateRepo(path, out var repo))
             {
-                var version = new Version();
+                var version = new Version(defaultPreReleaseIdentifiers);
 
                 log.WarnInvalidRepoPath(path, version);
 
@@ -80,7 +82,7 @@ namespace MinVer
 
             try
             {
-                return Versioner.GetVersion(repo, tagPrefix, range, buildMetadata, log);
+                return Versioner.GetVersion(repo, tagPrefix, range, buildMetadata, defaultPreReleaseIdentifiers, log);
             }
             finally
             {

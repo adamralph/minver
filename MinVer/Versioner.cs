@@ -7,11 +7,9 @@ namespace MinVer
 
     public static class Versioner
     {
-        public static Version GetVersion(Repository repo, string tagPrefix, MajorMinor range, string buildMetadata, ILogger log)
+        public static Version GetVersion(Repository repo, string tagPrefix, MajorMinor range, string buildMetadata, IEnumerable<string> defaultPreReleaseIdentifiers, ILogger log)
         {
             log.Debug(() => $"MinVer {typeof(Versioner).Assembly.GetCustomAttributes<AssemblyInformationalVersionAttribute>().Single().InformationalVersion}");
-
-            var defaultPreReleaseIdentifiers = new[] { "alpha", "0" };
 
             var commit = repo.Commits.FirstOrDefault();
 

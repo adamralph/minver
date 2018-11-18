@@ -4,6 +4,8 @@ namespace MinVer
     using System.Linq;
     using System.IO;
     using McMaster.Extensions.CommandLineUtils;
+    using MinVer.Lib;
+    using Version = MinVer.Lib.Version;
 
     internal class Program
     {

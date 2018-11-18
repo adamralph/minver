@@ -5,7 +5,7 @@ namespace MinVerTests
     using System.Linq;
     using System.Threading.Tasks;
     using LibGit2Sharp;
-    using MinVer;
+    using MinVer.Lib;
     using MinVerTests.Infra;
     using Xbehave;
     using Xunit;
@@ -122,7 +122,7 @@ git tag 1.1.0
         }
 
         [Scenario]
-        public static void EmptyRepo(string path, MinVer.Version version)
+        public static void EmptyRepo(string path, MinVer.Lib.Version version)
         {
             $"Given an empty git repository in '{path = GetScenarioDirectory("versioning-empty-repo")}'"
                 .x(async () => await EnsureEmptyRepository(path));

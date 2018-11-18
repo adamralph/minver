@@ -2,7 +2,7 @@ namespace MinVerTests
 {
     using System.IO;
     using LibGit2Sharp;
-    using MinVer;
+    using MinVer.Lib;
     using Xbehave;
     using Xunit;
     using static MinVerTests.Infra.FileSystem;

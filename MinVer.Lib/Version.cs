@@ -1,4 +1,4 @@
-namespace MinVer
+namespace MinVer.Lib
 {
     using System;
     using System.Collections.Generic;

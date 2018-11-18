@@ -1,7 +1,7 @@
 namespace MinVerTests.Infra
 {
     using System;
-    using MinVer;
+    using MinVer.Lib;
 
     internal class TestLogger : ILogger
     {

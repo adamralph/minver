@@ -10,6 +10,7 @@
     <PackageReleaseNotes>https://github.com/adamralph/min-ver/milestones?state=closed</PackageReleaseNotes>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <ToolCommandName>minver</ToolCommandName>
   </PropertyGroup>
 
   <ItemGroup>

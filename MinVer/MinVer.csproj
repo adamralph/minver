@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>Minimalistic versioning for .NET SDK-style projects.</Description>
+    <Description>Minimalistic versioning for .NET SDK-style projects using Git tags.</Description>
     <DevelopmentDependency>true</DevelopmentDependency>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <NoWarn>$(NoWarn);NU5100;NU5105</NoWarn>

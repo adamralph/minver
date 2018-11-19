@@ -15,8 +15,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="LibGit2Sharp" Version="0.25.3" IncludeAssets="compile" />
-    <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="2.2.5" IncludeAssets="compile" />
+    <Compile Include="..\minver-cli\Program.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="2.2.5" PrivateAssets="All" Publish="true" />
     <PackageReference Include="Microsoft.CodeQuality.Analyzers" Version="2.6.2" PrivateAssets="All" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" PrivateAssets="All" />
     <PackageReference Update="Microsoft.NETCore.App" PrivateAssets="All" />
@@ -31,7 +34,7 @@
     <None Remove="buildMultiTargeting\**\*" />
     <Content Include="build\**\*" PackagePath="build" />
     <Content Include="buildMultiTargeting\**\*" PackagePath="buildMultiTargeting" />
-    <Content Include="$(OutputPath)\publish\**\*" PackagePath="minver" />
+    <Content Include="$(OutputPath)\publish\**\*" PackagePath="minver" Visible="false" Link="hidden" />
   </ItemGroup>
 
 </Project>

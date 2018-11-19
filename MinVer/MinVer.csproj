@@ -6,10 +6,10 @@
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <NoWarn>$(NoWarn);NU5100;NU5105</NoWarn>
     <OutputType>Exe</OutputType>
-    <PackageIconUrl>https://raw.githubusercontent.com/adamralph/min-ver/master/assets/min-ver.png</PackageIconUrl>
-    <PackageLicenseUrl>https://github.com/adamralph/min-ver/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/adamralph/min-ver</PackageProjectUrl>
-    <PackageReleaseNotes>https://github.com/adamralph/min-ver/milestones?state=closed</PackageReleaseNotes>
+    <PackageIconUrl>https://raw.githubusercontent.com/adamralph/minver/master/assets/minver.png</PackageIconUrl>
+    <PackageLicenseUrl>https://github.com/adamralph/minver/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/adamralph/minver</PackageProjectUrl>
+    <PackageReleaseNotes>https://github.com/adamralph/minver/milestones?state=closed</PackageReleaseNotes>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>

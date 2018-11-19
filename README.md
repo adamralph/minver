@@ -7,7 +7,7 @@ _[![Build status](https://ci.appveyor.com/api/projects/status/0ai8j3x4tg6w3ima/b
 
 A minimalistic [.NET package](https://www.nuget.org/packages/MinVer) for versioning .NET SDK-style projects using Git tags.
 
-Also available as a [command line tool](can-i-use-minver-to-version-software-which-is-not-built-using-a-net-sdk-style-project) for use in any Git repository.
+Also available as a [command line tool](#can-i-use-minver-to-version-software-which-is-not-built-using-a-net-sdk-style-project) for use in any Git repository.
 
 - [Prerequisites](#prerequisites)
 - [Quick start](#quick-start)
@@ -58,7 +58,7 @@ _(With TL;DR answers inline.)_
 - [Can I include build metadata in the version?](#can-i-include-build-metadata-in-the-version) _(yes)_
 - [Can I use the version calculated by MinVer for other purposes?](#can-i-use-the-version-calculated-by-minver-for-other-purposes) _(yes)_
 - [Can I control the logging verbosity?](#can-i-control-the-logging-verbosity) _(yes)_
-- [Can I use MinVer to version software which is not built using a .NET SDK style project?](can-i-use-minver-to-version-software-which-is-not-built-using-a-net-sdk-style-project) _(yes)_
+- [Can I use MinVer to version software which is not built using a .NET SDK style project?](#can-i-use-minver-to-version-software-which-is-not-built-using-a-net-sdk-style-project) _(yes)_
 - [What if the history diverges, and more than one tag is found?](#what-if-the-history-diverges-and-more-than-one-tag-is-found) _(nothing bad)_
 - [What if the history diverges, and then converges again, before the latest tag (or root commit) is found?](#what-if-the-history-diverges-and-then-converges-again-before-the-latest-tag-or-root-commit-is-found) _(nothing bad)_
 - [Why does MinVer fail with `LibGit2Sharp.NotFoundException`?](#why-does-minver-fail-with-libgit2sharpnotfoundexception) _(easy to fix)_

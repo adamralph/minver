@@ -5,13 +5,13 @@ VisualStudioVersion = 15.0.28010.2003
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinVerTests", "MinVerTests\MinVerTests.csproj", "{57307B80-9750-4D4F-91DC-EE28EC89EDDD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinVer", "MinVer\MinVer.csproj", "{EE44EA11-CEBE-49C7-9F23-EE8AE6FDFCFB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinVer.Lib", "MinVer.Lib\MinVer.Lib.csproj", "{EE44EA11-CEBE-49C7-9F23-EE8AE6FDFCFB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Targets", "targets\Targets.csproj", "{0F266E8B-E818-41A8-B93C-9E80E9446AC6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinVer.Tasks", "MinVer.Tasks\MinVer.Tasks.csproj", "{EE9A19AA-0EDC-446F-8FD8-78A066E27B71}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinVer", "MinVer\MinVer.csproj", "{EE9A19AA-0EDC-446F-8FD8-78A066E27B71}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dotnet-minver", "dotnet-minver\dotnet-minver.csproj", "{34A5ECB1-400C-462A-B2B8-2B7136BE162A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "minver-cli", "minver-cli\minver-cli.csproj", "{34A5ECB1-400C-462A-B2B8-2B7136BE162A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

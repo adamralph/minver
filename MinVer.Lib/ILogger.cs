@@ -1,6 +1,6 @@
 using System;
 
-namespace MinVer
+namespace MinVer.Lib
 {
     public interface ILogger
     {

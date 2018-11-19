@@ -22,12 +22,12 @@ internal class Program
         Target(
             "publish",
             DependsOn("build"),
-            () => RunAsync("dotnet", $"publish ./MinVer.Tasks/MinVer.Tasks.csproj --configuration Release --no-build"));
+            () => RunAsync("dotnet", $"publish ./MinVer/MinVer.csproj --configuration Release --no-build"));
 
         Target(
             "pack",
             DependsOn("publish"),
-            ForEach("./MinVer/MinVer.csproj", "./dotnet-minver/dotnet-minver.csproj"),
+            ForEach("./MinVer/MinVer.csproj", "./minver-cli/minver-cli.csproj"),
             project => RunAsync("dotnet", $"pack {project} --configuration Release --no-build"));
 
         Target(

@@ -1,6 +1,8 @@
 namespace MinVer
 {
     using System;
+    using MinVer.Lib;
+    using Version = MinVer.Lib.Version;
 
     internal class Logger : ILogger
     {
@@ -8,11 +10,11 @@ namespace MinVer
 
         public Logger(Verbosity level) => this.level = level;
 
-        public bool IsDebugEnabled => this.level >= Verbosity.Debug;
+        public bool IsDebugEnabled => this.level >= Verbosity.Detailed;
 
         public void Debug(Func<string> createMessage)
         {
-            if (this.level >= Verbosity.Debug)
+            if (this.level >= Verbosity.Detailed)
             {
                 Message(createMessage());
             }
@@ -20,7 +22,7 @@ namespace MinVer
 
         public void Debug(string message)
         {
-            if (this.level >= Verbosity.Debug)
+            if (this.level >= Verbosity.Detailed)
             {
                 Message(message);
             }
@@ -28,33 +30,34 @@ namespace MinVer
 
         public void Info(string message)
         {
-            if (this.level >= Verbosity.Info)
+            if (this.level >= Verbosity.Normal)
             {
                 Message(message);
             }
         }
 
         public void WarnInvalidRepoPath(string path, Version version) =>
-            this.Warn($"'{path}' is not a valid repository or working directory. Using default version: {version}");
+            this.Warn(1001, $"'{path}' is not a valid repository or working directory. Using default version: {version}");
 
         public static void ErrorInvalidRepoPath(string path) =>
-            Error($"Invalid repository path '{path}'. Directory does not exist.");
+            Error(1002, $"Invalid repository path '{path}'. Directory does not exist.");
 
         public static void ErrorInvalidMajorMinorRange(string majorMinor) =>
-            Error($"Invalid MAJOR.MINOR range '{majorMinor}'.");
+            Error(1003, $"Invalid MAJOR.MINOR range '{majorMinor}'.");
 
         public static void ErrorInvalidVerbosityLevel(string verbosity) =>
-            Error($"Invalid verbosity level '{verbosity}'. Valid levels are error, warn, info, debug, and trace.");
+            Error(1004, $"Invalid verbosity level '{verbosity}'. Valid levels are quiet, minimal, normal, detailed, and diagnostic.");
 
-        private void Warn(string message)
+        private void Warn(int code, string message)
         {
-            if (this.level >= Verbosity.Warn)
+            // conditional isn't really required but it gets rid of a compiler warning
+            if (this.level >= Verbosity.Quiet)
             {
-                Message($"warning : {message}");
+                Message($"warning MINVER{code:D4} : {message}");
             }
         }
 
-        private static void Error(string message) => Message($"error : {message}");
+        private static void Error(int code, string message) => Message($"error MINVER{code:D4} : {message}");
 
         private static void Message(string message) => Console.Error.WriteLine($"MinVer: {message}");
     }

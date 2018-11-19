@@ -1,4 +1,4 @@
-namespace MinVer
+namespace MinVer.Lib
 {
     public class MajorMinor
     {

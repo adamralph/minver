@@ -1,14 +1,14 @@
 namespace MinVerTests
 {
     using LibGit2Sharp;
-    using MinVer;
+    using MinVer.Lib;
     using MinVerTests.Infra;
     using Xbehave;
     using Xunit;
     using static MinVerTests.Infra.FileSystem;
     using static MinVerTests.Infra.Git;
     using static SimpleExec.Command;
-    using Version = MinVer.Version;
+    using Version = MinVer.Lib.Version;
 
     public static class BuildMetadata
     {

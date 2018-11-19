@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>Minimalistic versioning for .NET SDK-style projects.</Description>
+    <Description>A minimalistic command line tool for versioning with Git.</Description>
     <OutputType>Exe</OutputType>
     <PackAsTool>true</PackAsTool>
     <PackageIconUrl>https://raw.githubusercontent.com/adamralph/min-ver/master/assets/min-ver.png</PackageIconUrl>
@@ -10,21 +10,17 @@
     <PackageReleaseNotes>https://github.com/adamralph/min-ver/milestones?state=closed</PackageReleaseNotes>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <ToolCommandName>minver</ToolCommandName>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\MinVer.Tasks\Program.cs" Link="Program.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="LibGit2Sharp" Version="0.25.3" />
     <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="2.2.5" />
     <PackageReference Include="Microsoft.CodeQuality.Analyzers" Version="2.6.2" PrivateAssets="All" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MinVer\MinVer.csproj" />
+    <ProjectReference Include="..\MinVer.Lib\MinVer.Lib.csproj" />
   </ItemGroup>
 
 </Project>

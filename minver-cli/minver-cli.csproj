@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Description>Minimalistic versioning for .NET SDK-style projects.</Description>
@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\MinVer\Program.cs" Link="Program.cs" />
+    <Compile Include="..\MinVer\Program.cs" />
   </ItemGroup>
 
   <ItemGroup>

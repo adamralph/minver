@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>Minimalistic versioning for .NET SDK-style projects.</Description>
+    <Description>A minimalistic command line tool for versioning with Git.</Description>
     <OutputType>Exe</OutputType>
     <PackAsTool>true</PackAsTool>
     <PackageIconUrl>https://raw.githubusercontent.com/adamralph/min-ver/master/assets/min-ver.png</PackageIconUrl>

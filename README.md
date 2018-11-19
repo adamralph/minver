@@ -10,8 +10,8 @@ A minimalistic [.NET package](https://www.nuget.org/packages/MinVer) for version
 - [Prerequisites](#prerequisites)
 - [Quick start](#quick-start)
 - [Usage](#usage)
+- [Options](#options)
 - [FAQ](#faq)
-- [Options reference](#options-reference)
 
 ## Prerequisites
 
@@ -29,7 +29,7 @@ Your project will be versioned according to the latest tag found in the commit h
 
 At a point in time, on a given branch, you work in a `MAJOR.MINOR` range, e.g. `1.0`, `1.1`, or `2.0`. The branch could be `master`, `develop`, a special release branch, a support branch, or anything else. When you want to release from that branch, whether it's a pre-release, RTM, patch, or anything else, simply create a tag with a valid [SemVer](https://semver.org) version. MinVer will apply that version to the assemblies and packages when you build your projects.
 
-Before you create the first tag, interim builds have a default version of `0.0.0-alpha.0`. If you prefer those interim builds to have a version within the current range, set the `MinVerMajorMinor` MSBuild property. For example:
+Before you create the first tag, interim builds have a default version of `0.0.0-alpha.0`. If you prefer those interim builds to have a version within the current range, specify the range with [`MinVerMajorMinor`](#options). For example:
 
 ```xml
 <PropertyGroup>
@@ -44,6 +44,18 @@ If you begin to release versions in the `1.0` range from another branch (e.g. a 
 If the current commit is not tagged, MinVer searches its ancestors for the latest tag. If the latest tag is a [pre-release](https://semver.org/#spec-item-9), MinVer will use it as-is. If the latest tag is RTM (not pre-release), MinVer will increase the patch number and add the default pre-release identifiers, e.g. `1.0.0` becomes `1.0.1-alpha.0`.
 
 You will notice that MinVer adds another number to the pre-release identifiers when the current commit is not tagged. This is the number of commits since the last tag, or if no tag was found, since the root commit. This is known as "height". For example, if the last tag is `1.0.0-beta.1`, at a height of 42 commits, the calculated version is `1.0.0-beta.1.42`.
+
+## Options
+
+Options can be specified as either MSBuild properties or environment variables.
+
+- [`MinVerBuildMetadata`](#can-i-include-build-metadata-in-the-version)
+- [`MinVerMajorMinor`](#usage)
+- [`MinVerTagPrefix`](#can-i-prefix-my-tag-names)
+- [`MinVerVerbosity`](#can-i-control-the-logging-verbosity)
+- [`MinVerVersionOverride`](#what-if-it-all-goes-wrong)
+
+Note that the option names are case-insensitive.
 
 ## FAQ
 
@@ -74,7 +86,7 @@ For example, all these versions work with MinVer:
 
 ### Can I prefix my tag names?
 
-Yes! Set the prefix in the MSBuild property `MinVerTagPrefix`.
+Yes! Specifying the prefix with [`MinVerTagPrefix`](#options).
 
 For example, if you prefix your tag names with "v", e.g. `v1.2.3`:
 
@@ -92,13 +104,13 @@ That means MinVer is compatible with [Git Flow](https://nvie.com/posts/a-success
 
 ### Can I include build metadata in the version?
 
-Yes! Specify [build metadata](https://semver.org/#spec-item-10) in the environment variable `MINVER_BUILD_METADATA`.
+Yes! Specify [build metadata](https://semver.org/#spec-item-10) with `MinVerBuildMetadata`.
 
 For example, in [`appveyor.yml`](https://www.appveyor.com/docs/appveyor-yml/):
 
 ```yaml
 environment:
-  MINVER_BUILD_METADATA: build.%APPVEYOR_BUILD_NUMBER%
+  MINVERBUILDMETADATA: build.%APPVEYOR_BUILD_NUMBER%
 ```
 
 You can also specify build metadata in a version tag. If the tag is on the current commit, its build metadata will be used. If the tag is on an older commit, its build metadata will be ignored. Build metadata in the environment variable will be appended to build metadata in the tag.
@@ -116,9 +128,9 @@ Yes! MinVer sets both the `Version` and `PackageVersion` MSBuild properties. Use
 
 ### Can I control the logging verbosity?
 
-Yes! Set the MSBuild property `MinVerVerbosity` (or environment variable `MINVER_VERBOSITY`) to `quiet`, `minimal`, `normal` (default), `detailed`, or `diagnostic`. At the `quiet` and `miminal` levels, you will see only warnings and errors. At the `detailed` and `diagnostic` levels you will see how many commits were examined, which version tags were found but ignored, which version was calculated, etc.
+Yes! Set [`MinVerVerbosity`](#options) to `quiet`, `minimal`, `normal` (default), `detailed`, or `diagnostic`. At the `quiet` and `miminal` levels, you will see only warnings and errors. At the `detailed` and `diagnostic` levels you will see how many commits were examined, which version tags were found but ignored, which version was calculated, etc.
 
-The verbosity levels reflect those supported by MSBuild and therefore `dotnet build`, `dotnet pack`, etc. In a future version of MinVer, these verbosity levels will be inherited from MSBuild and the MinVer verbosity option will be deprecated. Currently this is not possible due to technical restrictions related to [libgit2](https://github.com/libgit2/libgit2).
+The verbosity levels reflect those supported by MSBuild and therefore `dotnet build`, `dotnet pack`, etc. In a future version of MinVer, these verbosity levels will be inherited from MSBuild and `MinVerVerbosity` will be deprecated. Currently this is not possible due to technical restrictions related to [libgit2](https://github.com/libgit2/libgit2).
 
 ### What if the history diverges, and more than one tag is found?
 
@@ -148,13 +160,13 @@ This is probably because you are running on Linux, and you do not have libcurl i
 
 ### What if it all goes wrong?
 
-If MinVer calculates an unexpected version and you can't figure out why, but you need to ship your software in the meantime, set a temporary version override in the environment variable `MINVER_VERSION`.
+If MinVer calculates an unexpected version and you can't figure out why, but you need to ship your software in the meantime, you can specify a temporary override with [`MinVerVersionOverride`](#options).
 
 **Important:** This is a _complete_ override which disables _all_ versioning logic in MinVer. It must include the full version, including any required [pre-release identifiers](https://semver.org/#spec-item-9) and [build metadata](https://semver.org/#spec-item-10).
 
 For example, in the [Appveyor](https://www.appveyor.com/) UI:
 
-| Version                            | Environment variable                         |
+| Description                        | `MINVERVERSIONOVERRIDE` environment variable |
 |------------------------------------|----------------------------------------------|
 | Pre-release with build metadata    | `1.2.3-beta.4+build.%APPVEYOR_BUILD_NUMBER%` |
 | Pre-release without build metadata | `1.2.3-beta.4`                               |
@@ -162,20 +174,6 @@ For example, in the [Appveyor](https://www.appveyor.com/) UI:
 | RTM without build metadata         | `1.2.3`                                      |
 
 The same applies if you find a bug in MinVer (consider that a challenge!) and you're waiting for a fix.
-
-## Options reference
-
-| Option                                                         | Environment variable      | MSBuild property        | Recommended usage    |
-|----------------------------------------------------------------|---------------------------|-------------------------|----------------------|
-| [Build metadata](#can-i-include-build-metadata-in-the-version) | `MINVER_BUILD_METADATA`   | `MinVerBuildMetadata`   | Environment variable |
-| [Major minor range](#usage)                                    | `MINVER_MAJOR_MINOR`      | `MinVerMajorMinor`      | MSBuild property     |
-| [Tag prefix](#can-i-prefix-my-tag-names)                       | `MINVER_TAG_PREFIX`       | `MinVerTagPrefix`       | MSBuild property     |
-| [Logging verbosity](#can-i-control-the-logging-verbosity)      | `MINVER_VERBOSITY`        | `MinVerVerbosity`       | Either               |
-| [Version override](#what-if-it-all-goes-wrong)                 | `MINVER_VERSION_OVERRIDE` | `MinVerVersionOverride` | Environment variable |
-
-- Environment variables take precedence over MSBuild properties. This allows temporary overrides on the build server.
-- Environment variables specified as MSBuild properties are ignored.
-- An error occurs if any MSBuild properties are specified as environment variables.
 
 ---
 

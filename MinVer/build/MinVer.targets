@@ -17,10 +17,26 @@
       <Output TaskParameter="ConsoleOutput" ItemName="MinVerConsoleOutput" />
     </Exec>
     <ItemGroup>
-      <MinVerOutput Include="@(MinVerConsoleOutput)" Condition="'$([System.String]::new(`%(Identity)`).StartsWith(`MinVer:`))' != 'true'" />
+      <MinVerOutputVersion Include="@(MinVerConsoleOutput)" Condition="'$([System.String]::new(`%(Identity)`).StartsWith(`Version:`))' == 'true'" />
+      <MinVerOutputVersionPrefix Include="@(MinVerConsoleOutput)" Condition="'$([System.String]::new(`%(Identity)`).StartsWith(`VersionPrefix:`))' == 'true'" />
+      <MinVerOutputVersionSuffix Include="@(MinVerConsoleOutput)" Condition="'$([System.String]::new(`%(Identity)`).StartsWith(`VersionSuffix:`))' == 'true'" />
+      <MinVerOutputMajor Include="@(MinVerConsoleOutput)" Condition="'$([System.String]::new(`%(Identity)`).StartsWith(`Major:`))' == 'true'" />
+      <MinVerOutputMinor Include="@(MinVerConsoleOutput)" Condition="'$([System.String]::new(`%(Identity)`).StartsWith(`Minor:`))' == 'true'" />
+      <MinVerOutputPatch Include="@(MinVerConsoleOutput)" Condition="'$([System.String]::new(`%(Identity)`).StartsWith(`Patch:`))' == 'true'" />
     </ItemGroup>
     <PropertyGroup>
-      <MinVerVersion>@(MinVerOutput)</MinVerVersion>
+      <MinVerVersion>@(MinVerOutputVersion)</MinVerVersion>
+      <MinVerVersionPrefix>@(MinVerOutputVersionPrefix)</MinVerVersionPrefix>
+      <MinVerVersionSuffix>@(MinVerOutputVersionSuffix)</MinVerVersionSuffix>
+      <MinVerMajor>@(MinVerOutputMajor)</MinVerMajor>
+      <MinVerMinor>@(MinVerOutputMinor)</MinVerMinor>
+      <MinVerPatch>@(MinVerOutputPatch)</MinVerPatch>
+      <MinVerVersion>$([System.String]::new(`$(MinVerVersion)`).Substring(8))</MinVerVersion>
+      <MinVerVersionPrefix>$([System.String]::new(`$(MinVerVersionPrefix)`).Substring(14))</MinVerVersionPrefix>
+      <MinVerVersionSuffix>$([System.String]::new(`$(MinVerVersionSuffix)`).Substring(14))</MinVerVersionSuffix>
+      <MinVerMajor>$([System.String]::new(`$(MinVerMajor)`).Substring(6))</MinVerMajor>
+      <MinVerMinor>$([System.String]::new(`$(MinVerMinor)`).Substring(6))</MinVerMinor>
+      <MinVerPatch>$([System.String]::new(`$(MinVerPatch)`).Substring(6))</MinVerPatch>
     </PropertyGroup>
   </Target>
 
@@ -34,6 +50,8 @@
   <Target Name="MinVer" BeforeTargets="CoreCompile;GenerateNuspec" DependsOnTargets="MinVer_GetVersion" Condition="'$(UsingMicrosoftNETSdk)' == 'true' And '$(DesignTimeBuild)' != 'true'">
     <PropertyGroup>
       <Version>$(MinVerVersion)</Version>
+      <VersionPrefix>$(MinVerVersionPrefix)</VersionPrefix>
+      <VersionSuffix>$(MinVerVersionSuffix)</VersionSuffix>
       <PackageVersion>$(MinVerVersion)</PackageVersion>
     </PropertyGroup>
   </Target>

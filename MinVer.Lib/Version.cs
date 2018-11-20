@@ -9,9 +9,6 @@ namespace MinVer.Lib
     public class Version : IComparable<Version>
 #pragma warning restore CA1036 // Override methods on comparable types
     {
-        private readonly int major;
-        private readonly int minor;
-        private readonly int patch;
         private readonly List<string> preReleaseIdentifiers;
         private readonly int height;
         private readonly string buildMetadata;
@@ -22,32 +19,44 @@ namespace MinVer.Lib
 
         private Version(int major, int minor, int patch, IEnumerable<string> preReleaseIdentifiers, int height, string buildMetadata)
         {
-            this.major = major;
-            this.minor = minor;
-            this.patch = patch;
+            this.Major = major;
+            this.Minor = minor;
+            this.Patch = patch;
             this.preReleaseIdentifiers = preReleaseIdentifiers?.ToList() ?? new List<string>();
             this.height = height;
             this.buildMetadata = buildMetadata;
         }
 
+        public int Major { get; }
+
+        public int Minor { get; }
+
+        public int Patch { get; }
+
+        public string ToPrefix() =>
+            $"{this.Major}.{this.Minor}.{this.Patch}";
+
+        public string ToSuffix() =>
+            $"{string.Join(".", this.preReleaseIdentifiers)}{(this.height == 0 ? "" : $".{this.height}")}";
+
         public override string ToString() =>
-            $"{this.major}.{this.minor}.{this.patch}{(this.preReleaseIdentifiers.Count == 0 ? "" : $"-{string.Join(".", this.preReleaseIdentifiers)}")}{(this.height == 0 ? "" : $".{this.height}")}{(string.IsNullOrEmpty(this.buildMetadata) ? "" : $"+{this.buildMetadata}")}";
+            $"{this.ToPrefix()}{(this.preReleaseIdentifiers.Count == 0 ? "" : $"-{this.ToSuffix()}")}{(string.IsNullOrEmpty(this.buildMetadata) ? "" : $"+{this.buildMetadata}")}";
 
         public int CompareTo(Version other)
         {
-            var major = this.major.CompareTo(other.major);
+            var major = this.Major.CompareTo(other.Major);
             if (major != 0)
             {
                 return major;
             }
 
-            var minor = this.minor.CompareTo(other.minor);
+            var minor = this.Minor.CompareTo(other.Minor);
             if (minor != 0)
             {
                 return minor;
             }
 
-            var patch = this.patch.CompareTo(other.patch);
+            var patch = this.Patch.CompareTo(other.Patch);
             if (patch != 0)
             {
                 return patch;
@@ -99,16 +108,16 @@ namespace MinVer.Lib
 
         public Version WithHeight(int height) =>
             this.preReleaseIdentifiers.Count == 0 && height > 0
-                ? new Version(this.major, this.minor, this.patch + 1, new[] { "alpha", "0" }, height, default)
-                : new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, height, height == 0 ? this.buildMetadata : default);
+                ? new Version(this.Major, this.Minor, this.Patch + 1, new[] { "alpha", "0" }, height, default)
+                : new Version(this.Major, this.Minor, this.Patch, this.preReleaseIdentifiers, height, height == 0 ? this.buildMetadata : default);
 
         public Version AddBuildMetadata(string buildMetadata)
         {
             var separator = !string.IsNullOrEmpty(this.buildMetadata) && !string.IsNullOrEmpty(buildMetadata) ? "." : "";
-            return new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, this.height, $"{this.buildMetadata}{separator}{buildMetadata}");
+            return new Version(this.Major, this.Minor, this.Patch, this.preReleaseIdentifiers, this.height, $"{this.buildMetadata}{separator}{buildMetadata}");
         }
 
-        public bool IsBefore(int major, int minor) => this.major < major || (this.major == major && this.minor < minor);
+        public bool IsBefore(int major, int minor) => this.Major < major || (this.Major == major && this.Minor < minor);
 
         public static Version ParseOrDefault(string text, string prefix) =>
             text == default || !text.StartsWith(prefix ?? "") ? default : ParseOrDefault(text.Substring(prefix?.Length ?? 0));

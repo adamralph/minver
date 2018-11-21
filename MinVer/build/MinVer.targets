@@ -25,18 +25,12 @@
       <MinVerOutputPatch Include="@(MinVerConsoleOutput)" Condition="'$([System.String]::new(`%(Identity)`).StartsWith(`Patch:`))' == 'true'" />
     </ItemGroup>
     <PropertyGroup>
-      <MinVerVersion>@(MinVerOutputVersion)</MinVerVersion>
-      <MinVerVersionPrefix>@(MinVerOutputVersionPrefix)</MinVerVersionPrefix>
-      <MinVerVersionSuffix>@(MinVerOutputVersionSuffix)</MinVerVersionSuffix>
-      <MinVerMajor>@(MinVerOutputMajor)</MinVerMajor>
-      <MinVerMinor>@(MinVerOutputMinor)</MinVerMinor>
-      <MinVerPatch>@(MinVerOutputPatch)</MinVerPatch>
-      <MinVerVersion>$([System.String]::new(`$(MinVerVersion)`).Substring(8))</MinVerVersion>
-      <MinVerVersionPrefix>$([System.String]::new(`$(MinVerVersionPrefix)`).Substring(14))</MinVerVersionPrefix>
-      <MinVerVersionSuffix>$([System.String]::new(`$(MinVerVersionSuffix)`).Substring(14))</MinVerVersionSuffix>
-      <MinVerMajor>$([System.String]::new(`$(MinVerMajor)`).Substring(6))</MinVerMajor>
-      <MinVerMinor>$([System.String]::new(`$(MinVerMinor)`).Substring(6))</MinVerMinor>
-      <MinVerPatch>$([System.String]::new(`$(MinVerPatch)`).Substring(6))</MinVerPatch>
+      <MinVerVersion>@(MinVerOutputVersion->Substring(8))</MinVerVersion>
+      <MinVerVersionPrefix>@(MinVerOutputVersionPrefix->Substring(14))</MinVerVersionPrefix>
+      <MinVerVersionSuffix>@(MinVerOutputVersionSuffix->Substring(14))</MinVerVersionSuffix>
+      <MinVerMajor>@(MinVerOutputMajor->Substring(6))</MinVerMajor>
+      <MinVerMinor>@(MinVerOutputMinor->Substring(6))</MinVerMinor>
+      <MinVerPatch>@(MinVerOutputPatch->Substring(6))</MinVerPatch>
     </PropertyGroup>
   </Target>
 

@@ -31,7 +31,7 @@ Your project will be versioned according to the latest tag found in the commit h
 
 When you want to release a version of your software, whether it's a pre-release, RTM, patch, or anything else, simply create a tag with a name which is a valid [SemVer 2.0](https://semver.org/spec/v2.0.0.html) version and build your projects. MinVer will apply the version to the assemblies and packages. (If you like to prefix your tag names, see the [FAQ](#can-i-prefix-my-tag-names).)
 
-When the current commit is not tagged, MinVer searches the commit history for the latest tag. If the latest tag found is a [pre-release](https://semver.org/spec/v2.0.0.html#spec-item-9), MinVer will use it as-is. If the latest tag found is RTM (not pre-release), MinVer will increase the patch number and add the default pre-release identifiers, e.g. `1.0.0` becomes `1.0.1-alpha.0`. If no tag is found, the default version `0.0.0-alpha.0` is used.
+When the current commit is not tagged, MinVer searches the commit history for the latest tag. If the latest tag found is a [pre-release](https://semver.org/spec/v2.0.0.html#spec-item-9), MinVer will use it as-is. If the latest tag found is RTM (not pre-release), MinVer will increase the patch number and add default pre-release identifiers, e.g. `1.0.0` becomes `1.0.1-alpha.0`. If no tag is found, the default version `0.0.0-alpha.0` is used.
 
 You will notice that MinVer adds another number to the pre-release identifiers when the current commit is not tagged. This is the number of commits since the latest tag, or if no tag was found, since the root commit. This is known as "height". For example, if the latest tag found is `1.0.0-beta.1`, at a height of 42 commits, the calculated version is `1.0.0-beta.1.42`.
 
@@ -40,7 +40,7 @@ You will notice that MinVer adds another number to the pre-release identifiers w
 Options can be specified as either MSBuild properties or environment variables.
 
 - [`MinVerBuildMetadata`](#can-i-include-build-metadata-in-the-version)
-- [`MinVerMajorMinor`](#how-can-i-bump-the-major-or-minor-version)
+- [`MinVerMajorMinor`](#can-i-bump-the-major-or-minor-version)
 - [`MinVerTagPrefix`](#can-i-prefix-my-tag-names)
 - [`MinVerVerbosity`](#can-i-control-the-logging-verbosity)
 - [`MinVerVersionOverride`](#what-if-it-all-goes-wrong)
@@ -51,10 +51,10 @@ Note that the option names are case-insensitive.
 
 _(With TL;DR answers inline.)_
 
-- [How can I bump the major or minor version?](#how-can-i-bump-the-major-or-minor-version)
+- [Can I bump the major or minor version?](#can-i-bump-the-major-or-minor-version) _(yes)_
 - [Can I use my own pre-release versioning scheme?](#can-i-use-my-own-pre-release-versioning-scheme) _(yes)_
 - [Can I prefix my tag names?](#can-i-prefix-my-tag-names) _(yes)_
-- [Does MinVer work with my chosen branching strategy?](#does-minver-work-with-my-chosen-branching-strategy) _(yes)_
+- [Can I use my own branching strategy?](#can-i-use-my-own-branching-strategy) _(yes)_
 - [Can I include build metadata in the version?](#can-i-include-build-metadata-in-the-version) _(yes)_
 - [Can I use the version calculated by MinVer for other purposes?](#can-i-use-the-version-calculated-by-minver-for-other-purposes) _(yes)_
 - [Can I control the logging verbosity?](#can-i-control-the-logging-verbosity) _(yes)_
@@ -65,9 +65,9 @@ _(With TL;DR answers inline.)_
 - [Why does MinVer fail with `System.TypeInitializationException`?](#why-does-minver-fail-with-systemtypeinitializationexception) _(easy to fix)_
 - [What if it all goes wrong?](#what-if-it-all-goes-wrong) _(don't panic!)_
 
-### How can I bump the major or minor version?
+### Can I bump the major or minor version?
 
-You probably want to do this because, at a point in time, on a given branch, you are working on a `MAJOR.MINOR` range, e.g. `1.0`, `1.1`, or `2.0`. The branch could be `master`, `develop`, a special release branch, a support branch, or anything else.
+Yes! You probably want to do this because at a point in time, on a given branch, you are working on a `MAJOR.MINOR` range, e.g. `1.0`, `1.1`, or `2.0`. The branch could be `master`, `develop`, a special release branch, a support branch, or anything else.
 
 Before you create the first tag on that branch, interim builds will use the latest tag found in the commit history, which may not match the `MAJOR.MINOR` range which the current branch represents. Or if no tag is found in the commit history, interm builds will have the default version `0.0.0-alpha.0`. If you prefer those interim builds to have a version within the current range, specify the range with [`MinVerMajorMinor`](#options). For example:
 
@@ -98,7 +98,7 @@ For example, all these versions work with MinVer:
 
 ### Can I prefix my tag names?
 
-Yes! Specifying the prefix with [`MinVerTagPrefix`](#options).
+Yes! Specify the prefix with [`MinVerTagPrefix`](#options).
 
 For example, if you prefix your tag names with "v", e.g. `v1.2.3`:
 
@@ -108,7 +108,7 @@ For example, if you prefix your tag names with "v", e.g. `v1.2.3`:
 </PropertyGroup>
 ```
 
-### Does MinVer work with my chosen branching strategy?
+### Can I use my own branching strategy?
 
 Yes! MinVer doesn't care about branches. It's all about the tags!
 
@@ -125,7 +125,7 @@ environment:
   MINVERBUILDMETADATA: build.%APPVEYOR_BUILD_NUMBER%
 ```
 
-You can also specify build metadata in a version tag. If the tag is on the current commit, its build metadata will be used. If the tag is on an older commit, its build metadata will be ignored. Build metadata in the environment variable will be appended to build metadata in the tag.
+You can also specify build metadata in a version tag. If the tag is on the current commit, its build metadata will be used. If the tag is on an older commit, its build metadata will be ignored. Build metadata in `MinVerBuildMetadata` will be appended to build metadata in the tag.
 
 ### Can I use the version calculated by MinVer for other purposes?
 

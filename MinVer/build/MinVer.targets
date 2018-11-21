@@ -5,7 +5,7 @@
     <GetPackageVersionDependsOn>$(GetPackageVersionDependsOn);MinVer</GetPackageVersionDependsOn>
   </PropertyGroup>
 
-  <Target Name="MinVer_GetVersion" Condition="'$(MinVerVersionOverride)' == ''">
+  <Target Name="MinVer_GetVersion">
     <ItemGroup>
       <MinVerInputs Include="--build-metadata &quot;$(MinVerBuildMetadata)&quot;" />
       <MinVerInputs Include="--major-minor &quot;$(MinVerMajorMinor)&quot;" />
@@ -17,24 +17,25 @@
       <Output TaskParameter="ConsoleOutput" ItemName="MinVerConsoleOutput" />
     </Exec>
     <ItemGroup>
-      <MinVerOutput Include="@(MinVerConsoleOutput)" Condition="'$([System.String]::new(`%(Identity)`).StartsWith(`MinVer:`))' != 'true'" />
+      <MinVerOutputVersion Include="@(MinVerConsoleOutput)" Condition="'$([System.String]::new(`%(Identity)`).StartsWith(`Version:`))' == 'true'" />
+      <MinVerOutputMajor Include="@(MinVerConsoleOutput)" Condition="'$([System.String]::new(`%(Identity)`).StartsWith(`Major:`))' == 'true'" />
+      <MinVerOutputMinor Include="@(MinVerConsoleOutput)" Condition="'$([System.String]::new(`%(Identity)`).StartsWith(`Minor:`))' == 'true'" />
+      <MinVerOutputPatch Include="@(MinVerConsoleOutput)" Condition="'$([System.String]::new(`%(Identity)`).StartsWith(`Patch:`))' == 'true'" />
     </ItemGroup>
     <PropertyGroup>
-      <MinVerVersion>@(MinVerOutput)</MinVerVersion>
-    </PropertyGroup>
-  </Target>
-
-  <Target Name="MinVer_OverrideVersion" BeforeTargets="MinVer_GetVersion" Condition="'$(MinVerVersionOverride)' != ''">
-    <Message Text="MinVer: Using version override $(MinVerVersionOverride)." Importance="high" />
-    <PropertyGroup>
-      <MinVerVersion>$(MinVerVersionOverride)</MinVerVersion>
+      <MinVerVersion>@(MinVerOutputVersion->Substring(8))</MinVerVersion>
+      <MinVerMajor>@(MinVerOutputMajor->Substring(6))</MinVerMajor>
+      <MinVerMinor>@(MinVerOutputMinor->Substring(6))</MinVerMinor>
+      <MinVerPatch>@(MinVerOutputPatch->Substring(6))</MinVerPatch>
     </PropertyGroup>
   </Target>
 
   <Target Name="MinVer" BeforeTargets="CoreCompile;GenerateNuspec" DependsOnTargets="MinVer_GetVersion" Condition="'$(UsingMicrosoftNETSdk)' == 'true' And '$(DesignTimeBuild)' != 'true'">
     <PropertyGroup>
-      <Version>$(MinVerVersion)</Version>
+      <AssemblyVersion>$(MinVerMajor).0.0.0</AssemblyVersion>
+      <FileVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch).0</FileVersion>
       <PackageVersion>$(MinVerVersion)</PackageVersion>
+      <Version>$(MinVerVersion)</Version>
     </PropertyGroup>
   </Target>
 

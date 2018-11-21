@@ -32,7 +32,7 @@ namespace MinVer
 
                 var version = GetVersion(path, tagPrefix.Value(), range, buildMetadata.Value(), level);
 
-                Console.Out.WriteLine(version);
+                Console.Out.WriteVersion(version);
 
                 return 0;
             });

@@ -29,7 +29,7 @@ Your project will be versioned according to the latest tag found in the commit h
 
 ## Usage
 
-When you want to release a version of your software, whether it's a pre-release, RTM, patch, or anything else, simply create a tag with a name which is a valid [SemVer 2.0](https://semver.org/spec/v2.0.0.html) version and build your projects. MinVer will apply the version to the assemblies and packages. (If you like to prefix your tag names, see the [FAQ](#can-i-prefix-my-tag-names).)
+When you want to release a version of your software, whether it's a pre-release, RTM, patch, or anything else, simply create a tag with a name which is a valid [SemVer 2.0](https://semver.org/spec/v2.0.0.html) version and build your projects. MinVer will apply the version to the assemblies and packages. (If you like to prefix your tag names, see the [FAQ](#can-i-prefix-my-tag-names).) Note that MinVer sets `AssemblyVersion` to `{MAJOR}.0.0.0`, but [this behaviour can be overridden](#can-i-use-the-version-calculated-by-minver-for-other-purposes).
 
 When the current commit is not tagged, MinVer searches the commit history for the latest tag. If the latest tag found is a [pre-release](https://semver.org/spec/v2.0.0.html#spec-item-9), MinVer will use it as-is. If the latest tag found is RTM (not pre-release), MinVer will increase the patch number and add default pre-release identifiers, e.g. `1.0.0` becomes `1.0.1-alpha.0`. If no tag is found, the default version `0.0.0-alpha.0` is used.
 
@@ -43,7 +43,6 @@ Options can be specified as either MSBuild properties or environment variables.
 - [`MinVerMajorMinor`](#can-i-bump-the-major-or-minor-version)
 - [`MinVerTagPrefix`](#can-i-prefix-my-tag-names)
 - [`MinVerVerbosity`](#can-i-control-the-logging-verbosity)
-- [`MinVerVersionOverride`](#what-if-it-all-goes-wrong)
 
 Note that the option names are case-insensitive.
 
@@ -63,7 +62,6 @@ _(With TL;DR answers inline.)_
 - [What if the history diverges, and then converges again, before the latest tag (or root commit) is found?](#what-if-the-history-diverges-and-then-converges-again-before-the-latest-tag-or-root-commit-is-found) _(nothing bad)_
 - [Why does MinVer fail with `LibGit2Sharp.NotFoundException`?](#why-does-minver-fail-with-libgit2sharpnotfoundexception) _(easy to fix)_
 - [Why does MinVer fail with `System.TypeInitializationException`?](#why-does-minver-fail-with-systemtypeinitializationexception) _(easy to fix)_
-- [What if it all goes wrong?](#what-if-it-all-goes-wrong) _(don't panic!)_
 
 ### Can I bump the major or minor version?
 
@@ -129,12 +127,25 @@ You can also specify build metadata in a version tag. If the tag is on the curre
 
 ### Can I use the version calculated by MinVer for other purposes?
 
-Yes! MinVer sets both the `Version` and `PackageVersion` MSBuild properties. Use them in a target which runs after MinVer. E.g.
+Yes! MinVer sets the `Version`, `PackageVersion`, `AssemblyVersion`, `FileVersion`, `MinVerMajor`, `MinVerMinor`, and `MinVerPatch` MSBuild properties. You can use them, or override their values, in a target which runs after MinVer.
+
+For example, MinVer sets `AssemblyVersion` to `{MAJOR}.0.0.0`, as recommended in the official [open source library guidance](https://docs.microsoft.com/en-ca/dotnet/standard/library-guidance/versioning#assembly-version). For projects which do not create NuGet packages, you may want to override this behaviour and populate [all four parts](https://docs.microsoft.com/en-us/dotnet/framework/app-domains/assembly-versioning#assembly-version-number) of `AssemblyVersion`. E.g. using Appveyor:
 
 ```xml
 <Target Name="MyTarget" AfterTargets="MinVer">
-  <Message Text="Version=$(Version)" Importance="high" />
-  <Message Text="PackageVersion=$(PackageVersion)" Importance="high" />
+  <PropertyGroup>
+    <AssemblyVersion>$(MinVerMajor).$(MinVerMinor).$(APPVEYOR_BUILD_NUMBER).$(MinVerPatch)</AssemblyVersion>
+  </PropertyGroup>
+</Target>
+```
+
+Or, for example, for projects which _do_ create NuGet packages, you may want to adjust the assembly file version as recommended in the official [open source library guidance](https://docs.microsoft.com/en-ca/dotnet/standard/library-guidance/versioning#assembly-file-version). E.g. when using Appveyor:
+
+```xml
+<Target Name="MyTarget" AfterTargets="MinVer">
+  <PropertyGroup>
+    <FileVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch).$(APPVEYOR_BUILD_NUMBER)</FileVersion>
+  </PropertyGroup>
 </Target>
 ```
 
@@ -173,23 +184,6 @@ You may see an exception of this form:
 > Unhandled Exception: System.TypeInitializationException: The type initializer for 'LibGit2Sharp.Core.NativeMethods' threw an exception. ---> System.DllNotFoundException: Unable to load shared library 'git2-8e0b172' or one of its dependencies.
 
 This is probably because you are running on Linux, and you do not have libcurl installed. See the [prerequisites](#prerequisites).
-
-### What if it all goes wrong?
-
-If MinVer calculates an unexpected version and you can't figure out why, but you need to ship your software in the meantime, you can specify a temporary override with [`MinVerVersionOverride`](#options).
-
-**Important:** This is a _complete_ override which disables _all_ versioning logic in MinVer. It must include the full version, including any required [pre-release identifiers](https://semver.org/spec/v2.0.0.html#spec-item-9) and [build metadata](https://semver.org/spec/v2.0.0.html#spec-item-10).
-
-For example, in the [Appveyor](https://www.appveyor.com/) UI, under _Settings → Environment → Environment variables_, add an environment variable named `MINVERVERSIONOVERRIDE`:
-
-| E.g. to release:                                               | Set the value to:                            |
-|----------------------------------------------------------------|----------------------------------------------|
-| ...the fourth beta of version 1.2.3, with build metadata       | `1.2.3-beta.4+build.%APPVEYOR_BUILD_NUMBER%` |
-| ...the fourth beta of version 1.2.3, without build metadata    | `1.2.3-beta.4`                               |
-| ...the stable(/final/RTM) version 1.2.3 with build metadata    | `1.2.3+build.%APPVEYOR_BUILD_NUMBER%`        |
-| ...the stable(/final/RTM) version 1.2.3 without build metadata | `1.2.3`                                      |
-
-The same applies if you find a bug in MinVer (consider that a challenge!) and you're waiting for a fix.
 
 ---
 

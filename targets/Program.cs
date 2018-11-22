@@ -94,20 +94,6 @@ internal class Program
                     throw new Exception($"'{package}' does not contain '{expected}'.");
                 }
 
-                Environment.SetEnvironmentVariable("MinVerVersionOverride", "3.0.0-beta.2+build.52", EnvironmentVariableTarget.Process);
-
-                DeletePackages();
-
-                await RunAsync("dotnet", "build --no-restore", path);
-                await RunAsync("dotnet", "pack --no-build", path);
-
-                package = Directory.EnumerateFiles(path, "*.nupkg", new EnumerationOptions { RecurseSubdirectories = true }).First();
-                expected = "3.0.0-beta.2.nupkg";
-                if (!package.Contains(expected))
-                {
-                    throw new Exception($"'{package}' does not contain '{expected}'.");
-                }
-
                 void DeletePackages()
                 {
                     foreach (var file in Directory.EnumerateFiles(path, "*.nupkg", new EnumerationOptions { RecurseSubdirectories = true }))

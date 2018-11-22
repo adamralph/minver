@@ -5,9 +5,10 @@ namespace MinVerTests
     using MinVerTests.Infra;
     using Xbehave;
     using Xunit;
+
     using static MinVerTests.Infra.Git;
     using static MinVerTests.Infra.FileSystem;
-    using static SimpleExec.Command;
+
     using Version = MinVer.Lib.Version;
 
     public static class TagPrefixes
@@ -17,16 +18,16 @@ namespace MinVerTests
         [Example("2.3.4", "", "2.3.4")]
         [Example("v3.4.5", "v", "3.4.5")]
         [Example("version5.6.7", "version", "5.6.7")]
-        public static void TagPrefix(string tag, string prefix, string expectedVersion, string path, Version actualVersion)
+        public static void TagPrefix(string tag, string prefix, string expectedVersion, string path, Repository repo, Version actualVersion)
         {
             $"Given a git repository with a commit in '{path = GetScenarioDirectory($"tag-prefixes-{tag}")}'"
-                .x(async () => await EnsureRepositoryWithACommit(path));
+                .x(c => repo = EnsureEmptyRepositoryAndCommit(path).Using(c));
 
             $"And the commit is tagged '{tag}'"
-                .x(async () => await RunAsync("git", $"tag {tag}", path));
+                .x(() => repo.ApplyTag(tag));
 
             $"When the version is determined using the tag prefix '{prefix}'"
-                .x(() => actualVersion = Versioner.GetVersion(new Repository(path), prefix, default, default, new TestLogger()));
+                .x(() => actualVersion = Versioner.GetVersion(repo, prefix, default, default, new TestLogger()));
 
             $"Then the version is '{expectedVersion}'"
                 .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));

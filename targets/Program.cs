@@ -2,8 +2,11 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using LibGit2Sharp;
 using MinVerTests.Infra;
+
 using static Bullseye.Targets;
+using static MinVerTests.Infra.Git;
 using static SimpleExec.Command;
 
 internal class Program
@@ -42,56 +45,58 @@ internal class Program
                 var version = Path.GetFileNameWithoutExtension(Directory.EnumerateFiles(source, "*.nupkg").First()).Split("MinVer.", 2)[1];
 
                 var path = FileSystem.GetScenarioDirectory("package");
-                await Git.EnsureRepositoryWithACommit(path);
 
-                await RunAsync("dotnet", "new classlib", path);
-                await RunAsync("dotnet", $"add package MinVer --version {version} --source {source} --package-directory packages", path);
-                await RunAsync("dotnet", $"restore --source {source} --packages packages", path);
-
-                await RunAsync("git", "tag v.1.2.3+foo", path);
-
-                Environment.SetEnvironmentVariable("MinVerBuildMetadata", "build.1", EnvironmentVariableTarget.Process);
-
-                DeletePackages();
-
-                await RunAsync("dotnet", "build --no-restore", path);
-                await RunAsync("dotnet", "pack --no-build", path);
-
-                var package = Directory.EnumerateFiles(path, "*.nupkg", new EnumerationOptions { RecurseSubdirectories = true }).First();
-                var expected = "1.2.3.nupkg";
-                if (!package.Contains(expected))
+                using (var repo = EnsureEmptyRepositoryAndCommit(path))
                 {
-                    throw new Exception($"'{package}' does not contain '{expected}'.");
-                }
+                    await RunAsync("dotnet", "new classlib", path);
+                    await RunAsync("dotnet", $"add package MinVer --version {version} --source {source} --package-directory packages", path);
+                    await RunAsync("dotnet", $"restore --source {source} --packages packages", path);
 
-                await RunAsync("git", "commit --allow-empty -m '.'", path);
+                    repo.ApplyTag("v.1.2.3+foo");
 
-                DeletePackages();
+                    Environment.SetEnvironmentVariable("MinVerBuildMetadata", "build.1", EnvironmentVariableTarget.Process);
 
-                await RunAsync("dotnet", "build --no-restore", path);
-                await RunAsync("dotnet", "pack --no-build", path);
+                    DeletePackages();
 
-                package = Directory.EnumerateFiles(path, "*.nupkg", new EnumerationOptions { RecurseSubdirectories = true }).First();
-                expected = "1.2.4-alpha.0.1.nupkg";
-                if (!package.Contains(expected))
-                {
-                    throw new Exception($"'{package}' does not contain '{expected}'.");
-                }
+                    await RunAsync("dotnet", "build --no-restore", path);
+                    await RunAsync("dotnet", "pack --no-build", path);
 
-                Environment.SetEnvironmentVariable("MinVerBuildMetadata", "build.42", EnvironmentVariableTarget.Process);
-                Environment.SetEnvironmentVariable("MinVerVerbosity", "detailed", EnvironmentVariableTarget.Process);
-                Environment.SetEnvironmentVariable("MinVerMajorMinor", "2.0", EnvironmentVariableTarget.Process);
+                    var package = Directory.EnumerateFiles(path, "*.nupkg", new EnumerationOptions { RecurseSubdirectories = true }).First();
+                    var expected = "1.2.3.nupkg";
+                    if (!package.Contains(expected))
+                    {
+                        throw new Exception($"'{package}' does not contain '{expected}'.");
+                    }
 
-                DeletePackages();
+                    Commit(path);
 
-                await RunAsync("dotnet", "build --no-restore", path);
-                await RunAsync("dotnet", "pack --no-build", path);
+                    DeletePackages();
 
-                package = Directory.EnumerateFiles(path, "*.nupkg", new EnumerationOptions { RecurseSubdirectories = true }).First();
-                expected = "2.0.0-alpha.0.1.nupkg";
-                if (!package.Contains(expected))
-                {
-                    throw new Exception($"'{package}' does not contain '{expected}'.");
+                    await RunAsync("dotnet", "build --no-restore", path);
+                    await RunAsync("dotnet", "pack --no-build", path);
+
+                    package = Directory.EnumerateFiles(path, "*.nupkg", new EnumerationOptions { RecurseSubdirectories = true }).First();
+                    expected = "1.2.4-alpha.0.1.nupkg";
+                    if (!package.Contains(expected))
+                    {
+                        throw new Exception($"'{package}' does not contain '{expected}'.");
+                    }
+
+                    Environment.SetEnvironmentVariable("MinVerBuildMetadata", "build.42", EnvironmentVariableTarget.Process);
+                    Environment.SetEnvironmentVariable("MinVerVerbosity", "detailed", EnvironmentVariableTarget.Process);
+                    Environment.SetEnvironmentVariable("MinVerMajorMinor", "2.0", EnvironmentVariableTarget.Process);
+
+                    DeletePackages();
+
+                    await RunAsync("dotnet", "build --no-restore", path);
+                    await RunAsync("dotnet", "pack --no-build", path);
+
+                    package = Directory.EnumerateFiles(path, "*.nupkg", new EnumerationOptions { RecurseSubdirectories = true }).First();
+                    expected = "2.0.0-alpha.0.1.nupkg";
+                    if (!package.Contains(expected))
+                    {
+                        throw new Exception($"'{package}' does not contain '{expected}'.");
+                    }
                 }
 
                 void DeletePackages()

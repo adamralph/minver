@@ -5,9 +5,10 @@ namespace MinVerTests
     using MinVerTests.Infra;
     using Xbehave;
     using Xunit;
+
     using static MinVerTests.Infra.FileSystem;
     using static MinVerTests.Infra.Git;
-    using static SimpleExec.Command;
+
     using Version = MinVer.Lib.Version;
 
     public static class BuildMetadata
@@ -19,16 +20,16 @@ namespace MinVerTests
         [Example("1.2.3-pre+a", default, "1.2.3-pre+a")]
         [Example("1.2.3-pre", "b", "1.2.3-pre+b")]
         [Example("1.2.3-pre+a", "b", "1.2.3-pre+a.b")]
-        public static void CurrentTag(string tag, string buildMetadata, string expectedVersion, string path, Version actualVersion)
+        public static void CurrentTag(string tag, string buildMetadata, string expectedVersion, string path, Repository repo, Version actualVersion)
         {
             $"Given a git repository with a commit in '{path = GetScenarioDirectory($"build-metadata-current-tag-{tag}-{buildMetadata}")}'"
-                .x(async () => await EnsureRepositoryWithACommit(path));
+                .x(c => repo = EnsureEmptyRepositoryAndCommit(path).Using(c));
 
             $"And the commit is tagged '{tag}'"
-                .x(async () => await RunAsync("git", $"tag {tag}", path));
+                .x(() => repo.ApplyTag(tag));
 
             $"When the version is determined using build metadata '{buildMetadata}'"
-                .x(() => actualVersion = Versioner.GetVersion(new Repository(path), default, default, buildMetadata, new TestLogger()));
+                .x(() => actualVersion = Versioner.GetVersion(repo, default, default, buildMetadata, new TestLogger()));
 
             $"Then the version is '{expectedVersion}'"
                 .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));
@@ -41,19 +42,19 @@ namespace MinVerTests
         [Example("1.2.3-pre+a", default, "1.2.3-pre.1")]
         [Example("1.2.3-pre", "b", "1.2.3-pre.1+b")]
         [Example("1.2.3-pre+a", "b", "1.2.3-pre.1+b")]
-        public static void PreviousTag(string tag, string buildMetadata, string expectedVersion, string path, Version actualVersion)
+        public static void PreviousTag(string tag, string buildMetadata, string expectedVersion, string path, Repository repo, Version actualVersion)
         {
-            $"Given a git repository with a commit in '{path = GetScenarioDirectory($"build-metadata-current-tag-{tag}-{buildMetadata}")}'"
-                .x(async () => await EnsureRepositoryWithACommit(path));
+            $"Given a git repository with a commit in '{path = GetScenarioDirectory($"build-metadata-previous-tag-{tag}-{buildMetadata}")}'"
+                .x(c => repo = EnsureEmptyRepositoryAndCommit(path).Using(c));
 
             $"And the commit is tagged '{tag}'"
-                .x(async () => await RunAsync("git", $"tag {tag}", path));
+                .x(() => repo.ApplyTag(tag));
 
             $"And another commit"
-                .x(async () => await Commit(path));
+                .x(() => Commit(path));
 
             $"When the version is determined using build metadata '{buildMetadata}'"
-                .x(() => actualVersion = Versioner.GetVersion(new Repository(path), default, default, buildMetadata, new TestLogger()));
+                .x(() => actualVersion = Versioner.GetVersion(repo, default, default, buildMetadata, new TestLogger()));
 
             $"Then the version is '{expectedVersion}'"
                 .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));

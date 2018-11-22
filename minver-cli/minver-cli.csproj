@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <Description>A minimalistic command line tool for versioning any Git repository using tags.</Description>
+    <NoWarn>$(NoWarn);NU5105</NoWarn>
     <OutputType>Exe</OutputType>
     <PackAsTool>true</PackAsTool>
     <PackageIconUrl>https://raw.githubusercontent.com/adamralph/minver/master/assets/minver.png</PackageIconUrl>

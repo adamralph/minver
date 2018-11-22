@@ -25,8 +25,11 @@ namespace MinVerTests.Infra
 
             Repository.Init(path);
 
-            var repo = new Repository(path);
+            return new Repository(path).PrepareForCommits();
+        }
 
+        public static Repository PrepareForCommits(this Repository repo)
+        {
             repo.Config.Set("user.email", "johndoe @tempuri.org");
             repo.Config.Set("user.name", "John Doe");
             repo.Config.Set("commit.gpgsign", "false");

@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <NoWarn>$(NoWarn);CA1716</NoWarn>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 

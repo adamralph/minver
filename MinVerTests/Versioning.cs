@@ -9,6 +9,7 @@ namespace MinVerTests
     using MinVerTests.Infra;
     using Xbehave;
     using Xunit;
+
     using static MinVerTests.Infra.FileSystem;
     using static MinVerTests.Infra.Git;
     using static SimpleExec.Command;
@@ -69,12 +70,12 @@ git tag 1.1.0
 
         [Scenario]
         [Example("general")]
-        public static void RepoWithHistory(string name, string path)
+        public static void RepoWithHistory(string name, string path, Repository repo)
         {
             $"Given a git repository in '{path = GetScenarioDirectory("versioning-repo-with-history-" + name)}' with a history of branches and/or tags"
-                .x(async () =>
+                .x(async c =>
                 {
-                    await EnsureRepositoryWithACommit(path);
+                    repo = EnsureEmptyRepositoryAndCommit(path).Using(c);
 
                     foreach (var command in historicalCommands[name].Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
                     {
@@ -85,69 +86,49 @@ git tag 1.1.0
                 });
 
             "When the version is determined for every commit"
-                .x(() =>
+                .x(c =>
                 {
                     var versionCounts = new Dictionary<string, int>();
-
-                    using (var repo = new Repository(path))
+                    foreach (var commit in repo.Commits)
                     {
-                        foreach (var commit in repo.Commits)
+                        Commands.Checkout(repo, commit);
+
+                        var version = Versioner.GetVersion(new Repository(path).Using(c), default, default, default, new TestLogger());
+                        var versionString = version.ToString();
+                        var tagName = $"v/{versionString}";
+
+                        if (!repo.Tags.Any(tag => tag.Target.Sha == commit.Sha && tag.FriendlyName == tagName))
                         {
-                            Commands.Checkout(repo, commit);
+                            versionCounts.TryGetValue(versionString, out var oldVersionCount);
+                            var versionCount = oldVersionCount + 1;
+                            versionCounts[versionString] = versionCount;
 
-                            var version = Versioner.GetVersion(new Repository(path), default, default, default, new TestLogger());
-                            var versionString = version.ToString();
-                            var tagName = $"v/{versionString}";
+                            tagName = versionCount > 1
+                                ? $"v({versionCount})/{versionString}"
+                                : tagName;
 
-                            if (!repo.Tags.Any(tag => tag.Target.Sha == commit.Sha && tag.FriendlyName == tagName))
-                            {
-                                versionCounts.TryGetValue(versionString, out var oldVersionCount);
-                                var versionCount = oldVersionCount + 1;
-                                versionCounts[versionString] = versionCount;
-
-                                tagName = versionCount > 1
-                                    ? $"v({versionCount})/{versionString}"
-                                    : tagName;
-
-                                repo.Tags.Add(tagName, commit);
-                            }
+                            repo.Tags.Add(tagName, commit);
                         }
-
-                        Commands.Checkout(repo, repo.Branches["master"]);
                     }
+
+                    Commands.Checkout(repo, repo.Branches["master"]);
                 });
 
             "Then the versions are as expected"
-                .x(async () => await AssertFile.Contains($"../../../{name}.txt", await ReadAsync("git", "log --graph --pretty=format:'%d'", path)));
+                .x(async () => await AssertFile.Contains($"../../../{name}.txt", await GetGraph(path)));
         }
 
         [Scenario]
-        public static void EmptyRepo(string path, MinVer.Lib.Version version)
+        public static void EmptyRepo(string path, Repository repo, MinVer.Lib.Version version)
         {
             $"Given an empty git repository in '{path = GetScenarioDirectory("versioning-empty-repo")}'"
-                .x(async () => await EnsureEmptyRepository(path));
+                .x(c => repo = EnsureEmptyRepository(path).Using(c));
 
             "When the version is determined"
-                .x(() => version = Versioner.GetVersion(new Repository(path), default, default, default, new TestLogger()));
+                .x(() => version = Versioner.GetVersion(repo, default, default, default, new TestLogger()));
 
             "Then the version is 0.0.0-alpha.0"
                 .x(() => Assert.Equal("0.0.0-alpha.0", version.ToString()));
-        }
-
-        [Scenario]
-        public static void NoDirectory(string path, Exception ex)
-        {
-            "Given a non-existent directory"
-                .x(() => path = Guid.NewGuid().ToString());
-
-            "When the version is determined"
-                .x(() => ex = Record.Exception(() => Versioner.GetVersion(new Repository(path), default, default, default, new TestLogger())));
-
-            "Then an exception is thrown"
-                .x(() => Assert.NotNull(ex));
-
-            "And the exception message contains the path"
-                .x(() => Assert.Contains(path, ex.Message));
         }
     }
 }

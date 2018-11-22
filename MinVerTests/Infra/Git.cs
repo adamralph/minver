@@ -1,28 +1,39 @@
 namespace MinVerTests.Infra
 {
     using System.Threading.Tasks;
+    using LibGit2Sharp;
+
     using static MinVerTests.Infra.FileSystem;
     using static SimpleExec.Command;
 
     public static class Git
     {
-        public static async Task EnsureRepositoryWithACommit(string path)
+        public static Repository EnsureEmptyRepositoryAndCommit(string path)
         {
-            await EnsureEmptyRepository(path);
+            var repo = EnsureEmptyRepository(path);
 
-            await RunAsync("git", "config user.email 'johndoe @tempuri.org'", path);
-            await RunAsync("git", "config user.name 'John Doe'", path);
-            await RunAsync("git", "config commit.gpgsign false", path);
-            await Commit(path);
+            Commit(path);
+
+            return repo;
         }
 
-        public static Task Commit(string path) => RunAsync("git", "commit --allow-empty -m '.'", path);
+        public static void Commit(string path) => Run("git", "commit -m '.' --allow-empty", path);
 
-        public static async Task EnsureEmptyRepository(string path)
+        public static Repository EnsureEmptyRepository(string path)
         {
             EnsureEmptyDirectory(path);
 
-            await RunAsync("git", "init", path);
+            Repository.Init(path);
+
+            var repo = new Repository(path);
+
+            repo.Config.Set("user.email", "johndoe @tempuri.org");
+            repo.Config.Set("user.name", "John Doe");
+            repo.Config.Set("commit.gpgsign", "false");
+
+            return repo;
         }
+
+        public static Task<string> GetGraph(string path) => ReadAsync("git", "log --graph --pretty=format:'%d'", path);
     }
 }

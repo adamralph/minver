@@ -5,7 +5,7 @@
     <GetPackageVersionDependsOn>$(GetPackageVersionDependsOn);MinVer</GetPackageVersionDependsOn>
   </PropertyGroup>
 
-  <Target Name="MinVer_GetVersion">
+  <Target Name="MinVer" BeforeTargets="CoreCompile;GenerateNuspec" Condition="'$(UsingMicrosoftNETSdk)' == 'true' And '$(DesignTimeBuild)' != 'true'">
     <ItemGroup>
       <MinVerInputs Include="--build-metadata &quot;$(MinVerBuildMetadata)&quot;" />
       <MinVerInputs Include="--major-minor &quot;$(MinVerMajorMinor)&quot;" />
@@ -24,11 +24,6 @@
       <MinVerMajor>$(MinVerVersion.Split(`.`)[0])</MinVerMajor>
       <MinVerMinor>$(MinVerVersion.Split(`.`)[1])</MinVerMinor>
       <MinVerPatch>$(MinVerVersion.Split(`.`)[2].Split(`-`)[0].Split(`+`)[0])</MinVerPatch>
-    </PropertyGroup>
-  </Target>
-
-  <Target Name="MinVer" BeforeTargets="CoreCompile;GenerateNuspec" DependsOnTargets="MinVer_GetVersion" Condition="'$(UsingMicrosoftNETSdk)' == 'true' And '$(DesignTimeBuild)' != 'true'">
-    <PropertyGroup>
       <AssemblyVersion>$(MinVerMajor).0.0.0</AssemblyVersion>
       <FileVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch).0</FileVersion>
       <PackageVersion>$(MinVerVersion)</PackageVersion>

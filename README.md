@@ -12,6 +12,8 @@ Also available as a [command line tool](#can-i-use-minver-to-version-software-wh
 - [Prerequisites](#prerequisites)
 - [Quick start](#quick-start)
 - [Usage](#usage)
+- [How it works](#how-it-works)
+- [Version numbers](#version-numbers)
 - [Options](#options)
 - [FAQ](#faq)
 
@@ -29,11 +31,35 @@ Your project will be versioned according to the latest tag found in the commit h
 
 ## Usage
 
-When you want to release a version of your software, whether it's a pre-release, RTM, patch, or anything else, simply create a tag with a name which is a valid [SemVer 2.0](https://semver.org/spec/v2.0.0.html) version and build your projects. MinVer will apply the version to the assemblies and packages. (If you like to prefix your tag names, see the [FAQ](#can-i-prefix-my-tag-names).) Note that MinVer sets `AssemblyVersion` to `{MAJOR}.0.0.0`, but [this behaviour can be overridden](#can-i-use-the-version-calculated-by-minver-for-other-purposes).
+When you want to release a version of your software, whether it's a pre-release, RTM, patch, or anything else, simply create a tag with a name which is a valid [SemVer 2.0](https://semver.org/spec/v2.0.0.html) version and build your projects. MinVer will apply the version to the assemblies and packages. (If you like to prefix your tag names, see the [FAQ](#can-i-prefix-my-tag-names).)
+
+## How it works
+
+When the current commit is tagged with a version, the tag is used as-is.
 
 When the current commit is not tagged, MinVer searches the commit history for the latest tag. If the latest tag found is a [pre-release](https://semver.org/spec/v2.0.0.html#spec-item-9), MinVer will use it as-is. If the latest tag found is RTM (not pre-release), MinVer will increase the patch number and add default pre-release identifiers, e.g. `1.0.0` becomes `1.0.1-alpha.0`. If no tag is found, the default version `0.0.0-alpha.0` is used.
 
 You will notice that MinVer adds another number to the pre-release identifiers when the current commit is not tagged. This is the number of commits since the latest tag, or if no tag was found, since the root commit. This is known as "height". For example, if the latest tag found is `1.0.0-beta.1`, at a height of 42 commits, the calculated version is `1.0.0-beta.1.42`.
+
+## Version numbers
+
+MinVer sets the following custom properties:
+
+- `MinVerVersion`
+- `MinVerMajor`
+- `MinVerMinor`
+- `MinVerPatch`
+
+Those properties are used to set the following .NET SDK properties, satisfying the official [open-source library guidance for version numbers](https://docs.microsoft.com/en-ca/dotnet/standard/library-guidance/versioning#version-numbers):
+
+Property | Value
+-- | --
+`AssemblyVersion` | `{MinVerMajor}.0.0.0`
+`FileVersion` | `{MinVerMajor}.{MinVerMinor}.{MinVerPatch}.0`
+`PackageVersion` | `{MinVerVersion}`
+`Version` | `{MinVerVersion}`
+
+This behaviour can be [customised](#can-i-use-the-version-calculated-by-minver-for-other-purposes).
 
 ## Options
 
@@ -127,23 +153,25 @@ You can also specify build metadata in a version tag. If the tag is on the curre
 
 ### Can I use the version calculated by MinVer for other purposes?
 
-Yes! MinVer sets the `Version`, `PackageVersion`, `AssemblyVersion`, `FileVersion`, `MinVerMajor`, `MinVerMinor`, and `MinVerPatch` MSBuild properties. You can use them, or override their values, in a target which runs after MinVer.
+Yes! You can use any of the [properties set by MinVer](#version-numbers), or override their values, in a target which runs after MinVer.
 
-For example, MinVer sets `AssemblyVersion` to `{MAJOR}.0.0.0`, as recommended in the official [open source library guidance](https://docs.microsoft.com/en-ca/dotnet/standard/library-guidance/versioning#assembly-version). For projects which do not create NuGet packages, you may want to override this behaviour and populate [all four parts](https://docs.microsoft.com/en-us/dotnet/framework/app-domains/assembly-versioning#assembly-version-number) of `AssemblyVersion`. E.g. using Appveyor:
+For example, MinVer sets `AssemblyVersion` to `{MAJOR}.0.0.0`. For projects which do not create NuGet packages, you may want to override this behaviour and populate [all four parts](https://docs.microsoft.com/en-us/dotnet/framework/app-domains/assembly-versioning#assembly-version-number) of `AssemblyVersion`. E.g. using Appveyor:
 
 ```xml
 <Target Name="MyTarget" AfterTargets="MinVer">
   <PropertyGroup>
+    <APPVEYOR_BUILD_NUMBER Condition="'$(APPVEYOR_BUILD_NUMBER)' == ''">0</APPVEYOR_BUILD_NUMBER>
     <AssemblyVersion>$(MinVerMajor).$(MinVerMinor).$(APPVEYOR_BUILD_NUMBER).$(MinVerPatch)</AssemblyVersion>
   </PropertyGroup>
 </Target>
 ```
 
-Or, for example, for projects which _do_ create NuGet packages, you may want to adjust the assembly file version as recommended in the official [open source library guidance](https://docs.microsoft.com/en-ca/dotnet/standard/library-guidance/versioning#assembly-file-version). E.g. when using Appveyor:
+Or, for example, for projects which _do_ create NuGet packages, you may want to adjust the assembly file version to include the build number, as recommended in the [official guidance](https://docs.microsoft.com/en-ca/dotnet/standard/library-guidance/versioning#assembly-file-version). E.g. when using Appveyor:
 
 ```xml
 <Target Name="MyTarget" AfterTargets="MinVer">
   <PropertyGroup>
+    <APPVEYOR_BUILD_NUMBER Condition="'$(APPVEYOR_BUILD_NUMBER)' == ''">0</APPVEYOR_BUILD_NUMBER>
     <FileVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch).$(APPVEYOR_BUILD_NUMBER)</FileVersion>
   </PropertyGroup>
 </Target>

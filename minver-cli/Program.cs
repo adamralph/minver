@@ -7,9 +7,9 @@ namespace MinVer
     using MinVer.Lib;
     using Version = MinVer.Lib.Version;
 
-    internal class Program
+    internal static class Program
     {
-        static int Main(string[] args)
+        private static int Main(string[] args)
         {
             var app = new CommandLineApplication();
 
@@ -67,7 +67,7 @@ namespace MinVer
             return true;
         }
 
-        public static Version GetVersion(string path, string tagPrefix, MajorMinor range, string buildMetadata, Verbosity level)
+        private static Version GetVersion(string path, string tagPrefix, MajorMinor range, string buildMetadata, Verbosity level)
         {
             var log = new Logger(level);
 

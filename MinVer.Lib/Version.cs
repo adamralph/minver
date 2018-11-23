@@ -38,6 +38,11 @@ namespace MinVer.Lib
 
         public int CompareTo(Version other)
         {
+            if (other == default)
+            {
+                return 1;
+            }
+
             var major = this.Major.CompareTo(other.Major);
             if (major != 0)
             {

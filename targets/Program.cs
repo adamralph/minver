@@ -39,7 +39,7 @@ internal static class Program
         string testRepo = default;
 
         Target(
-            "test-package-empty-repo",
+            "test-package-no-repo",
             DependsOn("pack"),
             async () =>
             {
@@ -65,15 +65,28 @@ internal static class Program
             });
 
         Target(
-            "test-package-commit",
-            DependsOn("test-package-empty-repo"),
+            "test-package-no-commits",
+            DependsOn("test-package-no-repo"),
             async () =>
             {
                 // arrange
                 Repository.Init(testRepo);
 
+                // act
+                await CleanAndPack(testRepo);
+
+                // assert
+                AssertPackageFileNameContains("0.0.0-alpha.0.nupkg", testRepo);
+            });
+
+        Target(
+            "test-package-commit",
+            DependsOn("test-package-no-commits"),
+            async () =>
+            {
                 using (var repo = new Repository(testRepo))
                 {
+                    // assert
                     repo.PrepareForCommits();
                     Commit(testRepo);
 
@@ -86,8 +99,28 @@ internal static class Program
             });
 
         Target(
-            "test-package-tag",
+            "test-package-non-version-tag",
             DependsOn("test-package-commit"),
+            async () =>
+            {
+                using (var repo = new Repository(testRepo))
+                {
+                    // arrange
+                    repo.ApplyTag("foo");
+
+                    // act
+                    Environment.SetEnvironmentVariable("MinVerVerbosity", "detailed", EnvironmentVariableTarget.Process);
+                    await CleanAndPack(testRepo);
+                    Environment.SetEnvironmentVariable("MinVerVerbosity", "normal", EnvironmentVariableTarget.Process);
+
+                    // assert
+                    AssertPackageFileNameContains("0.0.0-alpha.0.nupkg", testRepo);
+                }
+            });
+
+        Target(
+            "test-package-version-tag",
+            DependsOn("test-package-non-version-tag"),
             async () =>
             {
                 using (var repo = new Repository(testRepo))
@@ -105,7 +138,7 @@ internal static class Program
 
         Target(
             "test-package-commit-after-tag",
-            DependsOn("test-package-tag"),
+            DependsOn("test-package-version-tag"),
             async () =>
             {
                 using (var repo = new Repository(testRepo))

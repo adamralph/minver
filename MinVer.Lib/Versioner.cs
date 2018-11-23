@@ -21,7 +21,6 @@ namespace MinVer.Lib
 
             var tagsAndVersions = repo.Tags
                 .Select(tag => (tag, Version.ParseOrDefault(tag.FriendlyName, tagPrefix)))
-                .Where(tagAndVersion => tagAndVersion.Item2 != default)
                 .OrderByDescending(tagAndVersion => tagAndVersion.Item2)
                 .ToList();
 
@@ -45,6 +44,11 @@ namespace MinVer.Lib
                     }
                     else
                     {
+                        if (tag != default)
+                        {
+                            candidates.Add(new Candidate { Commit = commit.Sha, Height = height, Tag = tag.FriendlyName, Version = default, });
+                        }
+
                         foreach (var parent in commit.Parents.Reverse())
                         {
                             commitsToCheck.Push((parent, height + 1));
@@ -52,7 +56,7 @@ namespace MinVer.Lib
 
                         if (commitsToCheck.Count == 0 || commitsToCheck.Peek().Item2 <= height)
                         {
-                            candidates.Add(new Candidate { Commit = commit.Sha, Height = height, Tag = "(none)", Version = new Version(), });
+                            candidates.Add(new Candidate { Commit = commit.Sha, Height = height, Tag = default, Version = new Version(), });
                         }
                     }
                 }
@@ -69,8 +73,8 @@ namespace MinVer.Lib
 
             var orderedCandidates = candidates.OrderBy(candidate => candidate.Version).ToList();
 
-            var tagWidth = log.IsDebugEnabled ? orderedCandidates.Max(candidate => candidate.Tag.Length) : 0;
-            var versionWidth = log.IsDebugEnabled ? orderedCandidates.Max(candidate => candidate.Version.ToString().Length) : 0;
+            var tagWidth = log.IsDebugEnabled ? orderedCandidates.Max(candidate => candidate.Tag?.Length ?? 2) : 0;
+            var versionWidth = log.IsDebugEnabled ? orderedCandidates.Max(candidate => candidate.Version?.ToString().Length ?? 4) : 0;
             var heightWidth = log.IsDebugEnabled ? orderedCandidates.Max(candidate => candidate.Height).ToString().Length : 0;
 
             if (log.IsDebugEnabled)
@@ -110,7 +114,7 @@ namespace MinVer.Lib
             public Version Version { get; set; }
 
             public string ToString(int tagWidth, int versionWidth, int heightWidth) =>
-                $"{{ {nameof(this.Commit)}: {this.Commit.Substring(0, 7)}, {nameof(this.Tag)}: {$"'{this.Tag}',".PadRight(tagWidth + 3)} {nameof(this.Version)}: {$"{this.Version.ToString()},".PadRight(versionWidth + 1)} {nameof(this.Height)}: {this.Height.ToString().PadLeft(heightWidth)} }}";
+                $"{{ {nameof(this.Commit)}: {this.Commit.Substring(0, 7)}, {nameof(this.Tag)}: {$"{(this.Tag == default ? "null": $"'{this.Tag}'")},".PadRight(tagWidth + 3)} {nameof(this.Version)}: {$"{this.Version?.ToString() ?? "null"},".PadRight(versionWidth + 1)} {nameof(this.Height)}: {this.Height.ToString().PadLeft(heightWidth)} }}";
         }
     }
 }

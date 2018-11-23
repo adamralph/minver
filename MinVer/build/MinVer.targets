@@ -5,7 +5,8 @@
     <GetPackageVersionDependsOn>$(GetPackageVersionDependsOn);MinVer</GetPackageVersionDependsOn>
   </PropertyGroup>
 
-  <Target Name="MinVer" BeforeTargets="CoreCompile;GenerateNuspec" Condition="'$(UsingMicrosoftNETSdk)' == 'true' And '$(DesignTimeBuild)' != 'true'">
+  <Target Name="MinVer" BeforeTargets="CoreCompile;GenerateNuspec" Condition="'$(DesignTimeBuild)' != 'true'">
+    <Error Condition="'$(UsingMicrosoftNETSdk)' != 'true'" Code="MINVER0001" Text="MinVer only works in SDK-style projects." />
     <ItemGroup>
       <MinVerInputs Include="--build-metadata &quot;$(MinVerBuildMetadata)&quot;" />
       <MinVerInputs Include="--major-minor &quot;$(MinVerMajorMinor)&quot;" />
@@ -29,10 +30,6 @@
       <PackageVersion>$(MinVerVersion)</PackageVersion>
       <Version>$(MinVerVersion)</Version>
     </PropertyGroup>
-  </Target>
-
-  <Target Name="MinVer_EnsureSdk" BeforeTargets="MinVer" Condition="'$(DesignTimeBuild)' != 'true'">
-    <Error Condition="'$(UsingMicrosoftNETSdk)' != 'true'" Code="MINVER0001" Text="MinVer only works in SDK-style projects." />
   </Target>
 
 </Project>

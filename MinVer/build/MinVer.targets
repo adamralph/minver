@@ -17,16 +17,13 @@
       <Output TaskParameter="ConsoleOutput" ItemName="MinVerConsoleOutput" />
     </Exec>
     <ItemGroup>
-      <MinVerOutputVersion Include="@(MinVerConsoleOutput)" Condition="'$([System.String]::new(`%(Identity)`).StartsWith(`Version:`))' == 'true'" />
-      <MinVerOutputMajor Include="@(MinVerConsoleOutput)" Condition="'$([System.String]::new(`%(Identity)`).StartsWith(`Major:`))' == 'true'" />
-      <MinVerOutputMinor Include="@(MinVerConsoleOutput)" Condition="'$([System.String]::new(`%(Identity)`).StartsWith(`Minor:`))' == 'true'" />
-      <MinVerOutputPatch Include="@(MinVerConsoleOutput)" Condition="'$([System.String]::new(`%(Identity)`).StartsWith(`Patch:`))' == 'true'" />
+      <MinVerOutputVersion Include="@(MinVerConsoleOutput)" Condition="'$([System.String]::new(`%(Identity)`).StartsWith(`MinVer:`))' != 'true'" />
     </ItemGroup>
     <PropertyGroup>
-      <MinVerVersion>@(MinVerOutputVersion->Substring(8))</MinVerVersion>
-      <MinVerMajor>@(MinVerOutputMajor->Substring(6))</MinVerMajor>
-      <MinVerMinor>@(MinVerOutputMinor->Substring(6))</MinVerMinor>
-      <MinVerPatch>@(MinVerOutputPatch->Substring(6))</MinVerPatch>
+      <MinVerVersion>@(MinVerOutputVersion)</MinVerVersion>
+      <MinVerMajor>$(MinVerVersion.Split(`.`)[0])</MinVerMajor>
+      <MinVerMinor>$(MinVerVersion.Split(`.`)[1])</MinVerMinor>
+      <MinVerPatch>$(MinVerVersion.Split(`.`)[2].Split(`-`)[0].Split(`+`)[0])</MinVerPatch>
     </PropertyGroup>
   </Target>
 

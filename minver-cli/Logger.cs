@@ -22,14 +22,6 @@ namespace MinVer
             }
         }
 
-        public void Debug(Func<string> createMessage)
-        {
-            if (this.level >= Verbosity.Debug)
-            {
-                Message(createMessage());
-            }
-        }
-
         public void Debug(string message)
         {
             if (this.level >= Verbosity.Debug)

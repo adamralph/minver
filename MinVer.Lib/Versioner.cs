@@ -9,7 +9,10 @@ namespace MinVer.Lib
     {
         public static Version GetVersion(Repository repo, string tagPrefix, MajorMinor range, string buildMetadata, ILogger log)
         {
-            log.Debug(() => $"MinVer {typeof(Versioner).Assembly.GetCustomAttributes<AssemblyInformationalVersionAttribute>().Single().InformationalVersion}");
+            if (log.IsDebugEnabled)
+            {
+                log.Debug($"MinVer {typeof(Versioner).Assembly.GetCustomAttributes<AssemblyInformationalVersionAttribute>().Single().InformationalVersion}");
+            }
 
             var commit = repo.Commits.FirstOrDefault();
 

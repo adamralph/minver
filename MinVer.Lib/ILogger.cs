@@ -1,5 +1,3 @@
-using System;
-
 namespace MinVer.Lib
 {
     public interface ILogger
@@ -9,8 +7,6 @@ namespace MinVer.Lib
         bool IsDebugEnabled { get; }
 
         void Trace(string message);
-
-        void Debug(Func<string> createMessage);
 
         void Debug(string message);
 

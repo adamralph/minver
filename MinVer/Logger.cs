@@ -10,7 +10,17 @@ namespace MinVer
 
         public Logger(Verbosity level) => this.level = level;
 
+        public bool IsTraceEnabled => this.level >= Verbosity.Diagnostic;
+
         public bool IsDebugEnabled => this.level >= Verbosity.Detailed;
+
+        public void Trace(string message)
+        {
+            if (this.level >= Verbosity.Diagnostic)
+            {
+                Message(message);
+            }
+        }
 
         public void Debug(Func<string> createMessage)
         {

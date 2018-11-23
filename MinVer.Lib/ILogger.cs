@@ -4,7 +4,11 @@ namespace MinVer.Lib
 {
     public interface ILogger
     {
+        bool IsTraceEnabled { get; }
+
         bool IsDebugEnabled { get; }
+
+        void Trace(string message);
 
         void Debug(Func<string> createMessage);
 

@@ -5,7 +5,13 @@ namespace MinVerTests.Infra
 
     internal class TestLogger : ILogger
     {
-        public bool IsDebugEnabled => true;
+        public bool IsTraceEnabled => false;
+
+        public bool IsDebugEnabled => false;
+
+        public void Trace(string message)
+        {
+        }
 
         public void Debug(Func<string> createMessage)
         {

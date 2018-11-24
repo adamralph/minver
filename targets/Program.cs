@@ -12,7 +12,9 @@ using static SimpleExec.Command;
 
 internal static class Program
 {
-    private static int buildNumber;
+    private static readonly string testPackageBaseOutput = Path.GetDirectoryName(Uri.UnescapeDataString(new UriBuilder(typeof(Program).Assembly.CodeBase).Path));
+
+    private static int buildNumber = 1;
 
     public static Task Main(string[] args)
     {
@@ -57,11 +59,13 @@ internal static class Program
                 await RunAsync("dotnet", $"add package MinVer --source {source} --version {version} --package-directory packages", testRepo);
                 await RunAsync("dotnet", $"restore --source {source} --packages packages", testRepo);
 
+                var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-no-repo");
+
                 // act
-                await CleanAndPack(testRepo);
+                await CleanAndPack(testRepo, output);
 
                 // assert
-                AssertPackageFileNameContains("0.0.0-alpha.0.nupkg", testRepo);
+                AssertPackageFileNameContains("0.0.0-alpha.0.nupkg", output);
             });
 
         Target(
@@ -72,11 +76,13 @@ internal static class Program
                 // arrange
                 Repository.Init(testRepo);
 
+                var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-no-commits");
+
                 // act
-                await CleanAndPack(testRepo);
+                await CleanAndPack(testRepo, output);
 
                 // assert
-                AssertPackageFileNameContains("0.0.0-alpha.0.nupkg", testRepo);
+                AssertPackageFileNameContains("0.0.0-alpha.0.nupkg", output);
             });
 
         Target(
@@ -90,11 +96,13 @@ internal static class Program
                     repo.PrepareForCommits();
                     Commit(testRepo);
 
+                    var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-commit");
+
                     // act
-                    await CleanAndPack(testRepo);
+                    await CleanAndPack(testRepo, output);
 
                     // assert
-                    AssertPackageFileNameContains("0.0.0-alpha.0.nupkg", testRepo);
+                    AssertPackageFileNameContains("0.0.0-alpha.0.nupkg", output);
                 }
             });
 
@@ -108,13 +116,15 @@ internal static class Program
                     // arrange
                     repo.ApplyTag("foo");
 
+                    var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-non-version-tag");
+
                     // act
                     Environment.SetEnvironmentVariable("MinVerVerbosity", "detailed", EnvironmentVariableTarget.Process);
-                    await CleanAndPack(testRepo);
+                    await CleanAndPack(testRepo, output);
                     Environment.SetEnvironmentVariable("MinVerVerbosity", "normal", EnvironmentVariableTarget.Process);
 
                     // assert
-                    AssertPackageFileNameContains("0.0.0-alpha.0.nupkg", testRepo);
+                    AssertPackageFileNameContains("0.0.0-alpha.0.nupkg", output);
                 }
             });
 
@@ -128,11 +138,13 @@ internal static class Program
                     // arrange
                     repo.ApplyTag("v.1.2.3+foo");
 
+                    var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-version-tag");
+
                     // act
-                    await CleanAndPack(testRepo);
+                    await CleanAndPack(testRepo, output);
 
                     // assert
-                    AssertPackageFileNameContains("1.2.3.nupkg", testRepo);
+                    AssertPackageFileNameContains("1.2.3.nupkg", output);
                 }
             });
 
@@ -146,11 +158,13 @@ internal static class Program
                     // arrange
                     Commit(testRepo);
 
+                    var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-commit-after-tag");
+
                     // act
-                    await CleanAndPack(testRepo);
+                    await CleanAndPack(testRepo, output);
 
                     // assert
-                    AssertPackageFileNameContains("1.2.4-alpha.0.1.nupkg", testRepo);
+                    AssertPackageFileNameContains("1.2.4-alpha.0.1.nupkg", output);
                 }
             });
 
@@ -164,12 +178,14 @@ internal static class Program
                     // arrange
                     Environment.SetEnvironmentVariable("MinVerMajorMinor", "2.0", EnvironmentVariableTarget.Process);
 
+                    var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-major-minor");
+
                     // act
                     Environment.SetEnvironmentVariable("MinVerVerbosity", "detailed", EnvironmentVariableTarget.Process);
-                    await CleanAndPack(testRepo);
+                    await CleanAndPack(testRepo, output);
 
                     // assert
-                    AssertPackageFileNameContains("2.0.0-alpha.0.1.nupkg", testRepo);
+                    AssertPackageFileNameContains("2.0.0-alpha.0.1.nupkg", output);
                 }
             });
 
@@ -178,17 +194,14 @@ internal static class Program
         return RunTargetsAsync(args);
     }
 
-    private static async Task CleanAndPack(string path)
+    private static async Task CleanAndPack(string path, string output)
     {
         Environment.SetEnvironmentVariable("MinVerBuildMetadata", $"build.{buildNumber++}", EnvironmentVariableTarget.Process);
 
-        foreach (var file in Directory.EnumerateFiles(path, "*.nupkg", new EnumerationOptions { RecurseSubdirectories = true }))
-        {
-            File.Delete(file);
-        }
+        EnsureEmptyDirectory(output);
 
         await RunAsync("dotnet", "build --no-restore", path);
-        await RunAsync("dotnet", "pack --no-build", path);
+        await RunAsync("dotnet", $"pack --no-build --output {output}", path);
     }
 
     private static void AssertPackageFileNameContains(string expected, string path)

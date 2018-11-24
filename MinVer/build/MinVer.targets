@@ -25,8 +25,20 @@
       <MinVerMajor>$(MinVerVersion.Split(`.`)[0])</MinVerMajor>
       <MinVerMinor>$(MinVerVersion.Split(`.`)[1])</MinVerMinor>
       <MinVerPatch>$(MinVerVersion.Split(`.`)[2].Split(`-`)[0].Split(`+`)[0])</MinVerPatch>
+      <!--Appveyor-->
+      <MinVerBuildNumber Condition="$(MinVerBuildNumber) == ''">$(APPVEYOR_BUILD_NUMBER)</MinVerBuildNumber>
+      <!--Bamboo-->
+      <MinVerBuildNumber Condition="$(MinVerBuildNumber) == ''">$(BAMBOO_BUILDNUMBER)</MinVerBuildNumber>
+      <!--Azure DevOps-->
+      <MinVerBuildNumber Condition="$(MinVerBuildNumber) == ''">$(BUILD_BUILD_NUMBER)</MinVerBuildNumber>
+      <!--Jenkins, TeamCity-->
+      <MinVerBuildNumber Condition="$(MinVerBuildNumber) == ''">$(BUILD_NUMBER)</MinVerBuildNumber>
+      <!--Travis CI-->
+      <MinVerBuildNumber Condition="$(MinVerBuildNumber) == ''">$(TRAVIS_BUILD_NUMBER)</MinVerBuildNumber>
+      <!--default-->
+      <MinVerBuildNumber Condition="$(MinVerBuildNumber) == ''">0</MinVerBuildNumber>
       <AssemblyVersion>$(MinVerMajor).0.0.0</AssemblyVersion>
-      <FileVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch).0</FileVersion>
+      <FileVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch).$(MinVerBuildNumber)</FileVersion>
       <PackageVersion>$(MinVerVersion)</PackageVersion>
       <Version>$(MinVerVersion)</Version>
     </PropertyGroup>

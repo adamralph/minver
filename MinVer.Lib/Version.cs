@@ -17,6 +17,8 @@ namespace MinVer.Lib
 
         public Version(int major, int minor) : this(major, minor, default, new List<string> { "alpha", "0" }, default, default) { }
 
+        public Version(int major, int minor, string buildMetadata) : this(major, minor, default, new List<string> { "alpha", "0" }, default, buildMetadata) { }
+
         private Version(int major, int minor, int patch, IEnumerable<string> preReleaseIdentifiers, int height, string buildMetadata)
         {
             this.Major = major;

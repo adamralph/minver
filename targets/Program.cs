@@ -189,7 +189,27 @@ internal static class Program
                 }
             });
 
-        Target("test-package", DependsOn("test-package-major-minor"));
+        Target(
+            "test-package-build-number",
+            DependsOn("test-package-major-minor"),
+            async () =>
+            {
+                using (var repo = new Repository(testRepo))
+                {
+                    // arrange
+                    Environment.SetEnvironmentVariable("MinVerBuildNumber", $"{buildNumber}", EnvironmentVariableTarget.Process);
+
+                    var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-build-number");
+
+                    // act
+                    await CleanAndPack(testRepo, output);
+
+                    // assert
+                    AssertPackageFileNameContains("2.0.0-alpha.0.1.nupkg", output);
+                }
+            });
+
+        Target("test-package", DependsOn("test-package-build-number"));
 
         return RunTargetsAsync(args);
     }

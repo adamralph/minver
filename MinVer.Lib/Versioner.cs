@@ -19,7 +19,7 @@ namespace MinVer.Lib
             if (commit == default)
             {
                 log.Info("No commits found. Using default version.");
-                return new Version();
+                return new Version(range?.Major ?? 0, range?.Minor ?? 0, buildMetadata);
             }
 
             var tagsAndVersions = repo.Tags

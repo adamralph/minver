@@ -73,7 +73,7 @@ namespace MinVer
 
             if (!RepositoryEx.TryCreateRepo(path, out var repo))
             {
-                var version = new Version();
+                var version = new Version(range?.Major ?? 0, range?.Minor ?? 0, buildMetadata);
 
                 log.WarnInvalidRepoPath(path, version);
 

@@ -14,6 +14,19 @@ namespace MinVerTests
     public static class MajorMinor
     {
         [Scenario]
+        public static void NoCommits(string path, Repository repo, Version actualVersion)
+        {
+            $"Given an empty git repository in '{path = GetScenarioDirectory($"major-minor-not-tagged")}'"
+                .x(c => repo = EnsureEmptyRepository(path).Using(c));
+
+            "When the version is determined using major minor '1.2'"
+                .x(() => actualVersion = Versioner.GetVersion(new Repository(path), default, new MinVer.Lib.MajorMinor(1, 2), default, new TestLogger()));
+
+            $"Then the version is '1.2.0-alpha.0'"
+                .x(() => Assert.Equal("1.2.0-alpha.0", actualVersion.ToString()));
+        }
+
+        [Scenario]
         [Example("2.0.0", 1, 0, "2.0.0")]
         [Example("2.0.0", 2, 0, "2.0.0")]
         [Example("2.0.0", 3, 0, "3.0.0-alpha.0")]

@@ -39,7 +39,7 @@ namespace MinVer
         }
 
         public void WarnInvalidRepoPath(string path, Version version) =>
-            this.Warn($"'{path}' is not a valid repository or working directory. Using default version: {version}");
+            this.Warn($"'{path}' is not a valid repository or working directory. Using default version: {version}.");
 
         public static void ErrorInvalidRepoPath(string path) =>
             Error($"Invalid repository path '{path}'. Directory does not exist.");

@@ -193,7 +193,7 @@ The tag with the higher version is used.
 
 ### What if the history diverges, and then converges again, before the latest tag (or root commit) is found?
 
-The height on the first branch followed is used. The first branch followed is the one with the older parent.
+MinVer will use the height on the first path followed where the history diverges. The paths are followed in the same order that the parents of the commit are stored in git. The first parent is the commit on the branch that was the current branch when the merge was performed. The remaining parents are stored in the order that their branches were specified in the merge command.
 
 ### Why does MinVer fail with `LibGit2Sharp.NotFoundException`?
 

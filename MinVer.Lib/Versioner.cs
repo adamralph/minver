@@ -2,18 +2,12 @@ namespace MinVer.Lib
 {
     using System.Collections.Generic;
     using System.Linq;
-    using System.Reflection;
     using LibGit2Sharp;
 
     public static class Versioner
     {
         public static Version GetVersion(Repository repo, string tagPrefix, MajorMinor range, string buildMetadata, ILogger log)
         {
-            if (log.IsDebugEnabled)
-            {
-                log.Debug($"MinVer {typeof(Versioner).Assembly.GetCustomAttributes<AssemblyInformationalVersionAttribute>().Single().InformationalVersion}");
-            }
-
             var commit = repo.Commits.FirstOrDefault();
 
             if (commit == default)

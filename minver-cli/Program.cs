@@ -6,6 +6,7 @@ namespace MinVer
     using McMaster.Extensions.CommandLineUtils;
     using MinVer.Lib;
     using Version = MinVer.Lib.Version;
+    using System.Reflection;
 
     internal static class Program
     {
@@ -70,6 +71,11 @@ namespace MinVer
         private static Version GetVersion(string path, string tagPrefix, MajorMinor range, string buildMetadata, Verbosity level)
         {
             var log = new Logger(level);
+
+            if (log.IsDebugEnabled)
+            {
+                log.Debug($"MinVer {typeof(Versioner).Assembly.GetCustomAttributes<AssemblyInformationalVersionAttribute>().Single().InformationalVersion}.");
+            }
 
             if (!RepositoryEx.TryCreateRepo(path, out var repo))
             {

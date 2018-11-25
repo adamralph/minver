@@ -18,13 +18,11 @@ namespace MinVer
 
             app.HelpOption();
 
-            var levels = Enum.GetValues(typeof(Verbosity)).Cast<Verbosity>().OrderBy(_ => _).Select(level => level.ToString().ToLowerInvariant()).ToList();
-
             var buildMetadata = app.Option("-b|--build-metadata <BUILD_METADATA>", "", CommandOptionType.SingleValue);
             var majorMinor = app.Option("-m|--major-minor <RANGE>", "1.0, 1.1, 2.0, etc.", CommandOptionType.SingleValue);
             var repo = app.Option("-r|--repo <PATH>", "Repository or working directory.", CommandOptionType.SingleValue);
             var tagPrefix = app.Option("-t|--tag-prefix <TAG_PREFIX>", "", CommandOptionType.SingleValue);
-            var verbosity = app.Option("-v|--verbosity <LEVEL>", $"{string.Join(", ", levels.Take(levels.Count - 1))}, or {levels.Last()}", CommandOptionType.SingleValue);
+            var verbosity = app.Option("-v|--verbosity <LEVEL>", VerbosityMap.Levels, CommandOptionType.SingleValue);
 
             app.OnExecute(() =>
             {
@@ -61,7 +59,7 @@ namespace MinVer
                 return false;
             }
 
-            if (!string.IsNullOrEmpty(verbosity) && !Enum.TryParse(verbosity, true, out level))
+            if (!string.IsNullOrEmpty(verbosity) && !VerbosityMap.TryMap(verbosity, out level))
             {
                 Logger.ErrorInvalidVerbosityLevel(verbosity);
                 return false;

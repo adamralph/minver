@@ -48,7 +48,7 @@ namespace MinVer
             Error($"Invalid MAJOR.MINOR range '{majorMinor}'.");
 
         public static void ErrorInvalidVerbosityLevel(string verbosity) =>
-            Error($"Invalid verbosity level '{verbosity}'. Valid levels are error, warn, info, debug, and trace.");
+            Error($"Invalid verbosity level '{verbosity}'. The level must be {VerbosityMap.Levels}.");
 
         private void Warn(string message)
         {

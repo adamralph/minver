@@ -7,7 +7,7 @@
     <NoWarn>$(NoWarn);NU5100;NU5105</NoWarn>
     <OutputType>Exe</OutputType>
     <PackageIconUrl>https://raw.githubusercontent.com/adamralph/minver/master/assets/minver.png</PackageIconUrl>
-    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageLicenseUrl>https://github.com/adamralph/minver/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/adamralph/minver</PackageProjectUrl>
     <PackageReleaseNotes>https://github.com/adamralph/minver/milestones?state=closed</PackageReleaseNotes>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>

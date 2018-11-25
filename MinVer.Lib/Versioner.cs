@@ -82,7 +82,7 @@ namespace MinVer.Lib
                                     case 1:
                                         log.Trace($"History diverges from {commit.Sha} to:");
                                         log.Trace($"  {firstParent.Sha}");
-                                        goto case default;
+                                        goto default;
                                     default:
                                         log.Trace($"  {parent.Sha}");
                                         break;

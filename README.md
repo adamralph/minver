@@ -93,7 +93,7 @@ _(With TL;DR answers inline.)_
 
 Yes! You probably want to do this because at a point in time, on a given branch, you are working on a `MAJOR.MINOR` range, e.g. `1.0`, `1.1`, or `2.0`. The branch could be `master`, `develop`, a special release branch, a support branch, or anything else.
 
-Before you create the first tag on that branch, interim builds will use the latest tag found in the commit history, which may not match the `MAJOR.MINOR` range which the current branch represents. Or if no tag is found in the commit history, interm builds will have the default version `0.0.0-alpha.0`. If you prefer those interim builds to have a version within the current range, specify the range with [`MinVerMajorMinor`](#options). For example:
+Before you create the first tag on that branch, interim builds will use the latest tag found in the commit history, which may not match the `MAJOR.MINOR` range which the current branch represents. Or if no tag is found in the commit history, interim builds will have the default version `0.0.0-alpha.0`. If you prefer those interim builds to have a version within the current range, specify the range with [`MinVerMajorMinor`](#options). For example:
 
 ```xml
 <PropertyGroup>
@@ -105,7 +105,7 @@ MinVer will now use a default version of `1.0.0-alpha.0`.
 
 If you begin to release versions in the `1.0` range from another branch (e.g. a special release branch), update this value to `1.1`, `2.0`, or whatever `MAJOR.MINOR` range the current branch now represents.
 
-Note that `MinVerMajorMinor` will be redundant after you create the first tag with same `MAJOR.MINOR`. If you don't care that the versions of interm builds before that first tag will have a lower `MAJOR.MINOR`, then simply don't specify `MinVerMajorMinor`.
+Note that `MinVerMajorMinor` will be redundant after you create the first tag with same `MAJOR.MINOR`. If you don't care that the versions of interim builds before that first tag will have a lower `MAJOR.MINOR`, then simply don't specify `MinVerMajorMinor`.
 
 Also note that if the latest tag found in the commit history has a higher `MAJOR.MINOR` than `MinVerMajorMinor`, then `MinVerMajorMinor` will be ignored.
 
@@ -179,7 +179,7 @@ Or, for example, for projects which _do_ create NuGet packages, you may want to 
 
 ### Can I control the logging verbosity?
 
-Yes! Set [`MinVerVerbosity`](#options) to `quiet`, `minimal`, `normal` (default), `detailed`, or `diagnostic`. At the `quiet` and `miminal` levels, you will see only warnings and errors. At the `detailed` and `diagnostic` levels you will see how many commits were examined, which version tags were found but ignored, which version was calculated, etc.
+Yes! Set [`MinVerVerbosity`](#options) to `quiet`, `minimal`, `normal` (default), `detailed`, or `diagnostic`. At the `quiet` and `minimal` levels, you will see only warnings and errors. At the `detailed` and `diagnostic` levels you will see how many commits were examined, which version tags were found but ignored, which version was calculated, etc.
 
 The verbosity levels reflect those supported by MSBuild and therefore `dotnet build`, `dotnet pack`, etc. In a future version of MinVer, these verbosity levels will be inherited from MSBuild and `MinVerVerbosity` will be deprecated. Currently this is not possible due to technical restrictions related to [libgit2](https://github.com/libgit2/libgit2).
 

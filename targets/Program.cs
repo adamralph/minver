@@ -181,7 +181,7 @@ internal static class Program
                     var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-major-minor");
 
                     // act
-                    Environment.SetEnvironmentVariable("MinVerVerbosity", "detailed", EnvironmentVariableTarget.Process);
+                    Environment.SetEnvironmentVariable("MinVerVerbosity", "diagnostic", EnvironmentVariableTarget.Process);
                     await CleanAndPack(testRepo, output);
 
                     // assert

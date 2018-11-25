@@ -71,12 +71,12 @@ namespace MinVer.Lib
                             candidates.Add(candidate);
                         }
 
-                        var parentIndex = 0;
-                        Commit firstParent = default;
-
-                        foreach (var parent in commit.Parents.Reverse())
+                        if (log.IsTraceEnabled)
                         {
-                            if (log.IsTraceEnabled)
+                            var parentIndex = 0;
+                            Commit firstParent = default;
+
+                            foreach (var parent in commit.Parents)
                             {
                                 switch (parentIndex)
                                 {
@@ -95,7 +95,10 @@ namespace MinVer.Lib
                                 ++parentIndex;
                                 parentCount = parentIndex;
                             }
+                        }
 
+                        foreach (var parent in commit.Parents.Reverse())
+                        {
                             commitsToCheck.Push((parent, height + 1, commit));
                         }
 
@@ -138,17 +141,17 @@ namespace MinVer.Lib
                 {
                     if (parentCount > 1)
                     {
-                        log.Trace($"Following path from {child.ShortSha()} (height {height - 1}) through oldest parent {commit.ShortSha()} (height {height})...");
+                        log.Trace($"Following path from {child.ShortSha()} (height {height - 1}) through first parent {commit.ShortSha()} (height {height})...");
                     }
                     else if (height <= oldHeight)
                     {
                         if (commitsToCheck.Any() && commitsToCheck.Peek().Item2 == height)
                         {
-                            log.Trace($"Backtracking to {child.ShortSha()} (height {height - 1}) and following path through next oldest parent {commit.ShortSha()} (height {height})...");
+                            log.Trace($"Backtracking to {child.ShortSha()} (height {height - 1}) and following path through next parent {commit.ShortSha()} (height {height})...");
                         }
                         else
                         {
-                            log.Trace($"Backtracking to {child.ShortSha()} (height {height - 1}) and following path through youngest parent {commit.ShortSha()} (height {height})...");
+                            log.Trace($"Backtracking to {child.ShortSha()} (height {height - 1}) and following path through last parent {commit.ShortSha()} (height {height})...");
                         }
                     }
                 }

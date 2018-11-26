@@ -1,5 +1,6 @@
 namespace MinVer.Lib
 {
+    using System.IO;
     using LibGit2Sharp;
 
     public static class RepositoryEx
@@ -8,16 +9,20 @@ namespace MinVer.Lib
         {
             repository = default;
 
-            path = Repository.Discover(path);
-
-            if (path == default)
+            while (path != default)
             {
-                return false;
+                try
+                {
+                    repository = new Repository(path);
+                    return true;
+                }
+                catch (RepositoryNotFoundException)
+                {
+                    path = Directory.GetParent(path)?.FullName;
+                }
             }
 
-            repository = new Repository(path);
-
-            return true;
+            return false;
         }
     }
 }

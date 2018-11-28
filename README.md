@@ -7,6 +7,8 @@ _[![Build status](https://ci.appveyor.com/api/projects/status/0ai8j3x4tg6w3ima/b
 
 A minimalistic [.NET package](https://www.nuget.org/packages/MinVer) for versioning .NET SDK-style projects using Git tags.
 
+Platform support: all platforms supported by .NET SDK-style projects.
+
 Also available as a [command line tool](#can-i-use-minver-to-version-software-which-is-not-built-using-a-net-sdk-style-project) for use in any Git repository.
 
 - [Prerequisites](#prerequisites)

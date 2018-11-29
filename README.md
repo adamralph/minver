@@ -181,7 +181,7 @@ Or, for example, for projects which _do_ create NuGet packages, you may want to 
 
 ### Can I control the logging verbosity?
 
-Yes! Set [`MinVerVerbosity`](#options) to `quiet`, `minimal`, `normal` (default), `detailed`, or `diagnostic`. At the `quiet` and `minimal` levels, you will see only warnings and errors. At the `detailed` and `diagnostic` levels you will see how many commits were examined, which version tags were found but ignored, which version was calculated, etc.
+Yes! Set [`MinVerVerbosity`](#options) to `quiet`, `minimal`, `normal` (default), `detailed`, or `diagnostic`. At the `quiet` and `minimal` levels, you will see only warnings and errors. At the `detailed` level you will see how many commits were examined, which version tags were found but ignored, which version was calculated, etc. At the `diagnostic` level you will see how MinVer walks the commit history, in excruciating detail.
 
 The verbosity levels reflect those supported by MSBuild and therefore `dotnet build`, `dotnet pack`, etc. In a future version of MinVer, these verbosity levels will be inherited from MSBuild and `MinVerVerbosity` will be deprecated. Currently this is not possible due to technical restrictions related to [libgit2](https://github.com/libgit2/libgit2).
 

@@ -99,7 +99,7 @@ Before you create the first tag on that branch, interim builds will use the late
 
 ```xml
 <PropertyGroup>
-  <MinVerMajorMinor>1.0<MinVerMajorMinor>
+  <MinVerMajorMinor>1.0</MinVerMajorMinor>
 </PropertyGroup>
 ```
 

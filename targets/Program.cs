@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Bullseye;
 using LibGit2Sharp;
 using MinVerTests.Infra;
 
@@ -16,7 +17,7 @@ internal static class Program
 
     private static int buildNumber = 1;
 
-    public static Task Main(string[] args)
+    public static async Task<int> Main(string[] args)
     {
         Target("default", DependsOn("test-api", "test-package"));
 
@@ -191,7 +192,17 @@ internal static class Program
 
         Target("test-package", DependsOn("test-package-major-minor"));
 
-        return RunTargetsAsync(args);
+        try
+        {
+            await RunTargetsAsync(args);
+        }
+        catch (BullseyeException ex)
+        {
+            await Console.Out.WriteLineAsync(ex.Message);
+            return 2;
+        }
+
+        return 0;
     }
 
     private static async Task CleanAndPack(string path, string output)

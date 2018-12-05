@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Bullseye;
 using LibGit2Sharp;
 using MinVerTests.Infra;
-
+using SimpleExec;
 using static Bullseye.Targets;
 using static MinVerTests.Infra.FileSystem;
 using static MinVerTests.Infra.Git;
@@ -17,7 +17,7 @@ internal static class Program
 
     private static int buildNumber = 1;
 
-    public static async Task<int> Main(string[] args)
+    public static async Task Main(string[] args)
     {
         Target("default", DependsOn("test-api", "test-package"));
 
@@ -192,17 +192,7 @@ internal static class Program
 
         Target("test-package", DependsOn("test-package-major-minor"));
 
-        try
-        {
-            await RunTargetsAsync(args);
-        }
-        catch (BullseyeException ex)
-        {
-            await Console.Out.WriteLineAsync(ex.Message);
-            return 2;
-        }
-
-        return 0;
+        await RunTargetsAndExitAsync(args);
     }
 
     private static async Task CleanAndPack(string path, string output)

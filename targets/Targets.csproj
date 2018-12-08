@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Bullseye" Version="2.3.0-beta.5" />
+    <PackageReference Include="Bullseye" Version="2.3.0-beta.6" />
     <PackageReference Include="LibGit2Sharp" Version="0.25.3" />
     <PackageReference Include="SimpleExec" Version="4.2.0" />
   </ItemGroup>

@@ -6,13 +6,13 @@ namespace MinVer.Lib
 
     public static class Versioner
     {
-        public static Version GetVersion(Repository repo, string tagPrefix, MajorMinor range, string buildMetadata, ILogger log)
+        public static Version GetVersion(Repository repo, string tagPrefix, MajorMinor minimumRange, string buildMetadata, ILogger log)
         {
             var commit = repo.Commits.FirstOrDefault();
 
             if (commit == default)
             {
-                var version = new Version(range?.Major ?? 0, range?.Minor ?? 0, buildMetadata);
+                var version = new Version(minimumRange?.Major ?? 0, minimumRange?.Minor ?? 0, buildMetadata);
 
                 log.Info($"No commits found. Using default version {version}.");
 
@@ -176,13 +176,13 @@ namespace MinVer.Lib
             var selectedCandidate = orderedCandidates.Last();
             log.Info($"Using{(log.IsDebugEnabled && orderedCandidates.Count > 1 ? "    " : " ")}{selectedCandidate.ToString(tagWidth, versionWidth, heightWidth)}.");
 
-            var baseVersion = range != default && selectedCandidate.Version.IsBefore(range.Major, range.Minor)
-                ? new Version(range.Major, range.Minor)
+            var baseVersion = minimumRange != default && selectedCandidate.Version.IsBefore(minimumRange.Major, minimumRange.Minor)
+                ? new Version(minimumRange.Major, minimumRange.Minor)
                 : selectedCandidate.Version;
 
             if (baseVersion != selectedCandidate.Version)
             {
-                log.Info($"Bumping version to {baseVersion} to satisfy {range} range.");
+                log.Info($"Bumping version to {baseVersion} to satisfy minimum major minor {minimumRange}.");
             }
 
             var calculatedVersion = baseVersion.WithHeight(selectedCandidate.Height).AddBuildMetadata(buildMetadata);

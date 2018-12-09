@@ -170,16 +170,16 @@ internal static class Program
             });
 
         Target(
-            "test-package-major-minor",
+            "test-package-minimum-major-minor",
             DependsOn("test-package-commit-after-tag"),
             async () =>
             {
                 using (var repo = new Repository(testRepo))
                 {
                     // arrange
-                    Environment.SetEnvironmentVariable("MinVerMajorMinor", "2.0", EnvironmentVariableTarget.Process);
+                    Environment.SetEnvironmentVariable("MinVerMinimumMajorMinor", "2.0", EnvironmentVariableTarget.Process);
 
-                    var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-major-minor");
+                    var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-minimum-major-minor");
 
                     // act
                     Environment.SetEnvironmentVariable("MinVerVerbosity", "diagnostic", EnvironmentVariableTarget.Process);
@@ -190,7 +190,7 @@ internal static class Program
                 }
             });
 
-        Target("test-package", DependsOn("test-package-major-minor"));
+        Target("test-package", DependsOn("test-package-minimum-major-minor"));
 
         await RunTargetsAndExitAsync(args);
     }

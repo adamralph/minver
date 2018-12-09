@@ -69,7 +69,7 @@ This behaviour can be [customised](#can-i-use-the-version-calculated-by-minver-f
 Options can be specified as either MSBuild properties or environment variables.
 
 - [`MinVerBuildMetadata`](#can-i-include-build-metadata-in-the-version)
-- [`MinVerMajorMinor`](#can-i-bump-the-major-or-minor-version)
+- [`MinVerMinimumMajorMinor`](#can-i-bump-the-major-or-minor-version)
 - [`MinVerTagPrefix`](#can-i-prefix-my-tag-names)
 - [`MinVerVerbosity`](#can-i-control-the-logging-verbosity)
 
@@ -96,11 +96,11 @@ _(With TL;DR answers inline.)_
 
 Yes! You probably want to do this because at a point in time, on a given branch, you are working on a `MAJOR.MINOR` range, e.g. `1.0`, `1.1`, or `2.0`. The branch could be `master`, `develop`, a special release branch, a support branch, or anything else.
 
-Before you create the first tag on that branch, interim builds will use the latest tag found in the commit history, which may not match the `MAJOR.MINOR` range which the current branch represents. Or if no tag is found in the commit history, interim builds will have the default version `0.0.0-alpha.0`. If you prefer those interim builds to have a version within the current range, specify the range with [`MinVerMajorMinor`](#options). For example:
+Before you create the first tag on that branch, interim builds will use the latest tag found in the commit history, which may not match the `MAJOR.MINOR` range which the current branch represents. Or if no tag is found in the commit history, interim builds will have the default version `0.0.0-alpha.0`. If you prefer those interim builds to have a version within the current range, specify the range with [`MinVerMinimumMajorMinor`](#options). For example:
 
 ```xml
 <PropertyGroup>
-  <MinVerMajorMinor>1.0</MinVerMajorMinor>
+  <MinVerMinimumMajorMinor>1.0</MinVerMinimumMajorMinor>
 </PropertyGroup>
 ```
 
@@ -108,9 +108,9 @@ MinVer will now use a default version of `1.0.0-alpha.0`.
 
 If you begin to release versions in the `1.0` range from another branch (e.g. a special release branch), update this value to `1.1`, `2.0`, or whatever `MAJOR.MINOR` range the current branch now represents.
 
-Note that `MinVerMajorMinor` will be redundant after you create the first tag with same `MAJOR.MINOR`. If you don't care that the versions of interim builds before that first tag will have a lower `MAJOR.MINOR`, then simply don't specify `MinVerMajorMinor`.
+Note that `MinVerMinimumMajorMinor` will be redundant after you create the first tag with same `MAJOR.MINOR`. If you don't care that the versions of interim builds before that first tag will have a lower `MAJOR.MINOR`, then simply don't specify `MinVerMinimumMajorMinor`.
 
-Also note that if the latest tag found in the commit history has a higher `MAJOR.MINOR` than `MinVerMajorMinor`, then `MinVerMajorMinor` will be ignored.
+Also note that if the latest tag found in the commit history has a higher `MAJOR.MINOR` than `MinVerMinimumMajorMinor`, then `MinVerMinimumMajorMinor` will be ignored.
 
 ### Can I use my own pre-release versioning scheme?
 

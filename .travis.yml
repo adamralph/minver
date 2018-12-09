@@ -1,0 +1,14 @@
+os:
+  - linux
+  - osx
+language: csharp
+mono: none
+dotnet: 2.1.500
+branches:
+  only:
+  - master
+  - /release-.*/
+  - /^\d+\.\d+\.\d+(-\S*)?$/
+script: "./build.sh"
+git:
+  depth: false

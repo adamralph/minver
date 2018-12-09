@@ -2,7 +2,6 @@ namespace MinVerTests.Infra
 {
     using System.Threading.Tasks;
     using LibGit2Sharp;
-
     using static MinVerTests.Infra.FileSystem;
     using static SimpleExec.Command;
 

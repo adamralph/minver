@@ -9,10 +9,10 @@ namespace MinVerTests
     using MinVerTests.Infra;
     using Xbehave;
     using Xunit;
-
     using static MinVerTests.Infra.FileSystem;
     using static MinVerTests.Infra.Git;
     using static SimpleExec.Command;
+    using Version = MinVer.Lib.Version;
 
     public static class Versioning
     {
@@ -93,7 +93,7 @@ git tag 1.1.0
                     {
                         Commands.Checkout(repo, commit);
 
-                        var version = Versioner.GetVersion(new Repository(path).Using(c), default, default, default, new TestLogger());
+                        var version = Versioner.GetVersion(repo.Using(c), default, default, default, new TestLogger());
                         var versionString = version.ToString();
                         var tagName = $"v/{versionString}";
 
@@ -119,7 +119,7 @@ git tag 1.1.0
         }
 
         [Scenario]
-        public static void EmptyRepo(string path, Repository repo, MinVer.Lib.Version version)
+        public static void EmptyRepo(string path, Repository repo, Version version)
         {
             $"Given an empty git repository in '{path = GetScenarioDirectory("versioning-empty-repo")}'"
                 .x(c => repo = EnsureEmptyRepository(path).Using(c));

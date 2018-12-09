@@ -6,17 +6,17 @@ namespace MinVer
 
     internal class Logger : ILogger
     {
-        private readonly Verbosity level;
+        private readonly Verbosity verbosity;
 
-        public Logger(Verbosity level) => this.level = level;
+        public Logger(Verbosity verbosity) => this.verbosity = verbosity;
 
-        public bool IsTraceEnabled => this.level >= Verbosity.Trace;
+        public bool IsTraceEnabled => this.verbosity >= Verbosity.Trace;
 
-        public bool IsDebugEnabled => this.level >= Verbosity.Debug;
+        public bool IsDebugEnabled => this.verbosity >= Verbosity.Debug;
 
         public void Trace(string message)
         {
-            if (this.level >= Verbosity.Trace)
+            if (this.verbosity >= Verbosity.Trace)
             {
                 Message(message);
             }
@@ -24,7 +24,7 @@ namespace MinVer
 
         public void Debug(string message)
         {
-            if (this.level >= Verbosity.Debug)
+            if (this.verbosity >= Verbosity.Debug)
             {
                 Message(message);
             }
@@ -32,27 +32,27 @@ namespace MinVer
 
         public void Info(string message)
         {
-            if (this.level >= Verbosity.Info)
+            if (this.verbosity >= Verbosity.Info)
             {
                 Message(message);
             }
         }
 
-        public void WarnInvalidRepoPath(string path, Version version) =>
-            this.Warn($"'{path}' is not a valid repository or working directory. Using default version: {version}.");
+        public void WarnIsNotAValidRepositoryOrWorkDirUsingDefaultVersion(string repoOrWorkDir, Version defaultVersion) =>
+            this.Warn($"'{repoOrWorkDir}' is not a valid repository or working directory. Using default version: {defaultVersion}.");
 
-        public static void ErrorInvalidRepoPath(string path) =>
-            Error($"Invalid repository path '{path}'. Directory does not exist.");
+        public static void ErrorRepoOrWorkDirDoesNotExist(string repoOrWorkDir) =>
+            Error($"Invalid repository path '{repoOrWorkDir}'. Directory does not exist.");
 
-        public static void ErrorInvalidMinimumMajorMinor(string range) =>
-            Error($"Invalid minimum MAJOR.MINOR range '{range}'.");
+        public static void ErrorInvalidMinMajorMinor(string minMajorMinor) =>
+            Error($"Invalid minimum MAJOR.MINOR range '{minMajorMinor}'.");
 
-        public static void ErrorInvalidVerbosityLevel(string verbosity) =>
-            Error($"Invalid verbosity level '{verbosity}'. The level must be {VerbosityMap.Levels}.");
+        public static void ErrorInvalidVerbosity(string verbosity) =>
+            Error($"Invalid verbosity level '{verbosity}'. The level must be {VerbosityMap.ToString()}.");
 
         private void Warn(string message)
         {
-            if (this.level >= Verbosity.Warn)
+            if (this.verbosity >= Verbosity.Warn)
             {
                 Message($"warning : {message}");
             }

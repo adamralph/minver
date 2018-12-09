@@ -24,20 +24,20 @@ namespace MinVer
 
             app.HelpOption();
 
-            var buildMetadata = app.Option("-b|--build-metadata <BUILD_METADATA>", "", CommandOptionType.SingleValue);
-            var minimumMajorMinor = app.Option("-m|--minimum-major-minor <RANGE>", "1.0, 1.1, 2.0, etc.", CommandOptionType.SingleValue);
-            var repo = app.Option("-r|--repo <PATH>", "Repository or working directory.", CommandOptionType.SingleValue);
-            var tagPrefix = app.Option("-t|--tag-prefix <TAG_PREFIX>", "", CommandOptionType.SingleValue);
-            var verbosity = app.Option("-v|--verbosity <LEVEL>", VerbosityMap.Levels, CommandOptionType.SingleValue);
+            var buildMetaOption = app.Option("-b|--build-metadata <BUILD_METADATA>", "", CommandOptionType.SingleValue);
+            var minMajorMinorOption = app.Option("-m|--minimum-major-minor <RANGE>", "1.0, 1.1, 2.0, etc.", CommandOptionType.SingleValue);
+            var repoOrWorkDirOption = app.Option("-r|--repo <PATH>", "Repository or working directory.", CommandOptionType.SingleValue);
+            var tagPrefixOption = app.Option("-t|--tag-prefix <TAG_PREFIX>", "", CommandOptionType.SingleValue);
+            var verbosityOption = app.Option("-v|--verbosity <LEVEL>", VerbosityMap.ToString(), CommandOptionType.SingleValue);
 
             app.OnExecute(() =>
             {
-                if (!TryParse(repo.Value(), minimumMajorMinor.Value(), verbosity.Value(), out var path, out var minimumRange, out var level))
+                if (!TryParse(repoOrWorkDirOption.Value(), minMajorMinorOption.Value(), verbosityOption.Value(), out var repoOrWorkDir, out var minMajorMinor, out var verbosity))
                 {
                     return 2;
                 }
 
-                var version = GetVersion(path, tagPrefix.Value(), minimumRange, buildMetadata.Value(), level);
+                var version = GetVersion(repoOrWorkDir, tagPrefixOption.Value(), minMajorMinor, buildMetaOption.Value(), verbosity);
 
                 Console.Out.WriteLine(version);
 
@@ -47,54 +47,54 @@ namespace MinVer
             return app.Execute(args);
         }
 
-        private static bool TryParse(string repo, string minimumMajorMinor, string verbosity, out string path, out MajorMinor minimumRange, out Verbosity level)
+        private static bool TryParse(string repoOrWorkDirOption, string minMajorMinorOption, string verbosityOption, out string repoOrWorkDir, out MajorMinor minMajorMinor, out Verbosity verbosity)
         {
-            path = ".";
-            minimumRange = default;
-            level = default;
+            repoOrWorkDir = ".";
+            minMajorMinor = default;
+            verbosity = default;
 
-            if (!string.IsNullOrEmpty(repo) && !Directory.Exists(path = repo))
+            if (!string.IsNullOrEmpty(repoOrWorkDirOption) && !Directory.Exists(repoOrWorkDir = repoOrWorkDirOption))
             {
-                Logger.ErrorInvalidRepoPath(path);
+                Logger.ErrorRepoOrWorkDirDoesNotExist(repoOrWorkDirOption);
                 return false;
             }
 
-            if (!string.IsNullOrEmpty(minimumMajorMinor) && !MajorMinor.TryParse(minimumMajorMinor, out minimumRange))
+            if (!string.IsNullOrEmpty(minMajorMinorOption) && !MajorMinor.TryParse(minMajorMinorOption, out minMajorMinor))
             {
-                Logger.ErrorInvalidMinimumMajorMinor(minimumMajorMinor);
+                Logger.ErrorInvalidMinMajorMinor(minMajorMinorOption);
                 return false;
             }
 
-            if (!string.IsNullOrEmpty(verbosity) && !VerbosityMap.TryMap(verbosity, out level))
+            if (!string.IsNullOrEmpty(verbosityOption) && !VerbosityMap.TryMap(verbosityOption, out verbosity))
             {
-                Logger.ErrorInvalidVerbosityLevel(verbosity);
+                Logger.ErrorInvalidVerbosity(verbosityOption);
                 return false;
             }
 
             return true;
         }
 
-        private static Version GetVersion(string path, string tagPrefix, MajorMinor minimumRange, string buildMetadata, Verbosity level)
+        private static Version GetVersion(string repoOrWorkDir, string tagPrefix, MajorMinor minMajorMinor, string buildMeta, Verbosity verbosity)
         {
-            var log = new Logger(level);
+            var log = new Logger(verbosity);
 
             if (log.IsDebugEnabled)
             {
                 log.Debug($"MinVer {informationalVersion}.");
             }
 
-            if (!RepositoryEx.TryCreateRepo(path, out var repo))
+            if (!RepositoryEx.TryCreateRepo(repoOrWorkDir, out var repo))
             {
-                var version = new Version(minimumRange?.Major ?? 0, minimumRange?.Minor ?? 0, buildMetadata);
+                var version = new Version(minMajorMinor?.Major ?? 0, minMajorMinor?.Minor ?? 0, buildMeta);
 
-                log.WarnInvalidRepoPath(path, version);
+                log.WarnIsNotAValidRepositoryOrWorkDirUsingDefaultVersion(repoOrWorkDir, version);
 
                 return version;
             }
 
             try
             {
-                return Versioner.GetVersion(repo, tagPrefix, minimumRange, buildMetadata, log);
+                return Versioner.GetVersion(repo, tagPrefix, minMajorMinor, buildMeta, log);
             }
             finally
             {

@@ -14,16 +14,16 @@ namespace MinVer.Lib
 
         public override string ToString() => $"{this.Major}.{this.Minor}";
 
-        public static bool TryParse(string text, out MajorMinor range)
+        public static bool TryParse(string value, out MajorMinor majorMinor)
         {
-            range = default;
+            majorMinor = default;
 
-            if (string.IsNullOrWhiteSpace(text))
+            if (string.IsNullOrWhiteSpace(value))
             {
                 return false;
             }
 
-            var numbers = text.Split('.');
+            var numbers = value.Split('.');
 
             var minor = 0;
 
@@ -34,7 +34,7 @@ namespace MinVer.Lib
                 return false;
             }
 
-            range = new MajorMinor(major, minor);
+            majorMinor = new MajorMinor(major, minor);
 
             return true;
         }

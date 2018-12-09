@@ -2,6 +2,9 @@
 
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
+    <!-- MinVer doesn't use MinVer for versioning because
+the environment variables for the build and for the package tests
+would interfere with each other. -->
     <VersionPrefix>1.0.0</VersionPrefix>
   </PropertyGroup>
 

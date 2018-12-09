@@ -53,6 +53,8 @@ MinVer sets the following custom properties:
 - `MinVerMajor`
 - `MinVerMinor`
 - `MinVerPatch`
+- `MinVerPreRelease`
+- `MinVerBuildMetadata`
 
 Those properties are used to set the following .NET SDK properties, satisfying the official [open-source library guidance for version numbers](https://docs.microsoft.com/en-ca/dotnet/standard/library-guidance/versioning#version-numbers):
 
@@ -159,7 +161,19 @@ You can also specify build metadata in a version tag. If the tag is on the curre
 
 Yes! You can use any of the [properties set by MinVer](#version-numbers), or override their values, in a target which runs after MinVer.
 
-For example, MinVer sets `AssemblyVersion` to `{MAJOR}.0.0.0`. For projects which do not create NuGet packages, you may want to override this behaviour and populate [all four parts](https://docs.microsoft.com/en-us/dotnet/framework/app-domains/assembly-versioning#assembly-version-number) of `AssemblyVersion`. E.g. using Appveyor:
+For example, for pull requests, you may want to inject the pull request number into the version. E.g. using Appveyor:
+
+```xml
+<Target Name="MyTarget" AfterTargets="MinVer" Condition="'$(APPVEYOR_PULL_REQUEST_NUMBER)' != ''" >
+  <PropertyGroup>
+    <PackageVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch)-PR.$(APPVEYOR_PULL_REQUEST_NUMBER).$(MinVerPreRelease)</PackageVersion>
+    <PackageVersion Condition="'$(MinVerBuildMetadata)' != ''">$(PackageVersion)+$(MinVerBuildMetadata)</PackageVersion>
+    <Version>$(PackageVersion)</Version>
+  </PropertyGroup>
+</Target>
+```
+
+Or for projects which do not create NuGet packages, you may want to populate [all four parts](https://docs.microsoft.com/en-us/dotnet/framework/app-domains/assembly-versioning#assembly-version-number) of `AssemblyVersion`. E.g. using Appveyor:
 
 ```xml
 <Target Name="MyTarget" AfterTargets="MinVer">
@@ -170,7 +184,7 @@ For example, MinVer sets `AssemblyVersion` to `{MAJOR}.0.0.0`. For projects whic
 </Target>
 ```
 
-Or, for example, for projects which _do_ create NuGet packages, you may want to adjust the assembly file version to include the build number, as recommended in the [official guidance](https://docs.microsoft.com/en-ca/dotnet/standard/library-guidance/versioning#assembly-file-version). E.g. when using Appveyor:
+Or  for projects which _do_ create NuGet packages, you may want to adjust the assembly file version to include the build number, as recommended in the [official guidance](https://docs.microsoft.com/en-ca/dotnet/standard/library-guidance/versioning#assembly-file-version). E.g. when using Appveyor:
 
 ```xml
 <Target Name="MyTarget" AfterTargets="MinVer">

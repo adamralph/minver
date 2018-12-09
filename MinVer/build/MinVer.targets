@@ -36,6 +36,10 @@
       <MinVerMajor>$(MinVerVersion.Split(`.`)[0])</MinVerMajor>
       <MinVerMinor>$(MinVerVersion.Split(`.`)[1])</MinVerMinor>
       <MinVerPatch>$(MinVerVersion.Split(`.`)[2].Split(`-`)[0].Split(`+`)[0])</MinVerPatch>
+      <MinVerPreRelease></MinVerPreRelease>
+      <MinVerPreRelease Condition="$(MinVerVersion.Split(`+`)[0].Contains(`-`))">$(MinVerVersion.Split(`+`)[0].Split(`-`)[1])</MinVerPreRelease>
+      <MinVerBuildMetadata></MinVerBuildMetadata>
+      <MinVerBuildMetadata Condition="$(MinVerVersion.Contains(`+`))">$(MinVerVersion.Split(`+`)[1])</MinVerBuildMetadata>
       <AssemblyVersion>$(MinVerMajor).0.0.0</AssemblyVersion>
       <FileVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch).0</FileVersion>
       <PackageVersion>$(MinVerVersion)</PackageVersion>
@@ -45,6 +49,8 @@
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [output] MinVerMajor=$(MinVerMajor)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [output] MinVerMinor=$(MinVerMinor)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [output] MinVerPatch=$(MinVerPatch)" />
+    <Message Importance="$(MinVerDetailed)" Text="MinVer: [output] MinVerPreRelease=$(MinVerPreRelease)" />
+    <Message Importance="$(MinVerDetailed)" Text="MinVer: [output] MinVerBuildMetadata=$(MinVerBuildMetadata)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [output] AssemblyVersion=$(AssemblyVersion)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [output] FileVersion=$(FileVersion)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [output] PackageVersion=$(PackageVersion)" />

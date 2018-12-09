@@ -25,10 +25,10 @@ namespace MinVer
             app.HelpOption();
 
             var buildMetaOption = app.Option("-b|--build-metadata <BUILD_METADATA>", "", CommandOptionType.SingleValue);
-            var minMajorMinorOption = app.Option("-m|--minimum-major-minor <RANGE>", "1.0, 1.1, 2.0, etc.", CommandOptionType.SingleValue);
-            var repoOrWorkDirOption = app.Option("-r|--repo <PATH>", "Repository or working directory.", CommandOptionType.SingleValue);
+            var minMajorMinorOption = app.Option("-m|--minimum-major-minor <MINIMUM_MAJOR_MINOR>", MajorMinor.ValidValues, CommandOptionType.SingleValue);
+            var repoOrWorkDirOption = app.Option("-r|--repo <REPO>", "Repository or working directory.", CommandOptionType.SingleValue);
             var tagPrefixOption = app.Option("-t|--tag-prefix <TAG_PREFIX>", "", CommandOptionType.SingleValue);
-            var verbosityOption = app.Option("-v|--verbosity <LEVEL>", VerbosityMap.ToString(), CommandOptionType.SingleValue);
+            var verbosityOption = app.Option("-v|--verbosity <VERBOSITY>", VerbosityMap.ValidValue, CommandOptionType.SingleValue);
 
             app.OnExecute(() =>
             {

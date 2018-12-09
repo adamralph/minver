@@ -14,6 +14,8 @@ namespace MinVer.Lib
 
         public override string ToString() => $"{this.Major}.{this.Minor}";
 
+        public static string ValidValues => "1.0, 1.1, 2.0, etc.";
+
         public static bool TryParse(string value, out MajorMinor majorMinor)
         {
             majorMinor = default;

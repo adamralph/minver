@@ -39,16 +39,16 @@ namespace MinVer
         }
 
         public void WarnIsNotAValidRepositoryOrWorkDirUsingDefaultVersion(string repoOrWorkDir, Version version) =>
-            this.Warn(1001, $"'{repoOrWorkDir}' is not a valid repository or working directory. Using default version: {version}.");
+            this.Warn(1001, $"'{repoOrWorkDir}' is not a valid repository or working directory. Using default version {version}.");
 
         public static void ErrorRepoOrWorkDirDoesNotExist(string repoOrWorkDir) =>
-            Error(1002, $"Invalid repository path '{repoOrWorkDir}'. Directory does not exist.");
+            Error(1002, $"Repository or working directory '{repoOrWorkDir}' does not exist.");
 
         public static void ErrorInvalidMinMajorMinor(string minMajorMinor) =>
-            Error(1003, $"Invalid minimum MAJOR.MINOR range '{minMajorMinor}'.");
+            Error(1003, $"Invalid minimum MAJOR.MINOR '{minMajorMinor}'. Valid values are {MajorMinor.ValidValues}");
 
         public static void ErrorInvalidVerbosity(string verbosity) =>
-            Error(1004, $"Invalid verbosity level '{verbosity}'. The level must be {VerbosityMap.ToString()}.");
+            Error(1004, $"Invalid verbosity '{verbosity}'. The value must be {VerbosityMap.ValidValue}.");
 
         private void Warn(int code, string message)
         {

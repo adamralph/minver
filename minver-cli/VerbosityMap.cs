@@ -22,7 +22,7 @@ namespace MinVer
             }
         }
 
-        public static new string ToString() => "e[rror], w[arn], i[nfo], d[ebug], or t[race] (case insensitive)";
+        public static string ValidValue => "e[rror], w[arn], i[nfo], d[ebug], or t[race] (case insensitive)";
 
         public static bool TryMap(string value, out Verbosity verbosity) => map.TryGetValue(value, out verbosity);
     }

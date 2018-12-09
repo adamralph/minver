@@ -44,8 +44,8 @@ namespace MinVer
         public static void ErrorInvalidRepoPath(string path) =>
             Error(1002, $"Invalid repository path '{path}'. Directory does not exist.");
 
-        public static void ErrorInvalidMajorMinorRange(string majorMinor) =>
-            Error(1003, $"Invalid MAJOR.MINOR range '{majorMinor}'.");
+        public static void ErrorInvalidMinimumMajorMinor(string range) =>
+            Error(1003, $"Invalid minimum MAJOR.MINOR range '{range}'.");
 
         public static void ErrorInvalidVerbosityLevel(string verbosity) =>
             Error(1004, $"Invalid verbosity level '{verbosity}'. The level must be {VerbosityMap.Levels}.");

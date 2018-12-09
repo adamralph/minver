@@ -14,24 +14,30 @@ namespace MinVer
 
         private static int Main(string[] args)
         {
+            if (args.Contains("--major-minor", StringComparer.OrdinalIgnoreCase))
+            {
+                Console.Out.WriteLine("--major-minor has been renamed to --minimum-major-minor");
+                return 2;
+            }
+
             var app = new CommandLineApplication { Name = "minver", FullName = $"MinVer CLI {informationalVersion}" };
 
             app.HelpOption();
 
             var buildMetadata = app.Option("-b|--build-metadata <BUILD_METADATA>", "", CommandOptionType.SingleValue);
-            var majorMinor = app.Option("-m|--major-minor <RANGE>", "1.0, 1.1, 2.0, etc.", CommandOptionType.SingleValue);
+            var minimumMajorMinor = app.Option("-m|--minimum-major-minor <RANGE>", "1.0, 1.1, 2.0, etc.", CommandOptionType.SingleValue);
             var repo = app.Option("-r|--repo <PATH>", "Repository or working directory.", CommandOptionType.SingleValue);
             var tagPrefix = app.Option("-t|--tag-prefix <TAG_PREFIX>", "", CommandOptionType.SingleValue);
             var verbosity = app.Option("-v|--verbosity <LEVEL>", VerbosityMap.Levels, CommandOptionType.SingleValue);
 
             app.OnExecute(() =>
             {
-                if (!TryParse(repo.Value(), majorMinor.Value(), verbosity.Value(), out var path, out var range, out var level))
+                if (!TryParse(repo.Value(), minimumMajorMinor.Value(), verbosity.Value(), out var path, out var minimumRange, out var level))
                 {
                     return 2;
                 }
 
-                var version = GetVersion(path, tagPrefix.Value(), range, buildMetadata.Value(), level);
+                var version = GetVersion(path, tagPrefix.Value(), minimumRange, buildMetadata.Value(), level);
 
                 Console.Out.WriteLine(version);
 
@@ -41,10 +47,10 @@ namespace MinVer
             return app.Execute(args);
         }
 
-        private static bool TryParse(string repo, string majorMinor, string verbosity, out string path, out MajorMinor range, out Verbosity level)
+        private static bool TryParse(string repo, string minimumMajorMinor, string verbosity, out string path, out MajorMinor minimumRange, out Verbosity level)
         {
             path = ".";
-            range = default;
+            minimumRange = default;
             level = default;
 
             if (!string.IsNullOrEmpty(repo) && !Directory.Exists(path = repo))
@@ -53,9 +59,9 @@ namespace MinVer
                 return false;
             }
 
-            if (!string.IsNullOrEmpty(majorMinor) && !MajorMinor.TryParse(majorMinor, out range))
+            if (!string.IsNullOrEmpty(minimumMajorMinor) && !MajorMinor.TryParse(minimumMajorMinor, out minimumRange))
             {
-                Logger.ErrorInvalidMajorMinorRange(majorMinor);
+                Logger.ErrorInvalidMinimumMajorMinor(minimumMajorMinor);
                 return false;
             }
 
@@ -68,7 +74,7 @@ namespace MinVer
             return true;
         }
 
-        private static Version GetVersion(string path, string tagPrefix, MajorMinor range, string buildMetadata, Verbosity level)
+        private static Version GetVersion(string path, string tagPrefix, MajorMinor minimumRange, string buildMetadata, Verbosity level)
         {
             var log = new Logger(level);
 
@@ -79,7 +85,7 @@ namespace MinVer
 
             if (!RepositoryEx.TryCreateRepo(path, out var repo))
             {
-                var version = new Version(range?.Major ?? 0, range?.Minor ?? 0, buildMetadata);
+                var version = new Version(minimumRange?.Major ?? 0, minimumRange?.Minor ?? 0, buildMetadata);
 
                 log.WarnInvalidRepoPath(path, version);
 
@@ -88,7 +94,7 @@ namespace MinVer
 
             try
             {
-                return Versioner.GetVersion(repo, tagPrefix, range, buildMetadata, log);
+                return Versioner.GetVersion(repo, tagPrefix, minimumRange, buildMetadata, log);
             }
             finally
             {

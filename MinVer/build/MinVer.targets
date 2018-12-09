@@ -7,9 +7,10 @@
 
   <Target Name="MinVer" BeforeTargets="CoreCompile;GenerateNuspec" Condition="'$(DesignTimeBuild)' != 'true'">
     <Error Condition="'$(UsingMicrosoftNETSdk)' != 'true'" Code="MINVER0001" Text="MinVer only works in SDK-style projects." />
+    <Error Condition="'$(MinVerMajorMinor)' != ''" Code="MINVER_TEMP0001" Text="MinVerMajorMinor has been renamed to MinVerMinimumMajorMinor." />
     <ItemGroup>
       <MinVerInputs Include="--build-metadata &quot;$(MinVerBuildMetadata)&quot;" />
-      <MinVerInputs Include="--major-minor &quot;$(MinVerMajorMinor)&quot;" />
+      <MinVerInputs Include="--minimum-major-minor &quot;$(MinVerMinimumMajorMinor)&quot;" />
       <MinVerInputs Include="--repo &quot;$(MSBuildProjectDirectory)&quot;" />
       <MinVerInputs Include="--tag-prefix &quot;$(MinVerTagPrefix)&quot;" />
       <MinVerInputs Include="--verbosity &quot;$(MinVerVerbosity)&quot;" />

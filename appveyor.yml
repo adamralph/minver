@@ -1,7 +1,6 @@
 version: '{build}'
 image:
 - Visual Studio 2017
-- Ubuntu
 pull_requests:
   do_not_increment_build_number: true
 branches:
@@ -11,7 +10,6 @@ branches:
   - /^\d+\.\d+\.\d+(-\S*)?$/
 build_script:
 - cmd: ./build.cmd
-- sh: ./build.sh
 test: off
 artifacts:
 - path: ./**/*.nupkg

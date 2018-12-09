@@ -2,10 +2,8 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Bullseye;
 using LibGit2Sharp;
 using MinVerTests.Infra;
-using SimpleExec;
 using static Bullseye.Targets;
 using static MinVerTests.Infra.FileSystem;
 using static MinVerTests.Infra.Git;
@@ -50,7 +48,7 @@ internal static class Program
                 Environment.SetEnvironmentVariable("MinVerTagPrefix", "v.", EnvironmentVariableTarget.Process);
                 Environment.SetEnvironmentVariable("NoPackageAnalysis", "true", EnvironmentVariableTarget.Process);
 
-                testRepo = FileSystem.GetScenarioDirectory("package");
+                testRepo = GetScenarioDirectory("package");
                 EnsureEmptyDirectory(testRepo);
 
                 var source = Path.GetFullPath("./MinVer/bin/Release/");

@@ -5,9 +5,19 @@
     <GetPackageVersionDependsOn>$(GetPackageVersionDependsOn);MinVer</GetPackageVersionDependsOn>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <MinVerDetailed>low</MinVerDetailed>
+    <MinVerDetailed Condition="'$(MinVerVerbosity)' == 'detailed' Or '$(MinVerVerbosity)' == 'd' Or '$(MinVerVerbosity)' == 'diagnostic' Or '$(MinVerVerbosity)' == 'diag'">high</MinVerDetailed>
+  </PropertyGroup>
+
   <Target Name="MinVer" BeforeTargets="CoreCompile;GenerateNuspec" Condition="'$(DesignTimeBuild)' != 'true'">
     <Error Condition="'$(UsingMicrosoftNETSdk)' != 'true'" Code="MINVER0001" Text="MinVer only works in SDK-style projects." />
     <Error Condition="'$(MinVerMajorMinor)' != ''" Code="MINVER_TEMP0001" Text="MinVerMajorMinor has been renamed to MinVerMinimumMajorMinor." />
+    <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerBuildMetadata=$(MinVerBuildMetadata)" />
+    <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerMinimumMajorMinor=$(MinVerMinimumMajorMinor)" />
+    <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MSBuildProjectDirectory=$(MSBuildProjectDirectory)" />
+    <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerTagPrefix=$(MinVerTagPrefix)" />
+    <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerVerbosity=$(MinVerVerbosity)" />
     <ItemGroup>
       <MinVerInputs Include="--build-metadata &quot;$(MinVerBuildMetadata)&quot;" />
       <MinVerInputs Include="--minimum-major-minor &quot;$(MinVerMinimumMajorMinor)&quot;" />
@@ -31,6 +41,14 @@
       <PackageVersion>$(MinVerVersion)</PackageVersion>
       <Version>$(MinVerVersion)</Version>
     </PropertyGroup>
+    <Message Importance="$(MinVerDetailed)" Text="MinVer: [output] MinVerVersion=$(MinVerVersion)" />
+    <Message Importance="$(MinVerDetailed)" Text="MinVer: [output] MinVerMajor=$(MinVerMajor)" />
+    <Message Importance="$(MinVerDetailed)" Text="MinVer: [output] MinVerMinor=$(MinVerMinor)" />
+    <Message Importance="$(MinVerDetailed)" Text="MinVer: [output] MinVerPatch=$(MinVerPatch)" />
+    <Message Importance="$(MinVerDetailed)" Text="MinVer: [output] AssemblyVersion=$(AssemblyVersion)" />
+    <Message Importance="$(MinVerDetailed)" Text="MinVer: [output] FileVersion=$(FileVersion)" />
+    <Message Importance="$(MinVerDetailed)" Text="MinVer: [output] PackageVersion=$(PackageVersion)" />
+    <Message Importance="$(MinVerDetailed)" Text="MinVer: [output] Version=$(Version)" />
   </Target>
 
 </Project>

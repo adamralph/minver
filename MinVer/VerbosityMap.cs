@@ -15,15 +15,15 @@ namespace MinVer
             Add(Verbosity.Detailed, 1);
             Add(Verbosity.Diagnostic, 4);
 
-            void Add(Verbosity level, int shortLength)
+            void Add(Verbosity verbosity, int shortLength)
             {
-                map.Add(level.ToString(), level);
-                map.Add(level.ToString().Substring(0, shortLength), level);
+                map.Add(verbosity.ToString(), verbosity);
+                map.Add(verbosity.ToString().Substring(0, shortLength), verbosity);
             }
         }
 
-        public static string Levels => "q[uiet], m[inimal], n[ormal], d[etailed], or diag[nostic] (case insensitive)";
+        public static new string ToString() => "q[uiet], m[inimal], n[ormal], d[etailed], or diag[nostic] (case insensitive)";
 
-        public static bool TryMap(string text, out Verbosity level) => map.TryGetValue(text, out level);
+        public static bool TryMap(string value, out Verbosity verbosity) => map.TryGetValue(value, out verbosity);
     }
 }

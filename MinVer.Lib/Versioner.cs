@@ -6,13 +6,13 @@ namespace MinVer.Lib
 
     public static class Versioner
     {
-        public static Version GetVersion(Repository repo, string tagPrefix, MajorMinor minimumRange, string buildMetadata, ILogger log)
+        public static Version GetVersion(Repository repo, string tagPrefix, MajorMinor minMajorMinor, string buildMetadata, ILogger log)
         {
             var commit = repo.Commits.FirstOrDefault();
 
             if (commit == default)
             {
-                var version = new Version(minimumRange?.Major ?? 0, minimumRange?.Minor ?? 0, buildMetadata);
+                var version = new Version(minMajorMinor?.Major ?? 0, minMajorMinor?.Minor ?? 0, buildMetadata);
 
                 log.Info($"No commits found. Using default version {version}.");
 
@@ -176,13 +176,13 @@ namespace MinVer.Lib
             var selectedCandidate = orderedCandidates.Last();
             log.Info($"Using{(log.IsDebugEnabled && orderedCandidates.Count > 1 ? "    " : " ")}{selectedCandidate.ToString(tagWidth, versionWidth, heightWidth)}.");
 
-            var baseVersion = minimumRange != default && selectedCandidate.Version.IsBefore(minimumRange.Major, minimumRange.Minor)
-                ? new Version(minimumRange.Major, minimumRange.Minor)
+            var baseVersion = minMajorMinor != default && selectedCandidate.Version.IsBefore(minMajorMinor.Major, minMajorMinor.Minor)
+                ? new Version(minMajorMinor.Major, minMajorMinor.Minor)
                 : selectedCandidate.Version;
 
             if (baseVersion != selectedCandidate.Version)
             {
-                log.Info($"Bumping version to {baseVersion} to satisfy minimum major minor {minimumRange}.");
+                log.Info($"Bumping version to {baseVersion} to satisfy minimum major minor {minMajorMinor}.");
             }
 
             var calculatedVersion = baseVersion.WithHeight(selectedCandidate.Height).AddBuildMetadata(buildMetadata);

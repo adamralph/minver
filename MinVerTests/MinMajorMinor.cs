@@ -11,7 +11,7 @@ namespace MinVerTests
 
     using Version = MinVer.Lib.Version;
 
-    public static class MinimumMajorMinor
+    public static class MinMajorMinor
     {
         [Scenario]
         public static void NoCommits(string path, Repository repo, Version actualVersion)

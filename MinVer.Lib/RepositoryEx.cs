@@ -5,20 +5,20 @@ namespace MinVer.Lib
 
     public static class RepositoryEx
     {
-        public static bool TryCreateRepo(string path, out Repository repository)
+        public static bool TryCreateRepo(string repoOrWorkDir, out Repository repository)
         {
             repository = default;
 
-            while (path != default)
+            while (repoOrWorkDir != default)
             {
                 try
                 {
-                    repository = new Repository(path);
+                    repository = new Repository(repoOrWorkDir);
                     return true;
                 }
                 catch (RepositoryNotFoundException)
                 {
-                    path = Directory.GetParent(path)?.FullName;
+                    repoOrWorkDir = Directory.GetParent(repoOrWorkDir)?.FullName;
                 }
             }
 

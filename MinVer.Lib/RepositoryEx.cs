@@ -3,7 +3,7 @@ namespace MinVer.Lib
     using System.IO;
     using LibGit2Sharp;
 
-    public static class RepositoryEx
+    internal static class RepositoryEx
     {
         public static bool TryCreateRepo(string repoOrWorkDir, out Repository repository)
         {

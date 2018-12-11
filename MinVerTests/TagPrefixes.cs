@@ -25,7 +25,7 @@ namespace MinVerTests
                 .x(() => repo.ApplyTag(tag));
 
             $"When the version is determined using the tag prefix '{prefix}'"
-                .x(() => actualVersion = Versioner.GetVersion(repo, prefix, default, default, new TestLogger()));
+                .x(() => actualVersion = Versioner.GetVersion(path, prefix, default, default, new TestLogger()));
 
             $"Then the version is '{expectedVersion}'"
                 .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));

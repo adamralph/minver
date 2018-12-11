@@ -93,7 +93,7 @@ git tag 1.1.0
                     {
                         Commands.Checkout(repo, commit);
 
-                        var version = Versioner.GetVersion(repo.Using(c), default, default, default, new TestLogger());
+                        var version = Versioner.GetVersion(path, default, default, default, new TestLogger());
                         var versionString = version.ToString();
                         var tagName = $"v/{versionString}";
 
@@ -119,13 +119,13 @@ git tag 1.1.0
         }
 
         [Scenario]
-        public static void EmptyRepo(string path, Repository repo, Version version)
+        public static void EmptyRepo(string path, Version version)
         {
             $"Given an empty git repository in '{path = GetScenarioDirectory("versioning-empty-repo")}'"
-                .x(c => repo = EnsureEmptyRepository(path).Using(c));
+                .x(c => EnsureEmptyRepository(path).Using(c));
 
             "When the version is determined"
-                .x(() => version = Versioner.GetVersion(repo, default, default, default, new TestLogger()));
+                .x(() => version = Versioner.GetVersion(path, default, default, default, new TestLogger()));
 
             "Then the version is 0.0.0-alpha.0"
                 .x(() => Assert.Equal("0.0.0-alpha.0", version.ToString()));

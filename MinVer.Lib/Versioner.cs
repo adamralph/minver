@@ -6,13 +6,50 @@ namespace MinVer.Lib
 
     public static class Versioner
     {
-        public static Version GetVersion(Repository repo, string tagPrefix, MajorMinor minMajorMinor, string buildMetadata, ILogger log)
+        public static Version GetVersion(string repoOrWorkDir, string tagPrefix, MajorMinor minMajorMinor, string buildMeta, ILogger log)
+        {
+            var version = GetVersion(repoOrWorkDir, tagPrefix, log).AddBuildMetadata(buildMeta);
+
+            var calculatedVersion = version.Satisfying(minMajorMinor);
+
+            if (calculatedVersion != version)
+            {
+                log.Info($"Bumping version to {calculatedVersion} to satisfy minimum major minor {minMajorMinor}.");
+            }
+
+            log.Debug($"Calculated version {calculatedVersion}.");
+
+            return calculatedVersion;
+        }
+
+        private static Version GetVersion(string repoOrWorkDir, string tagPrefix, ILogger log)
+        {
+            if (!RepositoryEx.TryCreateRepo(repoOrWorkDir, out var repo))
+            {
+                var version = new Version();
+
+                log.Warn(1001, $"'{repoOrWorkDir}' is not a valid repository or working directory. Using default version {version}.");
+
+                return version;
+            }
+
+            try
+            {
+                return GetVersion(repo, tagPrefix, log);
+            }
+            finally
+            {
+                repo.Dispose();
+            }
+        }
+
+        private static Version GetVersion(Repository repo, string tagPrefix, ILogger log)
         {
             var commit = repo.Commits.FirstOrDefault();
 
             if (commit == default)
             {
-                var version = new Version(minMajorMinor?.Major ?? 0, minMajorMinor?.Minor ?? 0, buildMetadata);
+                var version = new Version();
 
                 log.Info($"No commits found. Using default version {version}.");
 
@@ -176,19 +213,7 @@ namespace MinVer.Lib
             var selectedCandidate = orderedCandidates.Last();
             log.Info($"Using{(log.IsDebugEnabled && orderedCandidates.Count > 1 ? "    " : " ")}{selectedCandidate.ToString(tagWidth, versionWidth, heightWidth)}.");
 
-            var baseVersion = minMajorMinor != default && selectedCandidate.Version.IsBefore(minMajorMinor.Major, minMajorMinor.Minor)
-                ? new Version(minMajorMinor.Major, minMajorMinor.Minor)
-                : selectedCandidate.Version;
-
-            if (baseVersion != selectedCandidate.Version)
-            {
-                log.Info($"Bumping version to {baseVersion} to satisfy minimum major minor {minMajorMinor}.");
-            }
-
-            var calculatedVersion = baseVersion.WithHeight(selectedCandidate.Height).AddBuildMetadata(buildMetadata);
-            log.Debug($"Calculated version {calculatedVersion}.");
-
-            return calculatedVersion;
+            return selectedCandidate.Version.WithHeight(selectedCandidate.Height);
         }
 
         public static string ShortSha(this Commit commit) => commit.Sha.Substring(0, 7);

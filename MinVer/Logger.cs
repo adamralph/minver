@@ -2,7 +2,6 @@ namespace MinVer
 {
     using System;
     using MinVer.Lib;
-    using Version = MinVer.Lib.Version;
 
     internal class Logger : ILogger
     {
@@ -38,8 +37,13 @@ namespace MinVer
             }
         }
 
-        public void WarnIsNotAValidRepositoryOrWorkDirUsingDefaultVersion(string repoOrWorkDir, Version version) =>
-            this.Warn(1001, $"'{repoOrWorkDir}' is not a valid repository or working directory. Using default version {version}.");
+        public void Warn(int code, string message)
+        {
+            if (this.verbosity >= Verbosity.Quiet)
+            {
+                Message($"warning MINVER{code:D4} : {message}");
+            }
+        }
 
         public static void ErrorRepoOrWorkDirDoesNotExist(string repoOrWorkDir) =>
             Error(1002, $"Repository or working directory '{repoOrWorkDir}' does not exist.");
@@ -49,15 +53,6 @@ namespace MinVer
 
         public static void ErrorInvalidVerbosity(string verbosity) =>
             Error(1004, $"Invalid verbosity '{verbosity}'. The value must be {VerbosityMap.ValidValue}.");
-
-        private void Warn(int code, string message)
-        {
-            // conditional isn't really required but it gets rid of a compiler warning
-            if (this.verbosity >= Verbosity.Quiet)
-            {
-                Message($"warning MINVER{code:D4} : {message}");
-            }
-        }
 
         private static void Error(int code, string message) => Message($"error MINVER{code:D4} : {message}");
 

@@ -184,7 +184,7 @@ Or for projects which do not create NuGet packages, you may want to populate [al
 </Target>
 ```
 
-Or  for projects which _do_ create NuGet packages, you may want to adjust the assembly file version to include the build number, as recommended in the [official guidance](https://docs.microsoft.com/en-ca/dotnet/standard/library-guidance/versioning#assembly-file-version). E.g. when using Appveyor:
+Or for projects which _do_ create NuGet packages, you may want to adjust the assembly file version to include the build number, as recommended in the [official guidance](https://docs.microsoft.com/en-ca/dotnet/standard/library-guidance/versioning#assembly-file-version). E.g. when using Appveyor:
 
 ```xml
 <Target Name="MyTarget" AfterTargets="MinVer">

@@ -49,7 +49,7 @@ namespace MinVer
             return app.Execute(args);
         }
 
-        private static bool TryParse(string repoOrWorkDirOption, string minMajorMinorOption, string verbosityOption, string defaultPrereleaseIdentifiersOption, out string repoOrWorkDir, out MajorMinor minMajorMinor, out Verbosity verbosity, out IEnumerable<string> defaultPrereleaseIdentifiers)
+        private static bool TryParse(string repoOrWorkDirOption, string minMajorMinorOption, string verbosityOption, string defaultPrereleaseIdentifiersOption, out string repoOrWorkDir, out MajorMinor minMajorMinor, out Verbosity verbosity, out IReadOnlyCollection<string> defaultPrereleaseIdentifiers)
         {
             repoOrWorkDir = ".";
             minMajorMinor = default;
@@ -82,7 +82,7 @@ namespace MinVer
             return true;
         }
 
-        private static Version GetVersion(string repoOrWorkDir, string tagPrefix, MajorMinor minMajorMinor, IEnumerable<string> defaultPrereleaseIdentifiers, string buildMeta, Verbosity verbosity)
+        private static Version GetVersion(string repoOrWorkDir, string tagPrefix, MajorMinor minMajorMinor, IReadOnlyCollection<string> defaultPrereleaseIdentifiers, string buildMeta, Verbosity verbosity)
         {
             var log = new Logger(verbosity);
 

@@ -6,7 +6,7 @@ namespace MinVer.Lib
 
     public static class Versioner
     {
-        public static Version GetVersion(Repository repo, string tagPrefix, MajorMinor minMajorMinor, IEnumerable<string> defaultPrereleaseIdentifiers, string buildMetadata, ILogger log)
+        public static Version GetVersion(Repository repo, string tagPrefix, MajorMinor minMajorMinor, IReadOnlyCollection<string> defaultPrereleaseIdentifiers, string buildMetadata, ILogger log)
         {
             defaultPrereleaseIdentifiers = defaultPrereleaseIdentifiers ?? new[] {"alpha", "0"};
             var commit = repo.Commits.FirstOrDefault();

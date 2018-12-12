@@ -13,13 +13,13 @@ namespace MinVer.Lib
         private readonly int height;
         private readonly string buildMetadata;
 
-        public Version(IEnumerable<string> preReleaseIdentifiers) : this(default, default, preReleaseIdentifiers) { }
+        public Version(IReadOnlyCollection<string> preReleaseIdentifiers) : this(default, default, preReleaseIdentifiers) { }
 
-        public Version(int major, int minor, IEnumerable<string> preReleaseIdentifiers) : this(major, minor, default, preReleaseIdentifiers, default, default) { }
+        public Version(int major, int minor, IReadOnlyCollection<string> preReleaseIdentifiers) : this(major, minor, default, preReleaseIdentifiers, default, default) { }
 
-        public Version(int major, int minor, IEnumerable<string> preReleaseIdentifiers, string buildMetadata) : this(major, minor, default, preReleaseIdentifiers, default, buildMetadata) { }
+        public Version(int major, int minor, IReadOnlyCollection<string> preReleaseIdentifiers, string buildMetadata) : this(major, minor, default, preReleaseIdentifiers, default, buildMetadata) { }
 
-        private Version(int major, int minor, int patch, IEnumerable<string> preReleaseIdentifiers, int height, string buildMetadata)
+        private Version(int major, int minor, int patch, IReadOnlyCollection<string> preReleaseIdentifiers, int height, string buildMetadata)
         {
             this.Major = major;
             this.Minor = minor;
@@ -107,7 +107,7 @@ namespace MinVer.Lib
             return this.height.CompareTo(other.height);
         }
 
-        public Version WithHeight(int height, IEnumerable<string> defaultPreReleaseIdentifiers)
+        public Version WithHeight(int height, IReadOnlyCollection<string> defaultPreReleaseIdentifiers)
         {
             var preReleaseIdentifiers = this.preReleaseIdentifiers.Count > 0 || height == 0
                 ? this.preReleaseIdentifiers
@@ -141,7 +141,7 @@ namespace MinVer.Lib
             return ParseOrDefault(text.Before(meta).Before(pre).Split('.'), text.Before(meta).After(pre)?.Split('.'), text.After(meta));
         }
 
-        private static Version ParseOrDefault(string[] numbers, IEnumerable<string> pre, string meta) =>
+        private static Version ParseOrDefault(string[] numbers, IReadOnlyCollection<string> pre, string meta) =>
             numbers?.Length == 3 &&
                     int.TryParse(numbers[0], out var major) &&
                     int.TryParse(numbers[1], out var minor) &&

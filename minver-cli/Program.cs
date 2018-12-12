@@ -39,7 +39,7 @@ namespace MinVer
                     return 2;
                 }
 
-                var version = GetVersion(repoOrWorkDir, tagPrefixOption.Value(), minMajorMinor, defaultPrereleaseIdentifiers, buildMetaOption.Value(), verbosity);
+                var version = GetVersion(repoOrWorkDir, tagPrefixOption.Value(), minMajorMinor, buildMetaOption.Value(), new VersionSettings(defaultPrereleaseIdentifiers), verbosity);
 
                 Console.Out.WriteLine(version);
 
@@ -82,7 +82,7 @@ namespace MinVer
             return true;
         }
 
-        private static Version GetVersion(string repoOrWorkDir, string tagPrefix, MajorMinor minMajorMinor, IReadOnlyCollection<string> defaultPrereleaseIdentifiers, string buildMeta, Verbosity verbosity)
+        private static Version GetVersion(string repoOrWorkDir, string tagPrefix, MajorMinor minMajorMinor, string buildMeta, VersionSettings settings, Verbosity verbosity)
         {
             var log = new Logger(verbosity);
 
@@ -93,7 +93,7 @@ namespace MinVer
 
             if (!RepositoryEx.TryCreateRepo(repoOrWorkDir, out var repo))
             {
-                var version = new Version(minMajorMinor?.Major ?? 0, minMajorMinor?.Minor ?? 0, defaultPrereleaseIdentifiers, buildMeta);
+                var version = new Version(minMajorMinor?.Major ?? 0, minMajorMinor?.Minor ?? 0, buildMeta, settings);
 
                 log.WarnIsNotAValidRepositoryOrWorkDirUsingDefaultVersion(repoOrWorkDir, version);
 
@@ -102,7 +102,7 @@ namespace MinVer
 
             try
             {
-                return Versioner.GetVersion(repo, tagPrefix, minMajorMinor, defaultPrereleaseIdentifiers, buildMeta, log);
+                return Versioner.GetVersion(repo, tagPrefix, minMajorMinor, buildMeta, settings, log);
             }
             finally
             {

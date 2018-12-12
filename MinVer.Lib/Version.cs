@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace MinVer.Lib
 {
     using System;
@@ -12,14 +14,15 @@ namespace MinVer.Lib
         private readonly List<string> preReleaseIdentifiers;
         private readonly int height;
         private readonly string buildMetadata;
+        readonly VersionSettings settings;
 
-        public Version(IReadOnlyCollection<string> preReleaseIdentifiers) : this(default, default, preReleaseIdentifiers) { }
+        public Version(VersionSettings settings) : this(default, default, settings    ) { }
 
-        public Version(int major, int minor, IReadOnlyCollection<string> preReleaseIdentifiers) : this(major, minor, default, preReleaseIdentifiers, default, default) { }
+        public Version(int major, int minor, VersionSettings settings) : this(major, minor, default, settings.DefaultPreReleaseIdentifiers, default, default, settings) { }
 
-        public Version(int major, int minor, IReadOnlyCollection<string> preReleaseIdentifiers, string buildMetadata) : this(major, minor, default, preReleaseIdentifiers, default, buildMetadata) { }
+        public Version(int major, int minor, string buildMetadata, VersionSettings settings) : this(major, minor, default, settings.DefaultPreReleaseIdentifiers, default, buildMetadata, settings) { }
 
-        private Version(int major, int minor, int patch, IReadOnlyCollection<string> preReleaseIdentifiers, int height, string buildMetadata)
+        private Version(int major, int minor, int patch, IEnumerable<string> preReleaseIdentifiers, int height, string buildMetadata, VersionSettings settings)
         {
             this.Major = major;
             this.Minor = minor;
@@ -27,6 +30,7 @@ namespace MinVer.Lib
             this.preReleaseIdentifiers = preReleaseIdentifiers?.ToList() ?? new List<string>();
             this.height = height;
             this.buildMetadata = buildMetadata;
+            this.settings = settings;
         }
 
         public int Major { get; }
@@ -107,22 +111,19 @@ namespace MinVer.Lib
             return this.height.CompareTo(other.height);
         }
 
-        public Version WithHeight(int height, IReadOnlyCollection<string> defaultPreReleaseIdentifiers)
-        {
-            var preReleaseIdentifiers = this.preReleaseIdentifiers.Count > 0 || height == 0
-                ? this.preReleaseIdentifiers
-                : defaultPreReleaseIdentifiers;
+        public Version WithSettings(VersionSettings settings) =>
+            new Version(this.Major, this.Minor, this.Patch, this.preReleaseIdentifiers, height, this.buildMetadata, settings);
 
-            return this.preReleaseIdentifiers.Count == 0 && height > 0
-                ? new Version(this.Major, this.Minor, this.Patch + 1, preReleaseIdentifiers, height, default)
-                : new Version(this.Major, this.Minor, this.Patch, preReleaseIdentifiers, height,
-                    height == 0 ? this.buildMetadata : default);
-        }
+
+        public Version WithHeight(int height) =>
+            this.preReleaseIdentifiers.Count == 0 && height > 0
+                ? new Version(this.Major, this.Minor, this.Patch + 1, this.settings.DefaultPreReleaseIdentifiers, height, default, this.settings)
+                : new Version(this.Major, this.Minor, this.Patch, this.preReleaseIdentifiers, height, height == 0 ? this.buildMetadata : default, this.settings);
 
         public Version AddBuildMetadata(string buildMetadata)
         {
             var separator = !string.IsNullOrEmpty(this.buildMetadata) && !string.IsNullOrEmpty(buildMetadata) ? "." : "";
-            return new Version(this.Major, this.Minor, this.Patch, this.preReleaseIdentifiers, this.height, $"{this.buildMetadata}{separator}{buildMetadata}");
+            return new Version(this.Major, this.Minor, this.Patch, this.preReleaseIdentifiers, this.height, $"{this.buildMetadata}{separator}{buildMetadata}", this.settings);
         }
 
         public bool IsBefore(int major, int minor) => this.Major < major || (this.Major == major && this.Minor < minor);
@@ -146,7 +147,17 @@ namespace MinVer.Lib
                     int.TryParse(numbers[0], out var major) &&
                     int.TryParse(numbers[1], out var minor) &&
                     int.TryParse(numbers[2], out var patch)
-                ? new Version(major, minor, patch, pre, default, meta)
+                ? new Version(major, minor, patch, pre, default, meta, default)
                 : default;
+    }
+
+    public sealed class VersionSettings
+    {
+        public VersionSettings(IReadOnlyCollection<string> defaultPreReleaseIdentifiers = null)
+        {
+            this.DefaultPreReleaseIdentifiers = defaultPreReleaseIdentifiers ?? new[] {"alpha", "0"};
+        }
+
+        public IReadOnlyCollection<string> DefaultPreReleaseIdentifiers { get; }
     }
 }

@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace MinVerTests
 {
     using LibGit2Sharp;
@@ -12,30 +14,34 @@ namespace MinVerTests
     public static class BuildMetadata
     {
         [Scenario]
-        [Example(default, "0.0.0-alpha.0")]
-        [Example("a", "0.0.0-alpha.0+a")]
-        public static void NoCommits(string buildMetadata, string expectedVersion, string path, Repository repo, Version actualVersion)
+        [Example(default, default, "0.0.0-alpha.0")]
+        [Example(default, "a", "0.0.0-alpha.0+a")]
+        [Example("pre", default, "0.0.0-pre")]
+        [Example("pre", "a", "0.0.0-pre+a")]
+        public static void NoCommits(string defaultPrereleaseIdentifiers,string buildMetadata, string expectedVersion, string path, Repository repo, Version actualVersion)
         {
             $"Given an empty git repository in '{path = GetScenarioDirectory($"build-metadata-no-tag-{buildMetadata}")}'"
                 .x(c => repo = EnsureEmptyRepository(path).Using(c));
 
             $"When the version is determined using build metadata '{buildMetadata}'"
-                .x(() => actualVersion = Versioner.GetVersion(repo, default, default, buildMetadata, new TestLogger()));
+                .x(() => actualVersion = Versioner.GetVersion(repo, default, default, defaultPrereleaseIdentifiers?.Split('.'), buildMetadata, new TestLogger()));
 
             $"Then the version is '{expectedVersion}'"
                 .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));
         }
 
         [Scenario]
-        [Example(default, "0.0.0-alpha.0")]
-        [Example("a", "0.0.0-alpha.0+a")]
-        public static void NoTag(string buildMetadata, string expectedVersion, string path, Repository repo, Version actualVersion)
+        [Example(default, default, "0.0.0-alpha.0")]
+        [Example(default, "a", "0.0.0-alpha.0+a")]
+        [Example("pre", default, "0.0.0-pre")]
+        [Example("pre", "a", "0.0.0-pre+a")]
+        public static void NoTag(string defaultPrereleaseIdentifiers, string buildMetadata, string expectedVersion, string path, Repository repo, Version actualVersion)
         {
             $"Given a git repository with a commit in '{path = GetScenarioDirectory($"build-metadata-no-tag-{buildMetadata}")}'"
                 .x(c => repo = EnsureEmptyRepositoryAndCommit(path).Using(c));
 
             $"When the version is determined using build metadata '{buildMetadata}'"
-                .x(() => actualVersion = Versioner.GetVersion(repo, default, default, buildMetadata, new TestLogger()));
+                .x(() => actualVersion = Versioner.GetVersion(repo, default, default, defaultPrereleaseIdentifiers?.Split('.'), buildMetadata, new TestLogger()));
 
             $"Then the version is '{expectedVersion}'"
                 .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));
@@ -57,20 +63,23 @@ namespace MinVerTests
                 .x(() => repo.ApplyTag(tag));
 
             $"When the version is determined using build metadata '{buildMetadata}'"
-                .x(() => actualVersion = Versioner.GetVersion(repo, default, default, buildMetadata, new TestLogger()));
+                .x(() => actualVersion = Versioner.GetVersion(repo, default, default, default, buildMetadata, new TestLogger()));
 
             $"Then the version is '{expectedVersion}'"
                 .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));
         }
 
         [Scenario]
-        [Example("1.2.3+a", default, "1.2.4-alpha.0.1")]
-        [Example("1.2.3", "b", "1.2.4-alpha.0.1+b")]
-        [Example("1.2.3+a", "b", "1.2.4-alpha.0.1+b")]
-        [Example("1.2.3-pre+a", default, "1.2.3-pre.1")]
-        [Example("1.2.3-pre", "b", "1.2.3-pre.1+b")]
-        [Example("1.2.3-pre+a", "b", "1.2.3-pre.1+b")]
-        public static void PreviousTag(string tag, string buildMetadata, string expectedVersion, string path, Repository repo, Version actualVersion)
+        [Example(default, "1.2.3+a", default, "1.2.4-alpha.0.1")]
+        [Example("pre", "1.2.3+a", default, "1.2.4-pre.1")]
+        [Example(default, "1.2.3", "b", "1.2.4-alpha.0.1+b")]
+        [Example("pre", "1.2.3", "b", "1.2.4-pre.1+b")]
+        [Example(default, "1.2.3+a", "b", "1.2.4-alpha.0.1+b")]
+        [Example("pre", "1.2.3+a", "b", "1.2.4-pre.1+b")]
+        [Example(default, "1.2.3-pre+a", default, "1.2.3-pre.1")]
+        [Example(default, "1.2.3-pre", "b", "1.2.3-pre.1+b")]
+        [Example(default, "1.2.3-pre+a", "b", "1.2.3-pre.1+b")]
+        public static void PreviousTag(string defaultPrereleaseIdentifiers, string tag, string buildMetadata, string expectedVersion, string path, Repository repo, Version actualVersion)
         {
             $"Given a git repository with a commit in '{path = GetScenarioDirectory($"build-metadata-previous-tag-{tag}-{buildMetadata}")}'"
                 .x(c => repo = EnsureEmptyRepositoryAndCommit(path).Using(c));
@@ -82,7 +91,7 @@ namespace MinVerTests
                 .x(() => Commit(path));
 
             $"When the version is determined using build metadata '{buildMetadata}'"
-                .x(() => actualVersion = Versioner.GetVersion(repo, default, default, buildMetadata, new TestLogger()));
+                .x(() => actualVersion = Versioner.GetVersion(repo, default, default, defaultPrereleaseIdentifiers?.Split('.'), buildMetadata, new TestLogger()));
 
             $"Then the version is '{expectedVersion}'"
                 .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));

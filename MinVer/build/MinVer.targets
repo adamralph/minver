@@ -15,12 +15,14 @@
     <Error Condition="'$(MinVerMajorMinor)' != ''" Code="MINVER_TEMP0001" Text="MinVerMajorMinor has been renamed to MinVerMinimumMajorMinor." />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerBuildMetadata=$(MinVerBuildMetadata)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerMinimumMajorMinor=$(MinVerMinimumMajorMinor)" />
+    <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerDefaultPrereleaseIdentifiers=$(MinVerDefaultPrereleaseIdentifiers)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MSBuildProjectDirectory=$(MSBuildProjectDirectory)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerTagPrefix=$(MinVerTagPrefix)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerVerbosity=$(MinVerVerbosity)" />
     <ItemGroup>
       <MinVerInputs Include="--build-metadata &quot;$(MinVerBuildMetadata)&quot;" />
       <MinVerInputs Include="--minimum-major-minor &quot;$(MinVerMinimumMajorMinor)&quot;" />
+      <MinVerInputs Include="--default-prerelease-identifiers &quot;$(MinVerDefaultPrereleaseIdentifiers)&quot;" />
       <MinVerInputs Include="--repo &quot;$(MSBuildProjectDirectory)&quot;" />
       <MinVerInputs Include="--tag-prefix &quot;$(MinVerTagPrefix)&quot;" />
       <MinVerInputs Include="--verbosity &quot;$(MinVerVerbosity)&quot;" />

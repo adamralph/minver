@@ -114,7 +114,7 @@ namespace MinVer.Lib
 
         public Version WithHeight(int height) =>
             this.preReleaseIdentifiers.Count == 0 && height > 0
-                ? new Version(this.Major, this.Minor, this.Patch + 1, this.settings.DefaultPreReleaseIdentifiers, height, default, this.settings)
+                ? new Version(this.Major, this.Minor, this.Patch + 1, this.settings?.DefaultPreReleaseIdentifiers, height, default, this.settings)
                 : new Version(this.Major, this.Minor, this.Patch, this.preReleaseIdentifiers, height, height == 0 ? this.buildMetadata : default, this.settings);
 
         public Version AddBuildMetadata(string buildMetadata)
@@ -139,7 +139,7 @@ namespace MinVer.Lib
             return ParseOrDefault(text.Before(meta).Before(pre).Split('.'), text.Before(meta).After(pre)?.Split('.'), text.After(meta));
         }
 
-        private static Version ParseOrDefault(string[] numbers, IReadOnlyCollection<string> pre, string meta) =>
+        private static Version ParseOrDefault(string[] numbers, IEnumerable<string> pre, string meta) =>
             numbers?.Length == 3 &&
                     int.TryParse(numbers[0], out var major) &&
                     int.TryParse(numbers[1], out var minor) &&

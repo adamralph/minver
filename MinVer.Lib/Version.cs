@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace MinVer.Lib
 {
     using System;
@@ -19,7 +17,6 @@ namespace MinVer.Lib
         public Version(VersionSettings settings) : this(default, default, settings    ) { }
 
         public Version(int major, int minor, VersionSettings settings) : this(major, minor, default, settings.DefaultPreReleaseIdentifiers, default, default, settings) { }
-
         public Version(int major, int minor, string buildMetadata, VersionSettings settings) : this(major, minor, default, settings.DefaultPreReleaseIdentifiers, default, buildMetadata, settings) { }
 
         private Version(int major, int minor, int patch, IEnumerable<string> preReleaseIdentifiers, int height, string buildMetadata, VersionSettings settings)
@@ -149,15 +146,5 @@ namespace MinVer.Lib
                     int.TryParse(numbers[2], out var patch)
                 ? new Version(major, minor, patch, pre, default, meta, default)
                 : default;
-    }
-
-    public sealed class VersionSettings
-    {
-        public VersionSettings(IReadOnlyCollection<string> defaultPreReleaseIdentifiers = null)
-        {
-            this.DefaultPreReleaseIdentifiers = defaultPreReleaseIdentifiers ?? new[] {"alpha", "0"};
-        }
-
-        public IReadOnlyCollection<string> DefaultPreReleaseIdentifiers { get; }
     }
 }

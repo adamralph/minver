@@ -12,12 +12,12 @@ namespace MinVer.Lib
         private readonly List<string> preReleaseIdentifiers;
         private readonly int height;
         private readonly string buildMetadata;
-        readonly VersionSettings settings;
+        private readonly VersionSettings settings;
 
-        public Version(VersionSettings settings) : this(default, default, settings    ) { }
+        public Version(VersionSettings settings) : this(default, default, settings) { }
 
-        public Version(int major, int minor, VersionSettings settings) : this(major, minor, default, settings.DefaultPreReleaseIdentifiers, default, default, settings) { }
-        public Version(int major, int minor, string buildMetadata, VersionSettings settings) : this(major, minor, default, settings.DefaultPreReleaseIdentifiers, default, buildMetadata, settings) { }
+        public Version(int major, int minor, VersionSettings settings) : this(major, minor, default, settings?.DefaultPreReleaseIdentifiers, default, default, settings) { }
+        public Version(int major, int minor, string buildMetadata, VersionSettings settings) : this(major, minor, default, settings?.DefaultPreReleaseIdentifiers, default, buildMetadata, settings) { }
 
         private Version(int major, int minor, int patch, IEnumerable<string> preReleaseIdentifiers, int height, string buildMetadata, VersionSettings settings)
         {

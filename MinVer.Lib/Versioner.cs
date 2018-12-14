@@ -6,14 +6,13 @@ namespace MinVer.Lib
 
     public static class Versioner
     {
-        public static Version GetVersion(Repository repo, string tagPrefix, MajorMinor minMajorMinor, string buildMetadata, VersionSettings settings, ILogger log)
+        public static Version GetVersion(Repository repo, string tagPrefix, MajorMinor minMajorMinor, string buildMetadata, IEnumerable<string> preReleaseIdentifiers, ILogger log)
         {
-            settings = settings ?? new VersionSettings();
             var commit = repo.Commits.FirstOrDefault();
 
             if (commit == default)
             {
-                var version = new Version(minMajorMinor?.Major ?? 0, minMajorMinor?.Minor ?? 0, buildMetadata, settings);
+                var version = new Version(minMajorMinor?.Major ?? 0, minMajorMinor?.Minor ?? 0, buildMetadata, preReleaseIdentifiers);
 
                 log.Info($"No commits found. Using default version {version}.");
 
@@ -105,7 +104,7 @@ namespace MinVer.Lib
 
                         if (commitsToCheck.Count == 0 || commitsToCheck.Peek().Item2 <= height)
                         {
-                            var candidate = new Candidate { Commit = commit, Height = height, Tag = default, Version = new Version(settings), };
+                            var candidate = new Candidate { Commit = commit, Height = height, Tag = default, Version = new Version(preReleaseIdentifiers), };
 
                             if (log.IsTraceEnabled)
                             {
@@ -178,7 +177,7 @@ namespace MinVer.Lib
             log.Info($"Using{(log.IsDebugEnabled && orderedCandidates.Count > 1 ? "    " : " ")}{selectedCandidate.ToString(tagWidth, versionWidth, heightWidth)}.");
 
             var baseVersion = minMajorMinor != default && selectedCandidate.Version.IsBefore(minMajorMinor.Major, minMajorMinor.Minor)
-                ? new Version(minMajorMinor.Major, minMajorMinor.Minor, settings)
+                ? new Version(minMajorMinor.Major, minMajorMinor.Minor, preReleaseIdentifiers)
                 : selectedCandidate.Version;
 
             if (baseVersion != selectedCandidate.Version)
@@ -187,8 +186,7 @@ namespace MinVer.Lib
             }
 
             var calculatedVersion = baseVersion
-                .WithSettings(settings)
-                .WithHeight(selectedCandidate.Height)
+                .WithHeight(selectedCandidate.Height, preReleaseIdentifiers)
                 .AddBuildMetadata(buildMetadata);
             log.Debug($"Calculated version {calculatedVersion}.");
 

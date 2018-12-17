@@ -124,13 +124,13 @@ namespace MinVer.Lib
 
         private static Version ParseOrDefault(string text)
         {
-            var dash = text.IndexOf('-');
-            var plus = text.IndexOf('+');
+            var versionAndMeta = text.Split(new[] { '+' }, 2);
+            var numbersAndPre = versionAndMeta[0].Split(new[] { '-' }, 2);
 
-            var meta = plus >= 0 ? plus : default(int?);
-            var pre = dash >= 0 && (!meta.HasValue || dash < meta.Value) ? dash : default(int?);
-
-            return ParseOrDefault(text.Before(meta).Before(pre).Split('.'), text.Before(meta).After(pre)?.Split('.'), text.After(meta));
+            return ParseOrDefault(
+                numbersAndPre[0].Split('.'),
+                numbersAndPre.Length > 1 ? numbersAndPre[1].Split('.') : default,
+                versionAndMeta.Length > 1 ? versionAndMeta[1] : default);
         }
 
         private static Version ParseOrDefault(string[] numbers, IEnumerable<string> pre, string meta) =>

@@ -12,6 +12,13 @@ namespace MinVer.Lib
             {
                 log.Info($"Bumping version to {calculatedVersion} to satisfy minimum major minor {minMajorMinor}.");
             }
+            else
+            {
+                if (minMajorMinor != default)
+                {
+                    log.Debug($"Minimum major minor {minMajorMinor} is redundant. The calculated version is already equal or higher.");
+                }
+            }
 
             log.Debug($"Calculated version {calculatedVersion}.");
 

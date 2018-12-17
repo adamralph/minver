@@ -45,7 +45,7 @@ namespace MinVerTests
             if (isRedundant)
             {
                 $"And a debug message is logged because the minimum major minor is redundant"
-                    .x(() => Assert.Contains(logger.DebugMessages, message => message.Contains($"Minimum major minor {major}.{minor} is redundant. The calculated version is already equal or higher.")));
+                    .x(() => Assert.Contains(logger.DebugMessages, message => message.Contains($"The calculated version {actualVersion} satisfies the minimum major minor {major}.{minor}.")));
             }
         }
 

@@ -3,10 +3,9 @@ namespace MinVer
     using System;
     using System.Linq;
     using System.IO;
+    using System.Reflection;
     using McMaster.Extensions.CommandLineUtils;
     using MinVer.Lib;
-    using Version = MinVer.Lib.Version;
-    using System.Reflection;
 
     internal static class Program
     {
@@ -37,7 +36,14 @@ namespace MinVer
                     return 2;
                 }
 
-                var version = GetVersion(repoOrWorkDir, tagPrefixOption.Value(), minMajorMinor, buildMetaOption.Value(), verbosity);
+                var log = new Logger(verbosity);
+
+                if (log.IsDebugEnabled)
+                {
+                    log.Debug($"MinVer {informationalVersion}.");
+                }
+
+                var version = Versioner.GetVersion(repoOrWorkDir, tagPrefixOption.Value(), minMajorMinor, buildMetaOption.Value(), log);
 
                 Console.Out.WriteLine(version);
 
@@ -72,34 +78,6 @@ namespace MinVer
             }
 
             return true;
-        }
-
-        private static Version GetVersion(string repoOrWorkDir, string tagPrefix, MajorMinor minMajorMinor, string buildMeta, Verbosity verbosity)
-        {
-            var log = new Logger(verbosity);
-
-            if (log.IsDebugEnabled)
-            {
-                log.Debug($"MinVer {informationalVersion}.");
-            }
-
-            if (!RepositoryEx.TryCreateRepo(repoOrWorkDir, out var repo))
-            {
-                var version = new Version(minMajorMinor?.Major ?? 0, minMajorMinor?.Minor ?? 0, buildMeta);
-
-                log.WarnIsNotAValidRepositoryOrWorkDirUsingDefaultVersion(repoOrWorkDir, version);
-
-                return version;
-            }
-
-            try
-            {
-                return Versioner.GetVersion(repo, tagPrefix, minMajorMinor, buildMeta, log);
-            }
-            finally
-            {
-                repo.Dispose();
-            }
         }
     }
 }

@@ -13,11 +13,7 @@ namespace MinVer.Lib
         private readonly int height;
         private readonly string buildMetadata;
 
-        public Version() : this(default, default) { }
-
-        public Version(int major, int minor) : this(major, minor, default, new List<string> { "alpha", "0" }, default, default) { }
-
-        public Version(int major, int minor, string buildMetadata) : this(major, minor, default, new List<string> { "alpha", "0" }, default, buildMetadata) { }
+        public Version() : this(default, default, default, new List<string> { "alpha", "0" }, default, default) { }
 
         private Version(int major, int minor, int patch, IEnumerable<string> preReleaseIdentifiers, int height, string buildMetadata)
         {
@@ -107,6 +103,11 @@ namespace MinVer.Lib
             return this.height.CompareTo(other.height);
         }
 
+        public Version Satisfying(MajorMinor minMajorMinor) =>
+            minMajorMinor == default || minMajorMinor.Major < this.Major || (minMajorMinor.Major == this.Major && minMajorMinor.Minor <= this.Minor)
+                ? this
+                : new Version(minMajorMinor.Major, minMajorMinor.Minor, default, new[] { "alpha", "0" }, this.height, this.buildMetadata);
+
         public Version WithHeight(int height) =>
             this.preReleaseIdentifiers.Count == 0 && height > 0
                 ? new Version(this.Major, this.Minor, this.Patch + 1, new[] { "alpha", "0" }, height, default)
@@ -117,8 +118,6 @@ namespace MinVer.Lib
             var separator = !string.IsNullOrEmpty(this.buildMetadata) && !string.IsNullOrEmpty(buildMetadata) ? "." : "";
             return new Version(this.Major, this.Minor, this.Patch, this.preReleaseIdentifiers, this.height, $"{this.buildMetadata}{separator}{buildMetadata}");
         }
-
-        public bool IsBefore(int major, int minor) => this.Major < major || (this.Major == major && this.Minor < minor);
 
         public static Version ParseOrDefault(string text, string prefix) =>
             text == default || !text.StartsWith(prefix ?? "") ? default : ParseOrDefault(text.Substring(prefix?.Length ?? 0));

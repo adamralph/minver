@@ -11,5 +11,7 @@ namespace MinVer.Lib
         void Debug(string message);
 
         void Info(string message);
+
+        void Warn(int code, string message);
     }
 }

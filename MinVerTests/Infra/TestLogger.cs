@@ -24,5 +24,9 @@ namespace MinVerTests.Infra
         public void Info(string message)
         {
         }
+
+        public void Warn(int code, string message)
+        {
+        }
     }
 }

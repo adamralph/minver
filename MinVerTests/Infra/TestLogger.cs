@@ -1,25 +1,26 @@
 namespace MinVerTests.Infra
 {
     using System;
+    using System.Collections.Generic;
     using MinVer.Lib;
 
-    internal class TestLogger : ILogger
+    public class TestLogger : ILogger
     {
-        public bool IsTraceEnabled => false;
+        private readonly List<string> debugMessages = new List<string>();
 
-        public bool IsDebugEnabled => false;
+        public bool IsTraceEnabled => true;
+
+        public bool IsDebugEnabled => true;
+
+        public ICollection<string> DebugMessages => this.debugMessages;
 
         public void Trace(string message)
         {
         }
 
-        public void Debug(Func<string> createMessage)
-        {
-        }
+        public void Debug(Func<string> createMessage) => this.Debug(createMessage());
 
-        public void Debug(string message)
-        {
-        }
+        public void Debug(string message) => this.debugMessages.Add(message);
 
         public void Info(string message)
         {

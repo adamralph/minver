@@ -25,10 +25,10 @@ namespace MinVerTests
         }
 
         [Scenario]
-        [Example("2.0.0", 1, 0, "2.0.0")]
-        [Example("2.0.0", 2, 0, "2.0.0")]
-        [Example("2.0.0", 3, 0, "3.0.0-alpha.0")]
-        public static void Tagged(string tag, int major, int minor, string expectedVersion, string path, Repository repo, Version actualVersion)
+        [Example("2.0.0", 1, 0, "2.0.0", true)]
+        [Example("2.0.0", 2, 0, "2.0.0", true)]
+        [Example("2.0.0", 3, 0, "3.0.0-alpha.0", false)]
+        public static void Tagged(string tag, int major, int minor, string expectedVersion, bool isRedundant, string path, Repository repo, TestLogger logger, Version actualVersion)
         {
             $"Given a git repository with a commit in '{path = GetScenarioDirectory($"minimum-major-minor-tagged-{tag}-{major}-{minor}")}'"
                 .x(c => repo = EnsureEmptyRepositoryAndCommit(path).Using(c));
@@ -37,10 +37,16 @@ namespace MinVerTests
                 .x(() => repo.ApplyTag(tag));
 
             $"When the version is determined using minimum major minor '{major}.{minor}'"
-                .x(() => actualVersion = Versioner.GetVersion(path, default, new MajorMinor(major, minor), default, new TestLogger()));
+                .x(() => actualVersion = Versioner.GetVersion(path, default, new MajorMinor(major, minor), default, logger = new TestLogger()));
 
             $"Then the version is '{expectedVersion}'"
                 .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));
+
+            if (isRedundant)
+            {
+                $"And a debug message is logged because the minimum major minor is redundant"
+                    .x(() => Assert.Contains(logger.DebugMessages, message => message.Contains($"Minimum major minor {major}.{minor} is redundant. The calculated version is already equal or higher.")));
+            }
         }
 
         [Scenario]

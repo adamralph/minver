@@ -25,7 +25,7 @@
       <MinVerInputs Include="--tag-prefix &quot;$(MinVerTagPrefix)&quot;" />
       <MinVerInputs Include="--verbosity &quot;$(MinVerVerbosity)&quot;" />
     </ItemGroup>
-    <Exec Command="dotnet &quot;$(MSBuildThisFileDirectory)../minver/MinVer.dll&quot; @(MinVerInputs->'%(Identity)', ' ')" ConsoleToMSBuild="true">
+    <Exec Command="dotnet &quot;$(MSBuildThisFileDirectory)../minver/MinVer.dll&quot; @(MinVerInputs->'%(Identity)', ' ')" ConsoleToMSBuild="true" StandardOutputImportance="Low" >
       <Output TaskParameter="ConsoleOutput" ItemName="MinVerConsoleOutput" />
     </Exec>
     <ItemGroup>

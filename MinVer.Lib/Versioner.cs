@@ -20,7 +20,7 @@ namespace MinVer.Lib
                 }
             }
 
-            log.Debug($"Calculated version {calculatedVersion}.");
+            log.Info($"Calculated version {calculatedVersion}.");
 
             return calculatedVersion;
         }

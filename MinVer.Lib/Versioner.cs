@@ -16,7 +16,7 @@ namespace MinVer.Lib
             {
                 if (minMajorMinor != default)
                 {
-                    log.Debug($"Minimum major minor {minMajorMinor} is redundant. The calculated version is already equal or higher.");
+                    log.Debug($"The calculated version {calculatedVersion} satisfies the minimum major minor {minMajorMinor}.");
                 }
             }
 

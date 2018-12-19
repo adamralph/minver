@@ -74,7 +74,7 @@ Options can be specified as either MSBuild properties or environment variables.
 - [`MinVerBuildMetadata`](#can-i-include-build-metadata-in-the-version)
 - [`MinVerMinimumMajorMinor`](#can-i-bump-the-major-or-minor-version) (this is still named `MinVerMajorMinor` in 1.0.0-beta.1, the new name will be used in 1.0.0-beta.2)
 - [`MinVerTagPrefix`](#can-i-prefix-my-tag-names)
-- [`MinVerVerbosity`](#can-i-control-the-logging-verbosity)
+- [`MinVerVerbosity`](#can-I-get-log-output-to-see-how-minver-calculates-the-version)
 
 Note that the option names are case-insensitive.
 
@@ -88,7 +88,7 @@ _(With TL;DR answers inline.)_
 - [Can I use my own branching strategy?](#can-i-use-my-own-branching-strategy) _(yes)_
 - [Can I include build metadata in the version?](#can-i-include-build-metadata-in-the-version) _(yes)_
 - [Can I use the version calculated by MinVer for other purposes?](#can-i-use-the-version-calculated-by-minver-for-other-purposes) _(yes)_
-- [Can I control the logging verbosity?](#can-i-control-the-logging-verbosity) _(yes)_
+- [Can I get log output to see how MinVer calculates the version?](#can-I-get-log-output-to-see-how-minver-calculates-the-version) _(yes)_
 - [Can I use MinVer to version software which is not built using a .NET SDK style project?](#can-i-use-minver-to-version-software-which-is-not-built-using-a-net-sdk-style-project) _(yes)_
 - [What if the history diverges, and more than one tag is found?](#what-if-the-history-diverges-and-more-than-one-tag-is-found) _(nothing bad)_
 - [What if the history diverges, and then converges again, before the latest tag (or root commit) is found?](#what-if-the-history-diverges-and-then-converges-again-before-the-latest-tag-or-root-commit-is-found) _(nothing bad)_
@@ -195,11 +195,11 @@ Or for projects which _do_ create NuGet packages, you may want to adjust the ass
 </Target>
 ```
 
-### Can I control the logging verbosity?
+### Can I get log output to see how MinVer calculates the version?
 
-Yes! Set [`MinVerVerbosity`](#options) to `quiet`, `minimal`, `normal` (default), `detailed`, or `diagnostic`. At the `quiet` and `minimal` levels, you will see only warnings and errors. At the `detailed` level you will see how many commits were examined, which version tags were found but ignored, which version was calculated, etc. At the `diagnostic` level you will see how MinVer walks the commit history, in excruciating detail.
+Yes! [`MinVerVerbosity`](#options) can be set to `quiet`, `minimal` (default), `normal`, `detailed`, or `diagnostic`. These verbosity levels match those in MSBuild and therefore `dotnet build`, `dotnet pack`, etc. The default is `minimal`, which matches the default in MSBuild. At the `quiet` and `minimal` levels, you will see only warnings and errors. At the `normal` level you will see which commit is being used to calculate the version, and the calculated version. At the `detailed` level you will see how many commits were examined, which version tags were found but ignored, which version was calculated, etc. At the `diagnostic` level you will see how MinVer walks the commit history, in excruciating detail.
 
-The verbosity levels reflect those supported by MSBuild and therefore `dotnet build`, `dotnet pack`, etc. In a future version of MinVer, these verbosity levels will be inherited from MSBuild and `MinVerVerbosity` will be deprecated. Currently this is not possible due to technical restrictions related to [libgit2](https://github.com/libgit2/libgit2).
+In a future version of MinVer, the verbosity level may be inherited from MSBuild, in which case `MinVerVerbosity` will be deprecated. Currently this is not possible due to technical restrictions related to [libgit2](https://github.com/libgit2/libgit2).
 
 ### Can I use MinVer to version software which is not built using a .NET SDK style project?
 

@@ -61,7 +61,9 @@ internal static class Program
                 var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-no-repo");
 
                 // act
+                Environment.SetEnvironmentVariable("MinVerVerbosity", "normal", EnvironmentVariableTarget.Process);
                 await CleanAndPack(testRepo, output);
+                Environment.SetEnvironmentVariable("MinVerVerbosity", "", EnvironmentVariableTarget.Process);
 
                 // assert
                 AssertPackageFileNameContains("0.0.0-alpha.0.nupkg", output);
@@ -78,7 +80,9 @@ internal static class Program
                 var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-no-commits");
 
                 // act
+                Environment.SetEnvironmentVariable("MinVerVerbosity", "normal", EnvironmentVariableTarget.Process);
                 await CleanAndPack(testRepo, output);
+                Environment.SetEnvironmentVariable("MinVerVerbosity", "", EnvironmentVariableTarget.Process);
 
                 // assert
                 AssertPackageFileNameContains("0.0.0-alpha.0.nupkg", output);
@@ -98,7 +102,9 @@ internal static class Program
                     var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-commit");
 
                     // act
+                    Environment.SetEnvironmentVariable("MinVerVerbosity", "normal", EnvironmentVariableTarget.Process);
                     await CleanAndPack(testRepo, output);
+                    Environment.SetEnvironmentVariable("MinVerVerbosity", "", EnvironmentVariableTarget.Process);
 
                     // assert
                     AssertPackageFileNameContains("0.0.0-alpha.0.nupkg", output);
@@ -118,9 +124,7 @@ internal static class Program
                     var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-non-version-tag");
 
                     // act
-                    Environment.SetEnvironmentVariable("MinVerVerbosity", "detailed", EnvironmentVariableTarget.Process);
                     await CleanAndPack(testRepo, output);
-                    Environment.SetEnvironmentVariable("MinVerVerbosity", "normal", EnvironmentVariableTarget.Process);
 
                     // assert
                     AssertPackageFileNameContains("0.0.0-alpha.0.nupkg", output);
@@ -140,7 +144,9 @@ internal static class Program
                     var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-version-tag");
 
                     // act
+                    Environment.SetEnvironmentVariable("MinVerVerbosity", "normal", EnvironmentVariableTarget.Process);
                     await CleanAndPack(testRepo, output);
+                    Environment.SetEnvironmentVariable("MinVerVerbosity", "", EnvironmentVariableTarget.Process);
 
                     // assert
                     AssertPackageFileNameContains("1.2.3.nupkg", output);
@@ -160,7 +166,9 @@ internal static class Program
                     var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-commit-after-tag");
 
                     // act
+                    Environment.SetEnvironmentVariable("MinVerVerbosity", "detailed", EnvironmentVariableTarget.Process);
                     await CleanAndPack(testRepo, output);
+                    Environment.SetEnvironmentVariable("MinVerVerbosity", "", EnvironmentVariableTarget.Process);
 
                     // assert
                     AssertPackageFileNameContains("1.2.4-alpha.0.1.nupkg", output);
@@ -182,6 +190,7 @@ internal static class Program
                     // act
                     Environment.SetEnvironmentVariable("MinVerVerbosity", "diagnostic", EnvironmentVariableTarget.Process);
                     await CleanAndPack(testRepo, output);
+                    Environment.SetEnvironmentVariable("MinVerVerbosity", "", EnvironmentVariableTarget.Process);
 
                     // assert
                     AssertPackageFileNameContains("2.0.0-alpha.0.1.nupkg", output);

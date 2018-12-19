@@ -22,7 +22,7 @@ namespace MinVer
             }
         }
 
-        public static string ValidValue => "q[uiet], m[inimal], n[ormal], d[etailed], or diag[nostic] (case insensitive)";
+        public static string ValidValue => "q[uiet], m[inimal] (default), n[ormal], d[etailed], or diag[nostic] (case insensitive)";
 
         public static bool TryMap(string value, out Verbosity verbosity) => map.TryGetValue(value, out verbosity);
     }

@@ -185,7 +185,27 @@ internal static class Program
                 }
             });
 
-        Target("test-package", DependsOn("test-package-minimum-major-minor"));
+        Target(
+            "test-package-version-override",
+            DependsOn("test-package-minimum-major-minor"),
+            async () =>
+            {
+                using (var repo = new Repository(testRepo))
+                {
+                    // arrange
+                    Environment.SetEnvironmentVariable("MinVerVersionOverride", "3.2.1-rc.4+build.5", EnvironmentVariableTarget.Process);
+
+                    var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-version-override");
+
+                    // act
+                    await CleanAndPack(testRepo, output, "diagnostic");
+
+                    // assert
+                    AssertPackageFileNameContains("3.2.1-rc.4.nupkg", output);
+                }
+            });
+
+        Target("test-package", DependsOn("test-package-version-override"));
 
         await RunTargetsAndExitAsync(args);
     }

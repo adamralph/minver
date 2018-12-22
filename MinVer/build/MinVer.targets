@@ -18,12 +18,14 @@
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MSBuildProjectDirectory=$(MSBuildProjectDirectory)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerTagPrefix=$(MinVerTagPrefix)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerVerbosity=$(MinVerVerbosity)" />
+    <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerVersionOverride=$(MinVerVersionOverride)" />
     <ItemGroup>
       <MinVerInputs Include="--build-metadata &quot;$(MinVerBuildMetadata)&quot;" />
       <MinVerInputs Include="--minimum-major-minor &quot;$(MinVerMinimumMajorMinor)&quot;" />
       <MinVerInputs Include="--repo &quot;$(MSBuildProjectDirectory)&quot;" />
       <MinVerInputs Include="--tag-prefix &quot;$(MinVerTagPrefix)&quot;" />
       <MinVerInputs Include="--verbosity &quot;$(MinVerVerbosity)&quot;" />
+      <MinVerInputs Include="--version-override &quot;$(MinVerVersionOverride)&quot;" />
     </ItemGroup>
     <Exec Command="dotnet &quot;$(MSBuildThisFileDirectory)../minver/MinVer.dll&quot; @(MinVerInputs->'%(Identity)', ' ')" ConsoleToMSBuild="true" StandardOutputImportance="Low" >
       <Output TaskParameter="ConsoleOutput" ItemName="MinVerConsoleOutput" />

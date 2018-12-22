@@ -54,6 +54,11 @@ namespace MinVer
         public static void ErrorInvalidVerbosity(string verbosity) =>
             Error(1004, $"Invalid verbosity '{verbosity}'. The value must be {VerbosityMap.ValidValue}.");
 
+#if MINVER
+        public static void ErrorInvalidVersionOverride(string versionOverride) =>
+            Error(1005, $"Invalid version override '{versionOverride}'");
+#endif
+
         private static void Error(int code, string message) => Message($"error MINVER{code:D4} : {message}");
 
         private static void Message(string message) => Console.Error.WriteLine($"MinVer: {message}");

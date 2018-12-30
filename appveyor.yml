@@ -8,6 +8,9 @@ branches:
   - master
   - /release-.*/
   - /^\d+\.\d+\.\d+(-\S*)?$/
+init:
+- cmd: dotnet --info
+- sh: dotnet --info
 build_script:
 - cmd: ./build.cmd
 test: off

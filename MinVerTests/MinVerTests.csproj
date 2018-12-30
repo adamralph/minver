@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <IsTestProject>true</IsTestProject>
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 

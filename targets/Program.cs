@@ -19,12 +19,12 @@ internal static class Program
     {
         Target("default", DependsOn("test-api", "test-package"));
 
-        Target("build", () => RunAsync("dotnet", "build MinVer.sln --configuration Release"));
+        Target("build", () => RunAsync("dotnet", "build --configuration Release"));
 
         Target(
             "test-api",
             DependsOn("build"),
-            () => RunAsync("dotnet", $"test ./MinVerTests/MinVerTests.csproj --configuration Release --no-build --verbosity=normal"));
+            () => RunAsync("dotnet", $"test --configuration Release --no-build --verbosity=normal"));
 
         Target(
             "publish",

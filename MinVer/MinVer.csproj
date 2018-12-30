@@ -4,7 +4,6 @@
     <Description>Minimalistic versioning for .NET SDK-style projects using Git tags.</Description>
     <DevelopmentDependency>true</DevelopmentDependency>
     <IncludeBuildOutput>false</IncludeBuildOutput>
-    <IsTestProject>false</IsTestProject>
     <NoWarn>$(NoWarn);NU5100;NU5105</NoWarn>
     <OutputType>Exe</OutputType>
     <PackageIconUrl>https://raw.githubusercontent.com/adamralph/minver/master/assets/minver.png</PackageIconUrl>

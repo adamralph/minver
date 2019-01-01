@@ -11,6 +11,7 @@
     <PackageProjectUrl>https://github.com/adamralph/minver</PackageProjectUrl>
     <PackageReleaseNotes>https://github.com/adamralph/minver/milestones?state=closed</PackageReleaseNotes>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 

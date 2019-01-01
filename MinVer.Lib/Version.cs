@@ -119,6 +119,8 @@ namespace MinVer.Lib
             return new Version(this.Major, this.Minor, this.Patch, this.preReleaseIdentifiers, this.height, $"{this.buildMetadata}{separator}{buildMetadata}");
         }
 
+        public static bool TryParse(string text, out Version version) => (version = ParseOrDefault(text, default)) != default;
+
         public static Version ParseOrDefault(string text, string prefix) =>
             text == default || !text.StartsWith(prefix ?? "") ? default : ParseOrDefault(text.Substring(prefix?.Length ?? 0));
 

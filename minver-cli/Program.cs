@@ -28,6 +28,9 @@ namespace MinVer
             var repoOrWorkDirOption = app.Option("-r|--repo <REPO>", "Repository or working directory.", CommandOptionType.SingleValue);
             var tagPrefixOption = app.Option("-t|--tag-prefix <TAG_PREFIX>", "", CommandOptionType.SingleValue);
             var verbosityOption = app.Option("-v|--verbosity <VERBOSITY>", VerbosityMap.ValidValue, CommandOptionType.SingleValue);
+#if MINVER
+            var versionOverrideOption = app.Option("-o|--version-override <VERSION>", "", CommandOptionType.SingleValue);
+#endif
 
             app.OnExecute(() =>
             {
@@ -43,7 +46,25 @@ namespace MinVer
                     log.Debug($"MinVer {informationalVersion}.");
                 }
 
+#if MINVER
+                Lib.Version version;
+                if (!string.IsNullOrEmpty(versionOverrideOption.Value()))
+                {
+                    if (!Lib.Version.TryParse(versionOverrideOption.Value(), out version))
+                    {
+                        Logger.ErrorInvalidVersionOverride(versionOverrideOption.Value());
+                        return 2;
+                    }
+
+                    log.Info($"Using version override {version}.");
+                }
+                else
+                {
+                    version = Versioner.GetVersion(repoOrWorkDir, tagPrefixOption.Value(), minMajorMinor, buildMetaOption.Value(), log);
+                }
+#else
                 var version = Versioner.GetVersion(repoOrWorkDir, tagPrefixOption.Value(), minMajorMinor, buildMetaOption.Value(), log);
+#endif
 
                 Console.Out.WriteLine(version);
 

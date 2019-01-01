@@ -72,7 +72,7 @@ This behaviour can be [customised](#can-i-use-the-version-calculated-by-minver-f
 Options can be specified as either MSBuild properties or environment variables.
 
 - [`MinVerBuildMetadata`](#can-i-include-build-metadata-in-the-version)
-- [`MinVerMinimumMajorMinor`](#can-i-bump-the-major-or-minor-version) (this is still named `MinVerMajorMinor` in 1.0.0-beta.1, the new name will be used in 1.0.0-beta.2)
+- [`MinVerMinimumMajorMinor`](#can-i-bump-the-major-or-minor-version)
 - [`MinVerTagPrefix`](#can-i-prefix-my-tag-names)
 - [`MinVerVerbosity`](#can-I-get-log-output-to-see-how-minver-calculates-the-version)
 - [`MinVerVersionOverride`](#can-i-use-minver-to-version-software-which-is-not-built-using-a-net-sdk-style-project)

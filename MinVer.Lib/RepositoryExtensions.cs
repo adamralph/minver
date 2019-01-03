@@ -21,7 +21,8 @@ namespace MinVer.Lib
 
             var tagsAndVersions = repo.Tags
                 .Select(tag => (tag, Version.ParseOrDefault(tag.FriendlyName, tagPrefix)))
-                .OrderByDescending(tagAndVersion => tagAndVersion.Item2)
+                .OrderBy(tagAndVersion => tagAndVersion.Item2)
+                .ThenBy(tagsAndVersion => tagsAndVersion.tag.FriendlyName)
                 .ToList();
 
             var commitsChecked = new HashSet<string>();
@@ -44,33 +45,25 @@ namespace MinVer.Lib
                 {
                     ++count;
 
-                    var (tag, commitVersion) = tagsAndVersions.FirstOrDefault(tagAndVersion => tagAndVersion.tag.Target.Sha == commit.Sha);
+                    var commitTagsAndVersions = tagsAndVersions.Where(tagAndVersion => tagAndVersion.tag.Target.Sha == commit.Sha).ToList();
+                    var foundVersion = false;
 
-                    if (commitVersion != default)
+                    foreach (var (tag, commitVersion) in commitTagsAndVersions)
                     {
                         var candidate = new Candidate { Commit = commit, Height = height, Tag = tag.FriendlyName, Version = commitVersion, };
 
+                        foundVersion = foundVersion || candidate.Version != default;
+
                         if (log.IsTraceEnabled)
                         {
-                            log.Trace($"Found version tag {candidate}.");
+                            log.Trace($"Found {(candidate.Version == default ? "non-" : default)}version tag {candidate}.");
                         }
 
                         candidates.Add(candidate);
                     }
-                    else
+
+                    if (!foundVersion)
                     {
-                        if (tag != default)
-                        {
-                            var candidate = new Candidate { Commit = commit, Height = height, Tag = tag.FriendlyName, Version = default, };
-
-                            if (log.IsTraceEnabled)
-                            {
-                                log.Trace($"Found non-version tag {candidate}.");
-                            }
-
-                            candidates.Add(candidate);
-                        }
-
                         if (log.IsTraceEnabled)
                         {
                             var parentIndex = 0;

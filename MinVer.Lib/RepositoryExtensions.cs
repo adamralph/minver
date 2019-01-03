@@ -174,6 +174,12 @@ namespace MinVer.Lib
             }
 
             var selectedCandidate = orderedCandidates.Last();
+
+            if (selectedCandidate.Tag == default)
+            {
+                log.Info($"No commit found with a valid SemVer 2.0 version{(tagPrefix == default ? default : $" prefixed with '{tagPrefix}'")}. Using default version {selectedCandidate.Version}.");
+            }
+
             log.Info($"Using{(log.IsDebugEnabled && orderedCandidates.Count > 1 ? "    " : " ")}{selectedCandidate.ToString(tagWidth, versionWidth, heightWidth)}.");
 
             return selectedCandidate.Version.WithHeight(selectedCandidate.Height);

@@ -24,7 +24,6 @@ Also available as a [command line tool](#can-i-use-minver-to-version-software-wh
 ## Prerequisites
 
 - [.NET Core SDK 2.1.300 or later](https://www.microsoft.com/net/download)
-- [libcurl](https://curl.haxx.se/libcurl/) (Linux only)
 
 ## Quick start
 
@@ -227,14 +226,6 @@ You may see an exception of this form:
 This is because you are using a [shallow clone](https://www.git-scm.com/docs/git-clone#git-clone---depthltdepthgt). MinVer uses [libgit2](https://github.com/libgit2/libgit2) to interrogate the repo and [libgit2 does not support shallow clones](https://github.com/libgit2/libgit2/issues/3058). To resolve this problem, use a regular (deep) clone.
 
 **Important:** By default, [Travis CI](https://travis-ci.org/) uses shallow clones with a depth of 50 commits. To build on Travis CI, [remove the `--depth` flag](https://docs.travis-ci.com/user/customizing-the-build#git-clone-depth).
-
-### Why does MinVer fail with `System.TypeInitializationException`?
-
-You may see an exception of this form:
-
-> Unhandled Exception: System.TypeInitializationException: The type initializer for 'LibGit2Sharp.Core.NativeMethods' threw an exception. ---> System.DllNotFoundException: Unable to load shared library 'git2-8e0b172' or one of its dependencies.
-
-This is probably because you are running on Linux, and you do not have libcurl installed. See the [prerequisites](#prerequisites).
 
 ---
 

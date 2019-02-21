@@ -90,6 +90,7 @@ _(With TL;DR answers inline.)_
 - [Can I use my own branching strategy?](#can-i-use-my-own-branching-strategy) _(yes)_
 - [Can I include build metadata in the version?](#can-i-include-build-metadata-in-the-version) _(yes)_
 - [Can I use the version calculated by MinVer for other purposes?](#can-i-use-the-version-calculated-by-minver-for-other-purposes) _(yes)_
+- [Can I version multiple projects in a single repo independently?](#can-i-version-multiple-projects-in-a-single-repo-independently) _(yes)_
 - [Can I get log output to see how MinVer calculates the version?](#can-I-get-log-output-to-see-how-minver-calculates-the-version) _(yes)_
 - [Can I use MinVer to version software which is not built using a .NET SDK style project?](#can-i-use-minver-to-version-software-which-is-not-built-using-a-net-sdk-style-project) _(yes)_
 - [What if the history diverges, and more than one tag is found?](#what-if-the-history-diverges-and-more-than-one-tag-is-found) _(nothing bad)_
@@ -196,6 +197,10 @@ Or for projects which _do_ create NuGet packages, you may want to adjust the ass
   </PropertyGroup>
 </Target>
 ```
+
+### Can I version multiple projects in a single repo independently?
+
+Yes! You can do this by using a specific tag prefix for each project. For example, if you have a "main" project and an "extension" project, you could specify `<MinVerTagPrefix>main-</MinVerTagPrefix>` in the main project and `<MinVerTagPrefix>ext-</MinVerTagPrefix>` in the extension project. To release version `1.0.0` of the main project you'd tag the repo with `main-1.0.0`. To release version `1.1.0` of the extension project you'd tag the repo with `ext-1.1.0`.
 
 ### Can I get log output to see how MinVer calculates the version?
 

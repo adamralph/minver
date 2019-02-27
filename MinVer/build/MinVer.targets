@@ -8,6 +8,7 @@
   <PropertyGroup>
     <MinVerDetailed>low</MinVerDetailed>
     <MinVerDetailed Condition="'$(MinVerVerbosity)' == 'detailed' Or '$(MinVerVerbosity)' == 'd' Or '$(MinVerVerbosity)' == 'diagnostic' Or '$(MinVerVerbosity)' == 'diag'">high</MinVerDetailed>
+    <NoWarn>$(NoWarn);NU5015</NoWarn>
   </PropertyGroup>
 
   <Target Name="MinVer" BeforeTargets="CoreCompile;GenerateNuspec" Condition="'$(DesignTimeBuild)' != 'true'">

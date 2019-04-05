@@ -21,6 +21,11 @@
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerVerbosity=$(MinVerVerbosity)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerVersionOverride=$(MinVerVersionOverride)" />
     <ItemGroup>
+      <MinVerInputs Remove="@(MinVerInputs)" />
+      <MinVerConsoleOutput Remove="@(MinVerConsoleOutput)" />
+      <MinVerOutputVersion Remove="@(MinVerOutputVersion)" />
+    </ItemGroup>
+    <ItemGroup>
       <MinVerInputs Include="--build-metadata &quot;$(MinVerBuildMetadata)&quot;" />
       <MinVerInputs Include="--minimum-major-minor &quot;$(MinVerMinimumMajorMinor)&quot;" />
       <MinVerInputs Include="--repo &quot;$(MSBuildProjectDirectory)&quot;" />

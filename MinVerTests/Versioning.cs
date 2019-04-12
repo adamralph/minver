@@ -93,7 +93,7 @@ git tag 1.1.0
                     {
                         Commands.Checkout(repo, commit);
 
-                        var version = Versioner.GetVersion(path, default, default, default, new TestLogger());
+                        var version = Versioner.GetVersion(path, default, default, default, default, new TestLogger());
                         var versionString = version.ToString();
                         var tagName = $"v/{versionString}";
 
@@ -125,7 +125,7 @@ git tag 1.1.0
                 .x(c => EnsureEmptyRepository(path).Using(c));
 
             "When the version is determined"
-                .x(() => version = Versioner.GetVersion(path, default, default, default, new TestLogger()));
+                .x(() => version = Versioner.GetVersion(path, default, default, default, default, new TestLogger()));
 
             "Then the version is 0.0.0-alpha.0"
                 .x(() => Assert.Equal("0.0.0-alpha.0", version.ToString()));

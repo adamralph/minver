@@ -2,9 +2,9 @@ namespace MinVer.Lib
 {
     public static class Versioner
     {
-        public static Version GetVersion(string repoOrWorkDir, string tagPrefix, MajorMinor minMajorMinor, string buildMeta, ILogger log)
+        public static Version GetVersion(string repoOrWorkDir, string tagPrefix, MajorMinor minMajorMinor, string buildMeta, VersionPart autoIncrement, ILogger log)
         {
-            var version = GetVersion(repoOrWorkDir, tagPrefix, log).AddBuildMetadata(buildMeta);
+            var version = GetVersion(repoOrWorkDir, tagPrefix, autoIncrement, log).AddBuildMetadata(buildMeta);
 
             var calculatedVersion = version.Satisfying(minMajorMinor);
 
@@ -25,7 +25,7 @@ namespace MinVer.Lib
             return calculatedVersion;
         }
 
-        private static Version GetVersion(string repoOrWorkDir, string tagPrefix, ILogger log)
+        private static Version GetVersion(string repoOrWorkDir, string tagPrefix, VersionPart autoIncrement, ILogger log)
         {
             if (!RepositoryEx.TryCreateRepo(repoOrWorkDir, out var repo))
             {
@@ -38,7 +38,7 @@ namespace MinVer.Lib
 
             try
             {
-                return repo.GetVersion(tagPrefix, log);
+                return repo.GetVersion(tagPrefix, autoIncrement, log);
             }
             finally
             {

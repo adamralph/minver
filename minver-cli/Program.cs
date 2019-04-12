@@ -23,6 +23,7 @@ namespace MinVer
 
             app.HelpOption();
 
+            var autoIncrementOption = app.Option("-a|--auto-increment <VERSION_PART>", VersionPart.Patch.GetValidValues(), CommandOptionType.SingleValue);
             var buildMetaOption = app.Option("-b|--build-metadata <BUILD_METADATA>", "", CommandOptionType.SingleValue);
             var minMajorMinorOption = app.Option("-m|--minimum-major-minor <MINIMUM_MAJOR_MINOR>", MajorMinor.ValidValues, CommandOptionType.SingleValue);
             var repoOrWorkDirOption = app.Option("-r|--repo <REPO>", "Repository or working directory.", CommandOptionType.SingleValue);
@@ -34,7 +35,7 @@ namespace MinVer
 
             app.OnExecute(() =>
             {
-                if (!TryParse(repoOrWorkDirOption.Value(), minMajorMinorOption.Value(), verbosityOption.Value(), out var repoOrWorkDir, out var minMajorMinor, out var verbosity))
+                if (!TryParse(repoOrWorkDirOption.Value(), minMajorMinorOption.Value(), verbosityOption.Value(), autoIncrementOption.Value(), out var repoOrWorkDir, out var minMajorMinor, out var verbosity, out var autoIncrement))
                 {
                     return 2;
                 }
@@ -60,10 +61,10 @@ namespace MinVer
                 }
                 else
                 {
-                    version = Versioner.GetVersion(repoOrWorkDir, tagPrefixOption.Value(), minMajorMinor, buildMetaOption.Value(), log);
+                    version = Versioner.GetVersion(repoOrWorkDir, tagPrefixOption.Value(), minMajorMinor, buildMetaOption.Value(), autoIncrement, log);
                 }
 #else
-                var version = Versioner.GetVersion(repoOrWorkDir, tagPrefixOption.Value(), minMajorMinor, buildMetaOption.Value(), log);
+                var version = Versioner.GetVersion(repoOrWorkDir, tagPrefixOption.Value(), minMajorMinor, buildMetaOption.Value(), autoIncrement, log);
 #endif
 
                 Console.Out.WriteLine(version);
@@ -74,11 +75,12 @@ namespace MinVer
             return app.Execute(args);
         }
 
-        private static bool TryParse(string repoOrWorkDirOption, string minMajorMinorOption, string verbosityOption, out string repoOrWorkDir, out MajorMinor minMajorMinor, out Verbosity verbosity)
+        private static bool TryParse(string repoOrWorkDirOption, string minMajorMinorOption, string verbosityOption, string autoIncrementOption, out string repoOrWorkDir, out MajorMinor minMajorMinor, out Verbosity verbosity, out VersionPart autoIncrement)
         {
             repoOrWorkDir = ".";
             minMajorMinor = default;
             verbosity = default;
+            autoIncrement = default;
 
             if (!string.IsNullOrEmpty(repoOrWorkDirOption) && !Directory.Exists(repoOrWorkDir = repoOrWorkDirOption))
             {
@@ -95,6 +97,12 @@ namespace MinVer
             if (!string.IsNullOrEmpty(verbosityOption) && !VerbosityMap.TryMap(verbosityOption, out verbosity))
             {
                 Logger.ErrorInvalidVerbosity(verbosityOption);
+                return false;
+            }
+
+            if (!string.IsNullOrEmpty(autoIncrementOption) && !Enum.TryParse(autoIncrementOption, true, out autoIncrement))
+            {
+                Logger.ErrorInvalidAutoIncrement(autoIncrementOption);
                 return false;
             }
 

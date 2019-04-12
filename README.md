@@ -42,7 +42,9 @@ _NOTE: The MinVer package reference should normally include `PrivateAssets="All"
 
 When the current commit is tagged with a version, the tag is used as-is.
 
-When the current commit is not tagged, MinVer searches the commit history for the latest tag. If the latest tag found is a [pre-release](https://semver.org/spec/v2.0.0.html#spec-item-9), MinVer will use it as-is. If the latest tag found is RTM (not pre-release), MinVer will increase the patch number and add default pre-release identifiers, e.g. `1.0.0` becomes `1.0.1-alpha.0`. If no tag is found, the default version `0.0.0-alpha.0` is used.
+When the current commit is _not_ tagged, MinVer searches the commit history for the latest tag. If the latest tag found is a [pre-release](https://semver.org/spec/v2.0.0.html#spec-item-9), MinVer will use it as-is. If the latest tag found is RTM (not pre-release), MinVer will add default pre-release identifiers. MinVer will also increase the patch number, although this behaviour [can be customised](#can-i-auto-increment-the-minor-or-major-version-after-an-rtm-tag-instead-of-the-patch-version). For example, If the latest tag is `1.0.0`, the current version will be `1.0.1-alpha.0`.
+
+If no tag is found either on the current commit or in the commit history, the default version `0.0.0-alpha.0` is used.
 
 You will notice that MinVer adds another number to the pre-release identifiers when the current commit is not tagged. This is the number of commits since the latest tag, or if no tag was found, since the root commit. This is known as "height". For example, if the latest tag found is `1.0.0-beta.1`, at a height of 42 commits, the calculated version is `1.0.0-beta.1.42`.
 
@@ -72,6 +74,7 @@ This behaviour can be [customised](#can-i-use-the-version-calculated-by-minver-f
 
 Options can be specified as either MSBuild properties or environment variables.
 
+- [`MinVerAutoIncrement`](#can-i-auto-increment-the-minor-or-major-version-after-an-rtm-tag-instead-of-the-patch-version)
 - [`MinVerBuildMetadata`](#can-i-include-build-metadata-in-the-version)
 - [`MinVerMinimumMajorMinor`](#can-i-bump-the-major-or-minor-version)
 - [`MinVerTagPrefix`](#can-i-prefix-my-tag-names)
@@ -89,6 +92,7 @@ _(With TL;DR answers inline.)_
 - [Can I prefix my tag names?](#can-i-prefix-my-tag-names) _(yes)_
 - [Can I use my own branching strategy?](#can-i-use-my-own-branching-strategy) _(yes)_
 - [Can I include build metadata in the version?](#can-i-include-build-metadata-in-the-version) _(yes)_
+- [Can I auto-increment the minor or major version after an RTM tag instead of the patch version?](#can-i-auto-increment-the-minor-or-major-version-after-an-rtm-tag-instead-of-the-patch-version) _(yes)_
 - [Can I use the version calculated by MinVer for other purposes?](#can-i-use-the-version-calculated-by-minver-for-other-purposes) _(yes)_
 - [Can I version multiple projects in a single repo independently?](#can-i-version-multiple-projects-in-a-single-repo-independently) _(yes)_
 - [Can I get log output to see how MinVer calculates the version?](#can-i-get-log-output-to-see-how-minver-calculates-the-version) _(yes)_
@@ -159,6 +163,10 @@ environment:
 ```
 
 You can also specify build metadata in a version tag. If the tag is on the current commit, its build metadata will be used. If the tag is on an older commit, its build metadata will be ignored. Build metadata in `MinVerBuildMetadata` will be appended to build metadata in the tag.
+
+### Can I auto-increment the minor or major version after an RTM tag instead of the patch version?
+
+Yes! Specify which part of the version to auto-increment with `MinVerAutoIncrement`. By default, [MinVer will auto-increment the patch version](#how-it-works), but you can specify `minor` or `major` to increment the minor or major version instead.
 
 ### Can I use the version calculated by MinVer for other purposes?
 

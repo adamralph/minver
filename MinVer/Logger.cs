@@ -48,6 +48,9 @@ namespace MinVer
         public static void ErrorRepoOrWorkDirDoesNotExist(string repoOrWorkDir) =>
             Error(1002, $"Repository or working directory '{repoOrWorkDir}' does not exist.");
 
+        public static void ErrorInvalidAutoIncrement(string autoIncrement) =>
+            Error(1006, $"Invalid auto increment '{autoIncrement}'. Valid values are {VersionPart.Patch.GetValidValues()}");
+
         public static void ErrorInvalidMinMajorMinor(string minMajorMinor) =>
             Error(1003, $"Invalid minimum MAJOR.MINOR '{minMajorMinor}'. Valid values are {MajorMinor.ValidValues}");
 

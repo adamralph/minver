@@ -108,10 +108,25 @@ namespace MinVer.Lib
                 ? this
                 : new Version(minMajorMinor.Major, minMajorMinor.Minor, default, new[] { "alpha", "0" }, this.height, this.buildMetadata);
 
-        public Version WithHeight(int height) =>
-            this.preReleaseIdentifiers.Count == 0 && height > 0
-                ? new Version(this.Major, this.Minor, this.Patch + 1, new[] { "alpha", "0" }, height, default)
-                : new Version(this.Major, this.Minor, this.Patch, this.preReleaseIdentifiers, height, height == 0 ? this.buildMetadata : default);
+        public Version WithHeight(int height, VersionPart autoIncrement)
+        {
+            if (this.preReleaseIdentifiers.Count == 0 && height > 0)
+            {
+                switch (autoIncrement)
+                {
+                    case VersionPart.Major:
+                        return new Version(this.Major + 1, 0, 0, new[] { "alpha", "0" }, height, default);
+                    case VersionPart.Minor:
+                        return new Version(this.Major, this.Minor + 1, 0, new[] { "alpha", "0" }, height, default);
+                    case VersionPart.Patch:
+                        return new Version(this.Major, this.Minor, this.Patch + 1, new[] { "alpha", "0" }, height, default);
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(autoIncrement));
+                }
+            }
+
+            return new Version(this.Major, this.Minor, this.Patch, this.preReleaseIdentifiers, height, height == 0 ? this.buildMetadata : default);
+        }
 
         public Version AddBuildMetadata(string buildMetadata)
         {

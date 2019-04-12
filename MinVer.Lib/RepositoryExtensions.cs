@@ -6,7 +6,7 @@ namespace MinVer.Lib
 
     internal static class RepositoryExtensions
     {
-        public static Version GetVersion(this Repository repo, string tagPrefix, ILogger log)
+        public static Version GetVersion(this Repository repo, string tagPrefix, VersionPart autoIncrement, ILogger log)
         {
             var commit = repo.Commits.FirstOrDefault();
 
@@ -175,7 +175,7 @@ namespace MinVer.Lib
 
             log.Info($"Using{(log.IsDebugEnabled && orderedCandidates.Count > 1 ? "    " : " ")}{selectedCandidate.ToString(tagWidth, versionWidth, heightWidth)}.");
 
-            return selectedCandidate.Version.WithHeight(selectedCandidate.Height);
+            return selectedCandidate.Version.WithHeight(selectedCandidate.Height, autoIncrement);
         }
 
         public static string ShortSha(this Commit commit) => commit.Sha.Substring(0, 7);

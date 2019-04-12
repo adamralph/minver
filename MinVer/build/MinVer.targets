@@ -65,4 +65,33 @@
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [output] Version=$(Version)" />
   </Target>
 
+  <Target Name="MinVer_WriteVersionInformationFile" AfterTargets="MinVer" Condition="'$(MinVerCreateVersionInformationClass)' != 'false'">
+    <PropertyGroup>
+      <MinVerVersionInformationFilePath>$(IntermediateOutputPath)MinVerVersionInformation.g.cs</MinVerVersionInformationFilePath>
+      <MinVerVersionInformationFileSourceLines>
+        namespace $(RootNamespace)
+        {
+        internal static class MinVerVersionInformation
+        {
+        public const string MinVerVersion = "$(MinVerVersion)"%3b
+        public const string MinVerMajor = "$(MinVerMajor)"%3b
+        public const string MinVerMinor = "$(MinVerMinor)"%3b
+        public const string MinVerPatch = "$(MinVerPatch)"%3b
+        public const string MinVerPreRelease = "$(MinVerPreRelease)"%3b
+        public const string MinVerBuildMetadata = "$(MinVerBuildMetadata)"%3b
+        public const string AssemblyVersion = "$(AssemblyVersion)"%3b
+        public const string FileVersion = "$(FileVersion)"%3b
+        public const string PackageVersion = "$(PackageVersion)"%3b
+        public const string Version = "$(Version)"%3b
+        }
+        }
+      </MinVerVersionInformationFileSourceLines>
+    </PropertyGroup>
+    <WriteLinesToFile File="$(MinVerVersionInformationFilePath)" Lines="$(MinVerVersionInformationFileSourceLines)" Overwrite="true" WriteOnlyWhenDifferent="true" />
+    <ItemGroup>
+      <Compile Include="$(MinVerVersionInformationFilePath)" />
+      <FileWrites Include="$(MinVerVersionInformationFilePath)" />
+    </ItemGroup>
+  </Target>
+
 </Project>

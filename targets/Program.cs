@@ -166,8 +166,28 @@ internal static class Program
             });
 
         Target(
-            "test-package-minimum-major-minor",
+            "test-package-non-default-auto-increment",
             DependsOn("test-package-commit-after-tag"),
+            async () =>
+            {
+                using (var repo = new Repository(testRepo))
+                {
+                    // arrange
+                    Environment.SetEnvironmentVariable("MinVerAutoIncrement", "minor", EnvironmentVariableTarget.Process);
+
+                    var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-non-default-auto-increment");
+
+                    // act
+                    await CleanAndPack(testRepo, output, "diagnostic");
+
+                    // assert
+                    AssertPackageFileNameContains("1.3.0-alpha.0.1.nupkg", output);
+                }
+            });
+
+        Target(
+            "test-package-minimum-major-minor",
+            DependsOn("test-package-non-default-auto-increment"),
             async () =>
             {
                 using (var repo = new Repository(testRepo))

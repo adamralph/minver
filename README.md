@@ -87,6 +87,7 @@ Note that the option names are case-insensitive.
 
 _(With TL;DR answers inline.)_
 
+- [Why not use GitVersion, Nerdbank.GitVersioning, or some other tool?](#why-not-use-gitversion-nerdbankgitversioning-or-some-other-tool) _(simplicity)_
 - [Can I bump the major or minor version?](#can-i-bump-the-major-or-minor-version) _(yes)_
 - [Can I use my own pre-release versioning scheme?](#can-i-use-my-own-pre-release-versioning-scheme) _(yes)_
 - [Can I prefix my tag names?](#can-i-prefix-my-tag-names) _(yes)_
@@ -101,6 +102,34 @@ _(With TL;DR answers inline.)_
 - [What if the history diverges, and then converges again, before the latest tag (or root commit) is found?](#what-if-the-history-diverges-and-then-converges-again-before-the-latest-tag-or-root-commit-is-found) _(nothing bad)_
 - [Why does MinVer fail with `LibGit2Sharp.NotFoundException`?](#why-does-minver-fail-with-libgit2sharpnotfoundexception) _(easy to fix)_
 - [Why does MinVer fail with `System.TypeInitializationException`?](#why-does-minver-fail-with-systemtypeinitializationexception) _(easy to fix)_
+
+### Why not use GitVersion, Nerdbank.GitVersioning, or some other tool?
+
+Before starting MinVer, [Adam Ralph](https://github.com/adamralph) evaluated both [GitVersion](https://github.com/GitTools/GitVersion) and [Nerdbank.GitVersioning](https://github.com/AArnott/Nerdbank.GitVersioning), but neither of them worked in the way he wanted for his projects.
+
+The TL;DR is that MinVer is simpler. ["How it works"](#how-it-works) pretty much captures everything.
+
+#### Comparison with GitVersion
+
+To some degree, MinVer is a subset of what GitVersion is. It's much simpler and doesn't do nearly as much. Some of the differences:
+
+- No dependency on a specific branching pattern.
+- No inference of version from branch names.
+- No inference of version from YAML config.
+- No inference of version from commit messages.
+- No inference of version from CI build server env vars.
+- No creation of metadata code artifacts.
+- No automatic fetching of tags, etc. from the repo.
+- One package instead of a series of packages.
+- No support for `AssemblyInfo.cs`.
+
+#### Comparison with Nerdbank.GitVersioning
+
+MinVer is a different approach and, again, simpler. Some of the differences are already listed under the comparison with GitVersion above.
+
+Essentially, Nerdbank.GitVersioning encapsulates the injection of the version into the build process from a config file. That means versions are controlled by commits to that config file. MinVer works purely on tags. That means MinVer doesn't need some of the types of things that come with Nerdbank.GitVersioning such as the config file bootstrapper, and it means the version is controlled independently of the commits. For example, you can tag a commit as a release candidate, build it, and release it. After some time, if the release candidate has no bugs, you can tag the _same commit_ as RTM, build it, and release it.
+
+Also, Nerdbank.GitVersioning uses the git height for the patch version, which is undesirable. Either _every_ patch commit has to be released, or there will be gaps in the patch versions released.
 
 ### Can I bump the major or minor version?
 

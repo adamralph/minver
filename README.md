@@ -172,12 +172,12 @@ Yes! Specify which part of the version to auto-increment with `MinVerAutoIncreme
 
 Yes! You can use any of the [properties set by MinVer](#version-numbers), or override their values, in a target which runs after MinVer.
 
-For example, for pull requests, you may want to inject the pull request number into the version. E.g. using Appveyor:
+For example, for pull requests, you may want to inject the pull request number and a variable which uniquely identifies the build into the version. E.g. using Appveyor:
 
 ```xml
 <Target Name="MyTarget" AfterTargets="MinVer" Condition="'$(APPVEYOR_PULL_REQUEST_NUMBER)' != ''" >
   <PropertyGroup>
-    <PackageVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch)-PR.$(APPVEYOR_PULL_REQUEST_NUMBER).$(MinVerPreRelease)</PackageVersion>
+    <PackageVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch)-pr.$(APPVEYOR_PULL_REQUEST_NUMBER).build-id.$(APPVEYOR_BUILD_ID).$(MinVerPreRelease)</PackageVersion>
     <PackageVersion Condition="'$(MinVerBuildMetadata)' != ''">$(PackageVersion)+$(MinVerBuildMetadata)</PackageVersion>
     <Version>$(PackageVersion)</Version>
   </PropertyGroup>

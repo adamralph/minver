@@ -2,7 +2,7 @@ version: '{build}'
 environment:
   APPVEYOR_IGNORE_COMMIT_FILTERING_ON_TAG: true
 image:
-- Visual Studio 2017
+- Visual Studio 2019
 pull_requests:
   do_not_increment_build_number: true
 branches:

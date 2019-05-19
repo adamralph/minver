@@ -14,5 +14,5 @@ build_script:
 - cmd: ./build.cmd
 test: off
 artifacts:
-- path: ./**/*.nupkg
+- path: ./**/bin/Release/*.nupkg
 deploy: off

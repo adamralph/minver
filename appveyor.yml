@@ -1,4 +1,6 @@
 version: '{build}'
+environment:
+  APPVEYOR_IGNORE_COMMIT_FILTERING_ON_TAG: true
 image:
 - Visual Studio 2017
 pull_requests:
@@ -7,7 +9,6 @@ branches:
   only:
   - master
   - /release-.*/
-  - /^\d+\.\d+\.\d+(-\S*)?$/
 init:
 - cmd: dotnet --info
 build_script:

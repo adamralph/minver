@@ -13,7 +13,7 @@
   <ItemGroup>
     <PackageReference Include="Bullseye" Version="2.3.0" />
     <PackageReference Include="LibGit2Sharp" Version="0.26.0" />
-    <PackageReference Include="SimpleExec" Version="5.0.1-rc.1" />
+    <PackageReference Include="SimpleExec" Version="6.0.0-alpha.1" />
   </ItemGroup>
 
 </Project>

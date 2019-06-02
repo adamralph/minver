@@ -37,31 +37,36 @@ internal static class Program
             ForEach("./MinVer/MinVer.csproj", "./minver-cli/minver-cli.csproj"),
             project => RunAsync("dotnet", $"pack {project} --configuration Release --no-build /nologo"));
 
-        string testRepo = default;
+        string testProject = default;
 
         Target(
-            "test-package-no-repo",
+            "create-test-project",
             DependsOn("pack"),
             async () =>
             {
-                // arrange
-                Environment.SetEnvironmentVariable("MinVerTagPrefix", "v.", EnvironmentVariableTarget.Process);
                 Environment.SetEnvironmentVariable("NoPackageAnalysis", "true", EnvironmentVariableTarget.Process);
 
-                testRepo = GetScenarioDirectory("package");
-                EnsureEmptyDirectory(testRepo);
+                testProject = GetScenarioDirectory("package");
+                EnsureEmptyDirectory(testProject);
 
                 var source = Path.GetFullPath("./MinVer/bin/Release/");
                 var version = Path.GetFileNameWithoutExtension(Directory.EnumerateFiles(source, "*.nupkg").First()).Split("MinVer.", 2)[1];
 
-                await RunAsync("dotnet", "new classlib", testRepo);
-                await RunAsync("dotnet", $"add package MinVer --source {source} --version {version} --package-directory packages", testRepo);
-                await RunAsync("dotnet", $"restore --source {source} --packages packages", testRepo);
+                await RunAsync("dotnet", "new classlib", testProject);
+                await RunAsync("dotnet", $"add package MinVer --source {source} --version {version} --package-directory packages", testProject);
+                await RunAsync("dotnet", $"restore --source {source} --packages packages", testProject);
+            });
 
+        Target(
+            "test-package-no-repo",
+            DependsOn("create-test-project"),
+            async () =>
+            {
+                // arrange
                 var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-no-repo");
 
                 // act
-                await CleanAndPack(testRepo, output, "normal");
+                await CleanAndPack(testProject, output, "normal");
 
                 // assert
                 AssertPackageFileNameContains("0.0.0-alpha.0.nupkg", output);
@@ -73,12 +78,12 @@ internal static class Program
             async () =>
             {
                 // arrange
-                Repository.Init(testRepo);
+                Repository.Init(testProject);
 
                 var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-no-commits");
 
                 // act
-                await CleanAndPack(testRepo, output, "normal");
+                await CleanAndPack(testProject, output, "normal");
 
                 // assert
                 AssertPackageFileNameContains("0.0.0-alpha.0.nupkg", output);
@@ -89,16 +94,16 @@ internal static class Program
             DependsOn("test-package-no-commits"),
             async () =>
             {
-                using (var repo = new Repository(testRepo))
+                using (var repo = new Repository(testProject))
                 {
                     // assert
                     repo.PrepareForCommits();
-                    Commit(testRepo);
+                    Commit(testProject);
 
                     var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-commit");
 
                     // act
-                    await CleanAndPack(testRepo, output, "normal");
+                    await CleanAndPack(testProject, output, "normal");
 
                     // assert
                     AssertPackageFileNameContains("0.0.0-alpha.0.nupkg", output);
@@ -110,7 +115,7 @@ internal static class Program
             DependsOn("test-package-commit"),
             async () =>
             {
-                using (var repo = new Repository(testRepo))
+                using (var repo = new Repository(testProject))
                 {
                     // arrange
                     repo.ApplyTag("foo");
@@ -118,7 +123,7 @@ internal static class Program
                     var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-non-version-tag");
 
                     // act
-                    await CleanAndPack(testRepo, output, default);
+                    await CleanAndPack(testProject, output, default);
 
                     // assert
                     AssertPackageFileNameContains("0.0.0-alpha.0.nupkg", output);
@@ -130,15 +135,17 @@ internal static class Program
             DependsOn("test-package-non-version-tag"),
             async () =>
             {
-                using (var repo = new Repository(testRepo))
+                using (var repo = new Repository(testProject))
                 {
                     // arrange
+                    Environment.SetEnvironmentVariable("MinVerTagPrefix", "v.", EnvironmentVariableTarget.Process);
+
                     repo.ApplyTag("v.1.2.3+foo");
 
                     var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-version-tag");
 
                     // act
-                    await CleanAndPack(testRepo, output, "normal");
+                    await CleanAndPack(testProject, output, "normal");
 
                     // assert
                     AssertPackageFileNameContains("1.2.3.nupkg", output);
@@ -150,15 +157,15 @@ internal static class Program
             DependsOn("test-package-version-tag"),
             async () =>
             {
-                using (var repo = new Repository(testRepo))
+                using (var repo = new Repository(testProject))
                 {
                     // arrange
-                    Commit(testRepo);
+                    Commit(testProject);
 
                     var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-commit-after-tag");
 
                     // act
-                    await CleanAndPack(testRepo, output, "detailed");
+                    await CleanAndPack(testProject, output, "detailed");
 
                     // assert
                     AssertPackageFileNameContains("1.2.4-alpha.0.1.nupkg", output);
@@ -170,7 +177,7 @@ internal static class Program
             DependsOn("test-package-commit-after-tag"),
             async () =>
             {
-                using (var repo = new Repository(testRepo))
+                using (var repo = new Repository(testProject))
                 {
                     // arrange
                     Environment.SetEnvironmentVariable("MinVerAutoIncrement", "minor", EnvironmentVariableTarget.Process);
@@ -178,7 +185,7 @@ internal static class Program
                     var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-non-default-auto-increment");
 
                     // act
-                    await CleanAndPack(testRepo, output, "diagnostic");
+                    await CleanAndPack(testProject, output, "diagnostic");
 
                     // assert
                     AssertPackageFileNameContains("1.3.0-alpha.0.1.nupkg", output);
@@ -190,7 +197,7 @@ internal static class Program
             DependsOn("test-package-non-default-auto-increment"),
             async () =>
             {
-                using (var repo = new Repository(testRepo))
+                using (var repo = new Repository(testProject))
                 {
                     // arrange
                     Environment.SetEnvironmentVariable("MinVerMinimumMajorMinor", "2.0", EnvironmentVariableTarget.Process);
@@ -198,7 +205,7 @@ internal static class Program
                     var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-minimum-major-minor");
 
                     // act
-                    await CleanAndPack(testRepo, output, "diagnostic");
+                    await CleanAndPack(testProject, output, "diagnostic");
 
                     // assert
                     AssertPackageFileNameContains("2.0.0-alpha.0.1.nupkg", output);
@@ -210,7 +217,7 @@ internal static class Program
             DependsOn("test-package-minimum-major-minor"),
             async () =>
             {
-                using (var repo = new Repository(testRepo))
+                using (var repo = new Repository(testProject))
                 {
                     // arrange
                     Environment.SetEnvironmentVariable("MinVerVersionOverride", "3.2.1-rc.4+build.5", EnvironmentVariableTarget.Process);
@@ -218,7 +225,7 @@ internal static class Program
                     var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-version-override");
 
                     // act
-                    await CleanAndPack(testRepo, output, "diagnostic");
+                    await CleanAndPack(testProject, output, "diagnostic");
 
                     // assert
                     AssertPackageFileNameContains("3.2.1-rc.4.nupkg", output);

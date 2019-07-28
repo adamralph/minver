@@ -4,6 +4,11 @@ namespace MinVer.Lib
     {
         public static Version GetVersion(string repoOrWorkDir, string tagPrefix, MajorMinor minMajorMinor, string buildMeta, VersionPart autoIncrement, ILogger log)
         {
+            if (log == null)
+            {
+                throw new System.ArgumentNullException(nameof(log));
+            }
+
             var version = GetVersion(repoOrWorkDir, tagPrefix, autoIncrement, log).AddBuildMetadata(buildMeta);
 
             var calculatedVersion = version.Satisfying(minMajorMinor);

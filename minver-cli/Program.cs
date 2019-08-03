@@ -25,6 +25,7 @@ namespace MinVer
 
             var autoIncrementOption = app.Option("-a|--auto-increment <VERSION_PART>", VersionPart.Patch.GetValidValues(), CommandOptionType.SingleValue);
             var buildMetaOption = app.Option("-b|--build-metadata <BUILD_METADATA>", "", CommandOptionType.SingleValue);
+            var defaultPreReleasePhaseOption = app.Option("-d|--default-pre-release-phase <PHASE>", "alpha (default), preview, etc.", CommandOptionType.SingleValue);
             var minMajorMinorOption = app.Option("-m|--minimum-major-minor <MINIMUM_MAJOR_MINOR>", MajorMinor.ValidValues, CommandOptionType.SingleValue);
             var repoOrWorkDirOption = app.Option("-r|--repo <REPO>", "Repository or working directory.", CommandOptionType.SingleValue);
             var tagPrefixOption = app.Option("-t|--tag-prefix <TAG_PREFIX>", "", CommandOptionType.SingleValue);
@@ -61,10 +62,10 @@ namespace MinVer
                 }
                 else
                 {
-                    version = Versioner.GetVersion(repoOrWorkDir, tagPrefixOption.Value(), minMajorMinor, buildMetaOption.Value(), autoIncrement, log);
+                    version = Versioner.GetVersion(repoOrWorkDir, tagPrefixOption.Value(), minMajorMinor, buildMetaOption.Value(), autoIncrement, defaultPreReleasePhaseOption.Value(), log);
                 }
 #else
-                var version = Versioner.GetVersion(repoOrWorkDir, tagPrefixOption.Value(), minMajorMinor, buildMetaOption.Value(), autoIncrement, log);
+                var version = Versioner.GetVersion(repoOrWorkDir, tagPrefixOption.Value(), minMajorMinor, buildMetaOption.Value(), autoIncrement, defaultPreReleasePhaseOption.Value(), log);
 #endif
 
                 Console.Out.WriteLine(version);

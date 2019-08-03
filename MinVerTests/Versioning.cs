@@ -130,5 +130,18 @@ git tag 1.1.0
             "Then the version is 0.0.0-alpha.0"
                 .x(() => Assert.Equal("0.0.0-alpha.0", version.ToString()));
         }
+
+        [Scenario]
+        public static void NoRepo(string path, Version version)
+        {
+            $"Given an empty directory '{path = GetScenarioDirectory("versioning-no-repo")}'"
+                .x(() => EnsureEmptyDirectory(path));
+
+            "When the version is determined"
+                .x(() => version = Versioner.GetVersion(path, default, default, default, default, default, new TestLogger()));
+
+            "Then the version is 0.0.0-alpha.0"
+                .x(() => Assert.Equal("0.0.0-alpha.0", version.ToString()));
+        }
     }
 }

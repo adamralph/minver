@@ -213,8 +213,28 @@ internal static class Program
             });
 
         Target(
-            "test-package-version-override",
+            "test-package-default-pre-release-phase",
             DependsOn("test-package-minimum-major-minor"),
+            async () =>
+            {
+                using (var repo = new Repository(testProject))
+                {
+                    // arrange
+                    Environment.SetEnvironmentVariable("MinVerDefaultPreReleasePhase", "preview", EnvironmentVariableTarget.Process);
+
+                    var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-default-pre-release-phase");
+
+                    // act
+                    await CleanAndPack(testProject, output, "diagnostic");
+
+                    // assert
+                    AssertPackageFileNameContains("2.0.0-preview.0.1.nupkg", output);
+                }
+            });
+
+        Target(
+            "test-package-version-override",
+            DependsOn("test-package-default-pre-release-phase"),
             async () =>
             {
                 using (var repo = new Repository(testProject))

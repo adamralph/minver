@@ -13,7 +13,7 @@ namespace MinVer.Lib
         private readonly int height;
         private readonly string buildMetadata;
 
-        public Version() : this(default, default, default, new List<string> { "alpha", "0" }, default, default) { }
+        public Version(string defaultPreReleasePhase) : this(default, default, default, new List<string> { defaultPreReleasePhase, "0" }, default, default) { }
 
         private Version(int major, int minor, int patch, IEnumerable<string> preReleaseIdentifiers, int height, string buildMetadata)
         {
@@ -103,23 +103,23 @@ namespace MinVer.Lib
             return this.height.CompareTo(other.height);
         }
 
-        public Version Satisfying(MajorMinor minMajorMinor) =>
+        public Version Satisfying(MajorMinor minMajorMinor, string defaultPreReleasePhase) =>
             minMajorMinor == default || minMajorMinor.Major < this.Major || (minMajorMinor.Major == this.Major && minMajorMinor.Minor <= this.Minor)
                 ? this
-                : new Version(minMajorMinor.Major, minMajorMinor.Minor, default, new[] { "alpha", "0" }, this.height, this.buildMetadata);
+                : new Version(minMajorMinor.Major, minMajorMinor.Minor, default, new[] { defaultPreReleasePhase, "0" }, this.height, this.buildMetadata);
 
-        public Version WithHeight(int height, VersionPart autoIncrement)
+        public Version WithHeight(int height, VersionPart autoIncrement, string defaultPreReleasePhase)
         {
             if (this.preReleaseIdentifiers.Count == 0 && height > 0)
             {
                 switch (autoIncrement)
                 {
                     case VersionPart.Major:
-                        return new Version(this.Major + 1, 0, 0, new[] { "alpha", "0" }, height, default);
+                        return new Version(this.Major + 1, 0, 0, new[] { defaultPreReleasePhase, "0" }, height, default);
                     case VersionPart.Minor:
-                        return new Version(this.Major, this.Minor + 1, 0, new[] { "alpha", "0" }, height, default);
+                        return new Version(this.Major, this.Minor + 1, 0, new[] { defaultPreReleasePhase, "0" }, height, default);
                     case VersionPart.Patch:
-                        return new Version(this.Major, this.Minor, this.Patch + 1, new[] { "alpha", "0" }, height, default);
+                        return new Version(this.Major, this.Minor, this.Patch + 1, new[] { defaultPreReleasePhase, "0" }, height, default);
                     default:
                         throw new ArgumentOutOfRangeException(nameof(autoIncrement));
                 }

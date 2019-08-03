@@ -6,13 +6,13 @@ namespace MinVer.Lib
 
     internal static class RepositoryExtensions
     {
-        public static Version GetVersion(this Repository repo, string tagPrefix, VersionPart autoIncrement, ILogger log)
+        public static Version GetVersion(this Repository repo, string tagPrefix, VersionPart autoIncrement, string defaultPreReleasePhase, ILogger log)
         {
             var commit = repo.Commits.FirstOrDefault();
 
             if (commit == default)
             {
-                var version = new Version();
+                var version = new Version(defaultPreReleasePhase);
 
                 log.Info($"No commits found. Using default version {version}.");
 
@@ -97,7 +97,7 @@ namespace MinVer.Lib
 
                         if (commitsToCheck.Count == 0 || commitsToCheck.Peek().Item2 <= height)
                         {
-                            var candidate = new Candidate { Commit = commit, Height = height, Tag = default, Version = new Version(), };
+                            var candidate = new Candidate { Commit = commit, Height = height, Tag = default, Version = new Version(defaultPreReleasePhase), };
 
                             if (log.IsTraceEnabled)
                             {
@@ -175,7 +175,7 @@ namespace MinVer.Lib
 
             log.Info($"Using{(log.IsDebugEnabled && orderedCandidates.Count > 1 ? "    " : " ")}{selectedCandidate.ToString(tagWidth, versionWidth, heightWidth)}.");
 
-            return selectedCandidate.Version.WithHeight(selectedCandidate.Height, autoIncrement);
+            return selectedCandidate.Version.WithHeight(selectedCandidate.Height, autoIncrement, defaultPreReleasePhase);
         }
 
         public static string ShortSha(this Commit commit) => commit.Sha.Substring(0, 7);

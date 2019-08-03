@@ -42,7 +42,7 @@ _NOTE: The MinVer package reference should normally include `PrivateAssets="All"
 
 When the current commit is tagged with a version, the tag is used as-is.
 
-When the current commit is _not_ tagged, MinVer searches the commit history for the latest tag. If the latest tag found is a [pre-release](https://semver.org/spec/v2.0.0.html#spec-item-9), MinVer will use it as-is. If the latest tag found is RTM (not pre-release), MinVer will add default pre-release identifiers. MinVer will also increase the patch number, although this behaviour [can be customised](#can-i-auto-increment-the-minor-or-major-version-after-an-rtm-tag-instead-of-the-patch-version). For example, If the latest tag is `1.0.0`, the current version will be `1.0.1-alpha.0`.
+When the current commit is _not_ tagged, MinVer searches the commit history for the latest tag. If the latest tag found is a [pre-release](https://semver.org/spec/v2.0.0.html#spec-item-9), MinVer will use it as-is. If the latest tag found is RTM (not pre-release), MinVer will add default pre-release identifiers. The default pre-release phase is "alpha", but this [can be customised](#can-i-change-the-default-pre-release-phase-from-alpha-to-something-else). MinVer will also increase the patch number, but this [can also be customised](#can-i-auto-increment-the-minor-or-major-version-after-an-rtm-tag-instead-of-the-patch-version). For example, If the latest tag is `1.0.0`, the current version will be `1.0.1-alpha.0`.
 
 If no tag is found either on the current commit or in the commit history, the default version `0.0.0-alpha.0` is used.
 
@@ -76,6 +76,7 @@ Options can be specified as either MSBuild properties or environment variables.
 
 - [`MinVerAutoIncrement`](#can-i-auto-increment-the-minor-or-major-version-after-an-rtm-tag-instead-of-the-patch-version)
 - [`MinVerBuildMetadata`](#can-i-include-build-metadata-in-the-version)
+- [`MinVerDefaultPreReleasePhase`](#can-i-change-the-default-pre-release-phase-from-alpha-to-something-else)
 - [`MinVerMinimumMajorMinor`](#can-i-bump-the-major-or-minor-version)
 - [`MinVerTagPrefix`](#can-i-prefix-my-tag-names)
 - [`MinVerVerbosity`](#can-I-get-log-output-to-see-how-minver-calculates-the-version)
@@ -94,6 +95,7 @@ _(With TL;DR answers inline.)_
 - [Can I use my own branching strategy?](#can-i-use-my-own-branching-strategy) _(yes)_
 - [Can I include build metadata in the version?](#can-i-include-build-metadata-in-the-version) _(yes)_
 - [Can I auto-increment the minor or major version after an RTM tag instead of the patch version?](#can-i-auto-increment-the-minor-or-major-version-after-an-rtm-tag-instead-of-the-patch-version) _(yes)_
+- [Can I change the default pre-release phase from "alpha" to something else?](#can-i-change-the-default-pre-release-phase-from-alpha-to-something-else) _(yes)_
 - [Can I use the version calculated by MinVer for other purposes?](#can-i-use-the-version-calculated-by-minver-for-other-purposes) _(yes)_
 - [Can I version multiple projects in a single repo independently?](#can-i-version-multiple-projects-in-a-single-repo-independently) _(yes)_
 - [Can I get log output to see how MinVer calculates the version?](#can-i-get-log-output-to-see-how-minver-calculates-the-version) _(yes)_
@@ -196,6 +198,18 @@ You can also specify build metadata in a version tag. If the tag is on the curre
 ### Can I auto-increment the minor or major version after an RTM tag instead of the patch version?
 
 Yes! Specify which part of the version to auto-increment with `MinVerAutoIncrement`. By default, [MinVer will auto-increment the patch version](#how-it-works), but you can specify `minor` or `major` to increment the minor or major version instead.
+
+### Can I change the default pre-release phase from "alpha" to something else?
+
+Yes! Specify the default pre-release phase with `MinVerDefaultPreReleasePhase`. For example, if you prefer to name your pre-releases as "preview":
+
+```xml
+<PropertyGroup>
+  <MinVerDefaultPreReleasePhase>preview</MinVerDefaultPreReleasePhase>
+</PropertyGroup>
+```
+
+This will result in a post-RTM version of `{major}.{minor}.{patch+1}-preview.{height}`, e.g. `1.0.1-preview.1`.
 
 ### Can I use the version calculated by MinVer for other purposes?
 

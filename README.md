@@ -133,6 +133,8 @@ Essentially, Nerdbank.GitVersioning encapsulates the injection of the version in
 
 Also, Nerdbank.GitVersioning uses the git height for the patch version, which is undesirable. Either _every_ patch commit has to be released, or there will be gaps in the patch versions released.
 
+<sub>[Back to FAQ.](#faq)</sub>
+
 ### Can I bump the major or minor version?
 
 Yes! You probably want to do this because at a point in time, on a given branch, you are working on a `MAJOR.MINOR` range, e.g. `1.0`, `1.1`, or `2.0`. The branch could be `master`, `develop`, a special release branch, a support branch, or anything else.
@@ -153,6 +155,8 @@ Note that `MinVerMinimumMajorMinor` will be redundant after you create the first
 
 Also note that if the latest tag found in the commit history has a higher `MAJOR.MINOR` than `MinVerMinimumMajorMinor`, then `MinVerMinimumMajorMinor` will be ignored.
 
+<sub>[Back to FAQ.](#faq)</sub>
+
 ### Can I use my own pre-release versioning scheme?
 
 Yes! MinVer doesn't care what your pre-release versioning scheme is. The default pre-release identifiers are `alpha.0`, but you can use whatever you like in your tags. If your versioning scheme is valid [SemVer 2.0](https://semver.org/spec/v2.0.0.html), it will work with MinVer.
@@ -163,6 +167,8 @@ For example, all these versions work with MinVer:
 - `1.0.0-pre.1`
 - `1.0.0-preview-20181104`
 - `1.0.0-rc.1`
+
+<sub>[Back to FAQ.](#faq)</sub>
 
 ### Can I prefix my tag names?
 
@@ -176,11 +182,15 @@ For example, if you prefix your tag names with "v", e.g. `v1.2.3`:
 </PropertyGroup>
 ```
 
+<sub>[Back to FAQ.](#faq)</sub>
+
 ### Can I use my own branching strategy?
 
 Yes! MinVer doesn't care about branches. It's all about the tags!
 
 That means MinVer is compatible with [Git Flow](https://nvie.com/posts/a-successful-git-branching-model/), [GitHub Flow](https://guides.github.com/introduction/flow/), [Release Flow](https://docs.microsoft.com/en-us/azure/devops/learn/devops-at-microsoft/release-flow), and any other exotic flow.
+
+<sub>[Back to FAQ.](#faq)</sub>
 
 ### Can I include build metadata in the version?
 
@@ -195,9 +205,13 @@ environment:
 
 You can also specify build metadata in a version tag. If the tag is on the current commit, its build metadata will be used. If the tag is on an older commit, its build metadata will be ignored. Build metadata in `MinVerBuildMetadata` will be appended to build metadata in the tag.
 
+<sub>[Back to FAQ.](#faq)</sub>
+
 ### Can I auto-increment the minor or major version after an RTM tag instead of the patch version?
 
 Yes! Specify which part of the version to auto-increment with `MinVerAutoIncrement`. By default, [MinVer will auto-increment the patch version](#how-it-works), but you can specify `minor` or `major` to increment the minor or major version instead.
+
+<sub>[Back to FAQ.](#faq)</sub>
 
 ### Can I change the default pre-release phase from "alpha" to something else?
 
@@ -210,6 +224,8 @@ Yes! Specify the default pre-release phase with `MinVerDefaultPreReleasePhase`. 
 ```
 
 This will result in a post-RTM version of `{major}.{minor}.{patch+1}-preview.{height}`, e.g. `1.0.1-preview.1`.
+
+<sub>[Back to FAQ.](#faq)</sub>
 
 ### Can I use the version calculated by MinVer for other purposes?
 
@@ -249,9 +265,13 @@ Or for projects which _do_ create NuGet packages, you may want to adjust the ass
 </Target>
 ```
 
+<sub>[Back to FAQ.](#faq)</sub>
+
 ### Can I version multiple projects in a single repo independently?
 
 Yes! You can do this by using a specific tag prefix for each project. For example, if you have a "main" project and an "extension" project, you could specify `<MinVerTagPrefix>main-</MinVerTagPrefix>` in the main project and `<MinVerTagPrefix>ext-</MinVerTagPrefix>` in the extension project. To release version `1.0.0` of the main project you'd tag the repo with `main-1.0.0`. To release version `1.1.0` of the extension project you'd tag the repo with `ext-1.1.0`.
+
+<sub>[Back to FAQ.](#faq)</sub>
 
 ### Can I get log output to see how MinVer calculates the version?
 
@@ -259,19 +279,27 @@ Yes! [`MinVerVerbosity`](#options) can be set to `quiet`, `minimal` (default), `
 
 In a future version of MinVer, the verbosity level may be inherited from MSBuild, in which case `MinVerVerbosity` will be deprecated. Currently this is not possible due to technical restrictions related to [libgit2](https://github.com/libgit2/libgit2).
 
+<sub>[Back to FAQ.](#faq)</sub>
+
 ### Can I use MinVer to version software which is not built using a .NET SDK style project?
 
 Yes! MinVer is also available as a [command line tool](https://www.nuget.org/packages/minver-cli). Run `minver --help` for usage. The calculated version is printed to standard output (stdout).
 
 Sometimes you may want to version both .NET projects and other outputs, such as non-.NET projects, or a container image, in the same build. In those scenarios, you should use both the command line tool _and_ the regular MinVer package. Before building any .NET projects, your build script should run the command line tool and set the [`MINVERVERSIONOVERRIDE`](#options) environment variable to the calculated version. The MinVer package will then use that value rather than calculating the version a second time. This ensures that the command line tool and the MinVer package produce the same version.
 
+<sub>[Back to FAQ.](#faq)</sub>
+
 ### What if the history diverges, and more than one tag is found?
 
 The tag with the higher version is used.
 
+<sub>[Back to FAQ.](#faq)</sub>
+
 ### What if the history diverges, and then converges again, before the latest tag (or root commit) is found?
 
 MinVer will use the height on the first path followed where the history diverges. The paths are followed in the same order that the parents of the commit are stored in git. The first parent is the commit on the branch that was the current branch when the merge was performed. The remaining parents are stored in the order that their branches were specified in the merge command.
+
+<sub>[Back to FAQ.](#faq)</sub>
 
 ### Why does MinVer fail with `LibGit2Sharp.NotFoundException`?
 
@@ -282,6 +310,8 @@ You may see an exception of this form:
 This is because you are using a [shallow clone](https://www.git-scm.com/docs/git-clone#git-clone---depthltdepthgt). MinVer uses [libgit2](https://github.com/libgit2/libgit2) to interrogate the repo and [libgit2 does not support shallow clones](https://github.com/libgit2/libgit2/issues/3058). To resolve this problem, use a regular (deep) clone.
 
 **Important:** By default, [Travis CI](https://travis-ci.org/) uses shallow clones with a depth of 50 commits. To build on Travis CI, [remove the `--depth` flag](https://docs.travis-ci.com/user/customizing-the-build#git-clone-depth).
+
+<sub>[Back to FAQ.](#faq)</sub>
 
 ---
 

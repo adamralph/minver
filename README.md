@@ -23,7 +23,7 @@ Also available as a [command line tool](#can-i-use-minver-to-version-software-wh
 
 ## Prerequisites
 
-- [.NET Core SDK 2.1.300 or later](https://www.microsoft.com/net/download)
+- [.NET Core SDK 2.1.300 or a later 2.x version.](https://www.microsoft.com/net/download)
 
 ## Quick start
 

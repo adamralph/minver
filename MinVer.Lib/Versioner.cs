@@ -2,7 +2,7 @@ namespace MinVer.Lib
 {
     public static class Versioner
     {
-        public static Version GetVersion(string repoOrWorkDir, string tagPrefix, MajorMinor minMajorMinor, string buildMeta, VersionPart autoIncrement, string defaultPreReleasePhase, ILogger log)
+        public static Version GetVersion(string workDir, string tagPrefix, MajorMinor minMajorMinor, string buildMeta, VersionPart autoIncrement, string defaultPreReleasePhase, ILogger log)
         {
             log = log ?? new NullLogger();
 
@@ -10,7 +10,7 @@ namespace MinVer.Lib
                 ? "alpha"
                 : defaultPreReleasePhase;
 
-            var version = GetVersion(repoOrWorkDir, tagPrefix, autoIncrement, defaultPreReleasePhase, log).AddBuildMetadata(buildMeta);
+            var version = GetVersion(workDir, tagPrefix, autoIncrement, defaultPreReleasePhase, log).AddBuildMetadata(buildMeta);
 
             var calculatedVersion = version.Satisfying(minMajorMinor, defaultPreReleasePhase);
 
@@ -31,23 +31,19 @@ namespace MinVer.Lib
             return calculatedVersion;
         }
 
-        private static Version GetVersion(string repoOrWorkDir, string tagPrefix, VersionPart autoIncrement, string defaultPreReleasePhase, ILogger log)
+        private static Version GetVersion(string workDir, string tagPrefix, VersionPart autoIncrement, string defaultPreReleasePhase, ILogger log)
         {
-#pragma warning disable IDE0068 // Use recommended dispose pattern
-            if (!RepositoryEx.TryCreateRepo(repoOrWorkDir, out var repo))
-#pragma warning restore IDE0068 // Use recommended dispose pattern
+            if (!Repository.TryCreateRepo(workDir, out var repo, log))
+
             {
                 var version = new Version(defaultPreReleasePhase);
 
-                log.Warn(1001, $"'{repoOrWorkDir}' is not a valid repository or working directory. Using default version {version}.");
+                log.Warn(1001, $"'{workDir}' is not a valid working directory. Using default version {version}.");
 
                 return version;
             }
 
-            using (repo)
-            {
-                return repo.GetVersion(tagPrefix, autoIncrement, defaultPreReleasePhase, log);
-            }
+            return repo.GetVersion(tagPrefix, autoIncrement, defaultPreReleasePhase, log);
         }
     }
 }

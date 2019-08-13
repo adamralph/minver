@@ -64,7 +64,7 @@ internal static class Program
                 var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-no-repo");
 
                 // act
-                await CleanAndPack(testProject, output, "normal");
+                await CleanAndPack(testProject, output, "diagnostic");
 
                 // assert
                 AssertPackageFileNameContains("0.0.0-alpha.0.nupkg", output);
@@ -81,7 +81,7 @@ internal static class Program
                 var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-no-commits");
 
                 // act
-                await CleanAndPack(testProject, output, "normal");
+                await CleanAndPack(testProject, output, "diagnostic");
 
                 // assert
                 AssertPackageFileNameContains("0.0.0-alpha.0.nupkg", output);
@@ -99,7 +99,7 @@ internal static class Program
                 var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-commit");
 
                 // act
-                await CleanAndPack(testProject, output, "normal");
+                await CleanAndPack(testProject, output, "diagnostic");
 
                 // assert
                 AssertPackageFileNameContains("0.0.0-alpha.0.nupkg", output);
@@ -116,7 +116,7 @@ internal static class Program
                 var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-non-version-tag");
 
                 // act
-                await CleanAndPack(testProject, output, default);
+                await CleanAndPack(testProject, output, "diagnostic");
 
                 // assert
                 AssertPackageFileNameContains("0.0.0-alpha.0.nupkg", output);

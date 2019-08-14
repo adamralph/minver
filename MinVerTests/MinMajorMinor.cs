@@ -1,6 +1,5 @@
 namespace MinVerTests
 {
-    using LibGit2Sharp;
     using MinVer.Lib;
     using MinVerTests.Infra;
     using Xbehave;
@@ -15,7 +14,7 @@ namespace MinVerTests
         public static void NoCommits(string path, Version actualVersion)
         {
             $"Given an empty git repository in '{path = GetScenarioDirectory($"minimum-major-minor-not-tagged")}'"
-                .x(c => EnsureEmptyRepository(path).Using(c));
+                .x(() => EnsureEmptyRepository(path));
 
             "When the version is determined using minimum major minor '1.2'"
                 .x(() => actualVersion = Versioner.GetVersion(path, default, new MajorMinor(1, 2), default, default, default, new TestLogger()));
@@ -28,13 +27,13 @@ namespace MinVerTests
         [Example("2.0.0", 1, 0, "2.0.0", true)]
         [Example("2.0.0", 2, 0, "2.0.0", true)]
         [Example("2.0.0", 3, 0, "3.0.0-alpha.0", false)]
-        public static void Tagged(string tag, int major, int minor, string expectedVersion, bool isRedundant, string path, Repository repo, TestLogger logger, Version actualVersion)
+        public static void Tagged(string tag, int major, int minor, string expectedVersion, bool isRedundant, string path, TestLogger logger, Version actualVersion)
         {
             $"Given a git repository with a commit in '{path = GetScenarioDirectory($"minimum-major-minor-tagged-{tag}-{major}-{minor}")}'"
-                .x(c => repo = EnsureEmptyRepositoryAndCommit(path).Using(c));
+                .x(() => EnsureEmptyRepositoryAndCommit(path));
 
             $"And the commit is tagged '{tag}'"
-                .x(() => repo.ApplyTag(tag));
+                .x(() => Tag(path, tag));
 
             $"When the version is determined using minimum major minor '{major}.{minor}'"
                 .x(() => actualVersion = Versioner.GetVersion(path, default, new MajorMinor(major, minor), default, default, default, logger = new TestLogger()));
@@ -53,7 +52,7 @@ namespace MinVerTests
         public static void NotTagged(string path, Version actualVersion)
         {
             $"Given a git repository with a commit in '{path = GetScenarioDirectory($"minimum-major-minor-not-tagged")}'"
-                .x(c => EnsureEmptyRepositoryAndCommit(path).Using(c));
+                .x(() => EnsureEmptyRepositoryAndCommit(path));
 
             "When the version is determined using minimum major minor '1.0'"
                 .x(() => actualVersion = Versioner.GetVersion(path, default, new MajorMinor(1, 0), default, default, default, new TestLogger()));

@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using LibGit2Sharp;
 using MinVerTests.Infra;
 using static Bullseye.Targets;
 using static MinVerTests.Infra.FileSystem;
@@ -78,7 +77,7 @@ internal static class Program
             async () =>
             {
                 // arrange
-                Repository.Init(testProject);
+                Init(testProject);
 
                 var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-no-commits");
 
@@ -94,20 +93,17 @@ internal static class Program
             DependsOn("test-package-no-commits"),
             async () =>
             {
-                using (var repo = new Repository(testProject))
-                {
-                    // assert
-                    repo.PrepareForCommits();
-                    Commit(testProject);
+                // assert
+                PrepareForCommits(testProject);
+                Commit(testProject);
 
-                    var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-commit");
+                var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-commit");
 
-                    // act
-                    await CleanAndPack(testProject, output, "normal");
+                // act
+                await CleanAndPack(testProject, output, "normal");
 
-                    // assert
-                    AssertPackageFileNameContains("0.0.0-alpha.0.nupkg", output);
-                }
+                // assert
+                AssertPackageFileNameContains("0.0.0-alpha.0.nupkg", output);
             });
 
         Target(
@@ -115,19 +111,16 @@ internal static class Program
             DependsOn("test-package-commit"),
             async () =>
             {
-                using (var repo = new Repository(testProject))
-                {
-                    // arrange
-                    repo.ApplyTag("foo");
+                // arrange
+                Tag(testProject, "foo");
 
-                    var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-non-version-tag");
+                var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-non-version-tag");
 
-                    // act
-                    await CleanAndPack(testProject, output, default);
+                // act
+                await CleanAndPack(testProject, output, default);
 
-                    // assert
-                    AssertPackageFileNameContains("0.0.0-alpha.0.nupkg", output);
-                }
+                // assert
+                AssertPackageFileNameContains("0.0.0-alpha.0.nupkg", output);
             });
 
         Target(
@@ -135,21 +128,18 @@ internal static class Program
             DependsOn("test-package-non-version-tag"),
             async () =>
             {
-                using (var repo = new Repository(testProject))
-                {
-                    // arrange
-                    Environment.SetEnvironmentVariable("MinVerTagPrefix", "v.", EnvironmentVariableTarget.Process);
+                // arrange
+                Environment.SetEnvironmentVariable("MinVerTagPrefix", "v.", EnvironmentVariableTarget.Process);
 
-                    repo.ApplyTag("v.1.2.3+foo");
+                Tag(testProject, "v.1.2.3+foo");
 
-                    var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-version-tag");
+                var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-version-tag");
 
-                    // act
-                    await CleanAndPack(testProject, output, "normal");
+                // act
+                await CleanAndPack(testProject, output, "normal");
 
-                    // assert
-                    AssertPackageFileNameContains("1.2.3.nupkg", output);
-                }
+                // assert
+                AssertPackageFileNameContains("1.2.3.nupkg", output);
             });
 
         Target(
@@ -157,19 +147,16 @@ internal static class Program
             DependsOn("test-package-version-tag"),
             async () =>
             {
-                using (var repo = new Repository(testProject))
-                {
-                    // arrange
-                    Commit(testProject);
+                // arrange
+                Commit(testProject);
 
-                    var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-commit-after-tag");
+                var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-commit-after-tag");
 
-                    // act
-                    await CleanAndPack(testProject, output, "detailed");
+                // act
+                await CleanAndPack(testProject, output, "detailed");
 
-                    // assert
-                    AssertPackageFileNameContains("1.2.4-alpha.0.1.nupkg", output);
-                }
+                // assert
+                AssertPackageFileNameContains("1.2.4-alpha.0.1.nupkg", output);
             });
 
         Target(
@@ -177,19 +164,16 @@ internal static class Program
             DependsOn("test-package-commit-after-tag"),
             async () =>
             {
-                using (var repo = new Repository(testProject))
-                {
-                    // arrange
-                    Environment.SetEnvironmentVariable("MinVerAutoIncrement", "minor", EnvironmentVariableTarget.Process);
+                // arrange
+                Environment.SetEnvironmentVariable("MinVerAutoIncrement", "minor", EnvironmentVariableTarget.Process);
 
-                    var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-non-default-auto-increment");
+                var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-non-default-auto-increment");
 
-                    // act
-                    await CleanAndPack(testProject, output, "diagnostic");
+                // act
+                await CleanAndPack(testProject, output, "diagnostic");
 
-                    // assert
-                    AssertPackageFileNameContains("1.3.0-alpha.0.1.nupkg", output);
-                }
+                // assert
+                AssertPackageFileNameContains("1.3.0-alpha.0.1.nupkg", output);
             });
 
         Target(
@@ -197,19 +181,16 @@ internal static class Program
             DependsOn("test-package-non-default-auto-increment"),
             async () =>
             {
-                using (var repo = new Repository(testProject))
-                {
-                    // arrange
-                    Environment.SetEnvironmentVariable("MinVerMinimumMajorMinor", "2.0", EnvironmentVariableTarget.Process);
+                // arrange
+                Environment.SetEnvironmentVariable("MinVerMinimumMajorMinor", "2.0", EnvironmentVariableTarget.Process);
 
-                    var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-minimum-major-minor");
+                var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-minimum-major-minor");
 
-                    // act
-                    await CleanAndPack(testProject, output, "diagnostic");
+                // act
+                await CleanAndPack(testProject, output, "diagnostic");
 
-                    // assert
-                    AssertPackageFileNameContains("2.0.0-alpha.0.1.nupkg", output);
-                }
+                // assert
+                AssertPackageFileNameContains("2.0.0-alpha.0.1.nupkg", output);
             });
 
         Target(
@@ -217,19 +198,16 @@ internal static class Program
             DependsOn("test-package-minimum-major-minor"),
             async () =>
             {
-                using (var repo = new Repository(testProject))
-                {
-                    // arrange
-                    Environment.SetEnvironmentVariable("MinVerDefaultPreReleasePhase", "preview", EnvironmentVariableTarget.Process);
+                // arrange
+                Environment.SetEnvironmentVariable("MinVerDefaultPreReleasePhase", "preview", EnvironmentVariableTarget.Process);
 
-                    var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-default-pre-release-phase");
+                var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-default-pre-release-phase");
 
-                    // act
-                    await CleanAndPack(testProject, output, "diagnostic");
+                // act
+                await CleanAndPack(testProject, output, "diagnostic");
 
-                    // assert
-                    AssertPackageFileNameContains("2.0.0-preview.0.1.nupkg", output);
-                }
+                // assert
+                AssertPackageFileNameContains("2.0.0-preview.0.1.nupkg", output);
             });
 
         Target(
@@ -237,19 +215,16 @@ internal static class Program
             DependsOn("test-package-default-pre-release-phase"),
             async () =>
             {
-                using (var repo = new Repository(testProject))
-                {
-                    // arrange
-                    Environment.SetEnvironmentVariable("MinVerVersionOverride", "3.2.1-rc.4+build.5", EnvironmentVariableTarget.Process);
+                // arrange
+                Environment.SetEnvironmentVariable("MinVerVersionOverride", "3.2.1-rc.4+build.5", EnvironmentVariableTarget.Process);
 
-                    var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-version-override");
+                var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-version-override");
 
-                    // act
-                    await CleanAndPack(testProject, output, "diagnostic");
+                // act
+                await CleanAndPack(testProject, output, "diagnostic");
 
-                    // assert
-                    AssertPackageFileNameContains("3.2.1-rc.4.nupkg", output);
-                }
+                // assert
+                AssertPackageFileNameContains("3.2.1-rc.4.nupkg", output);
             });
 
         Target("test-package", DependsOn("test-package-version-override"));

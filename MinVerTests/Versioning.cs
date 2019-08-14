@@ -4,7 +4,6 @@ namespace MinVerTests
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using LibGit2Sharp;
     using MinVer.Lib;
     using MinVerTests.Infra;
     using Xbehave;
@@ -70,12 +69,12 @@ git tag 1.1.0
 
         [Scenario]
         [Example("general")]
-        public static void RepoWithHistory(string name, string path, Repository repo)
+        public static void RepoWithHistory(string name, string path)
         {
             $"Given a git repository in '{path = GetScenarioDirectory("versioning-repo-with-history-" + name)}' with a history of branches and/or tags"
-                .x(async c =>
+                .x(async () =>
                 {
-                    repo = EnsureEmptyRepositoryAndCommit(path).Using(c);
+                    EnsureEmptyRepositoryAndCommit(path);
 
                     foreach (var command in historicalCommands[name].Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
                     {
@@ -89,16 +88,14 @@ git tag 1.1.0
                 .x(c =>
                 {
                     var versionCounts = new Dictionary<string, int>();
-                    foreach (var commit in repo.Commits)
+                    foreach (var sha in GetCommitShas(path))
                     {
-                        Commands.Checkout(repo, commit);
+                        Checkout(path, sha);
 
                         var version = Versioner.GetVersion(path, default, default, default, default, default, new TestLogger());
                         var versionString = version.ToString();
                         var tagName = $"v/{versionString}";
 
-                        if (!repo.Tags.Any(tag => tag.Target.Sha == commit.Sha && tag.FriendlyName == tagName))
-                        {
                             versionCounts.TryGetValue(versionString, out var oldVersionCount);
                             var versionCount = oldVersionCount + 1;
                             versionCounts[versionString] = versionCount;
@@ -107,11 +104,10 @@ git tag 1.1.0
                                 ? $"v({versionCount})/{versionString}"
                                 : tagName;
 
-                            repo.Tags.Add(tagName, commit);
-                        }
+                            Tag(path, tagName, sha);
                     }
 
-                    Commands.Checkout(repo, repo.Branches["master"]);
+                    Checkout(path, "master");
                 });
 
             "Then the versions are as expected"
@@ -122,7 +118,7 @@ git tag 1.1.0
         public static void EmptyRepo(string path, Version version)
         {
             $"Given an empty git repository in '{path = GetScenarioDirectory("versioning-empty-repo")}'"
-                .x(c => EnsureEmptyRepository(path).Using(c));
+                .x(() => EnsureEmptyRepository(path));
 
             "When the version is determined"
                 .x(() => version = Versioner.GetVersion(path, default, default, default, default, default, new TestLogger()));

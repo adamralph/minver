@@ -1,6 +1,5 @@
 namespace MinVerTests
 {
-    using LibGit2Sharp;
     using MinVer.Lib;
     using Infra;
     using Xbehave;
@@ -15,10 +14,10 @@ namespace MinVerTests
         [Example(default, "0.0.0-alpha.0")]
         [Example("", "0.0.0-alpha.0")]
         [Example("preview", "0.0.0-preview.0")]
-        public static void DefaultPreReleasePhase(string phase, string expectedVersion, string path, Repository repo, Version actualVersion)
+        public static void DefaultPreReleasePhase(string phase, string expectedVersion, string path, Version actualVersion)
         {
             $"Given a git repository with a commit in '{path = GetScenarioDirectory($"default-pre-release-phase-{phase}")}'"
-                .x(c => repo = EnsureEmptyRepositoryAndCommit(path).Using(c));
+                .x(() => EnsureEmptyRepositoryAndCommit(path));
 
             $"When the version is determined using the default pre-release phase '{phase}'"
                 .x(() => actualVersion = Versioner.GetVersion(path, default, default, default, default, phase, new TestLogger()));

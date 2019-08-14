@@ -1,6 +1,5 @@
 namespace MinVerTests
 {
-    using LibGit2Sharp;
     using MinVer.Lib;
     using MinVerTests.Infra;
     using Xbehave;
@@ -17,7 +16,7 @@ namespace MinVerTests
         public static void NoCommits(string buildMetadata, string expectedVersion, string path, Version actualVersion)
         {
             $"Given an empty git repository in '{path = GetScenarioDirectory($"build-metadata-no-tag-{buildMetadata}")}'"
-                .x(c => EnsureEmptyRepository(path).Using(c));
+                .x(() => EnsureEmptyRepository(path));
 
             $"When the version is determined using build metadata '{buildMetadata}'"
                 .x(() => actualVersion = Versioner.GetVersion(path, default, default, buildMetadata, default, default, new TestLogger()));
@@ -32,7 +31,7 @@ namespace MinVerTests
         public static void NoTag(string buildMetadata, string expectedVersion, string path, Version actualVersion)
         {
             $"Given a git repository with a commit in '{path = GetScenarioDirectory($"build-metadata-no-tag-{buildMetadata}")}'"
-                .x(c => EnsureEmptyRepositoryAndCommit(path).Using(c));
+                .x(() => EnsureEmptyRepositoryAndCommit(path));
 
             $"When the version is determined using build metadata '{buildMetadata}'"
                 .x(() => actualVersion = Versioner.GetVersion(path, default, default, buildMetadata, default, default, new TestLogger()));
@@ -48,13 +47,13 @@ namespace MinVerTests
         [Example("1.2.3-pre+a", default, "1.2.3-pre+a")]
         [Example("1.2.3-pre", "b", "1.2.3-pre+b")]
         [Example("1.2.3-pre+a", "b", "1.2.3-pre+a.b")]
-        public static void CurrentTag(string tag, string buildMetadata, string expectedVersion, string path, Repository repo, Version actualVersion)
+        public static void CurrentTag(string tag, string buildMetadata, string expectedVersion, string path, Version actualVersion)
         {
             $"Given a git repository with a commit in '{path = GetScenarioDirectory($"build-metadata-current-tag-{tag}-{buildMetadata}")}'"
-                .x(c => repo = EnsureEmptyRepositoryAndCommit(path).Using(c));
+                .x(() => EnsureEmptyRepositoryAndCommit(path));
 
             $"And the commit is tagged '{tag}'"
-                .x(() => repo.ApplyTag(tag));
+                .x(() =>Tag(path, tag));
 
             $"When the version is determined using build metadata '{buildMetadata}'"
                 .x(() => actualVersion = Versioner.GetVersion(path, default, default, buildMetadata, default, default, new TestLogger()));
@@ -70,13 +69,13 @@ namespace MinVerTests
         [Example("1.2.3-pre+a", default, "1.2.3-pre.1")]
         [Example("1.2.3-pre", "b", "1.2.3-pre.1+b")]
         [Example("1.2.3-pre+a", "b", "1.2.3-pre.1+b")]
-        public static void PreviousTag(string tag, string buildMetadata, string expectedVersion, string path, Repository repo, Version actualVersion)
+        public static void PreviousTag(string tag, string buildMetadata, string expectedVersion, string path, Version actualVersion)
         {
             $"Given a git repository with a commit in '{path = GetScenarioDirectory($"build-metadata-previous-tag-{tag}-{buildMetadata}")}'"
-                .x(c => repo = EnsureEmptyRepositoryAndCommit(path).Using(c));
+                .x(() => EnsureEmptyRepositoryAndCommit(path));
 
             $"And the commit is tagged '{tag}'"
-                .x(() => repo.ApplyTag(tag));
+                .x(() => Tag(path, tag));
 
             $"And another commit"
                 .x(() => Commit(path));

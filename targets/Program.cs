@@ -177,14 +177,33 @@ internal static class Program
             });
 
         Target(
-            "test-package-minimum-major-minor",
+            "test-package-minimum-major-minor-on-tag",
             DependsOn("test-package-non-default-auto-increment"),
             async () =>
             {
                 // arrange
                 Environment.SetEnvironmentVariable("MinVerMinimumMajorMinor", "2.0", EnvironmentVariableTarget.Process);
 
-                var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-minimum-major-minor");
+                Tag(testProject, "v.1.4.0");
+
+                var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-minimum-major-minor-on-tag");
+
+                // act
+                await CleanAndPack(testProject, output, "diagnostic");
+
+                // assert
+                AssertPackageFileNameContains("2.0.0-alpha.0.nupkg", output);
+            });
+
+        Target(
+            "test-package-minimum-major-minor-after-tag",
+            DependsOn("test-package-minimum-major-minor-on-tag"),
+            async () =>
+            {
+                // arrange
+                Commit(testProject);
+
+                var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-minimum-major-minor-after-tag");
 
                 // act
                 await CleanAndPack(testProject, output, "diagnostic");
@@ -195,7 +214,7 @@ internal static class Program
 
         Target(
             "test-package-default-pre-release-phase",
-            DependsOn("test-package-minimum-major-minor"),
+            DependsOn("test-package-minimum-major-minor-after-tag"),
             async () =>
             {
                 // arrange

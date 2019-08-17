@@ -38,6 +38,8 @@ namespace MinVerTests.Infra
 
         internal static void Tag(string path, string tagName, string sha) => Run("git", $"tag {tagName} {sha}", path);
 
+        internal static void AnnotatedTag(string path, string tag, string message) => Run("git", $"tag {tag} -a -m '{message}'", path);
+
         internal static IEnumerable<string> GetCommitShas(string path) =>
             Read("git", "log --pretty=format:\"%H\"", path, noEcho: true)
                 .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);

@@ -177,14 +177,32 @@ internal static class Program
             });
 
         Target(
-            "test-package-minimum-major-minor-on-tag",
+            "test-package-annotated-tag",
             DependsOn("test-package-non-default-auto-increment"),
+            async () =>
+            {
+                // arrange
+                AnnotatedTag(testProject, "v.1.4.0", "foo");
+
+                var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-annotated-tag");
+
+                // act
+                await CleanAndPack(testProject, output, "diagnostic");
+
+                // assert
+                AssertPackageFileNameContains("1.4.0.nupkg", output);
+            });
+
+        Target(
+            "test-package-minimum-major-minor-on-tag",
+            DependsOn("test-package-annotated-tag"),
             async () =>
             {
                 // arrange
                 Environment.SetEnvironmentVariable("MinVerMinimumMajorMinor", "2.0", EnvironmentVariableTarget.Process);
 
-                Tag(testProject, "v.1.4.0");
+                Commit(testProject);
+                Tag(testProject, "v.1.5.0");
 
                 var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-minimum-major-minor-on-tag");
 

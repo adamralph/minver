@@ -42,13 +42,21 @@ _NOTE: The MinVer package reference should normally include `PrivateAssets="All"
 
 ## How it works
 
-When the current commit is tagged with a version, the tag is used as-is.
-
-When the current commit is _not_ tagged, MinVer searches the commit history for the latest tag. If the latest tag found is a [pre-release](https://semver.org/spec/v2.0.0.html#spec-item-9), MinVer will use it as-is. If the latest tag found is RTM (not pre-release), MinVer will add default pre-release identifiers. The default pre-release phase is "alpha", but this [can be customised](#can-i-change-the-default-pre-release-phase-from-alpha-to-something-else). MinVer will also increase the patch number, but this [can also be customised](#can-i-auto-increment-the-minor-or-major-version-after-an-rtm-tag-instead-of-the-patch-version). For example, If the latest tag is `1.0.0`, the current version will be `1.0.1-alpha.0`.
-
-If no tag is found either on the current commit or in the commit history, the default version `0.0.0-alpha.0` is used.
-
-You will notice that MinVer adds another number to the pre-release identifiers when the current commit is not tagged. This is the number of commits since the latest tag, or if no tag was found, since the root commit. This is known as "height". For example, if the latest tag found is `1.0.0-beta.1`, at a height of 42 commits, the calculated version is `1.0.0-beta.1.42`.
+- If the current commit is tagged with a version:
+  - The version is used as-is.
+- If the current commit is _not_ tagged with a version:
+  - MinVer searches the commit history for the latest commit tagged with a version.
+    - If a tag is found:
+      - If the version is a [pre-release](https://semver.org/spec/v2.0.0.html#spec-item-9):
+        - The version is used as-is.
+      - If the version is RTM (not pre-release):
+        - The patch number is incremented, but this [can be customised](#can-i-auto-increment-the-minor-or-major-version-after-an-rtm-tag-instead-of-the-patch-version).
+        - Default pre-release identifiers are added. The default pre-release phase is "alpha", but this [can be customised](#can-i-change-the-default-pre-release-phase-from-alpha-to-something-else).
+        - For example, If the latest tag is `1.0.0`, the current version will be `1.0.1-alpha.0`.
+    - If no tag is found:
+      - The default version `0.0.0-alpha.0` is used.
+  - The "height" is added to the pre-release identifiers. This is the number of commits since the latest tag, or if no tag was found, since the root commit.
+    - For example, if the latest tag found is `1.0.0-beta.1`, at a height of 42 commits, the calculated version is `1.0.0-beta.1.42`.
 
 ## Version numbers
 

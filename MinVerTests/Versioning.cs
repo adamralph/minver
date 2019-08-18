@@ -96,15 +96,15 @@ git tag 1.1.0 -a -m '.'
                         var versionString = version.ToString();
                         var tagName = $"v/{versionString}";
 
-                            versionCounts.TryGetValue(versionString, out var oldVersionCount);
-                            var versionCount = oldVersionCount + 1;
-                            versionCounts[versionString] = versionCount;
+                        versionCounts.TryGetValue(versionString, out var oldVersionCount);
+                        var versionCount = oldVersionCount + 1;
+                        versionCounts[versionString] = versionCount;
 
-                            tagName = versionCount > 1
-                                ? $"v({versionCount})/{versionString}"
-                                : tagName;
+                        tagName = versionCount > 1
+                            ? $"v({versionCount})/{versionString}"
+                            : tagName;
 
-                            Tag(path, tagName, sha);
+                        Tag(path, tagName, sha);
                     }
 
                     Checkout(path, "master");

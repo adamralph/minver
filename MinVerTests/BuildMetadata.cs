@@ -53,7 +53,7 @@ namespace MinVerTests
                 .x(() => EnsureEmptyRepositoryAndCommit(path));
 
             $"And the commit is tagged '{tag}'"
-                .x(() =>Tag(path, tag));
+                .x(() => Tag(path, tag));
 
             $"When the version is determined using build metadata '{buildMetadata}'"
                 .x(() => actualVersion = Versioner.GetVersion(path, default, default, buildMetadata, default, default, new TestLogger()));

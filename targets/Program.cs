@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using MinVerTests.Infra;
 using static Bullseye.Targets;
 using static MinVerTests.Infra.FileSystem;
 using static MinVerTests.Infra.Git;

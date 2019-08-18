@@ -2,7 +2,6 @@ namespace MinVerTests
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
     using MinVer.Lib;
     using MinVerTests.Infra;

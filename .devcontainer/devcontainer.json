@@ -1,0 +1,10 @@
+{
+  "name": "C# (.NET Core 2.2)",
+  "dockerFile": "Dockerfile",
+  "extensions": [
+    "editorconfig.editorconfig",
+    "formulahendry.dotnet-test-explorer",
+    "ms-vscode.csharp",
+    "sohamkamani.code-eol"
+  ]
+}

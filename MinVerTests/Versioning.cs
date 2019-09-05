@@ -2,6 +2,7 @@ namespace MinVerTests
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Threading.Tasks;
     using MinVer.Lib;
     using MinVerTests.Infra;
@@ -137,6 +138,22 @@ git tag 1.1.0 -a -m '.'
 
             "Then the version is 0.0.0-alpha.0"
                 .x(() => Assert.Equal("0.0.0-alpha.0", version.ToString()));
+        }
+
+        [Scenario]
+        public static void WorkingDir(string path, Version version)
+        {
+            $"Given a repository with a commit in '{path = GetScenarioDirectory("versioning-working-dir")}'"
+                .x(() => EnsureEmptyRepositoryAndCommit(path));
+
+            "And another commit"
+                .x(() => Commit(path));
+
+            "When the version is determined from the working dir"
+                .x(() => version = Versioner.GetVersion(Path.Combine(path, ".git"), default, default, default, default, default, new TestLogger()));
+
+            "Then the version is 0.0.0-alpha.0.1"
+                .x(() => Assert.Equal("0.0.0-alpha.0.1", version.ToString()));
         }
     }
 }

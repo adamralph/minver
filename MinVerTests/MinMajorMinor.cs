@@ -13,13 +13,13 @@ namespace MinVerTests
         [Scenario]
         public static void NoCommits(string path, Version actualVersion)
         {
-            $"Given an empty git repository in '{path = GetScenarioDirectory($"minimum-major-minor-not-tagged")}'"
+            $"Given an empty git repository in '{path = GetScenarioDirectory("minimum-major-minor-not-tagged")}'"
                 .x(() => EnsureEmptyRepository(path));
 
             "When the version is determined using minimum major minor '1.2'"
                 .x(() => actualVersion = Versioner.GetVersion(path, default, new MajorMinor(1, 2), default, default, default, new TestLogger()));
 
-            $"Then the version is '1.2.0-alpha.0'"
+            "Then the version is '1.2.0-alpha.0'"
                 .x(() => Assert.Equal("1.2.0-alpha.0", actualVersion.ToString()));
         }
 
@@ -43,7 +43,7 @@ namespace MinVerTests
 
             if (isRedundant)
             {
-                $"And a debug message is logged because the minimum major minor is redundant"
+                "And a debug message is logged because the minimum major minor is redundant"
                     .x(() => Assert.Contains(logger.DebugMessages, message => message.Contains($"The calculated version {actualVersion} satisfies the minimum major minor {major}.{minor}.")));
             }
         }
@@ -51,13 +51,13 @@ namespace MinVerTests
         [Scenario]
         public static void NotTagged(string path, Version actualVersion)
         {
-            $"Given a git repository with a commit in '{path = GetScenarioDirectory($"minimum-major-minor-not-tagged")}'"
+            $"Given a git repository with a commit in '{path = GetScenarioDirectory("minimum-major-minor-not-tagged")}'"
                 .x(() => EnsureEmptyRepositoryAndCommit(path));
 
             "When the version is determined using minimum major minor '1.0'"
                 .x(() => actualVersion = Versioner.GetVersion(path, default, new MajorMinor(1, 0), default, default, default, new TestLogger()));
 
-            $"Then the version is '1.0.0-alpha.0'"
+            "Then the version is '1.0.0-alpha.0'"
                 .x(() => Assert.Equal("1.0.0-alpha.0", actualVersion.ToString()));
         }
     }

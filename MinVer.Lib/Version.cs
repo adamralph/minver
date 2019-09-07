@@ -9,6 +9,9 @@ namespace MinVer.Lib
     public class Version : IComparable<Version>
 #pragma warning restore CA1036 // Override methods on comparable types
     {
+        private readonly int major;
+        private readonly int minor;
+        private readonly int patch;
         private readonly List<string> preReleaseIdentifiers;
         private readonly int height;
         private readonly string buildMetadata;
@@ -17,22 +20,16 @@ namespace MinVer.Lib
 
         private Version(int major, int minor, int patch, IEnumerable<string> preReleaseIdentifiers, int height, string buildMetadata)
         {
-            this.Major = major;
-            this.Minor = minor;
-            this.Patch = patch;
+            this.major = major;
+            this.minor = minor;
+            this.patch = patch;
             this.preReleaseIdentifiers = preReleaseIdentifiers?.ToList() ?? new List<string>();
             this.height = height;
             this.buildMetadata = buildMetadata;
         }
 
-        public int Major { get; }
-
-        public int Minor { get; }
-
-        public int Patch { get; }
-
         public override string ToString() =>
-            $"{this.Major}.{this.Minor}.{this.Patch}{(this.preReleaseIdentifiers.Count == 0 ? "" : $"-{string.Join(".", this.preReleaseIdentifiers)}")}{(this.height == 0 ? "" : $".{this.height}")}{(string.IsNullOrEmpty(this.buildMetadata) ? "" : $"+{this.buildMetadata}")}";
+            $"{this.major}.{this.minor}.{this.patch}{(this.preReleaseIdentifiers.Count == 0 ? "" : $"-{string.Join(".", this.preReleaseIdentifiers)}")}{(this.height == 0 ? "" : $".{this.height}")}{(string.IsNullOrEmpty(this.buildMetadata) ? "" : $"+{this.buildMetadata}")}";
 
         public int CompareTo(Version other)
         {
@@ -41,19 +38,19 @@ namespace MinVer.Lib
                 return 1;
             }
 
-            var major = this.Major.CompareTo(other.Major);
+            var major = this.major.CompareTo(other.major);
             if (major != 0)
             {
                 return major;
             }
 
-            var minor = this.Minor.CompareTo(other.Minor);
+            var minor = this.minor.CompareTo(other.minor);
             if (minor != 0)
             {
                 return minor;
             }
 
-            var patch = this.Patch.CompareTo(other.Patch);
+            var patch = this.patch.CompareTo(other.patch);
             if (patch != 0)
             {
                 return patch;
@@ -104,7 +101,7 @@ namespace MinVer.Lib
         }
 
         public Version Satisfying(MajorMinor minMajorMinor, string defaultPreReleasePhase) =>
-            minMajorMinor == default || minMajorMinor.Major < this.Major || (minMajorMinor.Major == this.Major && minMajorMinor.Minor <= this.Minor)
+            minMajorMinor == default || minMajorMinor.Major < this.major || (minMajorMinor.Major == this.major && minMajorMinor.Minor <= this.minor)
                 ? this
                 : new Version(minMajorMinor.Major, minMajorMinor.Minor, default, new[] { defaultPreReleasePhase, "0" }, this.height, this.buildMetadata);
 
@@ -115,23 +112,23 @@ namespace MinVer.Lib
                 switch (autoIncrement)
                 {
                     case VersionPart.Major:
-                        return new Version(this.Major + 1, 0, 0, new[] { defaultPreReleasePhase, "0" }, height, default);
+                        return new Version(this.major + 1, 0, 0, new[] { defaultPreReleasePhase, "0" }, height, default);
                     case VersionPart.Minor:
-                        return new Version(this.Major, this.Minor + 1, 0, new[] { defaultPreReleasePhase, "0" }, height, default);
+                        return new Version(this.major, this.minor + 1, 0, new[] { defaultPreReleasePhase, "0" }, height, default);
                     case VersionPart.Patch:
-                        return new Version(this.Major, this.Minor, this.Patch + 1, new[] { defaultPreReleasePhase, "0" }, height, default);
+                        return new Version(this.major, this.minor, this.patch + 1, new[] { defaultPreReleasePhase, "0" }, height, default);
                     default:
                         throw new ArgumentOutOfRangeException(nameof(autoIncrement));
                 }
             }
 
-            return new Version(this.Major, this.Minor, this.Patch, this.preReleaseIdentifiers, height, height == 0 ? this.buildMetadata : default);
+            return new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, height, height == 0 ? this.buildMetadata : default);
         }
 
         public Version AddBuildMetadata(string buildMetadata)
         {
             var separator = !string.IsNullOrEmpty(this.buildMetadata) && !string.IsNullOrEmpty(buildMetadata) ? "." : "";
-            return new Version(this.Major, this.Minor, this.Patch, this.preReleaseIdentifiers, this.height, $"{this.buildMetadata}{separator}{buildMetadata}");
+            return new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, this.height, $"{this.buildMetadata}{separator}{buildMetadata}");
         }
 
         public static bool TryParse(string text, out Version version) => (version = ParseOrDefault(text, default)) != default;

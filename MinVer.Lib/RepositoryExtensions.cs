@@ -178,7 +178,7 @@ namespace MinVer.Lib
             return selectedCandidate.Version.WithHeight(selectedCandidate.Height, autoIncrement, defaultPreReleasePhase);
         }
 
-        public static string ShortSha(this Commit commit) => commit.Sha.Substring(0, 7);
+        private static string ShortSha(this Commit commit) => commit.Sha.Substring(0, 7);
 
         private class Candidate
         {

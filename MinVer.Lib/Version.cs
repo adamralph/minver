@@ -152,9 +152,9 @@ namespace MinVer.Lib
 
         private static Version ParseOrDefault(string[] numbers, IEnumerable<string> pre, string meta) =>
             numbers?.Length == 3 &&
-                    int.TryParse(numbers?[0], out var major) &&
-                    int.TryParse(numbers?[1], out var minor) &&
-                    int.TryParse(numbers?[2], out var patch)
+                    int.TryParse(numbers[0], out var major) &&
+                    int.TryParse(numbers[1], out var minor) &&
+                    int.TryParse(numbers[2], out var patch)
                 ? new Version(major, minor, patch, pre, default, meta)
                 : default;
     }

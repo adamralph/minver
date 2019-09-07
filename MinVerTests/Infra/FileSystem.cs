@@ -44,7 +44,7 @@ namespace MinVerTests.Infra
 
         private static void DeleteDirectory(string path)
         {
-            // Directory.Delete fails if anything in the tree has the read-only attibute set. ¯\_(ツ)_/¯
+            // Directory.Delete fails if anything in the tree has the read-only attribute set. ¯\_(ツ)_/¯
             ResetAttributes(new DirectoryInfo(path));
 
             void ResetAttributes(DirectoryInfo directory)

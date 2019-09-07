@@ -22,12 +22,12 @@ internal static class Program
         Target(
             "test-api",
             DependsOn("build"),
-            () => RunAsync("dotnet", $"test --configuration Release --no-build --verbosity=normal /nologo"));
+            () => RunAsync("dotnet", "test --configuration Release --no-build --verbosity=normal /nologo"));
 
         Target(
             "publish",
             DependsOn("build"),
-            () => RunAsync("dotnet", $"publish ./MinVer/MinVer.csproj --configuration Release --no-build /nologo"));
+            () => RunAsync("dotnet", "publish ./MinVer/MinVer.csproj --configuration Release --no-build /nologo"));
 
         Target(
             "pack",

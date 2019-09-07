@@ -77,7 +77,7 @@ namespace MinVerTests
             $"And the commit is tagged '{tag}'"
                 .x(() => Tag(path, tag));
 
-            $"And another commit"
+            "And another commit"
                 .x(() => Commit(path));
 
             $"When the version is determined using build metadata '{buildMetadata}'"

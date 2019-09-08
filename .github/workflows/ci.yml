@@ -1,0 +1,29 @@
+on:
+  push:
+    branches:
+    - master
+    - release-*
+    tags:
+    - '*.*.*'
+  pull_request:
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        runs-on: [macOS-10.14, ubuntu-18.04, windows-2019]
+    name: ${{ matrix.runs-on }}
+    runs-on: ${{ matrix.runs-on }}
+    steps:
+    - run: dotnet --info
+    - uses: actions/checkout@af513c7a016048ae468971c52ed77d9562c7c819
+    - if: contains(matrix.runs-on, 'windows')
+      env:
+        VERSION: ${{ secrets.VERSION }}
+      run: build.cmd
+    - if: contains(matrix.runs-on, 'macOS') || contains(matrix.runs-on, 'ubuntu')
+      env:
+        VERSION: ${{ secrets.VERSION }}
+      run: ./build.sh
+    - if: matrix.runs-on == 'ubuntu-18.04'
+      run: ./push.sh ${{ secrets.MYGET_ADAMRALPH_CI_API_KEY }}

@@ -11,6 +11,6 @@ git:
   depth: false
 matrix:
   include:
-    - os: linux
-      dist: bionic
-    - os: osx
+  - os: linux
+    dist: bionic
+  - os: osx

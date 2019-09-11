@@ -1,6 +1,5 @@
 namespace MinVerTests.Infra
 {
-    using System;
     using System.Collections.Generic;
     using MinVer.Lib;
 
@@ -12,13 +11,11 @@ namespace MinVerTests.Infra
 
         public bool IsDebugEnabled => true;
 
-        public ICollection<string> DebugMessages => this.debugMessages;
+        public IEnumerable<string> DebugMessages => this.debugMessages;
 
         public void Trace(string message)
         {
         }
-
-        public void Debug(Func<string> createMessage) => this.Debug(createMessage());
 
         public void Debug(string message) => this.debugMessages.Add(message);
 

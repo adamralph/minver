@@ -23,7 +23,7 @@ namespace MinVer
 
             app.HelpOption();
 
-            var autoIncrementOption = app.Option("-a|--auto-increment <VERSION_PART>", VersionPart.Patch.GetValidValues(), CommandOptionType.SingleValue);
+            var autoIncrementOption = app.Option("-a|--auto-increment <VERSION_PART>", VersionPartEx.ValidValues, CommandOptionType.SingleValue);
             var buildMetaOption = app.Option("-b|--build-metadata <BUILD_METADATA>", "", CommandOptionType.SingleValue);
             var defaultPreReleasePhaseOption = app.Option("-d|--default-pre-release-phase <PHASE>", "alpha (default), preview, etc.", CommandOptionType.SingleValue);
             var minMajorMinorOption = app.Option("-m|--minimum-major-minor <MINIMUM_MAJOR_MINOR>", MajorMinor.ValidValues, CommandOptionType.SingleValue);

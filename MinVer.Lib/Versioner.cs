@@ -36,7 +36,9 @@ namespace MinVer.Lib
 
         private static Version GetVersion(string repoOrWorkDir, string tagPrefix, VersionPart autoIncrement, string defaultPreReleasePhase, ILogger log)
         {
+#pragma warning disable IDE0068 // Use recommended dispose pattern
             if (!RepositoryEx.TryCreateRepo(repoOrWorkDir, out var repo))
+#pragma warning restore IDE0068 // Use recommended dispose pattern
             {
                 var version = new Version(defaultPreReleasePhase);
 
@@ -45,13 +47,9 @@ namespace MinVer.Lib
                 return version;
             }
 
-            try
+            using (repo)
             {
                 return repo.GetVersion(tagPrefix, autoIncrement, defaultPreReleasePhase, log);
-            }
-            finally
-            {
-                repo.Dispose();
             }
         }
     }

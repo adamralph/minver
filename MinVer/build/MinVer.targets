@@ -13,7 +13,6 @@
 
   <Target Name="MinVer" BeforeTargets="CoreCompile;GenerateNuspec" Condition="'$(DesignTimeBuild)' != 'true'">
     <Error Condition="'$(UsingMicrosoftNETSdk)' != 'true'" Code="MINVER0001" Text="MinVer only works in SDK-style projects." />
-    <Error Condition="'$(MinVerMajorMinor)' != ''" Code="MINVER_TEMP0001" Text="MinVerMajorMinor has been renamed to MinVerMinimumMajorMinor." />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerAutoIncrement=$(MinVerAutoIncrement)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerBuildMetadata=$(MinVerBuildMetadata)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerDefaultPreReleasePhase=$(MinVerDefaultPreReleasePhase)" />

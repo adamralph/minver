@@ -13,12 +13,6 @@ namespace MinVer
 
         private static int Main(string[] args)
         {
-            if (args.Contains("--major-minor", StringComparer.OrdinalIgnoreCase))
-            {
-                Console.Out.WriteLine("--major-minor has been renamed to --minimum-major-minor");
-                return 2;
-            }
-
             var app = new CommandLineApplication { Name = "minver", FullName = $"MinVer CLI {informationalVersion}" };
 
             app.HelpOption();

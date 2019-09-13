@@ -4,10 +4,7 @@ namespace MinVer.Lib
     {
         public static Version GetVersion(string repoOrWorkDir, string tagPrefix, MajorMinor minMajorMinor, string buildMeta, VersionPart autoIncrement, string defaultPreReleasePhase, ILogger log)
         {
-            if (log == null)
-            {
-                throw new System.ArgumentNullException(nameof(log));
-            }
+            log = log ?? new NullLogger();
 
             defaultPreReleasePhase = string.IsNullOrEmpty(defaultPreReleasePhase)
                 ? "alpha"

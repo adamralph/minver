@@ -10,7 +10,7 @@ namespace MinVer.Lib
         {
             var commit = repo.Commits.FirstOrDefault();
 
-            if (commit == default)
+            if (commit == null)
             {
                 var version = new Version(defaultPreReleasePhase);
 
@@ -30,7 +30,7 @@ namespace MinVer.Lib
             var height = 0;
             var candidates = new List<Candidate>();
             var commitsToCheck = new Stack<(Commit, int, Commit)>();
-            Commit previousCommit = default;
+            Commit previousCommit = null;
 
             if (log.IsTraceEnabled)
             {
@@ -52,11 +52,11 @@ namespace MinVer.Lib
                     {
                         var candidate = new Candidate { Commit = commit, Height = height, Tag = tag.FriendlyName, Version = commitVersion, };
 
-                        foundVersion = foundVersion || candidate.Version != default;
+                        foundVersion = foundVersion || candidate.Version != null;
 
                         if (log.IsTraceEnabled)
                         {
-                            log.Trace($"Found {(candidate.Version == default ? "non-" : default)}version tag {candidate}.");
+                            log.Trace($"Found {(candidate.Version == null ? "non-" : null)}version tag {candidate}.");
                         }
 
                         candidates.Add(candidate);
@@ -67,7 +67,7 @@ namespace MinVer.Lib
                         if (log.IsTraceEnabled)
                         {
                             var parentIndex = 0;
-                            Commit firstParent = default;
+                            Commit firstParent = null;
 
                             foreach (var parent in commit.Parents)
                             {
@@ -97,7 +97,7 @@ namespace MinVer.Lib
 
                         if (commitsToCheck.Count == 0 || commitsToCheck.Peek().Item2 <= height)
                         {
-                            var candidate = new Candidate { Commit = commit, Height = height, Tag = default, Version = new Version(defaultPreReleasePhase), };
+                            var candidate = new Candidate { Commit = commit, Height = height, Tag = null, Version = new Version(defaultPreReleasePhase), };
 
                             if (log.IsTraceEnabled)
                             {
@@ -168,9 +168,9 @@ namespace MinVer.Lib
 
             var selectedCandidate = orderedCandidates.Last();
 
-            if (selectedCandidate.Tag == default)
+            if (selectedCandidate.Tag == null)
             {
-                log.Info($"No commit found with a valid SemVer 2.0 version{(tagPrefix == default ? default : $" prefixed with '{tagPrefix}'")}. Using default version {selectedCandidate.Version}.");
+                log.Info($"No commit found with a valid SemVer 2.0 version{(tagPrefix == null ? null : $" prefixed with '{tagPrefix}'")}. Using default version {selectedCandidate.Version}.");
             }
 
             log.Info($"Using{(log.IsDebugEnabled && orderedCandidates.Count > 1 ? "    " : " ")}{selectedCandidate.ToString(tagWidth, versionWidth, heightWidth)}.");
@@ -193,7 +193,7 @@ namespace MinVer.Lib
             public override string ToString() => this.ToString(0, 0, 0);
 
             public string ToString(int tagWidth, int versionWidth, int heightWidth) =>
-                $"{{ {nameof(this.Commit)}: {this.Commit.ShortSha()}, {nameof(this.Tag)}: {$"{(this.Tag == default ? "null" : $"'{this.Tag}'")},".PadRight(tagWidth + 3)} {nameof(this.Version)}: {$"{this.Version?.ToString() ?? "null"},".PadRight(versionWidth + 1)} {nameof(this.Height)}: {this.Height.ToString().PadLeft(heightWidth)} }}";
+                $"{{ {nameof(this.Commit)}: {this.Commit.ShortSha()}, {nameof(this.Tag)}: {$"{(this.Tag == null ? "null" : $"'{this.Tag}'")},".PadRight(tagWidth + 3)} {nameof(this.Version)}: {$"{this.Version?.ToString() ?? "null"},".PadRight(versionWidth + 1)} {nameof(this.Height)}: {this.Height.ToString().PadLeft(heightWidth)} }}";
         }
     }
 }

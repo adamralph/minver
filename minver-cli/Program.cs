@@ -73,7 +73,7 @@ namespace MinVer
         private static bool TryParse(string repoOrWorkDirOption, string minMajorMinorOption, string verbosityOption, string autoIncrementOption, out string repoOrWorkDir, out MajorMinor minMajorMinor, out Verbosity verbosity, out VersionPart autoIncrement)
         {
             repoOrWorkDir = ".";
-            minMajorMinor = default;
+            minMajorMinor = null;
             verbosity = default;
             autoIncrement = default;
 

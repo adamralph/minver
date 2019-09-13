@@ -18,7 +18,7 @@ namespace MinVer.Lib
 
         public static bool TryParse(string value, out MajorMinor majorMinor)
         {
-            majorMinor = default;
+            majorMinor = null;
 
             if (string.IsNullOrWhiteSpace(value))
             {

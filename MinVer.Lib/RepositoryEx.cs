@@ -7,9 +7,9 @@ namespace MinVer.Lib
     {
         public static bool TryCreateRepo(string repoOrWorkDir, out Repository repository)
         {
-            repository = default;
+            repository = null;
 
-            while (repoOrWorkDir != default)
+            while (repoOrWorkDir != null)
             {
                 try
                 {

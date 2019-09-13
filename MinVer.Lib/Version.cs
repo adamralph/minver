@@ -16,7 +16,7 @@ namespace MinVer.Lib
         private readonly int height;
         private readonly string buildMetadata;
 
-        public Version(string defaultPreReleasePhase) : this(default, default, default, new List<string> { defaultPreReleasePhase, "0" }, default, default) { }
+        public Version(string defaultPreReleasePhase) : this(0, 0, 0, new List<string> { defaultPreReleasePhase, "0" }, 0, null) { }
 
         private Version(int major, int minor, int patch, IEnumerable<string> preReleaseIdentifiers, int height, string buildMetadata)
         {
@@ -33,7 +33,7 @@ namespace MinVer.Lib
 
         public int CompareTo(Version other)
         {
-            if (other == default)
+            if (other == null)
             {
                 return 1;
             }
@@ -101,9 +101,9 @@ namespace MinVer.Lib
         }
 
         public Version Satisfying(MajorMinor minMajorMinor, string defaultPreReleasePhase) =>
-            minMajorMinor == default || minMajorMinor.Major < this.major || (minMajorMinor.Major == this.major && minMajorMinor.Minor <= this.minor)
+            minMajorMinor == null || minMajorMinor.Major < this.major || (minMajorMinor.Major == this.major && minMajorMinor.Minor <= this.minor)
                 ? this
-                : new Version(minMajorMinor.Major, minMajorMinor.Minor, default, new[] { defaultPreReleasePhase, "0" }, this.height, this.buildMetadata);
+                : new Version(minMajorMinor.Major, minMajorMinor.Minor, 0, new[] { defaultPreReleasePhase, "0" }, this.height, this.buildMetadata);
 
         public Version WithHeight(int height, VersionPart autoIncrement, string defaultPreReleasePhase)
         {
@@ -112,17 +112,17 @@ namespace MinVer.Lib
                 switch (autoIncrement)
                 {
                     case VersionPart.Major:
-                        return new Version(this.major + 1, 0, 0, new[] { defaultPreReleasePhase, "0" }, height, default);
+                        return new Version(this.major + 1, 0, 0, new[] { defaultPreReleasePhase, "0" }, height, null);
                     case VersionPart.Minor:
-                        return new Version(this.major, this.minor + 1, 0, new[] { defaultPreReleasePhase, "0" }, height, default);
+                        return new Version(this.major, this.minor + 1, 0, new[] { defaultPreReleasePhase, "0" }, height, null);
                     case VersionPart.Patch:
-                        return new Version(this.major, this.minor, this.patch + 1, new[] { defaultPreReleasePhase, "0" }, height, default);
+                        return new Version(this.major, this.minor, this.patch + 1, new[] { defaultPreReleasePhase, "0" }, height, null);
                     default:
                         throw new ArgumentOutOfRangeException(nameof(autoIncrement));
                 }
             }
 
-            return new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, height, height == 0 ? this.buildMetadata : default);
+            return new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, height, height == 0 ? this.buildMetadata : null);
         }
 
         public Version AddBuildMetadata(string buildMetadata)
@@ -131,10 +131,10 @@ namespace MinVer.Lib
             return new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, this.height, $"{this.buildMetadata}{separator}{buildMetadata}");
         }
 
-        public static bool TryParse(string text, out Version version) => (version = ParseOrDefault(text, default)) != default;
+        public static bool TryParse(string text, out Version version) => (version = ParseOrDefault(text, null)) != null;
 
         public static Version ParseOrDefault(string text, string prefix) =>
-            text == default || !text.StartsWith(prefix ?? "") ? default : ParseOrDefault(text.Substring(prefix?.Length ?? 0));
+            text == null || !text.StartsWith(prefix ?? "") ? null : ParseOrDefault(text.Substring(prefix?.Length ?? 0));
 
         private static Version ParseOrDefault(string text)
         {
@@ -143,8 +143,8 @@ namespace MinVer.Lib
 
             return ParseOrDefault(
                 numbersAndPre[0].Split('.'),
-                numbersAndPre.Length > 1 ? numbersAndPre[1].Split('.') : default,
-                versionAndMeta.Length > 1 ? versionAndMeta[1] : default);
+                numbersAndPre.Length > 1 ? numbersAndPre[1].Split('.') : null,
+                versionAndMeta.Length > 1 ? versionAndMeta[1] : null);
         }
 
         private static Version ParseOrDefault(string[] numbers, IEnumerable<string> pre, string meta) =>
@@ -152,7 +152,7 @@ namespace MinVer.Lib
                     int.TryParse(numbers[0], out var major) &&
                     int.TryParse(numbers[1], out var minor) &&
                     int.TryParse(numbers[2], out var patch)
-                ? new Version(major, minor, patch, pre, default, meta)
-                : default;
+                ? new Version(major, minor, patch, pre, 0, meta)
+                : null;
     }
 }

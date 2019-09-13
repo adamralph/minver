@@ -23,7 +23,7 @@ namespace MinVer.Lib
             }
             else
             {
-                if (minMajorMinor != default)
+                if (minMajorMinor != null)
                 {
                     log.Debug($"The calculated version {calculatedVersion} satisfies the minimum major minor {minMajorMinor}.");
                 }

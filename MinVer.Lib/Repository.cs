@@ -2,13 +2,38 @@ namespace MinVer.Lib
 {
     using System.Collections.Generic;
     using System.Linq;
-    using LibGit2Sharp;
 
-    internal static class RepositoryExtensions
+    internal class Repository
     {
-        public static Version GetVersion(this Repository repo, string tagPrefix, VersionPart autoIncrement, string defaultPreReleasePhase, ILogger log)
+        private readonly Commit head;
+        private readonly IEnumerable<Tag> tags;
+
+        private Repository(Commit head, IEnumerable<Tag> tags)
         {
-            var commit = repo.Commits.FirstOrDefault();
+            this.head = head;
+            this.tags = tags;
+        }
+
+        public static bool TryCreateRepo(string workDir, out Repository repository, ILogger log)
+        {
+            repository = null;
+
+            if (!Git.IsWorkingDirectory(workDir, log))
+            {
+                return false;
+            }
+
+            var head = Git.GetHeadOrDefault(workDir, log);
+            var tags = head != null ? Git.GetTagsOrEmpty(workDir, log) : Enumerable.Empty<Tag>();
+
+            repository = new Repository(head, tags);
+
+            return true;
+        }
+
+        public Version GetVersion(string tagPrefix, VersionPart autoIncrement, string defaultPreReleasePhase, ILogger log)
+        {
+            var commit = this.head;
 
             if (commit == null)
             {
@@ -19,10 +44,10 @@ namespace MinVer.Lib
                 return version;
             }
 
-            var tagsAndVersions = repo.Tags
-                .Select(tag => (tag, Version.ParseOrDefault(tag.FriendlyName, tagPrefix)))
+            var tagsAndVersions = this.tags
+                .Select(tag => (tag, Version.ParseOrDefault(tag.Name, tagPrefix)))
                 .OrderBy(tagAndVersion => tagAndVersion.Item2)
-                .ThenBy(tagsAndVersion => tagsAndVersion.tag.FriendlyName)
+                .ThenBy(tagsAndVersion => tagsAndVersion.tag.Name)
                 .ToList();
 
             var commitsChecked = new HashSet<string>();
@@ -34,7 +59,7 @@ namespace MinVer.Lib
 
             if (log.IsTraceEnabled)
             {
-                log.Trace($"Starting at commit {commit.ShortSha()} (height {height})...");
+                log.Trace($"Starting at commit {commit.ShortSha} (height {height})...");
             }
 
             while (true)
@@ -45,12 +70,12 @@ namespace MinVer.Lib
                 {
                     ++count;
 
-                    var commitTagsAndVersions = tagsAndVersions.Where(tagAndVersion => tagAndVersion.tag.Target.Sha == commit.Sha).ToList();
+                    var commitTagsAndVersions = tagsAndVersions.Where(tagAndVersion => tagAndVersion.tag.Sha == commit.Sha).ToList();
                     var foundVersion = false;
 
                     foreach (var (tag, commitVersion) in commitTagsAndVersions)
                     {
-                        var candidate = new Candidate { Commit = commit, Height = height, Tag = tag.FriendlyName, Version = commitVersion, };
+                        var candidate = new Candidate { Commit = commit, Height = height, Tag = tag.Name, Version = commitVersion, };
 
                         foundVersion = foundVersion || candidate.Version != null;
 
@@ -77,11 +102,11 @@ namespace MinVer.Lib
                                         firstParent = parent;
                                         break;
                                     case 1:
-                                        log.Trace($"History diverges from {commit.ShortSha()} (height {height}) to:");
-                                        log.Trace($"- {firstParent.ShortSha()} (height {height + 1})");
+                                        log.Trace($"History diverges from {commit.ShortSha} (height {height}) to:");
+                                        log.Trace($"- {firstParent.ShortSha} (height {height + 1})");
                                         goto default;
                                     default:
-                                        log.Trace($"- {parent.ShortSha()} (height {height + 1})");
+                                        log.Trace($"- {parent.ShortSha} (height {height + 1})");
                                         break;
                                 }
 
@@ -90,7 +115,7 @@ namespace MinVer.Lib
                             }
                         }
 
-                        foreach (var parent in commit.Parents.Reverse())
+                        foreach (var parent in ((IEnumerable<Commit>)commit.Parents).Reverse())
                         {
                             commitsToCheck.Push((parent, height + 1, commit));
                         }
@@ -112,7 +137,7 @@ namespace MinVer.Lib
                 {
                     if (log.IsTraceEnabled)
                     {
-                        log.Trace($"History converges from {previousCommit.ShortSha()} (height {height - 1}) back to previously seen commit {commit.ShortSha()} (height {height}). Abandoning path.");
+                        log.Trace($"History converges from {previousCommit.ShortSha} (height {height - 1}) back to previously seen commit {commit.ShortSha} (height {height}). Abandoning path.");
                     }
                 }
 
@@ -134,17 +159,17 @@ namespace MinVer.Lib
                 {
                     if (parentCount > 1)
                     {
-                        log.Trace($"Following path from {child.ShortSha()} (height {height - 1}) through first parent {commit.ShortSha()} (height {height})...");
+                        log.Trace($"Following path from {child.ShortSha} (height {height - 1}) through first parent {commit.ShortSha} (height {height})...");
                     }
                     else if (height <= oldHeight)
                     {
                         if (commitsToCheck.Any() && commitsToCheck.Peek().Item2 == height)
                         {
-                            log.Trace($"Backtracking to {child.ShortSha()} (height {height - 1}) and following path through next parent {commit.ShortSha()} (height {height})...");
+                            log.Trace($"Backtracking to {child.ShortSha} (height {height - 1}) and following path through next parent {commit.ShortSha} (height {height})...");
                         }
                         else
                         {
-                            log.Trace($"Backtracking to {child.ShortSha()} (height {height - 1}) and following path through last parent {commit.ShortSha()} (height {height})...");
+                            log.Trace($"Backtracking to {child.ShortSha} (height {height - 1}) and following path through last parent {commit.ShortSha} (height {height})...");
                         }
                     }
                 }
@@ -178,8 +203,6 @@ namespace MinVer.Lib
             return selectedCandidate.Version.WithHeight(selectedCandidate.Height, autoIncrement, defaultPreReleasePhase);
         }
 
-        private static string ShortSha(this Commit commit) => commit.Sha.Substring(0, 7);
-
         private class Candidate
         {
             public Commit Commit { get; set; }
@@ -193,7 +216,7 @@ namespace MinVer.Lib
             public override string ToString() => this.ToString(0, 0, 0);
 
             public string ToString(int tagWidth, int versionWidth, int heightWidth) =>
-                $"{{ {nameof(this.Commit)}: {this.Commit.ShortSha()}, {nameof(this.Tag)}: {$"{(this.Tag == null ? "null" : $"'{this.Tag}'")},".PadRight(tagWidth + 3)} {nameof(this.Version)}: {$"{this.Version?.ToString() ?? "null"},".PadRight(versionWidth + 1)} {nameof(this.Height)}: {this.Height.ToString().PadLeft(heightWidth)} }}";
+                $"{{ {nameof(this.Commit)}: {this.Commit.ShortSha}, {nameof(this.Tag)}: {$"{(this.Tag == null ? "null" : $"'{this.Tag}'")},".PadRight(tagWidth + 3)} {nameof(this.Version)}: {$"{this.Version?.ToString() ?? "null"},".PadRight(versionWidth + 1)} {nameof(this.Height)}: {this.Height.ToString().PadLeft(heightWidth)} }}";
         }
     }
 }

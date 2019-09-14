@@ -21,7 +21,7 @@ namespace MinVer
             var buildMetaOption = app.Option("-b|--build-metadata <BUILD_METADATA>", "", CommandOptionType.SingleValue);
             var defaultPreReleasePhaseOption = app.Option("-d|--default-pre-release-phase <PHASE>", "alpha (default), preview, etc.", CommandOptionType.SingleValue);
             var minMajorMinorOption = app.Option("-m|--minimum-major-minor <MINIMUM_MAJOR_MINOR>", MajorMinor.ValidValues, CommandOptionType.SingleValue);
-            var repoOrWorkDirOption = app.Option("-r|--repo <REPO>", "Repository or working directory.", CommandOptionType.SingleValue);
+            var workDirOption = app.Option("-r|--repo <REPO>", "Working directory.", CommandOptionType.SingleValue);
             var tagPrefixOption = app.Option("-t|--tag-prefix <TAG_PREFIX>", "", CommandOptionType.SingleValue);
             var verbosityOption = app.Option("-v|--verbosity <VERBOSITY>", VerbosityMap.ValidValue, CommandOptionType.SingleValue);
 #if MINVER
@@ -30,7 +30,7 @@ namespace MinVer
 
             app.OnExecute(() =>
             {
-                if (!TryParse(repoOrWorkDirOption.Value(), minMajorMinorOption.Value(), verbosityOption.Value(), autoIncrementOption.Value(), out var repoOrWorkDir, out var minMajorMinor, out var verbosity, out var autoIncrement))
+                if (!TryParse(workDirOption.Value(), minMajorMinorOption.Value(), verbosityOption.Value(), autoIncrementOption.Value(), out var workDir, out var minMajorMinor, out var verbosity, out var autoIncrement))
                 {
                     return 2;
                 }
@@ -56,10 +56,10 @@ namespace MinVer
                 }
                 else
                 {
-                    version = Versioner.GetVersion(repoOrWorkDir, tagPrefixOption.Value(), minMajorMinor, buildMetaOption.Value(), autoIncrement, defaultPreReleasePhaseOption.Value(), log);
+                    version = Versioner.GetVersion(workDir, tagPrefixOption.Value(), minMajorMinor, buildMetaOption.Value(), autoIncrement, defaultPreReleasePhaseOption.Value(), log);
                 }
 #else
-                var version = Versioner.GetVersion(repoOrWorkDir, tagPrefixOption.Value(), minMajorMinor, buildMetaOption.Value(), autoIncrement, defaultPreReleasePhaseOption.Value(), log);
+                var version = Versioner.GetVersion(workDir, tagPrefixOption.Value(), minMajorMinor, buildMetaOption.Value(), autoIncrement, defaultPreReleasePhaseOption.Value(), log);
 #endif
 
                 Console.Out.WriteLine(version);
@@ -70,16 +70,16 @@ namespace MinVer
             return app.Execute(args);
         }
 
-        private static bool TryParse(string repoOrWorkDirOption, string minMajorMinorOption, string verbosityOption, string autoIncrementOption, out string repoOrWorkDir, out MajorMinor minMajorMinor, out Verbosity verbosity, out VersionPart autoIncrement)
+        private static bool TryParse(string workDirOption, string minMajorMinorOption, string verbosityOption, string autoIncrementOption, out string workDir, out MajorMinor minMajorMinor, out Verbosity verbosity, out VersionPart autoIncrement)
         {
-            repoOrWorkDir = ".";
+            workDir = ".";
             minMajorMinor = null;
             verbosity = default;
             autoIncrement = default;
 
-            if (!string.IsNullOrEmpty(repoOrWorkDirOption) && !Directory.Exists(repoOrWorkDir = repoOrWorkDirOption))
+            if (!string.IsNullOrEmpty(workDirOption) && !Directory.Exists(workDir = workDirOption))
             {
-                Logger.ErrorRepoOrWorkDirDoesNotExist(repoOrWorkDirOption);
+                Logger.ErrorWorkDirDoesNotExist(workDirOption);
                 return false;
             }
 

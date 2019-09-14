@@ -45,8 +45,8 @@ namespace MinVer
             }
         }
 
-        public static void ErrorRepoOrWorkDirDoesNotExist(string repoOrWorkDir) =>
-            Error(1002, $"Repository or working directory '{repoOrWorkDir}' does not exist.");
+        public static void ErrorWorkDirDoesNotExist(string workDir) =>
+            Error(1002, $"Working directory '{workDir}' does not exist.");
 
         public static void ErrorInvalidAutoIncrement(string autoIncrement) =>
             Error(1006, $"Invalid auto increment '{autoIncrement}'. Valid values are {VersionPartEx.ValidValues}");
@@ -64,6 +64,15 @@ namespace MinVer
 
         private static void Error(int code, string message) => Message($"error MINVER{code:D4} : {message}");
 
-        private static void Message(string message) => Console.Error.WriteLine($"MinVer: {message}");
+        private static void Message(string message)
+        {
+            if (message.Contains('\r') || message.Contains('\n'))
+            {
+                var lines = message.Replace("\r\n", "\n").Split('\r', '\n');
+                message = string.Join($"{Environment.NewLine}MinVer: ", lines);
+            }
+
+            Console.Error.WriteLine($"MinVer: {message}");
+        }
     }
 }

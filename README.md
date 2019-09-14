@@ -23,6 +23,7 @@ Also available as a [command line tool](#can-i-use-minver-to-version-software-wh
 ## Prerequisites
 
 - [.NET Core SDK 2.1.300 or a later 2.x version.](https://www.microsoft.com/net/download)
+- [Git](https://git-scm.com/)
 
 ## Quick start
 
@@ -101,7 +102,7 @@ _(With TL;DR answers inline.)_
 - [Can I use MinVer to version software which is not built using a .NET SDK style project?](#can-i-use-minver-to-version-software-which-is-not-built-using-a-net-sdk-style-project) _(yes)_
 - [What if the history diverges, and more than one tag is found?](#what-if-the-history-diverges-and-more-than-one-tag-is-found) _(nothing bad)_
 - [What if the history diverges, and then converges again, before the latest tag (or root commit) is found?](#what-if-the-history-diverges-and-then-converges-again-before-the-latest-tag-or-root-commit-is-found) _(nothing bad)_
-- [Why does MinVer fail with `LibGit2Sharp.NotFoundException`?](#why-does-minver-fail-with-libgit2sharpnotfoundexception) _(easy to fix)_
+- [Why is the default version sometimes used on Travis CI when a version tag exists in the history?](#why-is-the-default-version-sometimes-used-on-travis-ci-when-a-version-tag-exists-in-the-history) _(shallow clones)_
 
 ### Why not use GitVersion, Nerdbank.GitVersioning, or some other tool?
 
@@ -255,7 +256,7 @@ Yes! You can do this by using a specific tag prefix for each project. For exampl
 
 Yes! [`MinVerVerbosity`](#options) can be set to `quiet`, `minimal` (default), `normal`, `detailed`, or `diagnostic`. These verbosity levels match those in MSBuild and therefore `dotnet build`, `dotnet pack`, etc. The default is `minimal`, which matches the default in MSBuild. At the `quiet` and `minimal` levels, you will see only warnings and errors. At the `normal` level you will see which commit is being used to calculate the version, and the calculated version. At the `detailed` level you will see how many commits were examined, which version tags were found but ignored, which version was calculated, etc. At the `diagnostic` level you will see how MinVer walks the commit history, in excruciating detail.
 
-In a future version of MinVer, the verbosity level may be inherited from MSBuild, in which case `MinVerVerbosity` will be deprecated. Currently this is not possible due to technical restrictions related to [libgit2](https://github.com/libgit2/libgit2).
+In a future version of MinVer, the verbosity level may be inherited from MSBuild, in which case `MinVerVerbosity` will be deprecated.
 
 ### Can I use MinVer to version software which is not built using a .NET SDK style project?
 
@@ -271,15 +272,9 @@ The tag with the higher version is used.
 
 MinVer will use the height on the first path followed where the history diverges. The paths are followed in the same order that the parents of the commit are stored in git. The first parent is the commit on the branch that was the current branch when the merge was performed. The remaining parents are stored in the order that their branches were specified in the merge command.
 
-### Why does MinVer fail with `LibGit2Sharp.NotFoundException`?
+### Why is the default version sometimes used on Travis CI when a version tag exists in the history?
 
-You may see an exception of this form:
-
-> Unhandled Exception: LibGit2Sharp.NotFoundException: object not found - no match for id (...)
-
-This is because you are using a [shallow clone](https://www.git-scm.com/docs/git-clone#git-clone---depthltdepthgt). MinVer uses [libgit2](https://github.com/libgit2/libgit2) to interrogate the repo and [libgit2 does not support shallow clones](https://github.com/libgit2/libgit2/issues/3058). To resolve this problem, use a regular (deep) clone.
-
-**Important:** By default, [Travis CI](https://travis-ci.org/) uses shallow clones with a depth of 50 commits. To build on Travis CI, [remove the `--depth` flag](https://docs.travis-ci.com/user/customizing-the-build#git-clone-depth).
+By default, [Travis CI](https://travis-ci.org/) uses [shallow clones](https://www.git-scm.com/docs/git-clone#Documentation/git-clone.txt---depthltdepthgt) with a depth of 50 commits. In that case, if the latest version tag in the history is at a height of more than 50 commits, it will not be found. To build on Travis CI, [ensure the `--depth` flag is set appropriately](https://docs.travis-ci.com/user/customizing-the-build#git-clone-depth).
 
 ---
 

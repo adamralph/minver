@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <RollForward>major</RollForward>
     <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
 

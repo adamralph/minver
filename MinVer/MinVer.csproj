@@ -7,11 +7,12 @@
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <NoWarn>$(NoWarn);NU5100;NU5105</NoWarn>
     <OutputType>Exe</OutputType>
-    <PackageIconUrl>https://raw.githubusercontent.com/adamralph/minver/master/assets/minver.png</PackageIconUrl>
+    <PackageIcon>minver.png</PackageIcon>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/adamralph/minver</PackageProjectUrl>
     <PackageReleaseNotes>https://github.com/adamralph/minver/milestones?state=closed</PackageReleaseNotes>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <RollForward>major</RollForward>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
@@ -32,6 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="../assets/minver.png" Pack="true" PackagePath="/"/>
     <None Remove="build\**\*" />
     <None Remove="buildMultiTargeting\**\*" />
     <Content Include="build\**\*" PackagePath="build" />

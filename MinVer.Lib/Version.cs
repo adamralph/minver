@@ -134,7 +134,7 @@ namespace MinVer.Lib
         public static bool TryParse(string text, out Version version) => (version = ParseOrDefault(text, null)) != null;
 
         public static Version ParseOrDefault(string text, string prefix) =>
-            text == null || !text.StartsWith(prefix ?? "") ? null : ParseOrDefault(text.Substring(prefix?.Length ?? 0));
+            text == null || !text.StartsWith(prefix ?? "", StringComparison.OrdinalIgnoreCase) ? null : ParseOrDefault(text.Substring(prefix?.Length ?? 0));
 
         private static Version ParseOrDefault(string text)
         {

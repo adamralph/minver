@@ -61,9 +61,9 @@ namespace MinVer
 
         private static void Message(string message)
         {
-            if (message.Contains('\r') || message.Contains('\n'))
+            if (message.Contains('\r', StringComparison.OrdinalIgnoreCase) || message.Contains('\n', StringComparison.OrdinalIgnoreCase))
             {
-                var lines = message.Replace("\r\n", "\n").Split('\r', '\n');
+                var lines = message.Replace("\r\n", "\n", StringComparison.OrdinalIgnoreCase).Split('\r', '\n');
                 message = string.Join($"{Environment.NewLine}MinVer: ", lines);
             }
 

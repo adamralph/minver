@@ -23,7 +23,7 @@ jobs:
     - if: contains(matrix.runs-on, 'windows')
       env:
         VERSION: ${{ secrets.VERSION }}
-      run: build.cmd
+      run: ./build.cmd
     - if: contains(matrix.runs-on, 'macOS') || contains(matrix.runs-on, 'ubuntu')
       env:
         VERSION: ${{ secrets.VERSION }}

@@ -17,23 +17,23 @@ internal static class Program
     {
         Target("default", DependsOn("test-api", "test-package"));
 
-        Target("build", () => RunAsync("dotnet", "build --configuration Release /nologo"));
+        Target("build", () => RunAsync("dotnet", "build --configuration Release --nologo"));
 
         Target(
             "test-api",
             DependsOn("build"),
-            () => RunAsync("dotnet", "test --configuration Release --no-build --verbosity=normal /nologo"));
+            () => RunAsync("dotnet", "test --configuration Release --no-build --verbosity=normal --nologo"));
 
         Target(
             "publish",
             DependsOn("build"),
-            () => RunAsync("dotnet", "publish ./MinVer/MinVer.csproj --configuration Release --no-build /nologo"));
+            () => RunAsync("dotnet", "publish ./MinVer/MinVer.csproj --configuration Release --no-build --nologo"));
 
         Target(
             "pack",
             DependsOn("publish"),
             ForEach("./MinVer/MinVer.csproj", "./minver-cli/minver-cli.csproj"),
-            project => RunAsync("dotnet", $"pack {project} --configuration Release --no-build /nologo"));
+            project => RunAsync("dotnet", $"pack {project} --configuration Release --no-build --nologo"));
 
         string testProject = default;
 
@@ -279,8 +279,8 @@ internal static class Program
         Environment.SetEnvironmentVariable("MinVerVerbosity", verbosity ?? "", EnvironmentVariableTarget.Process);
         try
         {
-            await RunAsync("dotnet", "build --no-restore /nologo", path);
-            await RunAsync("dotnet", $"pack --no-build --output {output} /nologo", path);
+            await RunAsync("dotnet", "build --no-restore --nologo", path);
+            await RunAsync("dotnet", $"pack --no-build --output {output} --nologo", path);
         }
         finally
         {

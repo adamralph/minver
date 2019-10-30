@@ -17,7 +17,7 @@ internal static class Program
     {
         Target("default", DependsOn("test-api", "test-package"));
 
-        Target("build", () => RunAsync("dotnet", "build --configuration Release --nologo"));
+        Target("build", () => RunAsync("dotnet", "build --configuration Release --nologo --verbosity quiet"));
 
         Target(
             "test-api",

@@ -81,6 +81,7 @@ Options can be specified as either MSBuild properties or environment variables.
 - [`MinVerTagPrefix`](#can-i-prefix-my-tag-names)
 - [`MinVerVerbosity`](#can-I-get-log-output-to-see-how-minver-calculates-the-version)
 - [`MinVerVersionOverride`](#can-i-use-minver-to-version-software-which-is-not-built-using-a-net-sdk-style-project)
+- [`MinVerSkip`](#can-i-conditionally-disable-minver)
 
 Note that the option names are case-insensitive.
 
@@ -100,6 +101,7 @@ _(With TL;DR answers inline.)_
 - [Can I version multiple projects in a single repo independently?](#can-i-version-multiple-projects-in-a-single-repo-independently) _(yes)_
 - [Can I get log output to see how MinVer calculates the version?](#can-i-get-log-output-to-see-how-minver-calculates-the-version) _(yes)_
 - [Can I use MinVer to version software which is not built using a .NET SDK style project?](#can-i-use-minver-to-version-software-which-is-not-built-using-a-net-sdk-style-project) _(yes)_
+- [Can I conditionally disable MinVer?](#can-i-conditionally-disable-minver) _(yes)_
 - [What if the history diverges, and more than one tag is found?](#what-if-the-history-diverges-and-more-than-one-tag-is-found) _(nothing bad)_
 - [What if the history diverges, and then converges again, before the latest tag (or root commit) is found?](#what-if-the-history-diverges-and-then-converges-again-before-the-latest-tag-or-root-commit-is-found) _(nothing bad)_
 - [Why is the default version sometimes used on Travis CI when a version tag exists in the history?](#why-is-the-default-version-sometimes-used-on-travis-ci-when-a-version-tag-exists-in-the-history) _(shallow clones)_
@@ -263,6 +265,16 @@ In a future version of MinVer, the verbosity level may be inherited from MSBuild
 Yes! MinVer is also available as a [command line tool](https://www.nuget.org/packages/minver-cli). Run `minver --help` for usage. The calculated version is printed to standard output (stdout).
 
 Sometimes you may want to version both .NET projects and other outputs, such as non-.NET projects, or a container image, in the same build. In those scenarios, you should use both the command line tool _and_ the regular MinVer package. Before building any .NET projects, your build script should run the command line tool and set the [`MINVERVERSIONOVERRIDE`](#options) environment variable to the calculated version. The MinVer package will then use that value rather than calculating the version a second time. This ensures that the command line tool and the MinVer package produce the same version.
+
+### Can I conditionally disable MinVer?
+
+Yes! [`MinVerSkip`](#options) can be set to `true`, then the MinVer task will skipped. For example you can easily disable MinVer for debug builds with the following in your project file:
+
+```xml
+<PropertyGroup>
+  <MinVerSkip Condition="'$(Configuration)' == 'Debug'">true</MinVerSkip>
+</PropertyGroup>
+```
 
 ### What if the history diverges, and more than one tag is found?
 

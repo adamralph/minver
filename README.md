@@ -268,7 +268,7 @@ Sometimes you may want to version both .NET projects and other outputs, such as 
 
 ### Can I conditionally disable MinVer?
 
-Yes! [`MinVerSkip`](#options) can be set to `true`, then the MinVer task will skipped. For example you can easily disable MinVer for debug builds with the following in your project file:
+Yes! [`MinVerSkip`](#options) can be set to `true`, then the MinVer task will be skipped. For example you can easily disable MinVer for debug builds with the following in your project file:
 
 ```xml
 <PropertyGroup>

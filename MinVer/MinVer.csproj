@@ -33,7 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="../assets/minver.png" Pack="true" PackagePath="/"/>
+    <None Include="../assets/minver.png" Pack="true" PackagePath="/" />
     <None Remove="build\**\*" />
     <None Remove="buildMultiTargeting\**\*" />
     <Content Include="build\**\*" PackagePath="build" />

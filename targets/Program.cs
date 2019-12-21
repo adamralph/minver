@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -42,8 +43,6 @@ internal static class Program
             DependsOn("pack"),
             async () =>
             {
-                Environment.SetEnvironmentVariable("NoPackageAnalysis", "true", EnvironmentVariableTarget.Process);
-
                 testProject = GetScenarioDirectory("package");
                 EnsureEmptyDirectory(testProject);
 
@@ -128,14 +127,12 @@ internal static class Program
             async () =>
             {
                 // arrange
-                Environment.SetEnvironmentVariable("MinVerTagPrefix", "v.", EnvironmentVariableTarget.Process);
-
                 Tag(testProject, "v.1.2.3+foo");
 
                 var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-version-tag");
 
                 // act
-                await CleanAndPack(testProject, output, "normal");
+                await CleanAndPack(testProject, output, "normal", env => env.Add("MinVerTagPrefix", "v."));
 
                 // assert
                 AssertPackageFileNameContains("1.2.3.nupkg", output);
@@ -147,6 +144,7 @@ internal static class Program
             async () =>
             {
                 // arrange
+                Tag(testProject, "1.2.3+foo");
                 Commit(testProject);
 
                 var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-commit-after-tag");
@@ -164,12 +162,10 @@ internal static class Program
             async () =>
             {
                 // arrange
-                Environment.SetEnvironmentVariable("MinVerAutoIncrement", "minor", EnvironmentVariableTarget.Process);
-
                 var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-non-default-auto-increment");
 
                 // act
-                await CleanAndPack(testProject, output, "diagnostic");
+                await CleanAndPack(testProject, output, "diagnostic", env => env.Add("MinVerAutoIncrement", "minor"));
 
                 // assert
                 AssertPackageFileNameContains("1.3.0-alpha.0.1.nupkg", output);
@@ -181,7 +177,7 @@ internal static class Program
             async () =>
             {
                 // arrange
-                AnnotatedTag(testProject, "v.1.4.0", "foo");
+                AnnotatedTag(testProject, "1.4.0", "foo");
 
                 var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-annotated-tag");
 
@@ -198,15 +194,13 @@ internal static class Program
             async () =>
             {
                 // arrange
-                Environment.SetEnvironmentVariable("MinVerMinimumMajorMinor", "2.0", EnvironmentVariableTarget.Process);
-
                 Commit(testProject);
-                Tag(testProject, "v.1.5.0");
+                Tag(testProject, "1.5.0");
 
                 var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-minimum-major-minor-on-tag");
 
                 // act
-                await CleanAndPack(testProject, output, "diagnostic");
+                await CleanAndPack(testProject, output, "diagnostic", env => env.Add("MinVerMinimumMajorMinor", "2.0"));
 
                 // assert
                 AssertPackageFileNameContains("2.0.0-alpha.0.nupkg", output);
@@ -223,7 +217,7 @@ internal static class Program
                 var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-minimum-major-minor-after-tag");
 
                 // act
-                await CleanAndPack(testProject, output, "diagnostic");
+                await CleanAndPack(testProject, output, "diagnostic", env => env.Add("MinVerMinimumMajorMinor", "2.0"));
 
                 // assert
                 AssertPackageFileNameContains("2.0.0-alpha.0.1.nupkg", output);
@@ -235,15 +229,13 @@ internal static class Program
             async () =>
             {
                 // arrange
-                Environment.SetEnvironmentVariable("MinVerDefaultPreReleasePhase", "preview", EnvironmentVariableTarget.Process);
-
                 var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-default-pre-release-phase");
 
                 // act
-                await CleanAndPack(testProject, output, "diagnostic");
+                await CleanAndPack(testProject, output, "diagnostic", env => env.Add("MinVerDefaultPreReleasePhase", "preview"));
 
                 // assert
-                AssertPackageFileNameContains("2.0.0-preview.0.1.nupkg", output);
+                AssertPackageFileNameContains("1.5.1-preview.0.1.nupkg", output);
             });
 
         Target(
@@ -252,12 +244,10 @@ internal static class Program
             async () =>
             {
                 // arrange
-                Environment.SetEnvironmentVariable("MinVerVersionOverride", "3.2.1-rc.4+build.5", EnvironmentVariableTarget.Process);
-
                 var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-version-override");
 
                 // act
-                await CleanAndPack(testProject, output, "diagnostic");
+                await CleanAndPack(testProject, output, "diagnostic", env => env.Add("MinVerVersionOverride", "3.2.1-rc.4+build.5"));
 
                 // assert
                 AssertPackageFileNameContains("3.2.1-rc.4.nupkg", output);
@@ -268,24 +258,22 @@ internal static class Program
         await RunTargetsAndExitAsync(args);
     }
 
-    private static async Task CleanAndPack(string path, string output, string verbosity)
+    private static async Task CleanAndPack(string path, string output, string verbosity, Action<IDictionary<string, string>> configureEnvironment = null)
     {
-        Environment.SetEnvironmentVariable("MinVerBuildMetadata", $"build.{buildNumber++}", EnvironmentVariableTarget.Process);
-
         EnsureEmptyDirectory(output);
 
-        var previousVerbosity = Environment.GetEnvironmentVariable("MinVerVerbosity", EnvironmentVariableTarget.Process);
-
-        Environment.SetEnvironmentVariable("MinVerVerbosity", verbosity ?? "", EnvironmentVariableTarget.Process);
-        try
-        {
-            await RunAsync("dotnet", "build --no-restore --nologo", path);
-            await RunAsync("dotnet", $"pack --no-build --output {output} --nologo", path);
-        }
-        finally
-        {
-            Environment.SetEnvironmentVariable("MinVerVerbosity", previousVerbosity, EnvironmentVariableTarget.Process);
-        }
+        await RunAsync("dotnet", "build --no-restore --nologo", path, configureEnvironment: configureEnvironment);
+        await RunAsync(
+            "dotnet",
+            $"pack --no-build --output {output} --nologo",
+            path,
+            configureEnvironment: env =>
+            {
+                configureEnvironment?.Invoke(env);
+                env.Add("MinVerBuildMetadata", $"build.{buildNumber++}");
+                env.Add("MinVerVerbosity", verbosity ?? "");
+                env.Add("NoPackageAnalysis", "true");
+            });
     }
 
     private static void AssertPackageFileNameContains(string expected, string path)

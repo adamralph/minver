@@ -221,7 +221,7 @@ For example, for pull requests, you may want to inject the pull request number a
 ```xml
 <Target Name="MyTarget" AfterTargets="MinVer" Condition="'$(APPVEYOR_PULL_REQUEST_NUMBER)' != ''" >
   <PropertyGroup>
-    <PackageVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch)-pr.$(APPVEYOR_PULL_REQUEST_NUMBER).build-id.$(APPVEYOR_BUILD_ID).$(MinVerPreRelease)</PackageVersion>
+    <PackageVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch)-$(MinVerPreRelease).pr.$(APPVEYOR_PULL_REQUEST_NUMBER).build-id.$(APPVEYOR_BUILD_ID)</PackageVersion>
     <PackageVersion Condition="'$(MinVerBuildMetadata)' != ''">$(PackageVersion)+$(MinVerBuildMetadata)</PackageVersion>
     <Version>$(PackageVersion)</Version>
   </PropertyGroup>

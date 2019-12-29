@@ -33,7 +33,7 @@ namespace MinVer.Lib
                 }
                 catch (Win32Exception ex)
                 {
-                    throw new Exception("Failed to run Git. Git may not be installed on the system.", ex);
+                    throw new Exception("\"git\" is not present in PATH.", ex);
                 }
 
                 var runProcess = tcs.Task;

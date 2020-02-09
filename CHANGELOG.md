@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.0
+
+### Enhancements
+
+- [#303: Allow disabling MinVer](https://github.com/adamralph/minver/pull/303)
+
 ## 2.0.0
 
 ### Enhancements

@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.2.0
+
+### Enhancements
+
+- [#312: upgrade to SourceLink 1.0.0](https://github.com/adamralph/minver/pull/312)
+- [#313: upgrade McMaster.Extensions.CommandLineUtils from 2.3.4 to 2.4.4](https://github.com/adamralph/minver/pull/313)
+- [#319: Simpler, more accurate exception message when git is not present in PATH](https://github.com/adamralph/minver/pull/319)
+
 ## 2.1.0
 
 ### Enhancements

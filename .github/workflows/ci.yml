@@ -15,7 +15,7 @@ jobs:
     name: ${{ matrix.runs-on }}
     runs-on: ${{ matrix.runs-on }}
     steps:
-    - uses: actions/setup-dotnet@bb95ce727fd49ec1a65933419cc7c91747785302
+    - uses: actions/setup-dotnet@b7821147f564527086410e8edd122d89b4b9602f
       with:
         dotnet-version: '3.1.102'
     - run: dotnet --info

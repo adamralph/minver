@@ -284,9 +284,11 @@ The tag with the higher version is used.
 
 MinVer will use the height on the first path followed where the history diverges. The paths are followed in the same order that the parents of the commit are stored in git. The first parent is the commit on the branch that was the current branch when the merge was performed. The remaining parents are stored in the order that their branches were specified in the merge command.
 
-### Why is the default version sometimes used on Travis CI when a version tag exists in the history?
+### Why is the default version sometimes used when a version tag exists in the history?
 
-By default, [Travis CI](https://travis-ci.org/) uses [shallow clones](https://www.git-scm.com/docs/git-clone#Documentation/git-clone.txt---depthltdepthgt) with a depth of 50 commits. In that case, if the latest version tag in the history is at a height of more than 50 commits, it will not be found. To build on Travis CI, [ensure the `--depth` flag is set appropriately](https://docs.travis-ci.com/user/customizing-the-build#git-clone-depth).
+CI/CD products like [Travis CI](https://travis-ci.org/) and [Github Actions](https://github.com/features/actions/) are using [shallow clones](https://www.git-scm.com/docs/git-clone#Documentation/git-clone.txt---depthltdepthgt) by default (Travis uses a depth of 50 commits where Github actions uses a depth of 1). In that case, if the latest version tag in the history is at a height of more than the depth, it will not be found.
+
+To fix this, ensure the `depth` is set appropriately. Check the docs for [Travis](https://docs.travis-ci.com/user/customizing-the-build#git-clone-depth) or [Github Actions](https://github.com/actions/checkout).
 
 ---
 

@@ -63,12 +63,12 @@ MinVer sets the following custom properties:
 
 Those properties are used to set the following .NET SDK properties, satisfying the official [open-source library guidance for version numbers](https://docs.microsoft.com/en-ca/dotnet/standard/library-guidance/versioning#version-numbers):
 
-Property | Value
--- | --
-`AssemblyVersion` | `{MinVerMajor}.0.0.0`
-`FileVersion` | `{MinVerMajor}.{MinVerMinor}.{MinVerPatch}.0`
-`PackageVersion` | `{MinVerVersion}`
-`Version` | `{MinVerVersion}`
+| Property          | Value                                         |
+|-------------------|-----------------------------------------------|
+| `AssemblyVersion` | `{MinVerMajor}.0.0.0`                         |
+| `FileVersion`     | `{MinVerMajor}.{MinVerMinor}.{MinVerPatch}.0` |
+| `PackageVersion`  | `{MinVerVersion}`                             |
+| `Version`         | `{MinVerVersion}`                             |
 
 This behaviour can be [customised](#can-i-use-the-version-calculated-by-minver-for-other-purposes).
 

@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.3.0
+
+### Enhancements
+
+- [#347: Support .NET Core SDK 3.1.300 and later](https://github.com/adamralph/minver/pull/347)
+
 ## 2.2.0
 
 ### Enhancements

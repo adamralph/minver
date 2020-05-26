@@ -57,7 +57,7 @@ internal static class Program
                     Path.Combine(testProject, "global.json"),
 @"{
   ""sdk"": {
-    ""version"": ""3.1.102""
+    ""version"": ""3.1.300""
   }
 }
 "

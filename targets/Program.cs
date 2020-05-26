@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Xunit;
 using static Bullseye.Targets;
 using static MinVerTests.Infra.FileSystem;
 using static MinVerTests.Infra.Git;
@@ -66,7 +67,7 @@ internal static class Program
                 await CleanAndPack(testProject, output, "diagnostic");
 
                 // assert
-                AssertPackageFileNameContains("0.0.0-alpha.0.nupkg", output);
+                AssertVersion("0.0.0-alpha.0", output);
             });
 
         Target(
@@ -83,7 +84,7 @@ internal static class Program
                 await CleanAndPack(testProject, output, "diagnostic");
 
                 // assert
-                AssertPackageFileNameContains("0.0.0-alpha.0.nupkg", output);
+                AssertVersion("0.0.0-alpha.0", output);
             });
 
         Target(
@@ -101,7 +102,7 @@ internal static class Program
                 await CleanAndPack(testProject, output, "diagnostic");
 
                 // assert
-                AssertPackageFileNameContains("0.0.0-alpha.0.nupkg", output);
+                AssertVersion("0.0.0-alpha.0", output);
             });
 
         Target(
@@ -118,7 +119,7 @@ internal static class Program
                 await CleanAndPack(testProject, output, "diagnostic");
 
                 // assert
-                AssertPackageFileNameContains("0.0.0-alpha.0.nupkg", output);
+                AssertVersion("0.0.0-alpha.0", output);
             });
 
         Target(
@@ -135,7 +136,7 @@ internal static class Program
                 await CleanAndPack(testProject, output, "normal", env => env.Add("MinVerTagPrefix", "v."));
 
                 // assert
-                AssertPackageFileNameContains("1.2.3.nupkg", output);
+                AssertVersion("1.2.3", output);
             });
 
         Target(
@@ -153,7 +154,7 @@ internal static class Program
                 await CleanAndPack(testProject, output, "detailed");
 
                 // assert
-                AssertPackageFileNameContains("1.2.4-alpha.0.1.nupkg", output);
+                AssertVersion("1.2.4-alpha.0.1", output);
             });
 
         Target(
@@ -168,7 +169,7 @@ internal static class Program
                 await CleanAndPack(testProject, output, "diagnostic", env => env.Add("MinVerAutoIncrement", "minor"));
 
                 // assert
-                AssertPackageFileNameContains("1.3.0-alpha.0.1.nupkg", output);
+                AssertVersion("1.3.0-alpha.0.1", output);
             });
 
         Target(
@@ -185,7 +186,7 @@ internal static class Program
                 await CleanAndPack(testProject, output, "diagnostic");
 
                 // assert
-                AssertPackageFileNameContains("1.4.0.nupkg", output);
+                AssertVersion("1.4.0", output);
             });
 
         Target(
@@ -203,7 +204,7 @@ internal static class Program
                 await CleanAndPack(testProject, output, "diagnostic", env => env.Add("MinVerMinimumMajorMinor", "2.0"));
 
                 // assert
-                AssertPackageFileNameContains("2.0.0-alpha.0.nupkg", output);
+                AssertVersion("2.0.0-alpha.0", output);
             });
 
         Target(
@@ -220,7 +221,7 @@ internal static class Program
                 await CleanAndPack(testProject, output, "diagnostic", env => env.Add("MinVerMinimumMajorMinor", "2.0"));
 
                 // assert
-                AssertPackageFileNameContains("2.0.0-alpha.0.1.nupkg", output);
+                AssertVersion("2.0.0-alpha.0.1", output);
             });
 
         Target(
@@ -235,7 +236,7 @@ internal static class Program
                 await CleanAndPack(testProject, output, "diagnostic", env => env.Add("MinVerDefaultPreReleasePhase", "preview"));
 
                 // assert
-                AssertPackageFileNameContains("1.5.1-preview.0.1.nupkg", output);
+                AssertVersion("1.5.1-preview.0.1", output);
             });
 
         Target(
@@ -250,7 +251,7 @@ internal static class Program
                 await CleanAndPack(testProject, output, "diagnostic", env => env.Add("MinVerVersionOverride", "3.2.1-rc.4+build.5"));
 
                 // assert
-                AssertPackageFileNameContains("3.2.1-rc.4.nupkg", output);
+                AssertVersion("3.2.1-rc.4", output);
             });
 
         Target("test-package", DependsOn("test-package-version-override"));
@@ -276,14 +277,11 @@ internal static class Program
             });
     }
 
-    private static void AssertPackageFileNameContains(string expected, string path)
+    private static void AssertVersion(string expected, string path)
     {
         var fileName = Directory.EnumerateFiles(path, "*.nupkg", new EnumerationOptions { RecurseSubdirectories = true })
             .First();
 
-        if (!fileName.Contains(expected))
-        {
-            throw new Exception($"'{fileName}' does not contain '{expected}'.");
-        }
+        Assert.EndsWith(expected, Path.GetFileNameWithoutExtension(fileName));
     }
 }

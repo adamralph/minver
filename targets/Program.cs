@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Runtime.Loader;
 using System.Threading.Tasks;
 using Xunit;
 using static Bullseye.Targets;
@@ -77,7 +80,7 @@ internal static class Program
                 await CleanAndPack(testProject, output, "diagnostic");
 
                 // assert
-                AssertVersion("0.0.0-alpha.0", output);
+                AssertVersion(new Version(0, 0, 0, new[] { "alpha", "0" }), output);
             });
 
         Target(
@@ -94,7 +97,7 @@ internal static class Program
                 await CleanAndPack(testProject, output, "diagnostic");
 
                 // assert
-                AssertVersion("0.0.0-alpha.0", output);
+                AssertVersion(new Version(0, 0, 0, new[] { "alpha", "0" }), output);
             });
 
         Target(
@@ -112,7 +115,7 @@ internal static class Program
                 await CleanAndPack(testProject, output, "diagnostic");
 
                 // assert
-                AssertVersion("0.0.0-alpha.0", output);
+                AssertVersion(new Version(0, 0, 0, new[] { "alpha", "0" }), output);
             });
 
         Target(
@@ -129,7 +132,7 @@ internal static class Program
                 await CleanAndPack(testProject, output, "diagnostic");
 
                 // assert
-                AssertVersion("0.0.0-alpha.0", output);
+                AssertVersion(new Version(0, 0, 0, new[] { "alpha", "0" }), output);
             });
 
         Target(
@@ -146,7 +149,7 @@ internal static class Program
                 await CleanAndPack(testProject, output, "normal", env => env.Add("MinVerTagPrefix", "v."));
 
                 // assert
-                AssertVersion("1.2.3", output);
+                AssertVersion(new Version(1, 2, 3, default, default, "foo"), output);
             });
 
         Target(
@@ -164,7 +167,7 @@ internal static class Program
                 await CleanAndPack(testProject, output, "detailed");
 
                 // assert
-                AssertVersion("1.2.4-alpha.0.1", output);
+                AssertVersion(new Version(1, 2, 4, new[] { "alpha", "0" }, 1), output);
             });
 
         Target(
@@ -179,7 +182,7 @@ internal static class Program
                 await CleanAndPack(testProject, output, "diagnostic", env => env.Add("MinVerAutoIncrement", "minor"));
 
                 // assert
-                AssertVersion("1.3.0-alpha.0.1", output);
+                AssertVersion(new Version(1, 3, 0, new[] { "alpha", "0" }, 1), output);
             });
 
         Target(
@@ -196,7 +199,7 @@ internal static class Program
                 await CleanAndPack(testProject, output, "diagnostic");
 
                 // assert
-                AssertVersion("1.4.0", output);
+                AssertVersion(new Version(1, 4, 0), output);
             });
 
         Target(
@@ -214,7 +217,7 @@ internal static class Program
                 await CleanAndPack(testProject, output, "diagnostic", env => env.Add("MinVerMinimumMajorMinor", "2.0"));
 
                 // assert
-                AssertVersion("2.0.0-alpha.0", output);
+                AssertVersion(new Version(2, 0, 0, new[] { "alpha", "0" }), output);
             });
 
         Target(
@@ -231,7 +234,7 @@ internal static class Program
                 await CleanAndPack(testProject, output, "diagnostic", env => env.Add("MinVerMinimumMajorMinor", "2.0"));
 
                 // assert
-                AssertVersion("2.0.0-alpha.0.1", output);
+                AssertVersion(new Version(2, 0, 0, new[] { "alpha", "0" }, 1), output);
             });
 
         Target(
@@ -246,7 +249,7 @@ internal static class Program
                 await CleanAndPack(testProject, output, "diagnostic", env => env.Add("MinVerDefaultPreReleasePhase", "preview"));
 
                 // assert
-                AssertVersion("1.5.1-preview.0.1", output);
+                AssertVersion(new Version(1, 5, 1, new[] { "preview", "0" }, 1), output);
             });
 
         Target(
@@ -261,7 +264,7 @@ internal static class Program
                 await CleanAndPack(testProject, output, "diagnostic", env => env.Add("MinVerVersionOverride", "3.2.1-rc.4+build.5"));
 
                 // assert
-                AssertVersion("3.2.1-rc.4", output);
+                AssertVersion(new Version(3, 2, 1, new[] { "rc", "4" }, default, "build.5"), output);
             });
 
         Target("test-package", DependsOn("test-package-version-override"));
@@ -287,11 +290,61 @@ internal static class Program
             });
     }
 
-    private static void AssertVersion(string expected, string path)
+    private static void AssertVersion(Version expected, string path)
     {
-        var fileName = Directory.EnumerateFiles(path, "*.nupkg", new EnumerationOptions { RecurseSubdirectories = true })
+        var packagePath = Directory.EnumerateFiles(path, "*.nupkg", new EnumerationOptions { RecurseSubdirectories = true })
             .First();
 
-        Assert.EndsWith(expected, Path.GetFileNameWithoutExtension(fileName));
+        Assert.EndsWith(expected.ToString().Split('+')[0], Path.GetFileNameWithoutExtension(packagePath));
+
+        ZipFile.ExtractToDirectory(
+            packagePath,
+            Path.Combine(Path.GetDirectoryName(packagePath), Path.GetFileNameWithoutExtension(packagePath)));
+
+        var assemblyPath = Directory.EnumerateFiles(path, "*.dll", new EnumerationOptions { RecurseSubdirectories = true })
+            .First();
+
+        var context = new AssemblyLoadContext(default, true);
+        var assembly = context.LoadFromAssemblyPath(assemblyPath);
+        var assemblyVersion = assembly.GetName().Version;
+        context.Unload();
+
+        var fileVersion = FileVersionInfo.GetVersionInfo(assemblyPath);
+
+        Assert.Equal(expected.Major, assemblyVersion.Major);
+        Assert.Equal(0, assemblyVersion.Minor);
+        Assert.Equal(0, assemblyVersion.Build);
+
+        Assert.Equal(expected.Major, fileVersion.FileMajorPart);
+        Assert.Equal(expected.Minor, fileVersion.FileMinorPart);
+        Assert.Equal(expected.Patch, fileVersion.FileBuildPart);
+
+        Assert.Equal(expected.ToString(), fileVersion.ProductVersion);
+    }
+
+    public class Version
+    {
+        private readonly List<string> preReleaseIdentifiers;
+        private readonly int height;
+        private readonly string buildMetadata;
+
+        public Version(int major, int minor, int patch, IEnumerable<string> preReleaseIdentifiers = null, int height = 0, string buildMetadata = null)
+        {
+            this.Major = major;
+            this.Minor = minor;
+            this.Patch = patch;
+            this.preReleaseIdentifiers = preReleaseIdentifiers?.ToList() ?? new List<string>();
+            this.height = height;
+            this.buildMetadata = buildMetadata;
+        }
+
+        public int Major { get; }
+
+        public int Minor { get; }
+
+        public int Patch { get; }
+
+        public override string ToString() =>
+            $"{this.Major}.{this.Minor}.{this.Patch}{(this.preReleaseIdentifiers.Count == 0 ? "" : $"-{string.Join(".", this.preReleaseIdentifiers)}")}{(this.height == 0 ? "" : $".{this.height}")}{(string.IsNullOrEmpty(this.buildMetadata) ? "" : $"+{this.buildMetadata}")}";
     }
 }

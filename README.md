@@ -140,7 +140,23 @@ Also, Nerdbank.GitVersioning uses the git height for the patch version, which is
 
 Yes! You probably want to do this because at a point in time, on a given branch, you are working on a specific `MAJOR.MINOR` range, e.g. `1.0`, `1.1`, or `2.0`. The branch could be `master`, `develop`, a special release branch, a support branch, or anything else.
 
-Before you create the first version tag on your branch, interim builds will use the latest version tag found in the commit history, which may not match the `MAJOR.MINOR` range you are working on. Or if no version tag is found in the commit history, interim builds will have the default version `0.0.0-alpha.0`. If you prefer those interim builds to have a version in the range you are working on, specify the range with [`MinVerMinimumMajorMinor`](#options). For example:
+Before you create the first version tag on your branch, interim builds will use the latest version tag found in the commit history, which may not match the `MAJOR.MINOR` range you are working on. Or if no version tag is found in the commit history, interim builds will have the default version `0.0.0-alpha.0`. If you prefer those interim builds to have a version in the range you are working on, you have two options:
+
+#### Tag a commit
+
+Tag a commit in your branch with a version matching your `MAJOR.MINOR` range, using your [preferred default pre-release phase](#can-i-change-the-default-pre-release-phase-from-alpha-to-something-else) and a pre-release ordinal of 0. For example:
+
+```bash
+git tag 1.0.0-alpha.0
+```
+
+This is not a version you will release, since the first "alpha" version will be `1.0.0-alpha.1`. The only purpose of this tag is to force MinVer to start versioning commits in your branch in the `1.0` range.
+
+If you begin to release versions in the `1.0` range from another branch (e.g. a special release branch), tag a commit in your branch with `1.1.0-alpha.0`, `2.0.0-alpha.0`, or whatever `MAJOR.MINOR` range your branch now represents.
+
+#### Set MinVerMinimumMajorMinor
+
+Specify your range with [`MinVerMinimumMajorMinor`](#options). For example:
 
 ```xml
 <PropertyGroup>

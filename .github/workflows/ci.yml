@@ -17,7 +17,7 @@ jobs:
     steps:
     - uses: actions/setup-dotnet@6efb2bd78f16e08562660f8246d6bd76adf6281f
       with:
-        dotnet-version: '3.1.300'
+        dotnet-version: '3.1.301'
     - run: dotnet --info
     - uses: actions/checkout@28c7f3d2b5162b5ddd3dfd9a45aa55eaf396478b
     - if: contains(matrix.runs-on, 'windows')

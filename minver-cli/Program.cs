@@ -62,7 +62,7 @@ namespace MinVer
                 var version = Versioner.GetVersion(workDir, tagPrefixOption.Value(), minMajorMinor, buildMetaOption.Value(), autoIncrement, defaultPreReleasePhaseOption.Value(), log);
 #endif
 
-                    Console.Out.WriteLine(version);
+                    Console.Out.Write(version);
 
                     return 0;
                 });

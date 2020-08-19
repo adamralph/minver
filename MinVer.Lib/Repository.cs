@@ -123,7 +123,7 @@ namespace MinVer.Lib
 
                         if (commitsToCheck.Count == 0 || commitsToCheck.Peek().Item2 <= height)
                         {
-                            var candidate = new Candidate { Commit = commit, Height = height, Tag = null, Version = new Version(defaultPreReleasePhase), };
+                            var candidate = new Candidate { Commit = commit, Height = height, Tag = null, Version = new Version(defaultPreReleasePhase, commit.SubtreeRoot), };
 
                             if (log.IsTraceEnabled)
                             {
@@ -217,7 +217,7 @@ namespace MinVer.Lib
             public override string ToString() => this.ToString(0, 0, 0);
 
             public string ToString(int tagWidth, int versionWidth, int heightWidth) =>
-                $"{{ {nameof(this.Commit)}: {this.Commit.ShortSha}, {nameof(this.Tag)}: {$"{(this.Tag == null ? "null" : $"'{this.Tag}'")},".PadRight(tagWidth + 3)} {nameof(this.Version)}: {$"{this.Version?.ToString() ?? "null"},".PadRight(versionWidth + 1)} {nameof(this.Height)}: {this.Height.ToString(CultureInfo.CurrentCulture).PadLeft(heightWidth)} }}";
+                $"{{ {nameof(this.Commit)}: {this.Commit.ShortSha}, {nameof(this.Tag)}: {$"{(this.Tag == null ? "null" : $"'{this.Tag}'")},".PadRight(tagWidth + 3)} {nameof(this.Version)}: {$"{this.Version?.ToString() ?? "null"},".PadRight(versionWidth + 1)} {nameof(this.Height)}: {this.Height.ToString(CultureInfo.CurrentCulture).PadLeft(heightWidth)}{(this.Commit.SubtreeRoot ? ", SubtreeRoot":"")} }}";
         }
     }
 }

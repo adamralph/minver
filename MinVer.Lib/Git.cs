@@ -15,14 +15,20 @@ namespace MinVer.Lib
                 return null;
             }
 
+            string[] subtreeRoots = Array.Empty<string>();
+            if (GitCommand.TryRun("rev-list --max-parents=0 --grep=git-subtree-dir HEAD", directory, log, out var subtreeOutput))
+            {
+                subtreeRoots = subtreeOutput.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            }
+
             var commits = new Dictionary<string, Commit>();
 
             foreach (var shas in output
                 .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(line => line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)))
             {
-                commits.GetOrAdd(shas[0], () => new Commit(shas[0]))
-                    .Parents.AddRange(shas.Skip(1).Select(parentSha => commits.GetOrAdd(parentSha, () => new Commit(parentSha))));
+                commits.GetOrAdd(shas[0], () => new Commit(shas[0], subtreeRoots.Contains(shas[0])))
+                    .Parents.AddRange(shas.Skip(1).Select(parentSha => commits.GetOrAdd(parentSha, () => new Commit(parentSha, subtreeRoots.Contains(parentSha)))));
             }
 
             return commits.Values.FirstOrDefault();

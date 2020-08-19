@@ -15,8 +15,9 @@ namespace MinVer.Lib
         private readonly List<string> preReleaseIdentifiers;
         private readonly int height;
         private readonly string buildMetadata;
+        private readonly bool subtreeRoot = false;
 
-        public Version(string defaultPreReleasePhase) : this(0, 0, 0, new List<string> { defaultPreReleasePhase, "0" }, 0, null) { }
+        public Version(string defaultPreReleasePhase, bool subtreeRoot = false) : this(0, 0, 0, new List<string> { defaultPreReleasePhase, "0" }, 0, null) { this.subtreeRoot = subtreeRoot;  }
 
         private Version(int major, int minor, int patch, IEnumerable<string> preReleaseIdentifiers, int height, string buildMetadata)
         {
@@ -54,6 +55,12 @@ namespace MinVer.Lib
             if (patch != 0)
             {
                 return patch;
+            }
+
+            var subtreeRoot = this.subtreeRoot.CompareTo(other.subtreeRoot);
+            if (subtreeRoot != 0)
+            {
+                return -subtreeRoot;
             }
 
             if (this.preReleaseIdentifiers.Count > 0 && other.preReleaseIdentifiers.Count == 0)

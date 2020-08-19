@@ -10,7 +10,8 @@ namespace MinVer.Lib
 
         public string ShortSha => this.Sha.Substring(0, 7);
 
-        public bool SubtreeRoot { get; } = false;
+        public bool SubtreeRoot { get; }
+
 
         public List<Commit> Parents { get; } = new List<Commit>();
     }

@@ -96,7 +96,7 @@ internal static class Program
             DependsOn("test-package-no-commits"),
             async () =>
             {
-                // assert
+                // arrange
                 PrepareForCommits(testProject);
                 Commit(testProject);
 

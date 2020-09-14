@@ -115,7 +115,7 @@ _(With TL;DR answers inline.)_
 - [Can I get log output to see how MinVer calculates the version?](#can-i-get-log-output-to-see-how-minver-calculates-the-version) _(yes)_
 - [Can I use MinVer to version software which is not built using a .NET SDK style project?](#can-i-use-minver-to-version-software-which-is-not-built-using-a-net-sdk-style-project) _(yes)_
 - [Can I disable MinVer?](#can-i-disable-minver) _(yes)_
-- [What if the history diverges, and more than one tag is found?](#what-if-the-history-diverges-and-more-than-one-tag-is-found) _(nothing bad)_
+- [What if the history diverges, and more than one tag or root commit is found?](#what-if-the-history-diverges-and-more-than-one-tag-or-root-commit-is-found) _(nothing bad)_
 - [What if the history diverges, and then converges again, before the latest tag (or root commit) is found?](#what-if-the-history-diverges-and-then-converges-again-before-the-latest-tag-or-root-commit-is-found) _(nothing bad)_
 - [Why is the default version sometimes used in GitHub Actions and Travis CI when a version tag exists in the history?](#why-is-the-default-version-sometimes-used-in-github-actions-and-travis-ci-when-a-version-tag-exists-in-the-history) _(shallow clones)_
 
@@ -305,9 +305,9 @@ Yes! Set [`MinVerSkip`](#options) to `true`. For example, MinVer can be disabled
 </PropertyGroup>
 ```
 
-### What if the history diverges, and more than one tag is found?
+### What if the history diverges, and more than one tag or root commit is found?
 
-The tag with the higher version is used.
+MinVer will use the tag with the higher version, or the tag or root commit on the first path followed where the history diverges. The paths are followed in the same order that the parents of the commit are stored in git. The first parent is the commit on the branch that was the current branch when the merge was performed. The remaining parents are stored in the order that their branches were specified in the merge command.
 
 ### What if the history diverges, and then converges again, before the latest tag (or root commit) is found?
 

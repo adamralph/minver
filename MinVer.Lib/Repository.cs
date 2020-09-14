@@ -54,7 +54,6 @@ namespace MinVer.Lib
             var commitsChecked = new HashSet<string>();
             var count = 0;
             var height = 0;
-            var foundRootCommit = false;
             var candidates = new List<Candidate>();
             var commitsToCheck = new Stack<(Commit, int, Commit)>();
             Commit previousCommit = null;
@@ -77,7 +76,7 @@ namespace MinVer.Lib
 
                     foreach (var (tag, commitVersion) in commitTagsAndVersions)
                     {
-                        var candidate = new Candidate { Commit = commit, Height = height, Tag = tag.Name, Version = commitVersion, };
+                        var candidate = new Candidate { Commit = commit, Height = height, Tag = tag.Name, Version = commitVersion, Index = candidates.Count };
 
                         foundVersion = foundVersion || candidate.Version != null;
 
@@ -122,10 +121,9 @@ namespace MinVer.Lib
                             commitsToCheck.Push((parent, height + 1, commit));
                         }
 
-                        if (!foundRootCommit && (commitsToCheck.Count == 0 || commitsToCheck.Peek().Item2 <= height))
+                        if (commitsToCheck.Count == 0 || commitsToCheck.Peek().Item2 <= height)
                         {
-                            foundRootCommit = true;
-                            var candidate = new Candidate { Commit = commit, Height = height, Tag = null, Version = new Version(defaultPreReleasePhase), };
+                            var candidate = new Candidate { Commit = commit, Height = height, Tag = null, Version = new Version(defaultPreReleasePhase), Index = candidates.Count };
 
                             if (log.IsTraceEnabled)
                             {
@@ -180,7 +178,7 @@ namespace MinVer.Lib
 
             log.Debug($"{count:N0} commits checked.");
 
-            var orderedCandidates = candidates.OrderBy(candidate => candidate.Version).ToList();
+            var orderedCandidates = candidates.OrderBy(candidate => candidate.Version).ThenByDescending(candidate => candidate.Index).ToList();
 
             var tagWidth = log.IsDebugEnabled ? orderedCandidates.Max(candidate => candidate.Tag?.Length ?? 2) : 0;
             var versionWidth = log.IsDebugEnabled ? orderedCandidates.Max(candidate => candidate.Version?.ToString().Length ?? 4) : 0;
@@ -215,6 +213,8 @@ namespace MinVer.Lib
             public string Tag { get; set; }
 
             public Version Version { get; set; }
+
+            public int Index { get; set; }
 
             public override string ToString() => this.ToString(0, 0, 0);
 

@@ -54,6 +54,7 @@ namespace MinVer.Lib
             var commitsChecked = new HashSet<string>();
             var count = 0;
             var height = 0;
+            var foundRootCommit = false;
             var candidates = new List<Candidate>();
             var commitsToCheck = new Stack<(Commit, int, Commit)>();
             Commit previousCommit = null;
@@ -121,8 +122,9 @@ namespace MinVer.Lib
                             commitsToCheck.Push((parent, height + 1, commit));
                         }
 
-                        if (commitsToCheck.Count == 0 || commitsToCheck.Peek().Item2 <= height)
+                        if (!foundRootCommit && (commitsToCheck.Count == 0 || commitsToCheck.Peek().Item2 <= height))
                         {
+                            foundRootCommit = true;
                             var candidate = new Candidate { Commit = commit, Height = height, Tag = null, Version = new Version(defaultPreReleasePhase), };
 
                             if (log.IsTraceEnabled)

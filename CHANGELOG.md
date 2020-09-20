@@ -74,4 +74,3 @@
 - [#180: Add MinVerVersionOverride property to simplify usage of both MinVer and minver-cli in the same build](https://github.com/adamralph/minver/issues/180)
 - [#193: Log info message when no version tags are found](https://github.com/adamralph/minver/issues/193)
 - [#194: Log all ignored tags for a commit](https://github.com/adamralph/minver/issues/194)
-

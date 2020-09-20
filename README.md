@@ -100,7 +100,7 @@ Note that the option names are case-insensitive.
 
 ## FAQ
 
-_(With TL;DR answers inline.)_
+(With TL;DR answers inline.)
 
 - [Why not use GitVersion, Nerdbank.GitVersioning, or some other tool?](#why-not-use-gitversion-nerdbankgitversioning-or-some-other-tool) _(simplicity)_
 - [Can I bump the major or minor version?](#can-i-bump-the-major-or-minor-version) _(yes)_

@@ -1,10 +1,18 @@
 {
-  "name": "C# (.NET Core 3.0)",
-  "dockerFile": "Dockerfile",
+  "name": "C# (.NET Core)",
+  "build": {
+    "dockerfile": "Dockerfile",
+  },
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash"
+  },
   "extensions": [
+    "alefragnani.Bookmarks",
+    "DavidAnson.vscode-markdownlint",
     "editorconfig.editorconfig",
-    "formulahendry.dotnet-test-explorer",
-    "ms-vscode.csharp",
-    "sohamkamani.code-eol"
-  ]
+    "jeff-hykin.code-eol",
+    "bierner.markdown-preview-github-styles",
+    "ms-dotnettools.csharp",
+    "streetsidesoftware.code-spell-checker"
+  ],
 }

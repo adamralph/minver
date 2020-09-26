@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.3.1
+
+### Fixed bugs
+
+- [#377: first root commit is not used](https://github.com/adamralph/minver/pull/377)
+- [#378: first tag with a given version is not used](https://github.com/adamralph/minver/pull/378)
+
 ## 2.3.0
 
 ### Enhancements

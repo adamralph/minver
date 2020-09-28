@@ -53,7 +53,17 @@ internal static class Program
                 var source = Path.GetFullPath("./MinVer/bin/Release/");
                 var version = Path.GetFileNameWithoutExtension(Directory.EnumerateFiles(source, "*.nupkg").First()).Split("MinVer.", 2)[1];
 
-                await RunAsync("dotnet", "new globaljson --sdk-version 3.1.402", testProject);
+                File.WriteAllText(
+                    Path.Combine(testProject, "global.json"),
+@"{
+  ""sdk"": {
+    ""version"": ""2.1.300"",
+    ""rollForward"": ""latestMajor""
+  }
+}
+"
+                    );
+
                 await RunAsync("dotnet", "new classlib", testProject);
                 await RunAsync("dotnet", $"add package MinVer --source {source} --version {version} --package-directory packages", testProject);
                 await RunAsync("dotnet", $"restore --source {source} --packages packages", testProject);

@@ -1,8 +1,8 @@
 namespace MinVer
 {
     using System;
-    using System.Linq;
     using System.IO;
+    using System.Linq;
     using System.Reflection;
     using McMaster.Extensions.CommandLineUtils;
     using MinVer.Lib;
@@ -59,7 +59,7 @@ namespace MinVer
                         version = Versioner.GetVersion(workDir, tagPrefixOption.Value(), minMajorMinor, buildMetaOption.Value(), autoIncrement, defaultPreReleasePhaseOption.Value(), log);
                     }
 #else
-                var version = Versioner.GetVersion(workDir, tagPrefixOption.Value(), minMajorMinor, buildMetaOption.Value(), autoIncrement, defaultPreReleasePhaseOption.Value(), log);
+                    var version = Versioner.GetVersion(workDir, tagPrefixOption.Value(), minMajorMinor, buildMetaOption.Value(), autoIncrement, defaultPreReleasePhaseOption.Value(), log);
 #endif
 
                     Console.Out.WriteLine(version);

@@ -4,8 +4,8 @@ namespace MinVerTests
     using MinVerTests.Infra;
     using Xbehave;
     using Xunit;
-    using static MinVerTests.Infra.Git;
     using static MinVerTests.Infra.FileSystem;
+    using static MinVerTests.Infra.Git;
     using Version = MinVer.Lib.Version;
 
     public static class TagPrefixes

@@ -59,8 +59,7 @@ internal static class Program
     ""rollForward"": ""latestMajor""
   }
 }
-"
-                    );
+");
 
                 await RunAsync("dotnet", "new classlib", testProject);
                 await RunAsync("dotnet", $"add package MinVer --source {source} --version {version} --package-directory packages", testProject);

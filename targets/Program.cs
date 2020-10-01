@@ -20,8 +20,6 @@ internal static class Program
 
     public static async Task Main(string[] args)
     {
-        Target("default", DependsOn("test-api", "test-package"));
-
         Target("build", () => RunAsync("dotnet", "build --configuration Release --nologo --verbosity quiet"));
 
         Target(
@@ -269,6 +267,8 @@ internal static class Program
             });
 
         Target("test-package", DependsOn("test-package-version-override"));
+
+        Target("default", DependsOn("test-api", "test-package"));
 
         await RunTargetsAndExitAsync(args);
     }

@@ -34,7 +34,6 @@ namespace MinVer.Lib
         private static Version GetVersion(string workDir, string tagPrefix, VersionPart autoIncrement, string defaultPreReleasePhase, ILogger log)
         {
             if (!Repository.TryCreateRepo(workDir, out var repo, log))
-
             {
                 var version = new Version(defaultPreReleasePhase);
 

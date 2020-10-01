@@ -1,11 +1,11 @@
 namespace MinVerTests
 {
     using MinVer.Lib;
-    using Infra;
+    using MinVerTests.Infra;
     using Xbehave;
     using Xunit;
-    using static Infra.Git;
     using static Infra.FileSystem;
+    using static Infra.Git;
     using Version = MinVer.Lib.Version;
 
     public static class DefaultPreReleasePhases

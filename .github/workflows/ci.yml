@@ -17,11 +17,11 @@ jobs:
     name: ${{ matrix.runs-on }}
     runs-on: ${{ matrix.runs-on }}
     steps:
-    - uses: actions/setup-dotnet@6efb2bd78f16e08562660f8246d6bd76adf6281f
+    - uses: actions/setup-dotnet@51f68377c181a79065c61bd492bd49be4575c439
       with:
         dotnet-version: '3.1.402'
     - run: dotnet --info
-    - uses: actions/checkout@28c7f3d2b5162b5ddd3dfd9a45aa55eaf396478b
+    - uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675
     - if: contains(matrix.runs-on, 'windows')
       env:
         VERSION: ${{ secrets.VERSION }}

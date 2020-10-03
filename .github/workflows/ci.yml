@@ -13,24 +13,24 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runs-on: [macos-10.15, ubuntu-16.04, ubuntu-18.04, windows-2016, windows-2019]
-    name: ${{ matrix.runs-on }}
-    runs-on: ${{ matrix.runs-on }}
+        os: [macos-10.15, ubuntu-16.04, ubuntu-18.04, windows-2016, windows-2019]
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/setup-dotnet@51f68377c181a79065c61bd492bd49be4575c439
       with:
         dotnet-version: '3.1.402'
     - run: dotnet --info
     - uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675
-    - if: contains(matrix.runs-on, 'windows')
+    - if: contains(matrix.os, 'windows')
       env:
         VERSION: ${{ secrets.VERSION }}
       run: ./build.cmd
-    - if: contains(matrix.runs-on, 'macos') || contains(matrix.runs-on, 'ubuntu')
+    - if: contains(matrix.os, 'macos') || contains(matrix.os, 'ubuntu')
       env:
         VERSION: ${{ secrets.VERSION }}
       run: ./build.sh
-    - if: matrix.runs-on == 'ubuntu-18.04'
+    - if: matrix.os == 'ubuntu-18.04'
       env:
         MYGET_ADAMRALPH_CI_API_KEY: ${{ secrets.MYGET_ADAMRALPH_CI_API_KEY }}
       run: ./push.sh

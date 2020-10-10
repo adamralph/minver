@@ -2,8 +2,11 @@
   "code-eol.crlfCharacter": "↵",
   "code-eol.newlineCharacter": "↓",
   "code-eol.returnCharacter": "←",
+  "cSpell.language": "en-GB",
   "cSpell.words": [
     "Ananth",
+    "MinVerBuildMetadata",
+    "MinVerVersionOverride",
     "Nerdbank",
     "Versioner",
     "Xbehave",
@@ -23,8 +26,6 @@
     "macos",
     "markdownlint",
     "minver",
-    "MinVerBuildMetadata",
-    "MinVerVersionOverride",
     "myget",
     "nerdbankgitversioning",
     "netcoreapp",
@@ -37,6 +38,7 @@
     "shas",
     "streetsidesoftware",
     "uiet",
+    "versioned",
     "visualstudio"
   ],
   "markdownlint.config": {

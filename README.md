@@ -133,7 +133,7 @@ To some degree, MinVer is a subset of what GitVersion is. It's much simpler and 
 - No inference of version from branch names.
 - No inference of version from YAML config.
 - No inference of version from commit messages.
-- No inference of version from CI build server env vars.
+- No inference of version from CI build server environment variables.
 - No creation of metadata code artifacts.
 - No automatic fetching of tags, etc. from the repo.
 - One package instead of a series of packages.

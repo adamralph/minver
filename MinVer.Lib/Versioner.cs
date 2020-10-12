@@ -37,7 +37,7 @@ namespace MinVer.Lib
             {
                 var version = new Version(defaultPreReleasePhase);
 
-                log.Warn(1001, $"'{workDir}' is not a valid working directory. Using default version {version}.");
+                log.Warn(1001, $"'{workDir}' is not a valid Git working directory. Using default version {version}.");
 
                 return version;
             }

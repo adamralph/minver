@@ -15,20 +15,20 @@ jobs:
       matrix:
         job:
           [
-            { os: macos-10.15, command: ./build.sh, push: false },
-            { os: ubuntu-16.04, command: ./build.sh, push: false },
-            { os: ubuntu-18.04, command: ./build.sh, push: true },
-            { os: windows-2016, command: ./build.cmd, push: false },
-            { os: windows-2019, command: ./build.cmd, push: false },
+            { os: macos-10.15, build: ./build.sh, push: "" },
+            { os: ubuntu-16.04, build: ./build.sh, push: "" },
+            { os: ubuntu-18.04, build: ./build.sh, push: ./push.sh },
+            { os: windows-2016, build: ./build.cmd, push: "" },
+            { os: windows-2019, build: ./build.cmd, push: "" },
           ]
     name: ${{ matrix.job.os }}
     runs-on: ${{ matrix.job.os }}
     steps:
-      - name: setup-dotnet-2.1.300
+      - name: setup-dotnet 2.1.300
         uses: actions/setup-dotnet@51f68377c181a79065c61bd492bd49be4575c439
         with:
           dotnet-version: "2.1.300"
-      - name: setup-dotnet-3.1.402
+      - name: setup-dotnet 3.1.402
         uses: actions/setup-dotnet@51f68377c181a79065c61bd492bd49be4575c439
         with:
           dotnet-version: "3.1.402"
@@ -36,11 +36,12 @@ jobs:
       - uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675
       - env:
           VERSION: ${{ secrets.VERSION }}
-        run: ${{ matrix.job.command }}
+        run: ${{ matrix.job.build }}
       - env:
           DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
-        run: ${{ matrix.job.command }} test-package --package-tests-sdk 2.1.300 --package-tests-suppress-nologo --skip-pack-dependency
-      - if: matrix.job.push
+        run: ${{ matrix.job.build }} test-package --package-tests-sdk 2.1.300 --package-tests-suppress-nologo --skip-pack-dependency
+      - name: push
+        if: matrix.job.push != ''
         env:
           MYGET_ADAMRALPH_CI_API_KEY: ${{ secrets.MYGET_ADAMRALPH_CI_API_KEY }}
-        run: ./push.sh
+        run: ${{ matrix.job.push }}

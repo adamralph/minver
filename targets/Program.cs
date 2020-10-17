@@ -1,4 +1,6 @@
 using System;
+using System.CommandLine;
+using System.CommandLine.Invocation;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -6,6 +8,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Runtime.Loader;
 using System.Threading.Tasks;
+using Bullseye;
 using Xunit;
 using static Bullseye.Targets;
 using static MinVerTests.Infra.FileSystem;
@@ -18,7 +21,34 @@ internal static class Program
 
     private static int buildNumber = 1;
 
-    public static async Task Main(string[] args)
+    public static int Main(string[] args)
+    {
+        var cmd = new RootCommand()
+        {
+            new Option<string>("--package-tests-sdk", "The SDK version to use for package tests"),
+            new Option<bool>("--package-tests-suppress-nologo", "Suppress --nologo when running package tests"),
+            new Option<bool>("--skip-pack-dependency", "Skip the \"pack\" target as a dependency"),
+        };
+
+        cmd.Add(new Argument("targets") { Arity = ArgumentArity.ZeroOrMore, Description = "The targets to run or list." });
+        foreach (var option in Options.Definitions)
+        {
+            cmd.Add(new Option(new[] { option.ShortName, option.LongName }.Where(n => !string.IsNullOrWhiteSpace(n)).ToArray(), option.Description));
+        }
+
+        cmd.Handler = CommandHandler.Create<string, bool, bool>((packageTestsSdk, packageTestsSuppressNoLogo, skipPackDependency) =>
+        {
+            var cmdLine = cmd.Parse(args);
+            var targets = cmdLine.CommandResult.Tokens.Select(token => token.Value);
+            var options = new Options(Options.Definitions.Select(o => (o.LongName, cmdLine.ValueForOption<bool>(o.LongName))));
+
+            Run(targets, options, packageTestsSdk, packageTestsSuppressNoLogo, skipPackDependency);
+        });
+
+        return cmd.Invoke(args);
+    }
+
+    private static void Run(IEnumerable<string> targets, Options options, string packageTestsSdk, bool packageTestsSuppressNoLogo, bool skipPackDependency)
     {
         Target("build", () => RunAsync("dotnet", "build --configuration Release --nologo --verbosity quiet"));
 
@@ -42,7 +72,7 @@ internal static class Program
 
         Target(
             "create-test-project",
-            DependsOn("pack"),
+            skipPackDependency ? default : DependsOn("pack"),
             async () =>
             {
                 testProject = GetScenarioDirectory("package");
@@ -51,15 +81,18 @@ internal static class Program
                 var source = Path.GetFullPath("./MinVer/bin/Release/");
                 var version = Path.GetFileNameWithoutExtension(Directory.EnumerateFiles(source, "*.nupkg").First()).Split("MinVer.", 2)[1];
 
-                File.WriteAllText(
-                    Path.Combine(testProject, "global.json"),
-@"{
-  ""sdk"": {
-    ""version"": ""2.1.300"",
-    ""rollForward"": ""latestMajor""
-  }
-}
+                if (!string.IsNullOrWhiteSpace(packageTestsSdk))
+                {
+                    File.WriteAllText(
+                        Path.Combine(testProject, "global.json"),
+$@"{{
+  ""sdk"": {{
+    ""version"": ""{packageTestsSdk.Trim()}"",
+    ""rollForward"": ""disable""
+  }}
+}}
 ");
+                }
 
                 await RunAsync("dotnet", "new classlib", testProject);
                 await RunAsync("dotnet", $"add package MinVer --source {source} --version {version} --package-directory packages", testProject);
@@ -75,7 +108,7 @@ internal static class Program
                 var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-no-repo");
 
                 // act
-                await CleanAndPack(testProject, output, "diagnostic");
+                await CleanAndPack(testProject, output, "diagnostic", packageTestsSuppressNoLogo);
 
                 // assert
                 AssertVersion(new Version(0, 0, 0, new[] { "alpha", "0" }), output);
@@ -92,7 +125,7 @@ internal static class Program
                 var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-no-commits");
 
                 // act
-                await CleanAndPack(testProject, output, "diagnostic");
+                await CleanAndPack(testProject, output, "diagnostic", packageTestsSuppressNoLogo);
 
                 // assert
                 AssertVersion(new Version(0, 0, 0, new[] { "alpha", "0" }), output);
@@ -110,7 +143,7 @@ internal static class Program
                 var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-commit");
 
                 // act
-                await CleanAndPack(testProject, output, "diagnostic");
+                await CleanAndPack(testProject, output, "diagnostic", packageTestsSuppressNoLogo);
 
                 // assert
                 AssertVersion(new Version(0, 0, 0, new[] { "alpha", "0" }), output);
@@ -127,7 +160,7 @@ internal static class Program
                 var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-non-version-tag");
 
                 // act
-                await CleanAndPack(testProject, output, "diagnostic");
+                await CleanAndPack(testProject, output, "diagnostic", packageTestsSuppressNoLogo);
 
                 // assert
                 AssertVersion(new Version(0, 0, 0, new[] { "alpha", "0" }), output);
@@ -144,7 +177,7 @@ internal static class Program
                 var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-version-tag");
 
                 // act
-                await CleanAndPack(testProject, output, "normal", env => env.Add("MinVerTagPrefix", "v."));
+                await CleanAndPack(testProject, output, "normal", packageTestsSuppressNoLogo, env => env.Add("MinVerTagPrefix", "v."));
 
                 // assert
                 AssertVersion(new Version(1, 2, 3, default, default, "foo"), output);
@@ -162,7 +195,7 @@ internal static class Program
                 var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-commit-after-tag");
 
                 // act
-                await CleanAndPack(testProject, output, "detailed");
+                await CleanAndPack(testProject, output, "detailed", packageTestsSuppressNoLogo);
 
                 // assert
                 AssertVersion(new Version(1, 2, 4, new[] { "alpha", "0" }, 1), output);
@@ -177,7 +210,7 @@ internal static class Program
                 var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-non-default-auto-increment");
 
                 // act
-                await CleanAndPack(testProject, output, "diagnostic", env => env.Add("MinVerAutoIncrement", "minor"));
+                await CleanAndPack(testProject, output, "diagnostic", packageTestsSuppressNoLogo, env => env.Add("MinVerAutoIncrement", "minor"));
 
                 // assert
                 AssertVersion(new Version(1, 3, 0, new[] { "alpha", "0" }, 1), output);
@@ -194,7 +227,7 @@ internal static class Program
                 var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-annotated-tag");
 
                 // act
-                await CleanAndPack(testProject, output, "diagnostic");
+                await CleanAndPack(testProject, output, "diagnostic", packageTestsSuppressNoLogo);
 
                 // assert
                 AssertVersion(new Version(1, 4, 0), output);
@@ -212,7 +245,7 @@ internal static class Program
                 var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-minimum-major-minor-on-tag");
 
                 // act
-                await CleanAndPack(testProject, output, "diagnostic", env => env.Add("MinVerMinimumMajorMinor", "2.0"));
+                await CleanAndPack(testProject, output, "diagnostic", packageTestsSuppressNoLogo, env => env.Add("MinVerMinimumMajorMinor", "2.0"));
 
                 // assert
                 AssertVersion(new Version(2, 0, 0, new[] { "alpha", "0" }), output);
@@ -229,7 +262,7 @@ internal static class Program
                 var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-minimum-major-minor-after-tag");
 
                 // act
-                await CleanAndPack(testProject, output, "diagnostic", env => env.Add("MinVerMinimumMajorMinor", "2.0"));
+                await CleanAndPack(testProject, output, "diagnostic", packageTestsSuppressNoLogo, env => env.Add("MinVerMinimumMajorMinor", "2.0"));
 
                 // assert
                 AssertVersion(new Version(2, 0, 0, new[] { "alpha", "0" }, 1), output);
@@ -244,7 +277,7 @@ internal static class Program
                 var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-default-pre-release-phase");
 
                 // act
-                await CleanAndPack(testProject, output, "diagnostic", env => env.Add("MinVerDefaultPreReleasePhase", "preview"));
+                await CleanAndPack(testProject, output, "diagnostic", packageTestsSuppressNoLogo, env => env.Add("MinVerDefaultPreReleasePhase", "preview"));
 
                 // assert
                 AssertVersion(new Version(1, 5, 1, new[] { "preview", "0" }, 1), output);
@@ -259,7 +292,7 @@ internal static class Program
                 var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-version-override");
 
                 // act
-                await CleanAndPack(testProject, output, "diagnostic", env => env.Add("MinVerVersionOverride", "3.2.1-rc.4+build.5"));
+                await CleanAndPack(testProject, output, "diagnostic", packageTestsSuppressNoLogo, env => env.Add("MinVerVersionOverride", "3.2.1-rc.4+build.5"));
 
                 // assert
                 AssertVersion(new Version(3, 2, 1, new[] { "rc", "4" }, default, "build.5"), output);
@@ -269,17 +302,19 @@ internal static class Program
 
         Target("default", DependsOn("test-api", "test-package"));
 
-        await RunTargetsAndExitAsync(args);
+        RunTargetsAndExit(targets, options);
     }
 
-    private static async Task CleanAndPack(string path, string output, string verbosity, Action<IDictionary<string, string>> configureEnvironment = null)
+    private static async Task CleanAndPack(string path, string output, string verbosity, bool suppressNoLogo, Action<IDictionary<string, string>> configureEnvironment = null)
     {
         EnsureEmptyDirectory(output);
 
-        await RunAsync("dotnet", "build --no-restore --nologo", path, configureEnvironment: configureEnvironment);
+        var noLogo = suppressNoLogo ? "" : " --nologo";
+
+        await RunAsync("dotnet", $"build --no-restore{noLogo}", path, configureEnvironment: configureEnvironment);
         await RunAsync(
             "dotnet",
-            $"pack --no-build --output {output} --nologo",
+            $"pack --no-build --output {output}{noLogo}",
             path,
             configureEnvironment: env =>
             {

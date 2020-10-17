@@ -13,10 +13,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os:
-          [macos-10.15, ubuntu-16.04, ubuntu-18.04, windows-2016, windows-2019]
-    name: ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+        job:
+          [
+            { os: macos-10.15, command: ./build.sh, push: false },
+            { os: ubuntu-16.04, command: ./build.sh, push: false },
+            { os: ubuntu-18.04, command: ./build.sh, push: true },
+            { os: windows-2016, command: ./build.cmd, push: false },
+            { os: windows-2019, command: ./build.cmd, push: false },
+          ]
+    name: ${{ matrix.job.os }}
+    runs-on: ${{ matrix.job.os }}
     steps:
       - name: setup-dotnet-2.1.300
         uses: actions/setup-dotnet@51f68377c181a79065c61bd492bd49be4575c439
@@ -28,23 +34,13 @@ jobs:
           dotnet-version: "3.1.402"
       - run: dotnet --info
       - uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675
-      - if: contains(matrix.os, 'windows')
-        env:
+      - env:
           VERSION: ${{ secrets.VERSION }}
-        run: ./build.cmd
-      - if: contains(matrix.os, 'macos') || contains(matrix.os, 'ubuntu')
-        env:
-          VERSION: ${{ secrets.VERSION }}
-        run: ./build.sh
-      - if: contains(matrix.os, 'windows')
-        env:
+        run: ${{ matrix.job.command }}
+      - env:
           DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
-        run: ./build.cmd test-package --package-tests-sdk 2.1.300 --package-tests-suppress-nologo --skip-pack-dependency
-      - if: contains(matrix.os, 'macos') || contains(matrix.os, 'ubuntu')
-        env:
-          DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
-        run: ./build.sh test-package --package-tests-sdk 2.1.300 --package-tests-suppress-nologo --skip-pack-dependency
-      - if: matrix.os == 'ubuntu-18.04'
+        run: ${{ matrix.job.command }} test-package --package-tests-sdk 2.1.300 --package-tests-suppress-nologo --skip-pack-dependency
+      - if: matrix.job.push
         env:
           MYGET_ADAMRALPH_CI_API_KEY: ${{ secrets.MYGET_ADAMRALPH_CI_API_KEY }}
         run: ./push.sh

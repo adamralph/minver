@@ -1,10 +1,7 @@
 on:
   push:
-    branches:
-      - master
-      - release-*
-    tags:
-      - "*.*.*"
+    branches: [master, release-*]
+    tags: ["*.*.*"]
   pull_request:
 env:
   DOTNET_NOLOGO: true

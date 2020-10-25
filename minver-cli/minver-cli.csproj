@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>A minimalistic command line tool for versioning any Git repository using tags.</Description>
+    <Description>A minimalist command line tool for versioning any Git repository using tags.</Description>
     <NoWarn>$(NoWarn);NU5105</NoWarn>
     <OutputType>Exe</OutputType>
     <PackAsTool>true</PackAsTool>

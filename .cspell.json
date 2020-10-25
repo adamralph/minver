@@ -1,0 +1,81 @@
+{
+  "version": "0.1",
+  "language": "en-GB",
+  "languageSettings": [
+    {
+      "languageId": "bash",
+      "words": [
+        "adamralph",
+        "nupkg",
+        "pipefail"
+      ]
+    },
+    {
+      "languageId": "csharp",
+      "words": [
+        "Arity",
+        "gpgsign",
+        "nologo",
+        "nupkg",
+        "shas",
+        "Versioner",
+        "Xbehave",
+        "Xunit"
+      ]
+    },
+    {
+      "languageId": "csproj",
+      "words": [
+        "netcoreapp",
+        "netstandard",
+        "visualstudio",
+        "Xbehave",
+        "xunit"
+      ]
+    },
+    {
+      "languageId": "markdown",
+      "words": [
+        "MINVERBUILDMETADATA",
+        "MINVERVERSIONOVERRIDE"
+      ]
+    },
+    {
+      "languageId": "targets",
+      "words": [
+        "diag",
+        "quot"
+      ]
+    }
+  ],
+  "overrides": [
+    {
+      "filename": "{*.cmd,*.cs,*.csproj,*.sh}",
+      "language": "en-US"
+    },
+    {
+      "filename": "*.csproj",
+      "languageId": "csproj"
+    },
+    {
+      "filename": ".cspell.json",
+      "enabled": false
+    },
+    {
+      "filename": "*.sh",
+      "languageId": "bash"
+    },
+    {
+      "filename": "*.targets",
+      "languageId": "targets"
+    }
+  ],
+  "words": [
+    "Ananth",
+    "bootstrapper",
+    "MinVer",
+    "MyGet",
+    "Nerdbank",
+    "NuGet"
+  ]
+}

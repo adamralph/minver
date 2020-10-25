@@ -5,8 +5,9 @@
 _[![MinVer NuGet version](https://img.shields.io/nuget/v/MinVer.svg?style=flat&label=nuget%3A%20MinVer)](https://www.nuget.org/packages/MinVer)_
 _[![minver-cli NuGet version](https://img.shields.io/nuget/v/minver-cli.svg?style=flat&label=nuget%3A%20minver-cli)](https://www.nuget.org/packages/minver-cli)_
 _[![Build status](https://github.com/adamralph/minver/workflows/.github/workflows/ci.yml/badge.svg)](https://github.com/adamralph/minver/actions)_
+_[![Spell check](https://github.com/adamralph/minver/workflows/.github/workflows/spell-check.yml/badge.svg)](https://github.com/adamralph/minver/actions?query=workflow%3A.github%2Fworkflows%2Fspell-check.yml)_
 
-A minimalistic [.NET package](https://www.nuget.org/packages/MinVer) for versioning .NET SDK-style projects using Git tags.
+A minimalist [.NET package](https://www.nuget.org/packages/MinVer) for versioning .NET SDK-style projects using Git tags.
 
 Platform support: all platforms supported by .NET SDK-style projects.
 
@@ -102,6 +103,7 @@ Note that the option names are case-insensitive.
 
 (With TL;DR answers inline.)
 
+<!-- spell-checker:disable -->
 - [Why not use GitVersion, Nerdbank.GitVersioning, or some other tool?](#why-not-use-gitversion-nerdbankgitversioning-or-some-other-tool) _(simplicity)_
 - [Can I bump the major or minor version?](#can-i-bump-the-major-or-minor-version) _(yes)_
 - [Can I use my own pre-release versioning scheme?](#can-i-use-my-own-pre-release-versioning-scheme) _(yes)_
@@ -118,6 +120,7 @@ Note that the option names are case-insensitive.
 - [What if the history diverges, and more than one tag or root commit is found?](#what-if-the-history-diverges-and-more-than-one-tag-or-root-commit-is-found) _(nothing bad)_
 - [What if the history diverges, and then converges again, before the latest tag (or root commit) is found?](#what-if-the-history-diverges-and-then-converges-again-before-the-latest-tag-or-root-commit-is-found) _(nothing bad)_
 - [Why is the default version sometimes used in GitHub Actions and Travis CI when a version tag exists in the history?](#why-is-the-default-version-sometimes-used-in-github-actions-and-travis-ci-when-a-version-tag-exists-in-the-history) _(shallow clones)_
+<!-- spell-checker:enable -->
 
 ### Why not use GitVersion, Nerdbank.GitVersioning, or some other tool?
 

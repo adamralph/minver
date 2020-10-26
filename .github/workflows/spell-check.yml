@@ -6,5 +6,5 @@ jobs:
   spell-check:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - run: npx cspell "**/*"
+      - uses: actions/checkout@v2
+      - run: npx cspell "**/*"

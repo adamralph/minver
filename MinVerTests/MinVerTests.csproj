@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <RollForward>major</RollForward>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFrameworks>netcoreapp2.1;netcoreapp3.1</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>

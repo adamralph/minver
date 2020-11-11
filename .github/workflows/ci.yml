@@ -37,6 +37,10 @@ jobs:
         uses: actions/setup-dotnet@51f68377c181a79065c61bd492bd49be4575c439
         with:
           dotnet-version: "3.1.404"
+      - name: setup-dotnet 5.0.100
+        uses: actions/setup-dotnet@51f68377c181a79065c61bd492bd49be4575c439
+        with:
+          dotnet-version: "5.0.100"
       - run: dotnet --info
       - uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675
       - env:
@@ -54,6 +58,9 @@ jobs:
       - env:
           DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
         run: ${{ matrix.job.build }} test-package --package-tests-sdk 3.1.404 --package-tests-suppress-nologo --skip-pack-dependency
+      - env:
+          DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+        run: ${{ matrix.job.build }} test-package --package-tests-sdk 5.0.100 --package-tests-suppress-nologo --skip-pack-dependency
       - name: push
         if: matrix.job.push != ''
         env:

@@ -25,18 +25,35 @@ jobs:
         uses: actions/setup-dotnet@51f68377c181a79065c61bd492bd49be4575c439
         with:
           dotnet-version: "2.1.300"
-      - name: setup-dotnet 3.1.402
+      - name: setup-dotnet 2.1.811
         uses: actions/setup-dotnet@51f68377c181a79065c61bd492bd49be4575c439
         with:
-          dotnet-version: "3.1.402"
+          dotnet-version: "2.1.811"
+      - name: setup-dotnet 3.1.100
+        uses: actions/setup-dotnet@51f68377c181a79065c61bd492bd49be4575c439
+        with:
+          dotnet-version: "3.1.100"
+      - name: setup-dotnet 3.1.404
+        uses: actions/setup-dotnet@51f68377c181a79065c61bd492bd49be4575c439
+        with:
+          dotnet-version: "3.1.404"
       - run: dotnet --info
       - uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675
       - env:
           VERSION: ${{ secrets.VERSION }}
-        run: ${{ matrix.job.build }}
+        run: ${{ matrix.job.build }} test-api pack
       - env:
           DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
         run: ${{ matrix.job.build }} test-package --package-tests-sdk 2.1.300 --package-tests-suppress-nologo --skip-pack-dependency
+      - env:
+          DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+        run: ${{ matrix.job.build }} test-package --package-tests-sdk 2.1.811 --package-tests-suppress-nologo --skip-pack-dependency
+      - env:
+          DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+        run: ${{ matrix.job.build }} test-package --package-tests-sdk 3.1.100 --package-tests-suppress-nologo --skip-pack-dependency
+      - env:
+          DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+        run: ${{ matrix.job.build }} test-package --package-tests-sdk 3.1.404 --package-tests-suppress-nologo --skip-pack-dependency
       - name: push
         if: matrix.job.push != ''
         env:

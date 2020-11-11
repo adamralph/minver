@@ -17,7 +17,7 @@ using static SimpleExec.Command;
 
 internal static class Program
 {
-    private static readonly string testPackageBaseOutput = Path.GetDirectoryName(Uri.UnescapeDataString(new UriBuilder(typeof(Program).Assembly.CodeBase).Path));
+    private static readonly string testPackageBaseOutput = Path.GetDirectoryName(typeof(Program).Assembly.Location);
 
     private static int buildNumber = 1;
 

@@ -5,6 +5,7 @@ on:
   pull_request:
 env:
   DOTNET_NOLOGO: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
 jobs:
   build:
     strategy:
@@ -46,21 +47,11 @@ jobs:
       - env:
           VERSION: ${{ secrets.VERSION }}
         run: ${{ matrix.job.build }} test-api pack
-      - env:
-          DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
-        run: ${{ matrix.job.build }} test-package --package-tests-sdk 2.1.300 --package-tests-suppress-nologo --skip-pack-dependency
-      - env:
-          DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
-        run: ${{ matrix.job.build }} test-package --package-tests-sdk 2.1.811 --package-tests-suppress-nologo --skip-pack-dependency
-      - env:
-          DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
-        run: ${{ matrix.job.build }} test-package --package-tests-sdk 3.1.100 --package-tests-suppress-nologo --skip-pack-dependency
-      - env:
-          DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
-        run: ${{ matrix.job.build }} test-package --package-tests-sdk 3.1.404 --package-tests-suppress-nologo --skip-pack-dependency
-      - env:
-          DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
-        run: ${{ matrix.job.build }} test-package --package-tests-sdk 5.0.100 --package-tests-suppress-nologo --skip-pack-dependency
+      - run: ${{ matrix.job.build }} test-package --package-tests-sdk 2.1.300 --skip-pack-dependency --package-tests-suppress-nologo
+      - run: ${{ matrix.job.build }} test-package --package-tests-sdk 2.1.811 --skip-pack-dependency --package-tests-suppress-nologo
+      - run: ${{ matrix.job.build }} test-package --package-tests-sdk 3.1.100 --skip-pack-dependency
+      - run: ${{ matrix.job.build }} test-package --package-tests-sdk 3.1.404 --skip-pack-dependency
+      - run: ${{ matrix.job.build }} test-package --package-tests-sdk 5.0.100 --skip-pack-dependency
       - name: push
         if: matrix.job.push != ''
         env:

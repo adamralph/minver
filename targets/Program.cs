@@ -353,28 +353,19 @@ static void AssertVersion(Version expected, string path)
     Assert.Equal(expected.ToString(), fileVersion.ProductVersion);
 }
 
-public class Version
+public record Version
 {
-    private readonly List<string> preReleaseIdentifiers;
-    private readonly int height;
-    private readonly string buildMetadata;
-
-    public Version(int major, int minor, int patch, IEnumerable<string> preReleaseIdentifiers = null, int height = 0, string buildMetadata = null)
-    {
-        this.Major = major;
-        this.Minor = minor;
-        this.Patch = patch;
-        this.preReleaseIdentifiers = preReleaseIdentifiers?.ToList() ?? new List<string>();
-        this.height = height;
-        this.buildMetadata = buildMetadata;
-    }
+    public Version(int major, int minor, int patch, IEnumerable<string> preReleaseIdentifiers = null, int height = 0, string buildMetadata = null) =>
+        (this.Major, this.Minor, this.Patch, this.PreReleaseIdentifiers, this.Height, this.BuildMetadata) =
+            (major, minor, patch, preReleaseIdentifiers?.ToList() ?? new List<string>(), height, buildMetadata);
 
     public int Major { get; }
-
     public int Minor { get; }
-
     public int Patch { get; }
+    private List<string> PreReleaseIdentifiers { get; }
+    private int Height { get; }
+    private string BuildMetadata { get; }
 
     public override string ToString() =>
-        $"{this.Major}.{this.Minor}.{this.Patch}{(this.preReleaseIdentifiers.Count == 0 ? "" : $"-{string.Join(".", this.preReleaseIdentifiers)}")}{(this.height == 0 ? "" : $".{this.height}")}{(string.IsNullOrEmpty(this.buildMetadata) ? "" : $"+{this.buildMetadata}")}";
+        $"{this.Major}.{this.Minor}.{this.Patch}{(this.PreReleaseIdentifiers.Count == 0 ? "" : $"-{string.Join(".", this.PreReleaseIdentifiers)}")}{(this.Height == 0 ? "" : $".{this.Height}")}{(string.IsNullOrEmpty(this.BuildMetadata) ? "" : $"+{this.BuildMetadata}")}";
 }

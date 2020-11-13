@@ -22,26 +22,9 @@ jobs:
     name: ${{ matrix.job.os }}
     runs-on: ${{ matrix.job.os }}
     steps:
-      - name: setup-dotnet 2.1.300
-        uses: actions/setup-dotnet@51f68377c181a79065c61bd492bd49be4575c439
+      - uses: actions/setup-dotnet@51f68377c181a79065c61bd492bd49be4575c439
         with:
-          dotnet-version: "2.1.300"
-      - name: setup-dotnet 2.1.811
-        uses: actions/setup-dotnet@51f68377c181a79065c61bd492bd49be4575c439
-        with:
-          dotnet-version: "2.1.811"
-      - name: setup-dotnet 3.1.100
-        uses: actions/setup-dotnet@51f68377c181a79065c61bd492bd49be4575c439
-        with:
-          dotnet-version: "3.1.100"
-      - name: setup-dotnet 3.1.404
-        uses: actions/setup-dotnet@51f68377c181a79065c61bd492bd49be4575c439
-        with:
-          dotnet-version: "3.1.404"
-      - name: setup-dotnet 5.0.100
-        uses: actions/setup-dotnet@51f68377c181a79065c61bd492bd49be4575c439
-        with:
-          dotnet-version: "5.0.100"
+          dotnet-versions: ["2.1.300", "2.1.811", "3.1.100", "3.1.404", "5.0.100"]
       - run: dotnet --info
       - uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675
       - env:

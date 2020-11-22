@@ -9,8 +9,10 @@ insert_final_newline                                                      = true
 max_line_length                                                           = 120
 trim_trailing_whitespace                                                  = true
 
+[*.cmd]
+max_line_length                                                           = 9999
+
 [*.cs]
-indent_size                                                               = 4
 csharp_indent_case_contents                                               = true
 csharp_indent_labels                                                      = flush_left
 csharp_indent_switch_labels                                               = true
@@ -80,10 +82,8 @@ dotnet_style_qualification_for_method                                     = true
 dotnet_style_qualification_for_property                                   = true:suggestion
 dotnet_style_readonly_field                                               = true:suggestion
 dotnet_style_require_accessibility_modifiers                              = for_non_interface_members:suggestion
+indent_size                                                               = 4
 
 [*.sh]
 end_of_line                                                               = lf
-max_line_length                                                           = 9999
-
-[*.cmd]
 max_line_length                                                           = 9999

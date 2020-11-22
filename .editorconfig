@@ -10,7 +10,7 @@ max_line_length                                                           = 120
 trim_trailing_whitespace                                                  = true
 
 [*.cs]
-indent_size = 4
+indent_size                                                               = 4
 csharp_indent_case_contents                                               = true
 csharp_indent_labels                                                      = flush_left
 csharp_indent_switch_labels                                               = true

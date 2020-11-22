@@ -307,7 +307,7 @@ async Task CleanAndPack(string path, string output, string verbosity, bool suppr
 
     var noLogo = suppressNoLogo ? "" : " --nologo";
 
-    await RunAsync("dotnet", $"build --no-restore{noLogo}", path, configureEnvironment: configureEnvironment);
+    await RunAsync("dotnet", $"build --no-restore{noLogo} --verbosity quiet", path, configureEnvironment: configureEnvironment);
     await RunAsync(
         "dotnet",
         $"pack --no-build --output {output}{noLogo}",

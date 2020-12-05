@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <PackageReference Include="Bullseye" Version="3.5.0" />
-    <PackageReference Include="SimpleExec" Version="6.3.0" />
+    <PackageReference Include="SimpleExec" Version="6.4.0-rc.1" />
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20427.1" />
     <PackageReference Include="xunit.assert" Version="2.4.1" />
   </ItemGroup>

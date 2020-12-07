@@ -14,28 +14,20 @@ jobs:
         job:
           - os: macos-10.15
             build: ./build.sh
-            push: false
           - os: ubuntu-16.04
             build: ./build.sh
-            push: false
           - os: ubuntu-18.04
             build: ./build.sh
             push: true
           - os: windows-2016
             build: ./build.cmd
-            push: false
           - os: windows-2019
             build: ./build.cmd
-            push: false
         package-tests:
           - sdk: 2.1.300
-            push: false
           - sdk: 2.1.811
-            push: false
           - sdk: 3.1.100
-            push: false
           - sdk: 3.1.404
-            push: false
           - sdk: 5.0.100
             push: true
     name: ${{ matrix.job.os }}-${{ matrix.package-tests.sdk }}

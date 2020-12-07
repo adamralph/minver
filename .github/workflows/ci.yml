@@ -27,43 +27,37 @@ jobs:
           - os: windows-2019
             build: ./build.cmd
             push: false
-    name: ${{ matrix.job.os }}
+        package-tests:
+          - sdk: 2.1.300
+            push: false
+          - sdk: 2.1.811
+            push: false
+          - sdk: 3.1.100
+            push: false
+          - sdk: 3.1.404
+            push: false
+          - sdk: 5.0.100
+            push: true
+    name: ${{ matrix.job.os }}-${{ matrix.package-tests.sdk }}
     runs-on: ${{ matrix.job.os }}
     steps:
-      - name: setup-dotnet 2.1.300
+      - name: setup-dotnet package-tests-sdk
+        if: matrix.package-tests.sdk != '5.0.100'
         uses: actions/setup-dotnet@51f68377c181a79065c61bd492bd49be4575c439
         with:
-          dotnet-version: "2.1.300"
-      - name: setup-dotnet 2.1.811
-        uses: actions/setup-dotnet@51f68377c181a79065c61bd492bd49be4575c439
-        with:
-          dotnet-version: "2.1.811"
-      - name: setup-dotnet 3.1.100
-        uses: actions/setup-dotnet@51f68377c181a79065c61bd492bd49be4575c439
-        with:
-          dotnet-version: "3.1.100"
-      - name: setup-dotnet 3.1.404
-        uses: actions/setup-dotnet@51f68377c181a79065c61bd492bd49be4575c439
-        with:
-          dotnet-version: "3.1.404"
-      - name: setup-dotnet 5.0.100
-        uses: actions/setup-dotnet@51f68377c181a79065c61bd492bd49be4575c439
+          dotnet-version: "${{ matrix.package-tests.sdk }}"
+      - uses: actions/setup-dotnet@51f68377c181a79065c61bd492bd49be4575c439
         with:
           dotnet-version: "5.0.100"
       - run: dotnet --info
       - uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675
       - env:
           VERSION: ${{ secrets.VERSION }}
-        run: ${{ matrix.job.build }} test-api pack
-      - run: ${{ matrix.job.build }} test-package --package-tests-sdk 2.1.300 --skip-pack-dependency --package-tests-suppress-nologo
-      - run: ${{ matrix.job.build }} test-package --package-tests-sdk 2.1.811 --skip-pack-dependency --package-tests-suppress-nologo
-      - run: ${{ matrix.job.build }} test-package --package-tests-sdk 3.1.100 --skip-pack-dependency
-      - run: ${{ matrix.job.build }} test-package --package-tests-sdk 3.1.404 --skip-pack-dependency
-      - run: ${{ matrix.job.build }} test-package --package-tests-sdk 5.0.100 --skip-pack-dependency
+        run: ${{ matrix.job.build }} --package-tests-sdk ${{ matrix.package-tests.sdk }}
       - name: push
         env:
           API_KEY: ${{ secrets.MYGET_ADAMRALPH_CI_API_KEY }}
-        if: matrix.job.push && env.API_KEY != ''
+        if: matrix.job.push && matrix.package-tests.push && env.API_KEY != ''
         run: |
           dotnet nuget push MinVer/**/*.nupkg --source https://www.myget.org/F/adamralph-ci/api/v2/package --api-key ${{ env.API_KEY }}
           dotnet nuget push minver-cli/**/*.nupkg --source https://www.myget.org/F/adamralph-ci/api/v2/package --api-key ${{ env.API_KEY }}

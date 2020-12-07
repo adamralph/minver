@@ -23,8 +23,6 @@ var buildNumber = 1;
 var cmd = new RootCommand()
 {
     new Option<string>("--package-tests-sdk", "The SDK version to use for package tests"),
-    new Option<bool>("--package-tests-suppress-nologo", "Suppress --nologo when running package tests"),
-    new Option<bool>("--skip-pack-dependency", "Skip the \"pack\" target as a dependency"),
 };
 
 cmd.Add(new Argument("targets") { Arity = ArgumentArity.ZeroOrMore, Description = "The targets to run or list." });
@@ -33,18 +31,18 @@ foreach (var option in Options.Definitions)
     cmd.Add(new Option(new[] { option.ShortName, option.LongName }.Where(n => !string.IsNullOrWhiteSpace(n)).ToArray(), option.Description));
 }
 
-cmd.Handler = CommandHandler.Create<string, bool, bool>((packageTestsSdk, packageTestsSuppressNoLogo, skipPackDependency) =>
+cmd.Handler = CommandHandler.Create<string>((packageTestsSdk) =>
 {
     var cmdLine = cmd.Parse(args);
     var targets = cmdLine.CommandResult.Tokens.Select(token => token.Value);
     var options = new Options(Options.Definitions.Select(o => (o.LongName, cmdLine.ValueForOption<bool>(o.LongName))));
 
-    Run(targets, options, packageTestsSdk, packageTestsSuppressNoLogo, skipPackDependency);
+    Run(targets, options, packageTestsSdk);
 });
 
 return cmd.Invoke(args);
 
-void Run(IEnumerable<string> targets, Options options, string packageTestsSdk, bool packageTestsSuppressNoLogo, bool skipPackDependency)
+void Run(IEnumerable<string> targets, Options options, string packageTestsSdk)
 {
     Target("build", () => RunAsync("dotnet", "build --configuration Release --nologo --verbosity quiet"));
 
@@ -68,7 +66,7 @@ void Run(IEnumerable<string> targets, Options options, string packageTestsSdk, b
 
     Target(
         "create-test-project",
-        skipPackDependency ? default : DependsOn("pack"),
+        DependsOn("pack"),
         async () =>
         {
             testProject = GetScenarioDirectory("package");
@@ -104,7 +102,7 @@ $@"{{
             var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-no-repo");
 
             // act
-            await CleanAndPack(testProject, output, "diagnostic", packageTestsSuppressNoLogo);
+            await CleanAndPack(testProject, output, "diagnostic", packageTestsSdk);
 
             // assert
             AssertVersion(new Version(0, 0, 0, new[] { "alpha", "0" }), output);
@@ -121,7 +119,7 @@ $@"{{
             var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-no-commits");
 
             // act
-            await CleanAndPack(testProject, output, "diagnostic", packageTestsSuppressNoLogo);
+            await CleanAndPack(testProject, output, "diagnostic", packageTestsSdk);
 
             // assert
             AssertVersion(new Version(0, 0, 0, new[] { "alpha", "0" }), output);
@@ -139,7 +137,7 @@ $@"{{
             var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-commit");
 
             // act
-            await CleanAndPack(testProject, output, "diagnostic", packageTestsSuppressNoLogo);
+            await CleanAndPack(testProject, output, "diagnostic", packageTestsSdk);
 
             // assert
             AssertVersion(new Version(0, 0, 0, new[] { "alpha", "0" }), output);
@@ -156,7 +154,7 @@ $@"{{
             var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-non-version-tag");
 
             // act
-            await CleanAndPack(testProject, output, "diagnostic", packageTestsSuppressNoLogo);
+            await CleanAndPack(testProject, output, "diagnostic", packageTestsSdk);
 
             // assert
             AssertVersion(new Version(0, 0, 0, new[] { "alpha", "0" }), output);
@@ -173,7 +171,7 @@ $@"{{
             var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-version-tag");
 
             // act
-            await CleanAndPack(testProject, output, "normal", packageTestsSuppressNoLogo, env => env.Add("MinVerTagPrefix", "v."));
+            await CleanAndPack(testProject, output, "normal", packageTestsSdk, env => env.Add("MinVerTagPrefix", "v."));
 
             // assert
             AssertVersion(new Version(1, 2, 3, default, default, "foo"), output);
@@ -191,7 +189,7 @@ $@"{{
             var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-commit-after-tag");
 
             // act
-            await CleanAndPack(testProject, output, "detailed", packageTestsSuppressNoLogo);
+            await CleanAndPack(testProject, output, "detailed", packageTestsSdk);
 
             // assert
             AssertVersion(new Version(1, 2, 4, new[] { "alpha", "0" }, 1), output);
@@ -206,7 +204,7 @@ $@"{{
             var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-non-default-auto-increment");
 
             // act
-            await CleanAndPack(testProject, output, "diagnostic", packageTestsSuppressNoLogo, env => env.Add("MinVerAutoIncrement", "minor"));
+            await CleanAndPack(testProject, output, "diagnostic", packageTestsSdk, env => env.Add("MinVerAutoIncrement", "minor"));
 
             // assert
             AssertVersion(new Version(1, 3, 0, new[] { "alpha", "0" }, 1), output);
@@ -223,7 +221,7 @@ $@"{{
             var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-annotated-tag");
 
             // act
-            await CleanAndPack(testProject, output, "diagnostic", packageTestsSuppressNoLogo);
+            await CleanAndPack(testProject, output, "diagnostic", packageTestsSdk);
 
             // assert
             AssertVersion(new Version(1, 4, 0), output);
@@ -241,7 +239,7 @@ $@"{{
             var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-minimum-major-minor-on-tag");
 
             // act
-            await CleanAndPack(testProject, output, "diagnostic", packageTestsSuppressNoLogo, env => env.Add("MinVerMinimumMajorMinor", "2.0"));
+            await CleanAndPack(testProject, output, "diagnostic", packageTestsSdk, env => env.Add("MinVerMinimumMajorMinor", "2.0"));
 
             // assert
             AssertVersion(new Version(2, 0, 0, new[] { "alpha", "0" }), output);
@@ -258,7 +256,7 @@ $@"{{
             var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-minimum-major-minor-after-tag");
 
             // act
-            await CleanAndPack(testProject, output, "diagnostic", packageTestsSuppressNoLogo, env => env.Add("MinVerMinimumMajorMinor", "2.0"));
+            await CleanAndPack(testProject, output, "diagnostic", packageTestsSdk, env => env.Add("MinVerMinimumMajorMinor", "2.0"));
 
             // assert
             AssertVersion(new Version(2, 0, 0, new[] { "alpha", "0" }, 1), output);
@@ -273,7 +271,7 @@ $@"{{
             var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-default-pre-release-phase");
 
             // act
-            await CleanAndPack(testProject, output, "diagnostic", packageTestsSuppressNoLogo, env => env.Add("MinVerDefaultPreReleasePhase", "preview"));
+            await CleanAndPack(testProject, output, "diagnostic", packageTestsSdk, env => env.Add("MinVerDefaultPreReleasePhase", "preview"));
 
             // assert
             AssertVersion(new Version(1, 5, 1, new[] { "preview", "0" }, 1), output);
@@ -288,7 +286,7 @@ $@"{{
             var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-version-override");
 
             // act
-            await CleanAndPack(testProject, output, "diagnostic", packageTestsSuppressNoLogo, env => env.Add("MinVerVersionOverride", "3.2.1-rc.4+build.5"));
+            await CleanAndPack(testProject, output, "diagnostic", packageTestsSdk, env => env.Add("MinVerVersionOverride", "3.2.1-rc.4+build.5"));
 
             // assert
             AssertVersion(new Version(3, 2, 1, new[] { "rc", "4" }, default, "build.5"), output);
@@ -301,11 +299,11 @@ $@"{{
     RunTargetsAndExit(targets, options);
 }
 
-async Task CleanAndPack(string path, string output, string verbosity, bool suppressNoLogo, Action<IDictionary<string, string>> configureEnvironment = null)
+async Task CleanAndPack(string path, string output, string verbosity, string packageTestsSdk, Action<IDictionary<string, string>> configureEnvironment = null)
 {
     EnsureEmptyDirectory(output);
 
-    var noLogo = suppressNoLogo ? "" : " --nologo";
+    var noLogo = packageTestsSdk.StartsWith("2.") ? "" : " --nologo";
 
     await RunAsync("dotnet", $"build --no-restore{noLogo}", path, configureEnvironment: configureEnvironment);
     await RunAsync(

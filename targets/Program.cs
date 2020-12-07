@@ -22,7 +22,7 @@ var buildNumber = 1;
 
 var cmd = new RootCommand()
 {
-    new Option<string>("--package-tests-sdk", "The SDK version to use for package tests"),
+    new Option<string>(new[] { "-k", "--package-tests-sdk" }, "The SDK version to use for package tests"),
 };
 
 cmd.Add(new Argument("targets") { Arity = ArgumentArity.ZeroOrMore, Description = "The targets to run or list." });

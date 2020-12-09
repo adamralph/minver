@@ -30,7 +30,15 @@ namespace MinVer
 
                 app.OnExecute(() =>
                 {
-                    if (!TryParse(workDirOption.Value(), minMajorMinorOption.Value(), verbosityOption.Value(), autoIncrementOption.Value(), out var workDir, out var minMajorMinor, out var verbosity, out var autoIncrement))
+                    if (!TryParse(
+                        workDirOption.Value(),
+                        autoIncrementOption.Value(),
+                        minMajorMinorOption.Value(),
+                        verbosityOption.Value(),
+                        out var workDir,
+                        out var autoIncrement,
+                        out var minMajorMinor,
+                        out var verbosity))
                     {
                         return 2;
                     }
@@ -71,16 +79,33 @@ namespace MinVer
             }
         }
 
-        private static bool TryParse(string workDirOption, string minMajorMinorOption, string verbosityOption, string autoIncrementOption, out string workDir, out MajorMinor minMajorMinor, out Verbosity verbosity, out VersionPart autoIncrement)
+        private static bool TryParse(
+            string workDirOption,
+            string autoIncrementOption,
+            string minMajorMinorOption,
+            string verbosityOption,
+            out string workDir,
+            out VersionPart autoIncrement,
+            out MajorMinor minMajorMinor,
+            out Verbosity verbosity)
         {
+            // TODO: make this an optional argument instead of an option
             workDir = ".";
+
+            // options
+            autoIncrement = default;
             minMajorMinor = null;
             verbosity = default;
-            autoIncrement = default;
 
             if (!string.IsNullOrEmpty(workDirOption) && !Directory.Exists(workDir = workDirOption))
             {
                 Logger.ErrorWorkDirDoesNotExist(workDirOption);
+                return false;
+            }
+
+            if (!string.IsNullOrEmpty(autoIncrementOption) && !Enum.TryParse(autoIncrementOption, true, out autoIncrement))
+            {
+                Logger.ErrorInvalidAutoIncrement(autoIncrementOption);
                 return false;
             }
 
@@ -93,12 +118,6 @@ namespace MinVer
             if (!string.IsNullOrEmpty(verbosityOption) && !VerbosityMap.TryMap(verbosityOption, out verbosity))
             {
                 Logger.ErrorInvalidVerbosity(verbosityOption);
-                return false;
-            }
-
-            if (!string.IsNullOrEmpty(autoIncrementOption) && !Enum.TryParse(autoIncrementOption, true, out autoIncrement))
-            {
-                Logger.ErrorInvalidAutoIncrement(autoIncrementOption);
                 return false;
             }
 

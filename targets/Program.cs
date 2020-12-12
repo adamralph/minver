@@ -303,7 +303,7 @@ async Task CleanAndPack(string path, string output, string verbosity, string pac
 {
     EnsureEmptyDirectory(output);
 
-    var noLogo = packageTestsSdk.StartsWith("2.") ? "" : " --nologo";
+    var noLogo = (packageTestsSdk?.StartsWith("2.") ?? false) ? "" : " --nologo";
 
     await RunAsync("dotnet", $"build --no-restore{noLogo}", path, configureEnvironment: configureEnvironment);
     await RunAsync(

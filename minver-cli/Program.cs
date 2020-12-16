@@ -89,7 +89,7 @@ namespace MinVer
             out MajorMinor minMajorMinor,
             out Verbosity verbosity)
         {
-            // TODO: make this an optional argument instead of an option
+            // optional argument — https://github.com/adamralph/minver/issues/436
             workDir = ".";
 
             // options

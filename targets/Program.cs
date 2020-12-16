@@ -171,7 +171,7 @@ $@"{{
             var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-version-tag");
 
             // act
-            await CleanAndPack(testProject, output, "normal", packageTestsSdk, env => env.Add("MinVerTagPrefix", "v."));
+            await CleanAndPack(testProject, output, "normal", packageTestsSdk, env => env.Add(AltCase("MinVerTagPrefix"), "v."));
 
             // assert
             AssertVersion(new Version(1, 2, 3, default, default, "foo"), output);
@@ -256,7 +256,7 @@ $@"{{
             var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-minimum-major-minor-after-tag");
 
             // act
-            await CleanAndPack(testProject, output, "diagnostic", packageTestsSdk, env => env.Add("MinVerMinimumMajorMinor", "2.0"));
+            await CleanAndPack(testProject, output, "diagnostic", packageTestsSdk, env => env.Add(AltCase("MinVerMinimumMajorMinor"), "2.0"));
 
             // assert
             AssertVersion(new Version(2, 0, 0, new[] { "alpha", "0" }, 1), output);
@@ -286,7 +286,7 @@ $@"{{
             var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-version-override");
 
             // act
-            await CleanAndPack(testProject, output, "diagnostic", packageTestsSdk, env => env.Add("MinVerVersionOverride", "3.2.1-rc.4+build.5"));
+            await CleanAndPack(testProject, output, "diagnostic", packageTestsSdk, env => env.Add(AltCase("MinVerVersionOverride"), "3.2.1-rc.4+build.5"));
 
             // assert
             AssertVersion(new Version(3, 2, 1, new[] { "rc", "4" }, default, "build.5"), output);
@@ -313,8 +313,8 @@ async Task CleanAndPack(string path, string output, string verbosity, string pac
         configureEnvironment: env =>
         {
             configureEnvironment?.Invoke(env);
-            env.Add("MinVerBuildMetadata", $"build.{buildNumber++}");
-            env.Add("MinVerVerbosity", verbosity ?? "");
+            env.Add(AltCase("MinVerBuildMetadata"), $"build.{buildNumber++}");
+            env.Add(AltCase("MinVerVerbosity"), verbosity ?? "");
             env.Add("NoPackageAnalysis", "true");
         });
 }
@@ -350,6 +350,8 @@ static void AssertVersion(Version expected, string path)
 
     Assert.Equal(expected.ToString(), fileVersion.ProductVersion);
 }
+
+static string AltCase(string value) => new string(value.Select((c, i) => i % 2 == 0 ? c.ToString().ToLowerInvariant()[0] : c.ToString().ToUpperInvariant()[0]).ToArray());
 
 public record Version
 {

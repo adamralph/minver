@@ -292,7 +292,22 @@ $@"{{
             AssertVersion(new Version(3, 2, 1, new[] { "rc", "4" }, default, "build.5"), output);
         });
 
-    Target("test-package", DependsOn("test-package-version-override"));
+    Target(
+        "test-package-skip",
+        DependsOn("test-package-version-override"),
+        async () =>
+        {
+            // arrange
+            var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-skip");
+
+            // act
+            await CleanAndPack(testProject, output, "diagnostic", packageTestsSdk, env => env.Add(AltCase("MinVerSkip"), "true"));
+
+            // assert
+            AssertVersion(new Version(1, 0, 0), output);
+        });
+
+    Target("test-package", DependsOn("test-package-skip"));
 
     Target("default", DependsOn("test-api", "test-package"));
 

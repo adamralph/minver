@@ -73,20 +73,20 @@ namespace MinVer
             return true;
         }
 
-        public VersionPart AutoIncrement { get; set; }
+        public VersionPart AutoIncrement { get; private set; }
 
-        public string BuildMeta { get; set; }
+        public string BuildMeta { get; private set; }
 
-        public string DefaultPreReleasePhase { get; set; }
+        public string DefaultPreReleasePhase { get; private set; }
 
-        public MajorMinor MinMajorMinor { get; set; }
+        public MajorMinor MinMajorMinor { get; private set; }
 
-        public string TagPrefix { get; set; }
+        public string TagPrefix { get; private set; }
 
-        public Verbosity Verbosity { get; set; }
+        public Verbosity Verbosity { get; private set; }
 
 #if MINVER
-        public Lib.Version VersionOverride { get; set; }
+        public Lib.Version VersionOverride { get; private set; }
 #endif
     }
 }

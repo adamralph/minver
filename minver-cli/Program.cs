@@ -30,20 +30,31 @@ namespace MinVer
 
                 app.OnExecute(() =>
                 {
-                    if (!TryParse(
-                        workDirOption.Value(),
+                    // optional argument â€” https://github.com/adamralph/minver/issues/436
+                    var workDir = ".";
+
+                    if (!string.IsNullOrEmpty(workDirOption.Value()) && !Directory.Exists(workDir = workDirOption.Value()))
+                    {
+                        Logger.ErrorWorkDirDoesNotExist(workDirOption.Value());
+                        return 2;
+                    }
+
+                    if (!Options.TryParse(
                         autoIncrementOption.Value(),
+                        buildMetaOption.Value(),
+                        defaultPreReleasePhaseOption.Value(),
                         minMajorMinorOption.Value(),
+                        tagPrefixOption.Value(),
                         verbosityOption.Value(),
-                        out var workDir,
-                        out var autoIncrement,
-                        out var minMajorMinor,
-                        out var verbosity))
+#if MINVER
+                        versionOverrideOption.Value(),
+#endif
+                        out var options))
                     {
                         return 2;
                     }
 
-                    var log = new Logger(verbosity);
+                    var log = new Logger(options.Verbosity);
 
                     if (log.IsDebugEnabled)
                     {
@@ -51,24 +62,17 @@ namespace MinVer
                     }
 
 #if MINVER
-                    Lib.Version version;
-                    if (!string.IsNullOrEmpty(versionOverrideOption.Value()))
+                    if (options.VersionOverride != null)
                     {
-                        if (!Lib.Version.TryParse(versionOverrideOption.Value(), out version))
-                        {
-                            Logger.ErrorInvalidVersionOverride(versionOverrideOption.Value());
-                            return 2;
-                        }
+                        log.Info($"Using version override {options.VersionOverride}.");
 
-                        log.Info($"Using version override {version}.");
+                        Console.Out.WriteLine(options.VersionOverride);
+
+                        return 0;
                     }
-                    else
-                    {
-                        version = Versioner.GetVersion(workDir, tagPrefixOption.Value(), minMajorMinor, buildMetaOption.Value(), autoIncrement, defaultPreReleasePhaseOption.Value(), log);
-                    }
-#else
-                    var version = Versioner.GetVersion(workDir, tagPrefixOption.Value(), minMajorMinor, buildMetaOption.Value(), autoIncrement, defaultPreReleasePhaseOption.Value(), log);
 #endif
+
+                    var version = Versioner.GetVersion(workDir, options.TagPrefix, options.MinMajorMinor, options.BuildMeta, options.AutoIncrement, options.DefaultPreReleasePhase, log);
 
                     Console.Out.WriteLine(version);
 
@@ -77,51 +81,6 @@ namespace MinVer
 
                 return app.Execute(args);
             }
-        }
-
-        private static bool TryParse(
-            string workDirOption,
-            string autoIncrementOption,
-            string minMajorMinorOption,
-            string verbosityOption,
-            out string workDir,
-            out VersionPart autoIncrement,
-            out MajorMinor minMajorMinor,
-            out Verbosity verbosity)
-        {
-            // optional argument — https://github.com/adamralph/minver/issues/436
-            workDir = ".";
-
-            // options
-            autoIncrement = default;
-            minMajorMinor = null;
-            verbosity = default;
-
-            if (!string.IsNullOrEmpty(workDirOption) && !Directory.Exists(workDir = workDirOption))
-            {
-                Logger.ErrorWorkDirDoesNotExist(workDirOption);
-                return false;
-            }
-
-            if (!string.IsNullOrEmpty(autoIncrementOption) && !Enum.TryParse(autoIncrementOption, true, out autoIncrement))
-            {
-                Logger.ErrorInvalidAutoIncrement(autoIncrementOption);
-                return false;
-            }
-
-            if (!string.IsNullOrEmpty(minMajorMinorOption) && !MajorMinor.TryParse(minMajorMinorOption, out minMajorMinor))
-            {
-                Logger.ErrorInvalidMinMajorMinor(minMajorMinorOption);
-                return false;
-            }
-
-            if (!string.IsNullOrEmpty(verbosityOption) && !VerbosityMap.TryMap(verbosityOption, out verbosity))
-            {
-                Logger.ErrorInvalidVerbosity(verbosityOption);
-                return false;
-            }
-
-            return true;
         }
     }
 }

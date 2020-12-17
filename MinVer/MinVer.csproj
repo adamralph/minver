@@ -20,6 +20,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\minver-cli\Options.cs" Link="Options.cs" />
     <Compile Include="..\minver-cli\Program.cs" />
   </ItemGroup>
 

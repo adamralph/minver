@@ -55,7 +55,7 @@ namespace MinVer
             Error(1003, $"Invalid minimum MAJOR.MINOR '{minMajorMinor}'. Valid values are {MajorMinor.ValidValues}");
 
         public static void ErrorInvalidVerbosity(string verbosity) =>
-            Error(1004, $"Invalid verbosity '{verbosity}'. The value must be {VerbosityMap.ValidValue}.");
+            Error(1004, $"Invalid verbosity '{verbosity}'. Valid values are {VerbosityMap.ValidValues}.");
 
 #if MINVER
         public static void ErrorInvalidVersionOverride(string versionOverride) =>

@@ -55,7 +55,7 @@ namespace MinVer
             Error($"Invalid minimum MAJOR.MINOR '{minMajorMinor}'. Valid values are {MajorMinor.ValidValues}");
 
         public static void ErrorInvalidVerbosity(string verbosity) =>
-            Error($"Invalid verbosity '{verbosity}'. The value must be {VerbosityMap.ValidValue}.");
+            Error($"Invalid verbosity '{verbosity}'. Valid values are {VerbosityMap.ValidValues}.");
 
         private static void Error(string message) => Message($"error : {message}");
 

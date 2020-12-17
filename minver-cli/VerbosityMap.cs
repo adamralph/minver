@@ -23,7 +23,7 @@ namespace MinVer
         }
 
         // spell-checker:disable
-        public static string ValidValue => "e[rror], w[arn], i[nfo] (default), d[ebug], or t[race] (case insensitive)";
+        public static string ValidValues => "e[rror], w[arn], i[nfo] (default), d[ebug], or t[race] (case insensitive)";
 
         // spell-checker:enable
         public static bool TryMap(string value, out Verbosity verbosity) => map.TryGetValue(value, out verbosity);

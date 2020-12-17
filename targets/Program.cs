@@ -204,7 +204,7 @@ $@"{{
             var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-non-default-auto-increment");
 
             // act
-            await CleanAndPack(testProject, output, "diagnostic", packageTestsSdk, env => env.Add("MinVerAutoIncrement", "minor"));
+            await CleanAndPack(testProject, output, "diagnostic", packageTestsSdk, env => env.Add(AltCase("MinVerAutoIncrement"), "minor"));
 
             // assert
             AssertVersion(new Version(1, 3, 0, new[] { "alpha", "0" }, 1), output);
@@ -239,7 +239,7 @@ $@"{{
             var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-minimum-major-minor-on-tag");
 
             // act
-            await CleanAndPack(testProject, output, "diagnostic", packageTestsSdk, env => env.Add("MinVerMinimumMajorMinor", "2.0"));
+            await CleanAndPack(testProject, output, "diagnostic", packageTestsSdk, env => env.Add(AltCase("MinVerMinimumMajorMinor"), "2.0"));
 
             // assert
             AssertVersion(new Version(2, 0, 0, new[] { "alpha", "0" }), output);
@@ -271,7 +271,7 @@ $@"{{
             var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-default-pre-release-phase");
 
             // act
-            await CleanAndPack(testProject, output, "diagnostic", packageTestsSdk, env => env.Add("MinVerDefaultPreReleasePhase", "preview"));
+            await CleanAndPack(testProject, output, "diagnostic", packageTestsSdk, env => env.Add(AltCase("MinVerDefaultPreReleasePhase"), "preview"));
 
             // assert
             AssertVersion(new Version(1, 5, 1, new[] { "preview", "0" }, 1), output);

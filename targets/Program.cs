@@ -106,6 +106,9 @@ $@"{{
 
             // assert
             AssertVersion(new Version(0, 0, 0, new[] { "alpha", "0" }), output);
+
+            // cli
+            Assert.Equal($"0.0.0-alpha.0+build.{buildNumber}", await RunCliAsync(testProject, "trace"));
         });
 
     Target(
@@ -123,6 +126,9 @@ $@"{{
 
             // assert
             AssertVersion(new Version(0, 0, 0, new[] { "alpha", "0" }), output);
+
+            // cli
+            Assert.Equal($"0.0.0-alpha.0+build.{buildNumber}", await RunCliAsync(testProject, "trace"));
         });
 
     Target(
@@ -141,6 +147,9 @@ $@"{{
 
             // assert
             AssertVersion(new Version(0, 0, 0, new[] { "alpha", "0" }), output);
+
+            // cli
+            Assert.Equal($"0.0.0-alpha.0+build.{buildNumber}", await RunCliAsync(testProject, "trace"));
         });
 
     Target(
@@ -158,6 +167,9 @@ $@"{{
 
             // assert
             AssertVersion(new Version(0, 0, 0, new[] { "alpha", "0" }), output);
+
+            // cli
+            Assert.Equal($"0.0.0-alpha.0+build.{buildNumber}", await RunCliAsync(testProject, "trace"));
         });
 
     Target(
@@ -175,6 +187,9 @@ $@"{{
 
             // assert
             AssertVersion(new Version(1, 2, 3, default, default, "foo"), output);
+
+            // cli
+            Assert.Equal($"1.2.3+foo.build.{buildNumber}", await RunCliAsync(testProject, "info", env => env.Add(AltCase("MinVerTagPrefix"), "v.")));
         });
 
     Target(
@@ -193,6 +208,9 @@ $@"{{
 
             // assert
             AssertVersion(new Version(1, 2, 4, new[] { "alpha", "0" }, 1), output);
+
+            // cli
+            Assert.Equal($"1.2.4-alpha.0.1+build.{buildNumber}", await RunCliAsync(testProject, "debug"));
         });
 
     Target(
@@ -208,6 +226,9 @@ $@"{{
 
             // assert
             AssertVersion(new Version(1, 3, 0, new[] { "alpha", "0" }, 1), output);
+
+            // cli
+            Assert.Equal($"1.3.0-alpha.0.1+build.{buildNumber}", await RunCliAsync(testProject, "trace", env => env.Add(AltCase("MinVerAutoIncrement"), "minor")));
         });
 
     Target(
@@ -225,6 +246,9 @@ $@"{{
 
             // assert
             AssertVersion(new Version(1, 4, 0), output);
+
+            // cli
+            Assert.Equal($"1.4.0+build.{buildNumber}", await RunCliAsync(testProject, "trace"));
         });
 
     Target(
@@ -243,6 +267,9 @@ $@"{{
 
             // assert
             AssertVersion(new Version(2, 0, 0, new[] { "alpha", "0" }), output);
+
+            // cli
+            Assert.Equal($"2.0.0-alpha.0+build.{buildNumber}", await RunCliAsync(testProject, "trace", env => env.Add(AltCase("MinVerMinimumMajorMinor"), "2.0")));
         });
 
     Target(
@@ -260,6 +287,9 @@ $@"{{
 
             // assert
             AssertVersion(new Version(2, 0, 0, new[] { "alpha", "0" }, 1), output);
+
+            // cli
+            Assert.Equal($"2.0.0-alpha.0.1+build.{buildNumber}", await RunCliAsync(testProject, "trace", env => env.Add(AltCase("MinVerMinimumMajorMinor"), "2.0")));
         });
 
     Target(
@@ -275,6 +305,9 @@ $@"{{
 
             // assert
             AssertVersion(new Version(1, 5, 1, new[] { "preview", "0" }, 1), output);
+
+            // cli
+            Assert.Equal($"1.5.1-preview.0.1+build.{buildNumber}", await RunCliAsync(testProject, "trace", env => env.Add(AltCase("MinVerDefaultPreReleasePhase"), "preview")));
         });
 
     Target(
@@ -290,6 +323,9 @@ $@"{{
 
             // assert
             AssertVersion(new Version(3, 2, 1, new[] { "rc", "4" }, default, "build.5"), output);
+
+            // cli
+            Assert.Equal("3.2.1-rc.4+build.5", await RunCliAsync(testProject, "trace", env => env.Add(AltCase("MinVerVersionOverride"), "3.2.1-rc.4+build.5")));
         });
 
     Target(
@@ -365,6 +401,17 @@ static void AssertVersion(Version expected, string path)
 
     Assert.Equal(expected.ToString(), fileVersion.ProductVersion);
 }
+
+async Task<string> RunCliAsync(string repo, string verbosity, Action<IDictionary<string, string>> configureEnvironment = null) =>
+    (await ReadAsync(
+        "dotnet",
+        $"exec ./minver-cli/bin/Release/netcoreapp2.1/minver-cli.dll --repo {repo}",
+        configureEnvironment: env =>
+        {
+            configureEnvironment?.Invoke(env);
+            env.Add(AltCase("MinVerBuildMetadata"), $"build.{buildNumber}");
+            env.Add(AltCase("MinVerVerbosity"), verbosity ?? "");
+        })).Trim();
 
 static string AltCase(string value) => new string(value.Select((c, i) => i % 2 == 0 ? c.ToString().ToLowerInvariant()[0] : c.ToString().ToUpperInvariant()[0]).ToArray());
 

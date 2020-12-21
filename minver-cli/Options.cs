@@ -1,10 +1,89 @@
 namespace MinVer
 {
     using System;
+#if MINVER_CLI
+    using System.Linq;
+#endif
     using MinVer.Lib;
 
     internal class Options
     {
+#if MINVER_CLI
+        public static bool TryParseEnvVars(out Options options)
+        {
+            options = new Options();
+
+            var autoIncrementEnvVar = GetEnvVar("MinVerAutoIncrement");
+            if (!string.IsNullOrEmpty(autoIncrementEnvVar))
+            {
+                if (!Enum.TryParse<VersionPart>(autoIncrementEnvVar, true, out var autoIncrement))
+                {
+                    Logger.ErrorInvalidEnvVar("MinVerAutoIncrement", autoIncrementEnvVar, VersionPartEx.ValidValues);
+                    return false;
+                }
+
+                options.AutoIncrement = autoIncrement;
+            }
+
+            options.BuildMeta = GetEnvVar("MinVerBuildMetadata");
+            options.DefaultPreReleasePhase = GetEnvVar("MinVerDefaultPreReleasePhase");
+
+            var minMajorMinorEnvVar = GetEnvVar("MinVerMinimumMajorMinor");
+            if (!string.IsNullOrEmpty(minMajorMinorEnvVar))
+            {
+                if (!MajorMinor.TryParse(minMajorMinorEnvVar, out var minMajorMinor))
+                {
+                    Logger.ErrorInvalidEnvVar("MinVerMinimumMajorMinor", minMajorMinorEnvVar, MajorMinor.ValidValues);
+                    return false;
+                }
+
+                options.MinMajorMinor = minMajorMinor;
+            }
+
+            options.TagPrefix = GetEnvVar("MinVerTagPrefix");
+
+            var verbosityEnvVar = GetEnvVar("MinVerVerbosity");
+            if (!string.IsNullOrEmpty(verbosityEnvVar))
+            {
+                if (!VerbosityMap.TryMap(verbosityEnvVar, out var verbosity))
+                {
+                    Logger.ErrorInvalidEnvVar("MinVerVerbosity", verbosityEnvVar, VerbosityMap.ValidValues);
+                    return false;
+                }
+
+                options.Verbosity = verbosity;
+            }
+
+            var versionOverrideEnvVar = GetEnvVar("MinVerVersionOverride");
+            if (!string.IsNullOrEmpty(versionOverrideEnvVar))
+            {
+                if (!Lib.Version.TryParse(versionOverrideEnvVar, out var versionOverride))
+                {
+                    Logger.ErrorInvalidEnvVar("MinVerVersionOverride", versionOverrideEnvVar, null);
+                    return false;
+                }
+
+                options.VersionOverride = versionOverride;
+            }
+
+            return true;
+        }
+
+        private static string GetEnvVar(string name)
+        {
+            var vars = Environment.GetEnvironmentVariables();
+
+            var key = vars.Keys
+                .Cast<string>()
+                .OrderBy(_ => _)
+                .FirstOrDefault(k => string.Equals(k, name, StringComparison.OrdinalIgnoreCase));
+
+            return key == null
+                ? null
+                : (string)vars[key];
+        }
+#endif
+
         public static bool TryParse(
             string autoIncrementOption,
             string buildMetaOption,
@@ -73,6 +152,18 @@ namespace MinVer
             return true;
         }
 
+        public Options Mask(Options other) =>
+            new Options
+            {
+                AutoIncrement = this.AutoIncrement == default ? other.AutoIncrement : this.AutoIncrement,
+                BuildMeta = this.BuildMeta ?? other.BuildMeta,
+                DefaultPreReleasePhase = this.DefaultPreReleasePhase ?? other.DefaultPreReleasePhase,
+                MinMajorMinor = this.MinMajorMinor ?? other.MinMajorMinor,
+                TagPrefix = this.TagPrefix ?? other.TagPrefix,
+                Verbosity = this.Verbosity == default ? other.Verbosity : this.Verbosity,
+                VersionOverride = this.VersionOverride ?? other.VersionOverride,
+            };
+
         public VersionPart AutoIncrement { get; private set; }
 
         public string BuildMeta { get; private set; }
@@ -85,8 +176,6 @@ namespace MinVer
 
         public Verbosity Verbosity { get; private set; }
 
-#if MINVER
         public Lib.Version VersionOverride { get; private set; }
-#endif
     }
 }

@@ -54,6 +54,15 @@ namespace MinVer
                         return 2;
                     }
 
+#if MINVER_CLI
+                    if (!Options.TryParseEnvVars(out var envOptions))
+                    {
+                        return 2;
+                    }
+
+                    options = options.Mask(envOptions);
+#endif
+
                     var log = new Logger(options.Verbosity);
 
                     if (log.IsDebugEnabled)
@@ -61,7 +70,6 @@ namespace MinVer
                         log.Debug($"MinVer {informationalVersion}.");
                     }
 
-#if MINVER
                     if (options.VersionOverride != null)
                     {
                         log.Info($"Using version override {options.VersionOverride}.");
@@ -70,7 +78,6 @@ namespace MinVer
 
                         return 0;
                     }
-#endif
 
                     var version = Versioner.GetVersion(workDir, options.TagPrefix, options.MinMajorMinor, options.BuildMeta, options.AutoIncrement, options.DefaultPreReleasePhase, log);
 

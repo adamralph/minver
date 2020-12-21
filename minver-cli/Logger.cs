@@ -45,6 +45,18 @@ namespace MinVer
             }
         }
 
+        public static void ErrorInvalidEnvVar(string name, string value, string validValueString)
+        {
+            if (validValueString == null)
+            {
+                Error($"Invalid environment variable '{name}' '{value}'.");
+            }
+            else
+            {
+                Error($"Invalid environment variable '{name}' '{value}'. Valid values are {validValueString}");
+            }
+        }
+
         public static void ErrorWorkDirDoesNotExist(string workDir) =>
             Error($"Working directory '{workDir}' does not exist.");
 

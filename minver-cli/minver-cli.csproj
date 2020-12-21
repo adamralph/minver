@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+    <DefineConstants>$(DefineConstants);MINVER_CLI</DefineConstants>
     <Description>A minimalist command line tool for versioning any Git repository using tags.</Description>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <NoWarn>$(NoWarn);NU5105</NoWarn>

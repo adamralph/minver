@@ -405,7 +405,7 @@ static void AssertVersion(Version expected, string path)
 async Task<string> RunCliAsync(string repo, string verbosity, Action<IDictionary<string, string>> configureEnvironment = null) =>
     (await ReadAsync(
         "dotnet",
-        $"exec ./minver-cli/bin/Release/netcoreapp2.1/minver-cli.dll --repo {repo}",
+        $"exec ./minver-cli/bin/Release/netcoreapp2.1/minver-cli.dll {repo}",
         configureEnvironment: env =>
         {
             configureEnvironment?.Invoke(env);

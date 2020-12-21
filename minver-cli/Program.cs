@@ -17,11 +17,15 @@ namespace MinVer
             {
                 app.HelpOption();
 
+                var workDirArg = app.Argument("workingDirectory", "Working directory (optional)");
+
                 var autoIncrementOption = app.Option("-a|--auto-increment <VERSION_PART>", VersionPartEx.ValidValues, CommandOptionType.SingleValue);
                 var buildMetaOption = app.Option("-b|--build-metadata <BUILD_METADATA>", "", CommandOptionType.SingleValue);
                 var defaultPreReleasePhaseOption = app.Option("-d|--default-pre-release-phase <PHASE>", "alpha (default), preview, etc.", CommandOptionType.SingleValue);
                 var minMajorMinorOption = app.Option("-m|--minimum-major-minor <MINIMUM_MAJOR_MINOR>", MajorMinor.ValidValues, CommandOptionType.SingleValue);
-                var workDirOption = app.Option("-r|--repo <REPO>", "Working directory.", CommandOptionType.SingleValue);
+#if MINVER_CLI
+                var workDirOption = app.Option("-r|--repo <REPO>", "DEPRECATED — use the workingDirectory argument instead", CommandOptionType.SingleValue);
+#endif
                 var tagPrefixOption = app.Option("-t|--tag-prefix <TAG_PREFIX>", "", CommandOptionType.SingleValue);
                 var verbosityOption = app.Option("-v|--verbosity <VERBOSITY>", VerbosityMap.ValidValues, CommandOptionType.SingleValue);
 #if MINVER
@@ -33,11 +37,25 @@ namespace MinVer
                     // optional argument — https://github.com/adamralph/minver/issues/436
                     var workDir = ".";
 
-                    if (!string.IsNullOrEmpty(workDirOption.Value()) && !Directory.Exists(workDir = workDirOption.Value()))
+#if MINVER_CLI
+                    if (!string.IsNullOrEmpty(workDirOption.Value()))
+                    {
+                        Logger.Warn("-r|--repo <REPO> is DEPRECATED — use the workingDirectory argument instead");
+                    }
+#endif
+
+                    if (!string.IsNullOrEmpty(workDirArg.Value) && !Directory.Exists(workDir = workDirArg.Value))
+                    {
+                        Logger.ErrorWorkDirDoesNotExist(workDirArg.Value);
+                        return 2;
+                    }
+#if MINVER_CLI
+                    else if (!string.IsNullOrEmpty(workDirOption.Value()) && !Directory.Exists(workDir = workDirOption.Value()))
                     {
                         Logger.ErrorWorkDirDoesNotExist(workDirOption.Value());
                         return 2;
                     }
+#endif
 
                     if (!Options.TryParse(
                         autoIncrementOption.Value(),

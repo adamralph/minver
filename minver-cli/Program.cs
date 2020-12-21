@@ -44,10 +44,13 @@ namespace MinVer
                     }
 #endif
 
-                    if (!string.IsNullOrEmpty(workDirArg.Value) && !Directory.Exists(workDir = workDirArg.Value))
+                    if (!string.IsNullOrEmpty(workDirArg.Value))
                     {
-                        Logger.ErrorWorkDirDoesNotExist(workDirArg.Value);
-                        return 2;
+                        if (!Directory.Exists(workDir = workDirArg.Value))
+                        {
+                            Logger.ErrorWorkDirDoesNotExist(workDirArg.Value);
+                            return 2;
+                        }
                     }
 #if MINVER_CLI
                     else if (!string.IsNullOrEmpty(workDirOption.Value()) && !Directory.Exists(workDir = workDirOption.Value()))

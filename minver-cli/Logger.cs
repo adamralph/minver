@@ -45,6 +45,8 @@ namespace MinVer
             }
         }
 
+        public static void Warn(string message) => Message($"warning : {message}");
+
         public static void ErrorInvalidEnvVar(string name, string value, string validValueString)
         {
             if (validValueString == null)

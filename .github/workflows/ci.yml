@@ -44,7 +44,7 @@ jobs:
       - run: dotnet --info
       - uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675
       - env:
-          VERSION: ${{ secrets.VERSION }}
+          CI_VERSION: ${{ secrets.CI_VERSION }}
         run: ${{ matrix.job.build }} --package-tests-sdk ${{ matrix.package-tests.sdk }}
       - name: push
         env:

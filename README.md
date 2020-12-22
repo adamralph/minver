@@ -86,7 +86,7 @@ This behaviour can be [customised](#can-i-use-the-version-calculated-by-minver-f
 
 ## Options
 
-Options can be specified as either MSBuild properties or environment variables.
+Options may be specified as either MSBuild properties (for the [MinVer](https://www.nuget.org/packages/MinVer) package) or environment variables (for both the [MinVer](https://www.nuget.org/packages/MinVer) and [minver-cli](https://www.nuget.org/packages/minver-cli) packages).
 
 - [`MinVerAutoIncrement`](#can-i-auto-increment-the-minor-or-major-version-after-an-rtm-tag-instead-of-the-patch-version)
 - [`MinVerBuildMetadata`](#can-i-include-build-metadata-in-the-version)

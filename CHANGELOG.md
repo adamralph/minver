@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.4.0
+
+### Enhancements
+
+- [#395: clarify that MINVER1001 refers to a Git working directory](https://github.com/adamralph/minver/pull/395)
+- [#436: Accept working directory as an optional argument in minver-cli](https://github.com/adamralph/minver/issues/436)
+- [#447: align error message for invalid verbosity value](https://github.com/adamralph/minver/pull/447)
+- [#450: Use environment variables in minver-cli](https://github.com/adamralph/minver/issues/450)
+
 ## 2.3.1
 
 ### Fixed bugs

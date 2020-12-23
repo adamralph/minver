@@ -1,9 +1,9 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace MinVer.Lib
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
     internal static class Git
     {
         public static bool IsWorkingDirectory(string directory, ILogger log) => GitCommand.TryRun("status --short", directory, log, out _);

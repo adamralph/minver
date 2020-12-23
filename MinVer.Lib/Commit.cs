@@ -1,7 +1,7 @@
+using System.Collections.Generic;
+
 namespace MinVer.Lib
 {
-    using System.Collections.Generic;
-
     internal class Commit
     {
         public Commit(string sha) => this.Sha = sha;

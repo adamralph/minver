@@ -1,9 +1,9 @@
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+
 namespace MinVer.Lib
 {
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.Linq;
-
     internal class Repository
     {
         private readonly Commit head;

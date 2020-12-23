@@ -1,8 +1,8 @@
+using System;
+using System.Collections.Generic;
+
 namespace MinVer
 {
-    using System;
-    using System.Collections.Generic;
-
     internal static class VerbosityMap
     {
         private static readonly Dictionary<string, Verbosity> map = new Dictionary<string, Verbosity>(StringComparer.OrdinalIgnoreCase);

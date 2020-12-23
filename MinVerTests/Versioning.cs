@@ -84,7 +84,7 @@ git tag 1.1.0 -a -m '.'
                 });
 
             "When the version is determined for every commit"
-                .x(c =>
+                .x(() =>
                 {
                     var versionCounts = new Dictionary<string, int>();
                     foreach (var sha in GetCommitShas(path))

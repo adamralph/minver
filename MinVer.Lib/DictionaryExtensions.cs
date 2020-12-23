@@ -1,8 +1,8 @@
+using System;
+using System.Collections.Generic;
+
 namespace MinVer.Lib
 {
-    using System;
-    using System.Collections.Generic;
-
     internal static class DictionaryExtensions
     {
         public static TValue GetOrAdd<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, TKey key, Func<TValue> valueFactory)

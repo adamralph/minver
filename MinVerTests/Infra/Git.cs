@@ -1,11 +1,11 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using static MinVerTests.Infra.FileSystem;
+using static SimpleExec.Command;
+
 namespace MinVerTests.Infra
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using static MinVerTests.Infra.FileSystem;
-    using static SimpleExec.Command;
-
     public static class Git
     {
         public static void EnsureEmptyRepositoryAndCommit(string path)

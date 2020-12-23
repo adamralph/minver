@@ -1,10 +1,10 @@
+using System;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Threading.Tasks;
+
 namespace MinVer.Lib
 {
-    using System;
-    using System.ComponentModel;
-    using System.Diagnostics;
-    using System.Threading.Tasks;
-
     internal static class GitCommand
     {
         public static bool TryRun(string args, string workingDirectory, ILogger log, out string output)

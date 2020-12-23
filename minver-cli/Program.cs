@@ -1,12 +1,12 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using McMaster.Extensions.CommandLineUtils;
+using MinVer.Lib;
+
 namespace MinVer
 {
-    using System;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
-    using McMaster.Extensions.CommandLineUtils;
-    using MinVer.Lib;
-
     internal static class Program
     {
         private static readonly string informationalVersion = typeof(Versioner).Assembly.GetCustomAttributes<AssemblyInformationalVersionAttribute>().Single().InformationalVersion;

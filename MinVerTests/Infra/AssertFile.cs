@@ -1,9 +1,9 @@
+using System;
+using System.IO;
+using System.Threading.Tasks;
+
 namespace MinVerTests.Infra
 {
-    using System;
-    using System.IO;
-    using System.Threading.Tasks;
-
     public static class AssertFile
     {
         public static async Task Contains(string expectedPath, string actual)

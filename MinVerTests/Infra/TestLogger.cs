@@ -1,8 +1,8 @@
+using System.Collections.Generic;
+using MinVer.Lib;
+
 namespace MinVerTests.Infra
 {
-    using System.Collections.Generic;
-    using MinVer.Lib;
-
     public class TestLogger : ILogger
     {
         private readonly List<string> debugMessages = new List<string>();

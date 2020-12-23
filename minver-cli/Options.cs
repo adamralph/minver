@@ -1,11 +1,11 @@
+using System;
+#if MINVER_CLI
+using System.Linq;
+#endif
+using MinVer.Lib;
+
 namespace MinVer
 {
-    using System;
-#if MINVER_CLI
-    using System.Linq;
-#endif
-    using MinVer.Lib;
-
     internal class Options
     {
 #if MINVER_CLI

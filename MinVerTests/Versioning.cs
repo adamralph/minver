@@ -1,17 +1,17 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using MinVer.Lib;
+using MinVerTests.Infra;
+using Xbehave;
+using Xunit;
+using static MinVerTests.Infra.FileSystem;
+using static MinVerTests.Infra.Git;
+using static SimpleExec.Command;
+using Version = MinVer.Lib.Version;
+
 namespace MinVerTests
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using MinVer.Lib;
-    using MinVerTests.Infra;
-    using Xbehave;
-    using Xunit;
-    using static MinVerTests.Infra.FileSystem;
-    using static MinVerTests.Infra.Git;
-    using static SimpleExec.Command;
-    using Version = MinVer.Lib.Version;
-
     public static class Versioning
     {
         private static readonly Dictionary<string, string> historicalCommands = new Dictionary<string, string>

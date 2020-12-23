@@ -1,8 +1,8 @@
+using System;
+using MinVer.Lib;
+
 namespace MinVer
 {
-    using System;
-    using MinVer.Lib;
-
     internal class Logger : ILogger
     {
         private readonly Verbosity verbosity;

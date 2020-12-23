@@ -37,12 +37,12 @@ cmd.Handler = CommandHandler.Create<string>((packageTestsSdk) =>
     var targets = cmdLine.CommandResult.Tokens.Select(token => token.Value);
     var options = new Options(Options.Definitions.Select(o => (o.LongName, cmdLine.ValueForOption<bool>(o.LongName))));
 
-    Run(targets, options, packageTestsSdk);
+    RunTargets(targets, options, packageTestsSdk);
 });
 
 return cmd.Invoke(args);
 
-void Run(IEnumerable<string> targets, Options options, string packageTestsSdk)
+void RunTargets(IEnumerable<string> targets, Options options, string packageTestsSdk)
 {
     Target("build", () => RunAsync("dotnet", "build --configuration Release --nologo --verbosity quiet"));
 

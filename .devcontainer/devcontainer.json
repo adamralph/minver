@@ -1,7 +1,7 @@
 {
   "name": "C# (.NET Core)",
   "build": {
-    "dockerfile": "Dockerfile",
+    "dockerfile": "Dockerfile"
   },
   "settings": {
     "terminal.integrated.shell.linux": "/bin/bash"
@@ -15,5 +15,5 @@
     "ms-dotnettools.csharp",
     "redhat.vscode-yaml",
     "streetsidesoftware.code-spell-checker"
-  ],
+  ]
 }

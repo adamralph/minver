@@ -80,10 +80,10 @@ void RunTargets(IEnumerable<string> targets, Options options, string packageTest
                 File.WriteAllText(
                     Path.Combine(testProject, "global.json"),
 $@"{{
-  ""sdk"": {{
-    ""version"": ""{packageTestsSdk.Trim()}"",
-    ""rollForward"": ""disable""
-  }}
+{"  "}""sdk"": {{
+{"    "}""version"": ""{packageTestsSdk.Trim()}"",
+{"    "}""rollForward"": ""disable""
+{"  "}}}
 }}
 ");
             }
@@ -415,6 +415,7 @@ async Task<string> RunCliAsync(string repo, string verbosity, Action<IDictionary
 
 static string AltCase(string value) => new string(value.Select((c, i) => i % 2 == 0 ? c.ToString().ToLowerInvariant()[0] : c.ToString().ToUpperInvariant()[0]).ToArray());
 
+#pragma warning disable format
 public record Version
 {
     public Version(int major, int minor, int patch, IEnumerable<string> preReleaseIdentifiers = null, int height = 0, string buildMetadata = null) =>
@@ -431,3 +432,4 @@ public record Version
     public override string ToString() =>
         $"{this.Major}.{this.Minor}.{this.Patch}{(this.PreReleaseIdentifiers.Count == 0 ? "" : $"-{string.Join(".", this.PreReleaseIdentifiers)}")}{(this.Height == 0 ? "" : $".{this.Height}")}{(string.IsNullOrEmpty(this.BuildMetadata) ? "" : $"+{this.BuildMetadata}")}";
 }
+#pragma warning restore format

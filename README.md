@@ -7,6 +7,7 @@ _[![minver-cli NuGet version](https://img.shields.io/nuget/v/minver-cli.svg?styl
 
 _[![Build status](https://github.com/adamralph/minver/workflows/.github/workflows/ci.yml/badge.svg)](https://github.com/adamralph/minver/actions)_
 _[![CodeQL analysis](https://github.com/adamralph/minver/workflows/.github/workflows/codeql-analysis.yml/badge.svg)](https://github.com/adamralph/minver/actions?query=workflow%3A.github%2Fworkflows%2Fcodeql-analysis.yml)_
+_[![Lint](https://github.com/adamralph/minver/workflows/.github/workflows/lint.yml/badge.svg)](https://github.com/adamralph/minver/actions?query=workflow%3A.github%2Fworkflows%2Flint.yml)_
 _[![Spell check](https://github.com/adamralph/minver/workflows/.github/workflows/spell-check.yml/badge.svg)](https://github.com/adamralph/minver/actions?query=workflow%3A.github%2Fworkflows%2Fspell-check.yml)_
 
 A minimalist [.NET package](https://www.nuget.org/packages/MinVer) for versioning .NET SDK-style projects using Git tags.

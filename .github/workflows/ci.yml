@@ -35,14 +35,14 @@ jobs:
     steps:
       - name: setup-dotnet package-tests-sdk
         if: matrix.package-tests.sdk != '5.0.100'
-        uses: actions/setup-dotnet@51f68377c181a79065c61bd492bd49be4575c439
+        uses: actions/setup-dotnet@v1.7.2
         with:
           dotnet-version: "${{ matrix.package-tests.sdk }}"
-      - uses: actions/setup-dotnet@51f68377c181a79065c61bd492bd49be4575c439
+      - uses: actions/setup-dotnet@v1.7.2
         with:
           dotnet-version: "5.0.100"
       - run: dotnet --info
-      - uses: actions/checkout@a81bbbf8298c0fa03ea29cdc473d45769f953675
+      - uses: actions/checkout@v2.3.4
       - env:
           CI_VERSION: ${{ secrets.CI_VERSION }}
         run: ${{ matrix.job.build }} --package-tests-sdk ${{ matrix.package-tests.sdk }}

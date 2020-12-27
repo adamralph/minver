@@ -1,5 +1,5 @@
 {
-  "name": "C# (.NET Core)",
+  "name": "C# (.NET)",
   "build": {
     "dockerfile": "Dockerfile"
   },
@@ -15,5 +15,6 @@
     "ms-dotnettools.csharp",
     "redhat.vscode-yaml",
     "streetsidesoftware.code-spell-checker"
-  ]
+  ],
+  "remoteUser": "vscode"
 }

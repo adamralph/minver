@@ -78,7 +78,6 @@ csharp_style_var_for_built_in_types                                       = true
 csharp_style_var_when_type_is_apparent                                    = true:suggestion
 csharp_using_directive_placement                                          = outside_namespace:suggestion
 dotnet_code_quality_unused_parameters                                     = all:suggestion
-dotnet_diagnostic.RS0026.severity                                         = none # RS0026: Do not add multiple public overloads with optional parameters
 dotnet_naming_rule.interface_should_be_begins_with_i.severity             = suggestion
 dotnet_naming_rule.interface_should_be_begins_with_i.style                = begins_with_i
 dotnet_naming_rule.interface_should_be_begins_with_i.symbols              = interface

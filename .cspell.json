@@ -41,6 +41,14 @@
       ]
     },
     {
+      "languageId": "nuspec",
+      "words": [
+        "deps",
+        "netcoreapp",
+        "runtimeconfig"
+      ]
+    },
+    {
       "languageId": "targets",
       "words": [
         "diag",
@@ -60,6 +68,10 @@
     {
       "filename": ".cspell.json",
       "enabled": false
+    },
+    {
+      "filename": "*.nuspec",
+      "languageId": "nuspec"
     },
     {
       "filename": "*.sh",

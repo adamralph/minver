@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <authors>MinVer</authors>
+    <description>Minimalist versioning for .NET SDK-style projects using Git tags.</description>
+    <developmentDependency>true</developmentDependency>
+    <icon>minver.png</icon>
+    <id>MinVer</id>
+    <license type="expression">Apache-2.0</license>
+    <projectUrl>https://github.com/adamralph/minver</projectUrl>
+    <releaseNotes>https://github.com/adamralph/minver/blob/master/CHANGELOG.md</releaseNotes>
+    <repository type="$RepositoryType$" url="$RepositoryUrl$" commit="$RepositoryCommit$" />
+    <version>$Version$</version>
+  </metadata>
+  <files>
+    <file src="build/MinVer.targets"  target="build" />
+    <file src="buildMultiTargeting/MinVer.targets"  target="buildMultiTargeting" />
+    <file src="$OutputPath$McMaster.Extensions.CommandLineUtils.dll" target="minver" />
+    <file src="$OutputPath$MinVer.deps.json" target="minver" />
+    <file src="$OutputPath$MinVer.dll" target="minver" />
+    <file src="$OutputPath$MinVer.Lib.dll" target="minver" />
+    <file src="$OutputPath$MinVer.Lib.pdb" target="minver" />
+    <file src="$OutputPath$MinVer.pdb" target="minver" />
+    <file src="$OutputPath$MinVer.runtimeconfig.json" target="minver" />
+    <file src="../assets/minver.png"  target="" />
+  </files>
+</package>

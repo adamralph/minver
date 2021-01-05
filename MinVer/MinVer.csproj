@@ -2,20 +2,15 @@
 
   <PropertyGroup>
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <DefineConstants>$(DefineConstants);MINVER</DefineConstants>
-    <Description>Minimalist versioning for .NET SDK-style projects using Git tags.</Description>
-    <DevelopmentDependency>true</DevelopmentDependency>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <NoWarn>$(NoWarn);NU5100;NU5105</NoWarn>
+    <NuspecFile>MinVer.nuspec</NuspecFile>
     <OutputType>Exe</OutputType>
-    <PackageIcon>minver.png</PackageIcon>
-    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/adamralph/minver</PackageProjectUrl>
-    <PackageReleaseNotes>https://github.com/adamralph/minver/blob/master/CHANGELOG.md</PackageReleaseNotes>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <RollForward>major</RollForward>
-    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 
@@ -34,13 +29,20 @@
     <ProjectReference Include="..\MinVer.Lib\MinVer.Lib.csproj" PrivateAssets="All" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="../assets/minver.png" Pack="true" PackagePath="/" />
-    <None Remove="build\**\*" />
-    <None Remove="buildMultiTargeting\**\*" />
-    <Content Include="build\**\*" PackagePath="build" />
-    <Content Include="buildMultiTargeting\**\*" PackagePath="buildMultiTargeting" />
-    <Content Include="$(OutputPath)\publish\**\*" PackagePath="minver" Visible="false" Link="hidden" />
-  </ItemGroup>
+  <Target Name="InitializeNuspecProperties" AfterTargets="Compile">
+
+    <ItemGroup>
+      <NuspecProperty Include="OutputPath=$(OutputPath)" />
+      <NuspecProperty Include="RepositoryCommit=$(SourceRevisionId)" />
+      <NuspecProperty Include="RepositoryType=$(RepositoryType)" />
+      <NuspecProperty Include="RepositoryUrl=$(PrivateRepositoryUrl)" />
+      <NuspecProperty Include="Version=$(Version)" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <NuspecProperties>@(NuspecProperty, ';')</NuspecProperties>
+    </PropertyGroup>
+
+  </Target>
 
 </Project>

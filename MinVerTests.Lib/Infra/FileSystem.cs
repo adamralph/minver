@@ -1,7 +1,7 @@
 using System.IO;
 using System.Threading;
 
-namespace MinVerTests.Infra
+namespace MinVerTests.Lib.Infra
 {
     // The spin waits are required. System.IO and the file system race. ¯\_(ツ)_/¯
     public static class FileSystem

@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\MinVerTests\Infra\FileSystem.cs" />
-    <Compile Include="..\MinVerTests\Infra\Git.cs" />
+    <Compile Include="..\MinVerTests.Lib\Infra\FileSystem.cs" />
+    <Compile Include="..\MinVerTests.Lib\Infra\Git.cs" />
   </ItemGroup>
 
   <ItemGroup>

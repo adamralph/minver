@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using static MinVerTests.Infra.FileSystem;
+using static MinVerTests.Lib.Infra.FileSystem;
 using static SimpleExec.Command;
 
-namespace MinVerTests.Infra
+namespace MinVerTests.Lib.Infra
 {
     public static class Git
     {

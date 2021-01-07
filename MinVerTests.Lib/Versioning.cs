@@ -2,15 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MinVer.Lib;
-using MinVerTests.Infra;
+using MinVerTests.Lib.Infra;
 using Xbehave;
 using Xunit;
-using static MinVerTests.Infra.FileSystem;
-using static MinVerTests.Infra.Git;
+using static MinVerTests.Lib.Infra.FileSystem;
+using static MinVerTests.Lib.Infra.Git;
 using static SimpleExec.Command;
 using Version = MinVer.Lib.Version;
 
-namespace MinVerTests
+namespace MinVerTests.Lib
 {
     public static class Versioning
     {

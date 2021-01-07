@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace MinVerTests.Infra
+namespace MinVerTests.Lib.Infra
 {
     public static class AssertFile
     {

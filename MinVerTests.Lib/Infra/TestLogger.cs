@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using MinVer.Lib;
 
-namespace MinVerTests.Infra
+namespace MinVerTests.Lib.Infra
 {
     public class TestLogger : ILogger
     {

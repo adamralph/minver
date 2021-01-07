@@ -12,8 +12,8 @@ using System.Threading.Tasks;
 using Bullseye;
 using Xunit;
 using static Bullseye.Targets;
-using static MinVerTests.Infra.FileSystem;
-using static MinVerTests.Infra.Git;
+using static MinVerTests.Lib.Infra.FileSystem;
+using static MinVerTests.Lib.Infra.Git;
 using static SimpleExec.Command;
 
 var testPackageBaseOutput = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -47,7 +47,7 @@ void RunTargets(IEnumerable<string> targets, Options options, string packageTest
     Target("build", () => RunAsync("dotnet", "build --configuration Release --nologo --verbosity quiet"));
 
     Target(
-        "test-api",
+        "test-lib",
         "test the MinVer.Lib library",
         DependsOn("build"),
         () => RunAsync("dotnet", "test --configuration Release --no-build --nologo"));
@@ -335,7 +335,7 @@ $@"{{
 
     Target("test-package", "test the MinVer package and the minver-cli console app", DependsOn("test-package-skip"));
 
-    Target("default", DependsOn("test-api", "test-package"));
+    Target("default", DependsOn("test-lib", "test-package"));
 
     RunTargetsAndExit(targets, options);
 }

@@ -51,22 +51,11 @@ void RunTargets(IEnumerable<string> targets, Options options, string packageTest
         DependsOn("build"),
         () => RunAsync("dotnet", "test --configuration Release --no-build --nologo"));
 
-    Target(
-        "publish",
-        DependsOn("build"),
-        () => RunAsync("dotnet", "publish ./MinVer/MinVer.csproj --configuration Release --no-build --nologo"));
-
-    Target(
-        "pack",
-        DependsOn("publish"),
-        ForEach("./MinVer/MinVer.csproj", "./minver-cli/minver-cli.csproj"),
-        project => RunAsync("dotnet", $"pack {project} --configuration Release --no-build --nologo"));
-
     string testProject = default;
 
     Target(
         "create-test-project",
-        DependsOn("pack"),
+        DependsOn("build"),
         async () =>
         {
             testProject = GetScenarioDirectory("package");

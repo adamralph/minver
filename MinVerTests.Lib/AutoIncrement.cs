@@ -1,9 +1,9 @@
+using System.Reflection;
 using MinVer.Lib;
-using MinVerTests.Lib.Infra;
+using MinVerTests.Infra;
 using Xbehave;
 using Xunit;
-using static MinVerTests.Lib.Infra.FileSystem;
-using static MinVerTests.Lib.Infra.Git;
+using static MinVerTests.Infra.Git;
 using Version = MinVer.Lib.Version;
 
 namespace MinVerTests.Lib
@@ -16,7 +16,7 @@ namespace MinVerTests.Lib
         [Example("1.2.3", VersionPart.Patch, "1.2.4-alpha.0.1")]
         public static void RtmVersionIncrement(string tag, VersionPart autoIncrement, string expectedVersion, string path, Version actualVersion)
         {
-            $"Given a git repository with a commit in '{path = GetScenarioDirectory($"rtm-auto-increment-{tag}")}'"
+            $"Given a git repository with a commit in {path = MethodBase.GetCurrentMethod().GetTestDirectory(autoIncrement)}"
                 .x(() => EnsureEmptyRepositoryAndCommit(path));
 
             $"And the commit is tagged '{tag}'"

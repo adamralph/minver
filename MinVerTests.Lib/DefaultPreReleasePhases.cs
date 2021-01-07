@@ -1,9 +1,9 @@
+using System.Reflection;
 using MinVer.Lib;
-using MinVerTests.Lib.Infra;
+using MinVerTests.Infra;
 using Xbehave;
 using Xunit;
-using static MinVerTests.Lib.Infra.FileSystem;
-using static MinVerTests.Lib.Infra.Git;
+using static MinVerTests.Infra.Git;
 using Version = MinVer.Lib.Version;
 
 namespace MinVerTests.Lib
@@ -16,7 +16,7 @@ namespace MinVerTests.Lib
         [Example("preview", "0.0.0-preview.0")]
         public static void DefaultPreReleasePhase(string phase, string expectedVersion, string path, Version actualVersion)
         {
-            $"Given a git repository with a commit in '{path = GetScenarioDirectory($"default-pre-release-phase-{phase}")}'"
+            $"Given a git repository with a commit in {path = MethodBase.GetCurrentMethod().GetTestDirectory(phase)}"
                 .x(() => EnsureEmptyRepositoryAndCommit(path));
 
             $"When the version is determined using the default pre-release phase '{phase}'"

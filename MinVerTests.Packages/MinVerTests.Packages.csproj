@@ -1,19 +1,20 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <RollForward>major</RollForward>
-    <TargetFrameworks>netcoreapp2.1;netcoreapp3.1;net5.0</TargetFrameworks>
+    <TargetFrameworks>net5.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CliWrap" Version="3.3.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
     <PackageReference Include="Xbehave" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MinVer.Lib\MinVer.Lib.csproj" />
     <ProjectReference Include="..\MinVerTests.Infra\MinVerTests.Infra.csproj" />
+    <ProjectReference Include="..\MinVer\MinVer.csproj" />
   </ItemGroup>
 
 </Project>

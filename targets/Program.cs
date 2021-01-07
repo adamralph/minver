@@ -48,6 +48,7 @@ void RunTargets(IEnumerable<string> targets, Options options, string packageTest
 
     Target(
         "test-api",
+        "test the MinVer.Lib library",
         DependsOn("build"),
         () => RunAsync("dotnet", "test --configuration Release --no-build --nologo"));
 
@@ -332,7 +333,7 @@ $@"{{
             AssertVersion(new Version(1, 0, 0), output);
         });
 
-    Target("test-package", DependsOn("test-package-skip"));
+    Target("test-package", "test the MinVer package and the minver-cli console app", DependsOn("test-package-skip"));
 
     Target("default", DependsOn("test-api", "test-package"));
 

@@ -48,9 +48,9 @@
       <MinVerMinor>$(MinVerVersion.Split(`.`)[1])</MinVerMinor>
       <MinVerPatch>$(MinVerVersion.Split(`.`)[2].Split(`-`)[0].Split(`+`)[0])</MinVerPatch>
       <MinVerPreRelease></MinVerPreRelease>
-      <MinVerPreRelease Condition="$(MinVerVersion.Split(`+`)[0].Contains(`-`))">$(MinVerVersion.Split(`+`)[0].Split(`-`)[1])</MinVerPreRelease>
+      <MinVerPreRelease Condition="$(MinVerVersion.Split(`+`)[0].Contains(`-`))">$(MinVerVersion.Split(`+`)[0].Split(`-`, 2)[1])</MinVerPreRelease>
       <MinVerBuildMetadata></MinVerBuildMetadata>
-      <MinVerBuildMetadata Condition="$(MinVerVersion.Contains(`+`))">$(MinVerVersion.Split(`+`)[1])</MinVerBuildMetadata>
+      <MinVerBuildMetadata Condition="$(MinVerVersion.Contains(`+`))">$(MinVerVersion.Split(`+`, 2)[1])</MinVerBuildMetadata>
       <AssemblyVersion>$(MinVerMajor).0.0.0</AssemblyVersion>
       <FileVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch).0</FileVersion>
       <PackageVersion>$(MinVerVersion)</PackageVersion>

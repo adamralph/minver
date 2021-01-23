@@ -20,7 +20,7 @@ namespace MinVerTests.Lib
                 .x(() => EnsureEmptyRepositoryAndCommit(path));
 
             $"When the version is determined using the default pre-release phase '{phase}'"
-                .x(() => actualVersion = Versioner.GetVersion(path, default, default, default, default, phase, new TestLogger()));
+                .x(() => actualVersion = Versioner.GetVersion(path, default, default, default, default, phase, default));
 
             $"Then the version is '{expectedVersion}'"
                 .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));

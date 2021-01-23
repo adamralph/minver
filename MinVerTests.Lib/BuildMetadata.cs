@@ -19,7 +19,7 @@ namespace MinVerTests.Lib
                 .x(() => EnsureEmptyRepository(path));
 
             $"When the version is determined using build metadata '{buildMetadata}'"
-                .x(() => actualVersion = Versioner.GetVersion(path, default, default, buildMetadata, default, default, new TestLogger()));
+                .x(() => actualVersion = Versioner.GetVersion(path, default, default, buildMetadata, default, default, default));
 
             $"Then the version is '{expectedVersion}'"
                 .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));
@@ -34,7 +34,7 @@ namespace MinVerTests.Lib
                 .x(() => EnsureEmptyRepositoryAndCommit(path));
 
             $"When the version is determined using build metadata '{buildMetadata}'"
-                .x(() => actualVersion = Versioner.GetVersion(path, default, default, buildMetadata, default, default, new TestLogger()));
+                .x(() => actualVersion = Versioner.GetVersion(path, default, default, buildMetadata, default, default, default));
 
             $"Then the version is '{expectedVersion}'"
                 .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));
@@ -56,7 +56,7 @@ namespace MinVerTests.Lib
                 .x(() => Tag(path, tag));
 
             $"When the version is determined using build metadata '{buildMetadata}'"
-                .x(() => actualVersion = Versioner.GetVersion(path, default, default, buildMetadata, default, default, new TestLogger()));
+                .x(() => actualVersion = Versioner.GetVersion(path, default, default, buildMetadata, default, default, default));
 
             $"Then the version is '{expectedVersion}'"
                 .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));
@@ -81,7 +81,7 @@ namespace MinVerTests.Lib
                 .x(() => Commit(path));
 
             $"When the version is determined using build metadata '{buildMetadata}'"
-                .x(() => actualVersion = Versioner.GetVersion(path, default, default, buildMetadata, default, default, new TestLogger()));
+                .x(() => actualVersion = Versioner.GetVersion(path, default, default, buildMetadata, default, default, default));
 
             $"Then the version is '{expectedVersion}'"
                 .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));

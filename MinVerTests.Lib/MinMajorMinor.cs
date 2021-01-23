@@ -17,7 +17,7 @@ namespace MinVerTests.Lib
                 .x(() => EnsureEmptyRepository(path));
 
             "When the version is determined using minimum major minor '1.2'"
-                .x(() => actualVersion = Versioner.GetVersion(path, default, new MajorMinor(1, 2), default, default, default, new TestLogger()));
+                .x(() => actualVersion = Versioner.GetVersion(path, default, new MajorMinor(1, 2), default, default, default, default));
 
             "Then the version is '1.2.0-alpha.0'"
                 .x(() => Assert.Equal("1.2.0-alpha.0", actualVersion.ToString()));
@@ -55,7 +55,7 @@ namespace MinVerTests.Lib
                 .x(() => EnsureEmptyRepositoryAndCommit(path));
 
             "When the version is determined using minimum major minor '1.0'"
-                .x(() => actualVersion = Versioner.GetVersion(path, default, new MajorMinor(1, 0), default, default, default, new TestLogger()));
+                .x(() => actualVersion = Versioner.GetVersion(path, default, new MajorMinor(1, 0), default, default, default, default));
 
             "Then the version is '1.0.0-alpha.0'"
                 .x(() => Assert.Equal("1.0.0-alpha.0", actualVersion.ToString()));

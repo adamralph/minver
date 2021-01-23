@@ -26,7 +26,7 @@ namespace MinVerTests.Lib
                 .x(() => Commit(path));
 
             $"When the version is determined using auto-increment '{autoIncrement}'"
-                .x(() => actualVersion = Versioner.GetVersion(path, default, default, default, autoIncrement, default, new TestLogger()));
+                .x(() => actualVersion = Versioner.GetVersion(path, default, default, default, autoIncrement, default, default));
 
             $"Then the version is '{expectedVersion}'"
                 .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));

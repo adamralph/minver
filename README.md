@@ -155,7 +155,7 @@ Also, Nerdbank.GitVersioning uses the git height for the patch version, which is
 
 ### Can I bump the major or minor version?
 
-Yes! You probably want to do this because at a point in time, on a given branch, you are working on a specific `MAJOR.MINOR` range, e.g. `1.0`, `1.1`, or `2.0`. The branch could be `master`, `develop`, a special release branch, a support branch, or anything else.
+Yes! You probably want to do this because at a point in time, on a given branch, you are working on a specific `MAJOR.MINOR` range, e.g. `1.0`, `1.1`, or `2.0`. The branch could be `main`, `develop`, a special release branch, a support branch, or anything else.
 
 Before you create the first version tag on your branch, interim builds will use the latest version tag found in the commit history, which may not match the `MAJOR.MINOR` range you are working on. Or if no version tag is found in the commit history, interim builds will have the default version `0.0.0-alpha.0`. If you prefer those interim builds to have a version in the range you are working on, you have two options:
 

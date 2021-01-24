@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.CommandLine;
-using System.CommandLine.Invocation;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -9,336 +7,310 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Threading.Tasks;
-using Bullseye;
 using Xunit;
 using static Bullseye.Targets;
 using static MinVerTests.Lib.Infra.FileSystem;
 using static MinVerTests.Lib.Infra.Git;
 using static SimpleExec.Command;
 
+var sdk = Environment.GetEnvironmentVariable("MINVER_TESTS_SDK");
 var testPackageBaseOutput = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-
 var buildNumber = 1;
 
-var cmd = new RootCommand()
-{
-    new Option<string>(new[] { "-k", "--package-tests-sdk" }, "The SDK version to use for package tests"),
-};
+Target("build", () => RunAsync("dotnet", "build --configuration Release --nologo --verbosity quiet"));
 
-cmd.Add(new Argument("targets") { Arity = ArgumentArity.ZeroOrMore, Description = "The targets to run or list." });
-foreach (var option in Options.Definitions)
-{
-    cmd.Add(new Option(new[] { option.ShortName, option.LongName }.Where(n => !string.IsNullOrWhiteSpace(n)).ToArray(), option.Description));
-}
+Target(
+    "test-lib",
+    "test the MinVer.Lib library",
+    DependsOn("build"),
+    () => RunAsync("dotnet", $"test --framework {Environment.GetEnvironmentVariable("MINVER_TESTS_FRAMEWORK") ?? "net5.0"} --configuration Release --no-build --nologo"));
 
-cmd.Handler = CommandHandler.Create<string>((packageTestsSdk) =>
-{
-    var cmdLine = cmd.Parse(args);
-    var targets = cmdLine.CommandResult.Tokens.Select(token => token.Value);
-    var options = new Options(Options.Definitions.Select(o => (o.LongName, cmdLine.ValueForOption<bool>(o.LongName))));
+string testProject = default;
 
-    RunTargets(targets, options, packageTestsSdk);
-});
+Target(
+    "create-test-project",
+    DependsOn("build"),
+    async () =>
+    {
+        testProject = GetScenarioDirectory("package");
+        EnsureEmptyDirectory(testProject);
 
-return cmd.Invoke(args);
+        var source = Path.GetFullPath("./MinVer/bin/Release/");
+        var version = Path.GetFileNameWithoutExtension(Directory.EnumerateFiles(source, "*.nupkg").First()).Split("MinVer.", 2)[1];
 
-void RunTargets(IEnumerable<string> targets, Options options, string packageTestsSdk)
-{
-    Target("build", () => RunAsync("dotnet", "build --configuration Release --nologo --verbosity quiet"));
-
-    Target(
-        "test-lib",
-        "test the MinVer.Lib library",
-        DependsOn("build"),
-        () => RunAsync("dotnet", "test --configuration Release --no-build --nologo"));
-
-    string testProject = default;
-
-    Target(
-        "create-test-project",
-        DependsOn("build"),
-        async () =>
+        if (!string.IsNullOrWhiteSpace(sdk))
         {
-            testProject = GetScenarioDirectory("package");
-            EnsureEmptyDirectory(testProject);
-
-            var source = Path.GetFullPath("./MinVer/bin/Release/");
-            var version = Path.GetFileNameWithoutExtension(Directory.EnumerateFiles(source, "*.nupkg").First()).Split("MinVer.", 2)[1];
-
-            if (!string.IsNullOrWhiteSpace(packageTestsSdk))
-            {
-                File.WriteAllText(
-                    Path.Combine(testProject, "global.json"),
+            File.WriteAllText(
+                Path.Combine(testProject, "global.json"),
 $@"{{
 {"  "}""sdk"": {{
-{"    "}""version"": ""{packageTestsSdk.Trim()}"",
+{"    "}""version"": ""{sdk.Trim()}"",
 {"    "}""rollForward"": ""disable""
 {"  "}}}
 }}
 ");
-            }
+        }
 
-            await RunAsync("dotnet", "new classlib", testProject);
-            await RunAsync("dotnet", $"add package MinVer --source {source} --version {version} --package-directory packages", testProject);
-            await RunAsync("dotnet", $"restore --source {source} --packages packages", testProject);
-        });
+        await RunAsync("dotnet", "new classlib", testProject);
+        await RunAsync("dotnet", $"add package MinVer --source {source} --version {version} --package-directory packages", testProject);
+        await RunAsync("dotnet", $"restore --source {source} --packages packages", testProject);
+    });
 
-    Target(
-        "test-package-no-repo",
-        DependsOn("create-test-project"),
-        async () =>
-        {
-            // arrange
-            var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-no-repo");
+Target(
+    "test-package-no-repo",
+    DependsOn("create-test-project"),
+    async () =>
+    {
+        // arrange
+        var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-no-repo");
 
-            // act
-            await CleanAndPack(testProject, output, "diagnostic", packageTestsSdk);
+        // act
+        await CleanAndPack(testProject, output, "diagnostic", sdk);
 
-            // assert
-            AssertVersion(new Version(0, 0, 0, new[] { "alpha", "0" }), output);
+        // assert
+        AssertVersion(new Version(0, 0, 0, new[] { "alpha", "0" }), output);
 
-            // cli
-            Assert.Equal($"0.0.0-alpha.0+build.{buildNumber}", await RunCliAsync(testProject, "trace"));
-        });
+        // cli
+        Assert.Equal($"0.0.0-alpha.0+build.{buildNumber}", await RunCliAsync(testProject, "trace"));
+    });
 
-    Target(
-        "test-package-no-commits",
-        DependsOn("test-package-no-repo"),
-        async () =>
-        {
-            // arrange
-            Init(testProject);
+Target(
+    "test-package-no-commits",
+    DependsOn("test-package-no-repo"),
+    async () =>
+    {
+        // arrange
+        Init(testProject);
 
-            var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-no-commits");
+        var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-no-commits");
 
-            // act
-            await CleanAndPack(testProject, output, "diagnostic", packageTestsSdk);
+        // act
+        await CleanAndPack(testProject, output, "diagnostic", sdk);
 
-            // assert
-            AssertVersion(new Version(0, 0, 0, new[] { "alpha", "0" }), output);
+        // assert
+        AssertVersion(new Version(0, 0, 0, new[] { "alpha", "0" }), output);
 
-            // cli
-            Assert.Equal($"0.0.0-alpha.0+build.{buildNumber}", await RunCliAsync(testProject, "trace"));
-        });
+        // cli
+        Assert.Equal($"0.0.0-alpha.0+build.{buildNumber}", await RunCliAsync(testProject, "trace"));
+    });
 
-    Target(
-        "test-package-commit",
-        DependsOn("test-package-no-commits"),
-        async () =>
-        {
-            // arrange
-            PrepareForCommits(testProject);
-            Commit(testProject);
+Target(
+    "test-package-commit",
+    DependsOn("test-package-no-commits"),
+    async () =>
+    {
+        // arrange
+        PrepareForCommits(testProject);
+        Commit(testProject);
 
-            var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-commit");
+        var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-commit");
 
-            // act
-            await CleanAndPack(testProject, output, "diagnostic", packageTestsSdk);
+        // act
+        await CleanAndPack(testProject, output, "diagnostic", sdk);
 
-            // assert
-            AssertVersion(new Version(0, 0, 0, new[] { "alpha", "0" }), output);
+        // assert
+        AssertVersion(new Version(0, 0, 0, new[] { "alpha", "0" }), output);
 
-            // cli
-            Assert.Equal($"0.0.0-alpha.0+build.{buildNumber}", await RunCliAsync(testProject, "trace"));
-        });
+        // cli
+        Assert.Equal($"0.0.0-alpha.0+build.{buildNumber}", await RunCliAsync(testProject, "trace"));
+    });
 
-    Target(
-        "test-package-non-version-tag",
-        DependsOn("test-package-commit"),
-        async () =>
-        {
-            // arrange
-            Tag(testProject, "foo");
+Target(
+    "test-package-non-version-tag",
+    DependsOn("test-package-commit"),
+    async () =>
+    {
+        // arrange
+        Tag(testProject, "foo");
 
-            var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-non-version-tag");
+        var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-non-version-tag");
 
-            // act
-            await CleanAndPack(testProject, output, "diagnostic", packageTestsSdk);
+        // act
+        await CleanAndPack(testProject, output, "diagnostic", sdk);
 
-            // assert
-            AssertVersion(new Version(0, 0, 0, new[] { "alpha", "0" }), output);
+        // assert
+        AssertVersion(new Version(0, 0, 0, new[] { "alpha", "0" }), output);
 
-            // cli
-            Assert.Equal($"0.0.0-alpha.0+build.{buildNumber}", await RunCliAsync(testProject, "trace"));
-        });
+        // cli
+        Assert.Equal($"0.0.0-alpha.0+build.{buildNumber}", await RunCliAsync(testProject, "trace"));
+    });
 
-    Target(
-        "test-package-version-tag",
-        DependsOn("test-package-non-version-tag"),
-        async () =>
-        {
-            // arrange
-            Tag(testProject, "v.1.2.3+foo");
+Target(
+    "test-package-version-tag",
+    DependsOn("test-package-non-version-tag"),
+    async () =>
+    {
+        // arrange
+        Tag(testProject, "v.1.2.3+foo");
 
-            var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-version-tag");
+        var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-version-tag");
 
-            // act
-            await CleanAndPack(testProject, output, "normal", packageTestsSdk, env => env.Add(AltCase("MinVerTagPrefix"), "v."));
+        // act
+        await CleanAndPack(testProject, output, "normal", sdk, env => env.Add(AltCase("MinVerTagPrefix"), "v."));
 
-            // assert
-            AssertVersion(new Version(1, 2, 3, default, default, "foo"), output);
+        // assert
+        AssertVersion(new Version(1, 2, 3, default, default, "foo"), output);
 
-            // cli
-            Assert.Equal($"1.2.3+foo.build.{buildNumber}", await RunCliAsync(testProject, "info", env => env.Add(AltCase("MinVerTagPrefix"), "v.")));
-        });
+        // cli
+        Assert.Equal($"1.2.3+foo.build.{buildNumber}", await RunCliAsync(testProject, "info", env => env.Add(AltCase("MinVerTagPrefix"), "v.")));
+    });
 
-    Target(
-        "test-package-commit-after-tag",
-        DependsOn("test-package-version-tag"),
-        async () =>
-        {
-            // arrange
-            Tag(testProject, "1.2.3+foo");
-            Commit(testProject);
+Target(
+    "test-package-commit-after-tag",
+    DependsOn("test-package-version-tag"),
+    async () =>
+    {
+        // arrange
+        Tag(testProject, "1.2.3+foo");
+        Commit(testProject);
 
-            var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-commit-after-tag");
+        var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-commit-after-tag");
 
-            // act
-            await CleanAndPack(testProject, output, "detailed", packageTestsSdk);
+        // act
+        await CleanAndPack(testProject, output, "detailed", sdk);
 
-            // assert
-            AssertVersion(new Version(1, 2, 4, new[] { "alpha", "0" }, 1), output);
+        // assert
+        AssertVersion(new Version(1, 2, 4, new[] { "alpha", "0" }, 1), output);
 
-            // cli
-            Assert.Equal($"1.2.4-alpha.0.1+build.{buildNumber}", await RunCliAsync(testProject, "debug"));
-        });
+        // cli
+        Assert.Equal($"1.2.4-alpha.0.1+build.{buildNumber}", await RunCliAsync(testProject, "debug"));
+    });
 
-    Target(
-        "test-package-non-default-auto-increment",
-        DependsOn("test-package-commit-after-tag"),
-        async () =>
-        {
-            // arrange
-            var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-non-default-auto-increment");
+Target(
+    "test-package-non-default-auto-increment",
+    DependsOn("test-package-commit-after-tag"),
+    async () =>
+    {
+        // arrange
+        var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-non-default-auto-increment");
 
-            // act
-            await CleanAndPack(testProject, output, "diagnostic", packageTestsSdk, env => env.Add(AltCase("MinVerAutoIncrement"), "minor"));
+        // act
+        await CleanAndPack(testProject, output, "diagnostic", sdk, env => env.Add(AltCase("MinVerAutoIncrement"), "minor"));
 
-            // assert
-            AssertVersion(new Version(1, 3, 0, new[] { "alpha", "0" }, 1), output);
+        // assert
+        AssertVersion(new Version(1, 3, 0, new[] { "alpha", "0" }, 1), output);
 
-            // cli
-            Assert.Equal($"1.3.0-alpha.0.1+build.{buildNumber}", await RunCliAsync(testProject, "trace", env => env.Add(AltCase("MinVerAutoIncrement"), "minor")));
-        });
+        // cli
+        Assert.Equal($"1.3.0-alpha.0.1+build.{buildNumber}", await RunCliAsync(testProject, "trace", env => env.Add(AltCase("MinVerAutoIncrement"), "minor")));
+    });
 
-    Target(
-        "test-package-annotated-tag",
-        DependsOn("test-package-non-default-auto-increment"),
-        async () =>
-        {
-            // arrange
-            AnnotatedTag(testProject, "1.4.0", "foo");
+Target(
+    "test-package-annotated-tag",
+    DependsOn("test-package-non-default-auto-increment"),
+    async () =>
+    {
+        // arrange
+        AnnotatedTag(testProject, "1.4.0", "foo");
 
-            var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-annotated-tag");
+        var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-annotated-tag");
 
-            // act
-            await CleanAndPack(testProject, output, "diagnostic", packageTestsSdk);
+        // act
+        await CleanAndPack(testProject, output, "diagnostic", sdk);
 
-            // assert
-            AssertVersion(new Version(1, 4, 0), output);
+        // assert
+        AssertVersion(new Version(1, 4, 0), output);
 
-            // cli
-            Assert.Equal($"1.4.0+build.{buildNumber}", await RunCliAsync(testProject, "trace"));
-        });
+        // cli
+        Assert.Equal($"1.4.0+build.{buildNumber}", await RunCliAsync(testProject, "trace"));
+    });
 
-    Target(
-        "test-package-minimum-major-minor-on-tag",
-        DependsOn("test-package-annotated-tag"),
-        async () =>
-        {
-            // arrange
-            Commit(testProject);
-            Tag(testProject, "1.5.0");
+Target(
+    "test-package-minimum-major-minor-on-tag",
+    DependsOn("test-package-annotated-tag"),
+    async () =>
+    {
+        // arrange
+        Commit(testProject);
+        Tag(testProject, "1.5.0");
 
-            var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-minimum-major-minor-on-tag");
+        var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-minimum-major-minor-on-tag");
 
-            // act
-            await CleanAndPack(testProject, output, "diagnostic", packageTestsSdk, env => env.Add(AltCase("MinVerMinimumMajorMinor"), "2.0"));
+        // act
+        await CleanAndPack(testProject, output, "diagnostic", sdk, env => env.Add(AltCase("MinVerMinimumMajorMinor"), "2.0"));
 
-            // assert
-            AssertVersion(new Version(2, 0, 0, new[] { "alpha", "0" }), output);
+        // assert
+        AssertVersion(new Version(2, 0, 0, new[] { "alpha", "0" }), output);
 
-            // cli
-            Assert.Equal($"2.0.0-alpha.0+build.{buildNumber}", await RunCliAsync(testProject, "trace", env => env.Add(AltCase("MinVerMinimumMajorMinor"), "2.0")));
-        });
+        // cli
+        Assert.Equal($"2.0.0-alpha.0+build.{buildNumber}", await RunCliAsync(testProject, "trace", env => env.Add(AltCase("MinVerMinimumMajorMinor"), "2.0")));
+    });
 
-    Target(
-        "test-package-minimum-major-minor-after-tag",
-        DependsOn("test-package-minimum-major-minor-on-tag"),
-        async () =>
-        {
-            // arrange
-            Commit(testProject);
+Target(
+    "test-package-minimum-major-minor-after-tag",
+    DependsOn("test-package-minimum-major-minor-on-tag"),
+    async () =>
+    {
+        // arrange
+        Commit(testProject);
 
-            var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-minimum-major-minor-after-tag");
+        var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-minimum-major-minor-after-tag");
 
-            // act
-            await CleanAndPack(testProject, output, "diagnostic", packageTestsSdk, env => env.Add(AltCase("MinVerMinimumMajorMinor"), "2.0"));
+        // act
+        await CleanAndPack(testProject, output, "diagnostic", sdk, env => env.Add(AltCase("MinVerMinimumMajorMinor"), "2.0"));
 
-            // assert
-            AssertVersion(new Version(2, 0, 0, new[] { "alpha", "0" }, 1), output);
+        // assert
+        AssertVersion(new Version(2, 0, 0, new[] { "alpha", "0" }, 1), output);
 
-            // cli
-            Assert.Equal($"2.0.0-alpha.0.1+build.{buildNumber}", await RunCliAsync(testProject, "trace", env => env.Add(AltCase("MinVerMinimumMajorMinor"), "2.0")));
-        });
+        // cli
+        Assert.Equal($"2.0.0-alpha.0.1+build.{buildNumber}", await RunCliAsync(testProject, "trace", env => env.Add(AltCase("MinVerMinimumMajorMinor"), "2.0")));
+    });
 
-    Target(
-        "test-package-default-pre-release-phase",
-        DependsOn("test-package-minimum-major-minor-after-tag"),
-        async () =>
-        {
-            // arrange
-            var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-default-pre-release-phase");
+Target(
+    "test-package-default-pre-release-phase",
+    DependsOn("test-package-minimum-major-minor-after-tag"),
+    async () =>
+    {
+        // arrange
+        var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-default-pre-release-phase");
 
-            // act
-            await CleanAndPack(testProject, output, "diagnostic", packageTestsSdk, env => env.Add(AltCase("MinVerDefaultPreReleasePhase"), "preview"));
+        // act
+        await CleanAndPack(testProject, output, "diagnostic", sdk, env => env.Add(AltCase("MinVerDefaultPreReleasePhase"), "preview"));
 
-            // assert
-            AssertVersion(new Version(1, 5, 1, new[] { "preview", "0" }, 1), output);
+        // assert
+        AssertVersion(new Version(1, 5, 1, new[] { "preview", "0" }, 1), output);
 
-            // cli
-            Assert.Equal($"1.5.1-preview.0.1+build.{buildNumber}", await RunCliAsync(testProject, "trace", env => env.Add(AltCase("MinVerDefaultPreReleasePhase"), "preview")));
-        });
+        // cli
+        Assert.Equal($"1.5.1-preview.0.1+build.{buildNumber}", await RunCliAsync(testProject, "trace", env => env.Add(AltCase("MinVerDefaultPreReleasePhase"), "preview")));
+    });
 
-    Target(
-        "test-package-version-override",
-        DependsOn("test-package-default-pre-release-phase"),
-        async () =>
-        {
-            // arrange
-            var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-version-override");
+Target(
+    "test-package-version-override",
+    DependsOn("test-package-default-pre-release-phase"),
+    async () =>
+    {
+        // arrange
+        var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-version-override");
 
-            // act
-            await CleanAndPack(testProject, output, "diagnostic", packageTestsSdk, env => env.Add(AltCase("MinVerVersionOverride"), "3.2.1-rc.4+build.5"));
+        // act
+        await CleanAndPack(testProject, output, "diagnostic", sdk, env => env.Add(AltCase("MinVerVersionOverride"), "3.2.1-rc.4+build.5"));
 
-            // assert
-            AssertVersion(new Version(3, 2, 1, new[] { "rc", "4" }, default, "build.5"), output);
+        // assert
+        AssertVersion(new Version(3, 2, 1, new[] { "rc", "4" }, default, "build.5"), output);
 
-            // cli
-            Assert.Equal("3.2.1-rc.4+build.5", await RunCliAsync(testProject, "trace", env => env.Add(AltCase("MinVerVersionOverride"), "3.2.1-rc.4+build.5")));
-        });
+        // cli
+        Assert.Equal("3.2.1-rc.4+build.5", await RunCliAsync(testProject, "trace", env => env.Add(AltCase("MinVerVersionOverride"), "3.2.1-rc.4+build.5")));
+    });
 
-    Target(
-        "test-package-skip",
-        DependsOn("test-package-version-override"),
-        async () =>
-        {
-            // arrange
-            var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-skip");
+Target(
+    "test-package-skip",
+    DependsOn("test-package-version-override"),
+    async () =>
+    {
+        // arrange
+        var output = Path.Combine(testPackageBaseOutput, $"{buildNumber}-test-package-skip");
 
-            // act
-            await CleanAndPack(testProject, output, "diagnostic", packageTestsSdk, env => env.Add(AltCase("MinVerSkip"), "true"));
+        // act
+        await CleanAndPack(testProject, output, "diagnostic", sdk, env => env.Add(AltCase("MinVerSkip"), "true"));
 
-            // assert
-            AssertVersion(new Version(1, 0, 0), output);
-        });
+        // assert
+        AssertVersion(new Version(1, 0, 0), output);
+    });
 
-    Target("test-package", "test the MinVer package and the minver-cli console app", DependsOn("test-package-skip"));
+Target("test-package", "test the MinVer package and the minver-cli console app", DependsOn("test-package-skip"));
 
-    Target("default", DependsOn("test-lib", "test-package"));
+Target("default", DependsOn("test-lib", "test-package"));
 
-    RunTargetsAndExit(targets, options);
-}
+RunTargetsAndExit(args);
 
 async Task CleanAndPack(string path, string output, string verbosity, string packageTestsSdk, Action<IDictionary<string, string>> configureEnvironment = null)
 {

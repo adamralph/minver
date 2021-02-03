@@ -122,6 +122,11 @@ namespace MinVer.Lib
                 }
             }
 
+            if (this.preReleaseIdentifiers.Count == 3 && height > 0 && int.TryParse(this.preReleaseIdentifiers.Last(), out var prereleaseHeight))
+            {
+                return new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers.Take(2), prereleaseHeight + height, this.buildMetadata);
+            }
+
             return new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, height, height == 0 ? this.buildMetadata : null);
         }
 

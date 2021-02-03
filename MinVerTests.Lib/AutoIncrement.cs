@@ -31,5 +31,30 @@ namespace MinVerTests.Lib
             $"Then the version is '{expectedVersion}'"
                 .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));
         }
+
+        [Scenario]
+        [Example("1.0.0-alpha.0.1", VersionPart.Minor, "1.0.0-alpha.0.3")]
+        [Example("1.0.0-alpha.0.1", VersionPart.Patch, "1.0.0-alpha.0.3")]
+        [Example("1.0.0-alpha.0.1", VersionPart.Major, "1.0.0-alpha.0.3")]
+        public static void PrereleaseVersionIncrement(string tag, VersionPart autoIncrement, string expectedVersion, string path, Version actualVersion)
+        {
+            $"Given a git repository with a commit in '{path = GetScenarioDirectory($"rtm-auto-increment-{tag}")}'"
+                .x(() => EnsureEmptyRepositoryAndCommit(path));
+
+            $"And the commit is tagged '{tag}'"
+                .x(() => Tag(path, tag));
+
+            "And another commit"
+                .x(() => Commit(path));
+
+            "And another commit"
+                .x(() => Commit(path));
+
+            $"When the version is determined using auto-increment '{autoIncrement}'"
+                .x(() => actualVersion = Versioner.GetVersion(path, default, default, default, autoIncrement, default, new TestLogger()));
+
+            $"Then the version is '{expectedVersion}'"
+                .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));
+        }
     }
 }

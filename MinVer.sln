@@ -13,6 +13,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinVer", "MinVer\MinVer.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "minver-cli", "minver-cli\minver-cli.csproj", "{34A5ECB1-400C-462A-B2B8-2B7136BE162A}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinVerTests.Infra", "MinVerTests.Infra\MinVerTests.Infra.csproj", "{AA98F752-F8EF-447D-BC85-4F277CAF4B82}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinVerTests.Packages", "MinVerTests.Packages\MinVerTests.Packages.csproj", "{694ECAC7-FD05-4550-A4FB-8F497D29ECB0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,14 @@ Global
 		{34A5ECB1-400C-462A-B2B8-2B7136BE162A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{34A5ECB1-400C-462A-B2B8-2B7136BE162A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{34A5ECB1-400C-462A-B2B8-2B7136BE162A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA98F752-F8EF-447D-BC85-4F277CAF4B82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA98F752-F8EF-447D-BC85-4F277CAF4B82}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA98F752-F8EF-447D-BC85-4F277CAF4B82}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA98F752-F8EF-447D-BC85-4F277CAF4B82}.Release|Any CPU.Build.0 = Release|Any CPU
+		{694ECAC7-FD05-4550-A4FB-8F497D29ECB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{694ECAC7-FD05-4550-A4FB-8F497D29ECB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{694ECAC7-FD05-4550-A4FB-8F497D29ECB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{694ECAC7-FD05-4550-A4FB-8F497D29ECB0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -17,6 +17,7 @@
         "gpgsign",
         "nologo",
         "nupkg",
+        "Sdks",
         "shas",
         "Versioner",
         "Xbehave",

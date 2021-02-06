@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -7,14 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\MinVerTests.Lib\Infra\FileSystem.cs" />
-    <Compile Include="..\MinVerTests.Lib\Infra\Git.cs" />
+    <PackageReference Include="Bullseye" Version="3.7.0" />
+    <PackageReference Include="SimpleExec" Version="7.0.0-alpha.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Bullseye" Version="3.7.0" />
-    <PackageReference Include="SimpleExec" Version="7.0.0-alpha.1" />
-    <PackageReference Include="xunit.assert" Version="2.4.1" />
+    <ProjectReference Include="..\MinVerTests.Infra\MinVerTests.Infra.csproj" />
   </ItemGroup>
 
 </Project>

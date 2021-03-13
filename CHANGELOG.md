@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.5.0
+
+### Enhancements
+
+- [#477: Bump McMaster.Extensions.CommandLineUtils from 3.0.0 to 3.1.0](https://github.com/adamralph/minver/pull/477)
+
+### Fixed bugs
+
+- [#479: MinVerPreRelease terminates before the first hyphen in the pre-release identifiers](https://github.com/adamralph/minver/issues/479)
+- [#480: MinVerBuildMetadata terminates before the first plus sign in the build metadata identifiers](https://github.com/adamralph/minver/issues/480)
+
 ## 2.4.0
 
 ### Enhancements

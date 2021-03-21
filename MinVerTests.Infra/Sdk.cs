@@ -1,4 +1,4 @@
-#if !NETCOREAPP2_1
+#if NET
 using System;
 using System.Diagnostics;
 using System.IO;

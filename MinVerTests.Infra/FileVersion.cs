@@ -1,4 +1,4 @@
-#if !NETCOREAPP2_1
+#if NET
 namespace MinVerTests.Infra
 {
     public record FileVersion(int FileMajorPart, int FileMinorPart, int FileBuildPart, int FilePrivatePart, string ProductVersion);

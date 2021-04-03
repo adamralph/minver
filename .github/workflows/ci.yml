@@ -26,26 +26,26 @@ jobs:
         tests:
           - sdk: 2.1.300
             framework: netcoreapp2.1
-          - sdk: 2.1.811
+          - sdk: 2.1.814
             framework: netcoreapp2.1
           - sdk: 3.1.100
             framework: netcoreapp3.1
-          - sdk: 3.1.404
+          - sdk: 3.1.407
             framework: netcoreapp3.1
-          - sdk: 5.0.100
+          - sdk: 5.0.201
             framework: net5.0
             push: true
     name: ${{ matrix.job.os }}-${{ matrix.tests.sdk }}
     runs-on: ${{ matrix.job.os }}
     steps:
       - name: setup-dotnet tests-sdk
-        if: matrix.tests.sdk != '5.0.100'
+        if: matrix.tests.sdk != '5.0.201'
         uses: actions/setup-dotnet@v1.7.2
         with:
           dotnet-version: "${{ matrix.tests.sdk }}"
       - uses: actions/setup-dotnet@v1.7.2
         with:
-          dotnet-version: "5.0.100"
+          dotnet-version: "5.0.201"
       - run: dotnet --info
       - uses: actions/checkout@v2.3.4
       - env:

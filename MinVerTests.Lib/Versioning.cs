@@ -16,7 +16,11 @@ namespace MinVerTests.Lib
 {
     public static class Versioning
     {
+#if NET5_0_OR_GREATER
+        private static readonly Dictionary<string, string> historicalCommands = new()
+#else
         private static readonly Dictionary<string, string> historicalCommands = new Dictionary<string, string>
+#endif
         {
             {
                 "general",
@@ -80,7 +84,7 @@ git tag 1.1.0 -a -m '.'
                     foreach (var command in historicalCommands[name].Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
                     {
                         var nameAndArgs = command.Split(" ", 2);
-                        await Cli.Wrap(nameAndArgs[0]).WithArguments(nameAndArgs[1]).WithWorkingDirectory(path).ExecuteAsync();
+                        _ = await Cli.Wrap(nameAndArgs[0]).WithArguments(nameAndArgs[1]).WithWorkingDirectory(path).ExecuteAsync();
                         await Task.Delay(200);
                     }
                 });
@@ -97,7 +101,7 @@ git tag 1.1.0 -a -m '.'
                         var versionString = version.ToString();
                         var tagName = $"v/{versionString}";
 
-                        versionCounts.TryGetValue(versionString, out var oldVersionCount);
+                        _ = versionCounts.TryGetValue(versionString, out var oldVersionCount);
                         var versionCount = oldVersionCount + 1;
                         versionCounts[versionString] = versionCount;
 

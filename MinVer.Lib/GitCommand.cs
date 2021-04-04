@@ -33,7 +33,7 @@ namespace MinVer.Lib
                 }
                 catch (Win32Exception ex)
                 {
-                    throw new Exception("\"git\" is not present in PATH.", ex);
+                    throw new InvalidOperationException("\"git\" is not present in PATH.", ex);
                 }
 
                 var runProcess = tcs.Task;

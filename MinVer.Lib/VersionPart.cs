@@ -7,7 +7,7 @@ namespace MinVer.Lib
         Major = 2,
     }
 
-    public static class VersionPartEx
+    public static class VersionPartExtensions
     {
         public static string ValidValues => "major, minor, or patch (default)";
     }

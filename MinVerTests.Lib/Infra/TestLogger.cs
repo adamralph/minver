@@ -5,7 +5,11 @@ namespace MinVerTests.Lib.Infra
 {
     public class TestLogger : ILogger
     {
+#if NET5_0_OR_GREATER
+        private readonly List<string> debugMessages = new();
+#else
         private readonly List<string> debugMessages = new List<string>();
+#endif
 
         public bool IsTraceEnabled => true;
 

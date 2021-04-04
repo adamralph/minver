@@ -18,7 +18,7 @@ namespace MinVer
             {
                 if (!Enum.TryParse<VersionPart>(autoIncrementEnvVar, true, out var autoIncrement))
                 {
-                    Logger.ErrorInvalidEnvVar("MinVerAutoIncrement", autoIncrementEnvVar, VersionPartEx.ValidValues);
+                    Logger.ErrorInvalidEnvVar("MinVerAutoIncrement", autoIncrementEnvVar, VersionPartExtensions.ValidValues);
                     return false;
                 }
 

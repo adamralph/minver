@@ -63,7 +63,7 @@ namespace MinVer
             Error($"Working directory '{workDir}' does not exist.");
 
         public static void ErrorInvalidAutoIncrement(string autoIncrement) =>
-            Error($"Invalid auto increment '{autoIncrement}'. Valid values are {VersionPartEx.ValidValues}");
+            Error($"Invalid auto increment '{autoIncrement}'. Valid values are {VersionPartExtensions.ValidValues}");
 
         public static void ErrorInvalidMinMajorMinor(string minMajorMinor) =>
             Error($"Invalid minimum MAJOR.MINOR '{minMajorMinor}'. Valid values are {MajorMinor.ValidValues}");

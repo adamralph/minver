@@ -5,9 +5,7 @@ using static System.Math;
 
 namespace MinVer.Lib
 {
-#pragma warning disable CA1036 // Override methods on comparable types
     public class Version : IComparable<Version>
-#pragma warning restore CA1036 // Override methods on comparable types
     {
         private readonly int major;
         private readonly int minor;

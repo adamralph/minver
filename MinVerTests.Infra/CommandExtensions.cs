@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CliWrap;
 using CliWrap.Buffered;
+using CliWrap.Exceptions;
 
 namespace MinVerTests.Infra
 {
@@ -55,9 +56,9 @@ $@"
 ```
 ";
 
-            await File.WriteAllTextAsync(Path.Combine(command.WorkingDirPath, $"command-{index:D2}.md"), log);
+            await File.WriteAllTextAsync(Path.Combine(command.WorkingDirPath, $"command-{index:D2}.md"), log).ConfigureAwait(false);
 
-            return result.ExitCode == 0 || validation == CommandResultValidation.None ? result : throw new Exception(log);
+            return result.ExitCode == 0 || validation == CommandResultValidation.None ? result : throw new CommandExecutionException(command, result.ExitCode, log);
         }
     }
 }

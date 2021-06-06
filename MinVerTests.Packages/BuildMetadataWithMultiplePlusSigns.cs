@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 using System.Threading.Tasks;
 using MinVerTests.Infra;
@@ -25,10 +26,10 @@ namespace MinVerTests.Packages
             }
 
             // assert
-            Assert.Contains("MinVer: [output] MinVerVersion=2.3.4-alpha-x.5+build.6+7", @out);
-            Assert.Contains("MinVer: [output] MinVerBuildMetadata=build.6+7", @out);
-            Assert.Contains("MinVer: [output] PackageVersion=2.3.4-alpha-x.5+build.6+7", @out);
-            Assert.Contains("MinVer: [output] Version=2.3.4-alpha-x.5+build.6+7", @out);
+            Assert.Contains("MinVer: [output] MinVerVersion=2.3.4-alpha-x.5+build.6+7", @out, StringComparison.Ordinal);
+            Assert.Contains("MinVer: [output] MinVerBuildMetadata=build.6+7", @out, StringComparison.Ordinal);
+            Assert.Contains("MinVer: [output] PackageVersion=2.3.4-alpha-x.5+build.6+7", @out, StringComparison.Ordinal);
+            Assert.Contains("MinVer: [output] Version=2.3.4-alpha-x.5+build.6+7", @out, StringComparison.Ordinal);
         }
     }
 }

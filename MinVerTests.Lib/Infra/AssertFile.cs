@@ -1,6 +1,6 @@
-using System;
 using System.IO;
 using System.Threading.Tasks;
+using Xunit.Sdk;
 
 namespace MinVerTests.Lib.Infra
 {
@@ -16,7 +16,7 @@ namespace MinVerTests.Lib.Infra
 
                 await File.WriteAllTextAsync(actualPath, actual);
 
-                throw new Exception($"{actualPath} does not contain the contents of {expectedPath}.");
+                throw new XunitException($"{actualPath} does not contain the contents of {expectedPath}.");
             }
         }
     }

@@ -152,5 +152,38 @@ namespace MinVer.Lib
                     int.TryParse(numbers[2], out var patch)
                 ? new Version(major, minor, patch, pre, 0, meta)
                 : null;
+
+        public override bool Equals(object obj) =>
+            ReferenceEquals(this, obj) ||
+            (!(obj is null) && obj is Version && this.CompareTo(obj as Version) == 0);
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var code = 17;
+
+                code = (code * 23) + this.major.GetHashCode();
+                code = (code * 23) + this.minor.GetHashCode();
+                code = (code * 23) + this.patch.GetHashCode();
+                code = (code * 23) + this.preReleaseIdentifiers.GetHashCode();
+                code = (code * 23) + this.height.GetHashCode();
+                code = (code * 23) + this.buildMetadata.GetHashCode();
+
+                return code;
+            }
+        }
+
+        public static bool operator ==(Version left, Version right) => left is null ? right is null : left.Equals(right);
+
+        public static bool operator !=(Version left, Version right) => !(left == right);
+
+        public static bool operator <(Version left, Version right) => left is null ? right is object : left.CompareTo(right) < 0;
+
+        public static bool operator <=(Version left, Version right) => left is null || left.CompareTo(right) <= 0;
+
+        public static bool operator >(Version left, Version right) => left is object && left.CompareTo(right) > 0;
+
+        public static bool operator >=(Version left, Version right) => left is null ? right is null : left.CompareTo(right) >= 0;
     }
 }

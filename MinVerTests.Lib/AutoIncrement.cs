@@ -16,19 +16,19 @@ namespace MinVerTests.Lib
         [Example("1.2.3", VersionPart.Patch, "1.2.4-alpha.0.1")]
         public static void RtmVersionIncrement(string tag, VersionPart autoIncrement, string expectedVersion, string path, Version actualVersion)
         {
-            $"Given a git repository with a commit in {path = MethodBase.GetCurrentMethod().GetTestDirectory(autoIncrement)}"
+            _ = $"Given a git repository with a commit in {path = MethodBase.GetCurrentMethod().GetTestDirectory(autoIncrement)}"
                 .x(() => EnsureEmptyRepositoryAndCommit(path));
 
-            $"And the commit is tagged '{tag}'"
+            _ = $"And the commit is tagged '{tag}'"
                 .x(() => Tag(path, tag));
 
-            "And another commit"
+            _ = "And another commit"
                 .x(() => Commit(path));
 
-            $"When the version is determined using auto-increment '{autoIncrement}'"
+            _ = $"When the version is determined using auto-increment '{autoIncrement}'"
                 .x(() => actualVersion = Versioner.GetVersion(path, default, default, default, autoIncrement, default, default));
 
-            $"Then the version is '{expectedVersion}'"
+            _ = $"Then the version is '{expectedVersion}'"
                 .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));
         }
     }

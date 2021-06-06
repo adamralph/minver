@@ -29,7 +29,7 @@ namespace MinVer.Lib
 
                 try
                 {
-                    process.Start();
+                    _ = process.Start();
                 }
                 catch (Win32Exception ex)
                 {

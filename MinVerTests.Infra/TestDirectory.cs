@@ -15,11 +15,11 @@ namespace MinVerTests.Infra
                 Path.GetTempPath(),
                 testSuiteName,
                 runId.ToString(CultureInfo.InvariantCulture),
-                $"{testName}{(tag == null ? "" : (tag.GetType().Name.StartsWith("ValueTuple") ? tag : $"({tag})"))}");
+                $"{testName}{(tag == null ? "" : (tag.GetType().Name.StartsWith("ValueTuple", StringComparison.Ordinal) ? tag : $"({tag})"))}");
 
 
         public static string GetTestDirectory(this MethodBase testMethod, object tag = null, [CallerMemberName] string testMethodName = "") =>
-            Get(testMethod.DeclaringType.Assembly.GetName().Name, $"{testMethod.DeclaringType.GetReflectedType().Name}.{testMethodName}", tag);
+            Get(testMethod?.DeclaringType?.Assembly.GetName().Name, $"{testMethod.DeclaringType.GetReflectedType().Name}.{testMethodName}", tag);
 
         private static Type GetReflectedType(this Type type) => type.ReflectedType?.GetReflectedType() ?? type;
     }

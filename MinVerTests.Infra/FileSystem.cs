@@ -6,7 +6,9 @@ namespace MinVerTests.Infra
     // The spin waits are required. System.IO and the file system race. ¯\_(ツ)_/¯
     public static class FileSystem
     {
+#pragma warning disable CA1802 // Use literals where appropriate
         private static readonly int millisecondsTimeout = 50;
+#pragma warning restore CA1802 // Use literals where appropriate
 
         public static void EnsureEmptyDirectory(string path)
         {

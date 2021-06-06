@@ -15,7 +15,7 @@ namespace MinVerTests.Infra
             var result = await Cli.Wrap("dotnet")
                 .WithArguments($"exec {GetPath(configuration)}")
                 .WithEnvironmentVariables(environmentVariables)
-                .WithWorkingDirectory(workingDirectory).ExecuteBufferedLoggedAsync();
+                .WithWorkingDirectory(workingDirectory).ExecuteBufferedLoggedAsync().ConfigureAwait(false);
 
             return (result.StandardOutput.Trim(), result.StandardError);
         }

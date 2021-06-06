@@ -40,15 +40,15 @@ $@"{{
 
             _ = await Cli.Wrap("dotnet").WithArguments($"new classlib --name test --output {path}")
                 .WithEnvironmentVariables(builder => builder.SetSdk().Build())
-                .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync();
+                .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync().ConfigureAwait(false);
 
             _ = await Cli.Wrap("dotnet").WithArguments($"add package MinVer --source {source} --version {minVerPackageVersion} --package-directory packages")
                 .WithEnvironmentVariables(builder => builder.SetSdk().Build())
-                .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync();
+                .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync().ConfigureAwait(false);
 
             _ = await Cli.Wrap("dotnet").WithArguments($"restore --source {source} --packages packages")
                 .WithEnvironmentVariables(builder => builder.SetSdk().Build())
-                .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync();
+                .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync().ConfigureAwait(false);
         }
 
         public static async Task<(Package, string)> BuildProject(string path, params (string, string)[] envVars)
@@ -59,7 +59,7 @@ $@"{{
             _ = environmentVariables.TryAdd("NoPackageAnalysis", "true");
 
             var result = await Cli.Wrap("dotnet")
-                .WithArguments($"build --no-restore{((Version?.StartsWith("2.") ?? false) ? "" : " --nologo")}")
+                .WithArguments($"build --no-restore{((Version?.StartsWith("2.", StringComparison.Ordinal) ?? false) ? "" : " --nologo")}")
                 .WithEnvironmentVariables(builder =>
                 {
                     foreach (var pair in environmentVariables)
@@ -69,13 +69,13 @@ $@"{{
 
                     _ = builder.SetSdk().Build();
                 })
-                .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync();
+                .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync().ConfigureAwait(false);
 
             var packageFileName = Directory.EnumerateFiles(path, "*.nupkg", new EnumerationOptions { RecurseSubdirectories = true }).First();
             var extractedPackageDirectoryName = Path.Combine(Path.GetDirectoryName(packageFileName), Path.GetFileNameWithoutExtension(packageFileName));
             ZipFile.ExtractToDirectory(packageFileName, extractedPackageDirectoryName);
 
-            var nuspec = await File.ReadAllTextAsync(Directory.EnumerateFiles(extractedPackageDirectoryName, "*.nuspec").First());
+            var nuspec = await File.ReadAllTextAsync(Directory.EnumerateFiles(extractedPackageDirectoryName, "*.nuspec").First()).ConfigureAwait(false);
             var nuspecVersion = nuspec.Split("<version>")[1].Split("</version>")[0];
 
             var assemblyFileName = Directory.EnumerateFiles(extractedPackageDirectoryName, "*.dll", new EnumerationOptions { RecurseSubdirectories = true }).First();

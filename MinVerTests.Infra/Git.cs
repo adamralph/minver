@@ -10,8 +10,8 @@ namespace MinVerTests.Infra
     {
         public static async Task EnsureEmptyRepositoryAndCommit(string path)
         {
-            await EnsureEmptyRepository(path);
-            await Commit(path);
+            await EnsureEmptyRepository(path).ConfigureAwait(false);
+            await Commit(path).ConfigureAwait(false);
         }
 
         public static Task Commit(string path) =>
@@ -20,7 +20,7 @@ namespace MinVerTests.Infra
         public static async Task EnsureEmptyRepository(string path)
         {
             FileSystem.EnsureEmptyDirectory(path);
-            await Init(path);
+            await Init(path).ConfigureAwait(false);
         }
 
         public static async Task Init(string path)

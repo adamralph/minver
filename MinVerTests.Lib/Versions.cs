@@ -14,7 +14,7 @@ using Version = MinVer.Lib.Version;
 
 namespace MinVerTests.Lib
 {
-    public static class Versioning
+    public static class Versions
     {
 #if NET5_0_OR_GREATER
         private static readonly Dictionary<string, string> historicalCommands = new()
@@ -74,7 +74,7 @@ git tag 1.1.0 -a -m '.'"
         [Example("general")]
         public static void RepoWithHistory(string name, string path)
         {
-            $"Given a git repository with a history of branches and/or tags in {path = MethodBase.GetCurrentMethod().GetTestDirectory(name)}"
+            _ = $"Given a git repository with a history of branches and/or tags in {path = MethodBase.GetCurrentMethod().GetTestDirectory(name)}"
                 .x(async () =>
                 {
                     await EnsureEmptyRepositoryAndCommit(path);
@@ -87,7 +87,7 @@ git tag 1.1.0 -a -m '.'"
                     }
                 });
 
-            "When the version is determined for every commit"
+            _ = "When the version is determined for every commit"
                 .x(async () =>
                 {
                     var versionCounts = new Dictionary<string, int>();
@@ -113,33 +113,33 @@ git tag 1.1.0 -a -m '.'"
                     await Checkout(path, "master");
                 });
 
-            "Then the versions are as expected"
+            _ = "Then the versions are as expected"
                 .x(async () => await AssertFile.Contains($"../../../{name}.txt", await GetGraph(path)));
         }
 
         [Scenario]
         public static void EmptyRepo(string path, Version version)
         {
-            $"Given an empty git repository in {path = MethodBase.GetCurrentMethod().GetTestDirectory()}"
+            _ = $"Given an empty git repository in {path = MethodBase.GetCurrentMethod().GetTestDirectory()}"
                 .x(() => EnsureEmptyRepository(path));
 
-            "When the version is determined"
+            _ = "When the version is determined"
                 .x(() => version = Versioner.GetVersion(path, default, default, default, default, default, default));
 
-            "Then the version is 0.0.0-alpha.0"
+            _ = "Then the version is 0.0.0-alpha.0"
                 .x(() => Assert.Equal("0.0.0-alpha.0", version.ToString()));
         }
 
         [Scenario]
         public static void NoRepo(string path, Version version)
         {
-            $"Given an empty directory {path = MethodBase.GetCurrentMethod().GetTestDirectory()}"
+            _ = $"Given an empty directory {path = MethodBase.GetCurrentMethod().GetTestDirectory()}"
                 .x(() => EnsureEmptyDirectory(path));
 
-            "When the version is determined"
+            _ = "When the version is determined"
                 .x(() => version = Versioner.GetVersion(path, default, default, default, default, default, default));
 
-            "Then the version is 0.0.0-alpha.0"
+            _ = "Then the version is 0.0.0-alpha.0"
                 .x(() => Assert.Equal("0.0.0-alpha.0", version.ToString()));
         }
     }

@@ -16,13 +16,13 @@ namespace MinVerTests.Lib
         [Example("preview", "0.0.0-preview.0")]
         public static void DefaultPreReleasePhase(string phase, string expectedVersion, string path, Version actualVersion)
         {
-            $"Given a git repository with a commit in {path = MethodBase.GetCurrentMethod().GetTestDirectory(phase)}"
+            _ = $"Given a git repository with a commit in {path = MethodBase.GetCurrentMethod().GetTestDirectory(phase)}"
                 .x(() => EnsureEmptyRepositoryAndCommit(path));
 
-            $"When the version is determined using the default pre-release phase '{phase}'"
+            _ = $"When the version is determined using the default pre-release phase '{phase}'"
                 .x(() => actualVersion = Versioner.GetVersion(path, default, default, default, default, phase, default));
 
-            $"Then the version is '{expectedVersion}'"
+            _ = $"Then the version is '{expectedVersion}'"
                 .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));
         }
     }

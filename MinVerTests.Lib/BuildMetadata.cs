@@ -15,13 +15,13 @@ namespace MinVerTests.Lib
         [Example("a", "0.0.0-alpha.0+a")]
         public static void NoCommits(string buildMetadata, string expectedVersion, string path, Version actualVersion)
         {
-            $"Given an empty git repository in {path = MethodBase.GetCurrentMethod().GetTestDirectory(buildMetadata)}"
+            _ = $"Given an empty git repository in {path = MethodBase.GetCurrentMethod().GetTestDirectory(buildMetadata)}"
                 .x(() => EnsureEmptyRepository(path));
 
-            $"When the version is determined using build metadata '{buildMetadata}'"
+            _ = $"When the version is determined using build metadata '{buildMetadata}'"
                 .x(() => actualVersion = Versioner.GetVersion(path, default, default, buildMetadata, default, default, default));
 
-            $"Then the version is '{expectedVersion}'"
+            _ = $"Then the version is '{expectedVersion}'"
                 .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));
         }
 
@@ -30,13 +30,13 @@ namespace MinVerTests.Lib
         [Example("a", "0.0.0-alpha.0+a")]
         public static void NoTag(string buildMetadata, string expectedVersion, string path, Version actualVersion)
         {
-            $"Given a git repository with a commit in {path = MethodBase.GetCurrentMethod().GetTestDirectory(buildMetadata)}"
+            _ = $"Given a git repository with a commit in {path = MethodBase.GetCurrentMethod().GetTestDirectory(buildMetadata)}"
                 .x(() => EnsureEmptyRepositoryAndCommit(path));
 
-            $"When the version is determined using build metadata '{buildMetadata}'"
+            _ = $"When the version is determined using build metadata '{buildMetadata}'"
                 .x(() => actualVersion = Versioner.GetVersion(path, default, default, buildMetadata, default, default, default));
 
-            $"Then the version is '{expectedVersion}'"
+            _ = $"Then the version is '{expectedVersion}'"
                 .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));
         }
 
@@ -49,16 +49,16 @@ namespace MinVerTests.Lib
         [Example("1.2.3-pre+a", "b", "1.2.3-pre+a.b")]
         public static void CurrentTag(string tag, string buildMetadata, string expectedVersion, string path, Version actualVersion)
         {
-            $"Given a git repository with a commit in {path = MethodBase.GetCurrentMethod().GetTestDirectory((tag, buildMetadata))}"
+            _ = $"Given a git repository with a commit in {path = MethodBase.GetCurrentMethod().GetTestDirectory((tag, buildMetadata))}"
                 .x(() => EnsureEmptyRepositoryAndCommit(path));
 
-            $"And the commit is tagged '{tag}'"
+            _ = $"And the commit is tagged '{tag}'"
                 .x(() => Tag(path, tag));
 
-            $"When the version is determined using build metadata '{buildMetadata}'"
+            _ = $"When the version is determined using build metadata '{buildMetadata}'"
                 .x(() => actualVersion = Versioner.GetVersion(path, default, default, buildMetadata, default, default, default));
 
-            $"Then the version is '{expectedVersion}'"
+            _ = $"Then the version is '{expectedVersion}'"
                 .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));
         }
 
@@ -71,19 +71,19 @@ namespace MinVerTests.Lib
         [Example("1.2.3-pre+a", "b", "1.2.3-pre.1+b")]
         public static void PreviousTag(string tag, string buildMetadata, string expectedVersion, string path, Version actualVersion)
         {
-            $"Given a git repository with a commit in {path = MethodBase.GetCurrentMethod().GetTestDirectory((tag, buildMetadata))}"
+            _ = $"Given a git repository with a commit in {path = MethodBase.GetCurrentMethod().GetTestDirectory((tag, buildMetadata))}"
                 .x(() => EnsureEmptyRepositoryAndCommit(path));
 
-            $"And the commit is tagged '{tag}'"
+            _ = $"And the commit is tagged '{tag}'"
                 .x(() => Tag(path, tag));
 
-            "And another commit"
+            _ = "And another commit"
                 .x(() => Commit(path));
 
-            $"When the version is determined using build metadata '{buildMetadata}'"
+            _ = $"When the version is determined using build metadata '{buildMetadata}'"
                 .x(() => actualVersion = Versioner.GetVersion(path, default, default, buildMetadata, default, default, default));
 
-            $"Then the version is '{expectedVersion}'"
+            _ = $"Then the version is '{expectedVersion}'"
                 .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));
         }
     }

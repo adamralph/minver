@@ -17,16 +17,16 @@ namespace MinVerTests.Lib
         [Example("version5.6.7", "version", "5.6.7")]
         public static void TagPrefix(string tag, string prefix, string expectedVersion, string path, Version actualVersion)
         {
-            $"Given a git repository with a commit in {path = MethodBase.GetCurrentMethod().GetTestDirectory(tag)}"
+            _ = $"Given a git repository with a commit in {path = MethodBase.GetCurrentMethod().GetTestDirectory(tag)}"
                 .x(() => EnsureEmptyRepositoryAndCommit(path));
 
-            $"And the commit is tagged '{tag}'"
+            _ = $"And the commit is tagged '{tag}'"
                 .x(() => Tag(path, tag));
 
-            $"When the version is determined using the tag prefix '{prefix}'"
+            _ = $"When the version is determined using the tag prefix '{prefix}'"
                 .x(() => actualVersion = Versioner.GetVersion(path, prefix, default, default, default, default, default));
 
-            $"Then the version is '{expectedVersion}'"
+            _ = $"Then the version is '{expectedVersion}'"
                 .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));
         }
     }

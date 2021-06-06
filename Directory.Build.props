@@ -1,8 +1,9 @@
 <Project>
 
   <PropertyGroup>
+    <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <NoWarn>$(NoWarn);CA1014</NoWarn>    <!-- Mark assemblies with CLSCompliant -->
     <!-- MinVer doesn't use MinVer for versioning because
 the environment variables for the build and for the package tests
 would interfere with each other. -->

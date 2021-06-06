@@ -38,10 +38,10 @@ jobs:
     steps:
       - name: setup-dotnet tests-sdk
         if: matrix.tests.sdk != '5.0.300'
-        uses: actions/setup-dotnet@v1.7.2
+        uses: actions/setup-dotnet@v1.8.0
         with:
           dotnet-version: "${{ matrix.tests.sdk }}"
-      - uses: actions/setup-dotnet@v1.7.2
+      - uses: actions/setup-dotnet@v1.8.0
         with:
           dotnet-version: "5.0.300"
       - run: dotnet --info

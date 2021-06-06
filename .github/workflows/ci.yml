@@ -25,27 +25,32 @@ jobs:
             build: ./build.cmd
         tests:
           - sdk: 2.1.300
+            sdk-bound: earliest
             framework: netcoreapp2.1
-          - sdk: 2.1.814
+          - sdk: 2.1.816
+            sdk-bound: latest
             framework: netcoreapp2.1
           - sdk: 3.1.100
+            sdk-bound: earliest
             framework: netcoreapp3.1
-          - sdk: 3.1.407
+          - sdk: 3.1.409
+            sdk-bound: latest
             framework: netcoreapp3.1
-          - sdk: 5.0.201
+          - sdk: 5.0.300
+            sdk-bound: latest
             framework: net5.0
             push: true
-    name: ${{ matrix.job.os }}-${{ matrix.tests.sdk }}
+    name: ${{ matrix.job.os }}-${{ matrix.tests.framework }}-${{ matrix.tests.sdk-bound }}
     runs-on: ${{ matrix.job.os }}
     steps:
       - name: setup-dotnet tests-sdk
-        if: matrix.tests.sdk != '5.0.201'
+        if: matrix.tests.sdk != '5.0.300'
         uses: actions/setup-dotnet@v1.7.2
         with:
           dotnet-version: "${{ matrix.tests.sdk }}"
       - uses: actions/setup-dotnet@v1.7.2
         with:
-          dotnet-version: "5.0.201"
+          dotnet-version: "5.0.300"
       - run: dotnet --info
       - uses: actions/checkout@v2.3.4
       - env:

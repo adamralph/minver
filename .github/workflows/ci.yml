@@ -25,12 +25,14 @@ jobs:
             build: ./build.cmd
         tests:
           - framework: netcoreapp2.1
-            sdk: 2.1.816
+            sdk: "2.1.816"
           - framework: netcoreapp3.1
-            sdk: 3.1.409
+            sdk: "3.1.409"
           - framework: net5.0
-            sdk: 5.0.300
+            sdk: "5.0.300"
             push: true
+          - framework: net6.0
+            sdk: "6.0.100-preview.4.21255.9"
     name: ${{ matrix.job.os }}-${{ matrix.tests.framework }}
     runs-on: ${{ matrix.job.os }}
     steps:

@@ -9,7 +9,7 @@ Target(
     "test-lib",
     "test the MinVer.Lib library",
     DependsOn("build"),
-    () => RunAsync("dotnet", $"test ./MinVerTests.Lib --framework {Environment.GetEnvironmentVariable("MINVER_TESTS_FRAMEWORK") ?? "net5.0"} --configuration Release --no-build --nologo"));
+    () => RunAsync("dotnet", $"test ./MinVerTests.Lib --framework {Environment.GetEnvironmentVariable("MINVER_TESTS_FRAMEWORK") ?? "net5.0"} --configuration Release --no-build --nologo --verbosity normal"));
 
 Target(
     "test-packages",

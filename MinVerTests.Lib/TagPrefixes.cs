@@ -1,33 +1,31 @@
 using System.Reflection;
+using System.Threading.Tasks;
 using MinVer.Lib;
 using MinVerTests.Infra;
-using Xbehave;
 using Xunit;
 using static MinVerTests.Infra.Git;
-using Version = MinVer.Lib.Version;
 
 namespace MinVerTests.Lib
 {
     public static class TagPrefixes
     {
-        [Scenario]
-        [Example("1.2.3", default, "1.2.3")]
-        [Example("2.3.4", "", "2.3.4")]
-        [Example("v3.4.5", "v", "3.4.5")]
-        [Example("version5.6.7", "version", "5.6.7")]
-        public static void TagPrefix(string tag, string prefix, string expectedVersion, string path, Version actualVersion)
+        [Theory]
+        [InlineData("1.2.3", default, "1.2.3")]
+        [InlineData("2.3.4", "", "2.3.4")]
+        [InlineData("v3.4.5", "v", "3.4.5")]
+        [InlineData("version5.6.7", "version", "5.6.7")]
+        public static async Task TagPrefix(string tag, string prefix, string expectedVersion)
         {
-            _ = $"Given a git repository with a commit in {path = MethodBase.GetCurrentMethod().GetTestDirectory(tag)}"
-                .x(() => EnsureEmptyRepositoryAndCommit(path));
+            // act
+            var path = MethodBase.GetCurrentMethod().GetTestDirectory((tag, prefix));
+            await EnsureEmptyRepositoryAndCommit(path);
+            await Tag(path, tag);
 
-            _ = $"And the commit is tagged '{tag}'"
-                .x(() => Tag(path, tag));
+            // act
+            var actualVersion = Versioner.GetVersion(path, prefix, default, default, default, default, default);
 
-            _ = $"When the version is determined using the tag prefix '{prefix}'"
-                .x(() => actualVersion = Versioner.GetVersion(path, prefix, default, default, default, default, default));
-
-            _ = $"Then the version is '{expectedVersion}'"
-                .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));
+            // assert
+            Assert.Equal(expectedVersion, actualVersion.ToString());
         }
     }
 }

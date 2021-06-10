@@ -25,7 +25,7 @@ namespace MinVerTests.Infra
 
         public static async Task Init(string path)
         {
-            _ = await Cli.Wrap("git").WithArguments("init").WithWorkingDirectory(path).ExecuteAsync();
+            _ = await Cli.Wrap("git").WithArguments("init --initial-branch=main").WithWorkingDirectory(path).ExecuteAsync();
             _ = await Cli.Wrap("git").WithArguments("config user.email johndoe@tempuri.org").WithWorkingDirectory(path).ExecuteAsync();
             _ = await Cli.Wrap("git").WithArguments("config user.name John Doe").WithWorkingDirectory(path).ExecuteAsync();
             _ = await Cli.Wrap("git").WithArguments("config commit.gpgsign false").WithWorkingDirectory(path).ExecuteAsync();

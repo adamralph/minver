@@ -53,7 +53,7 @@ git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
 git tag 1.0.1
 git commit --allow-empty -m '.'
-git checkout master
+git checkout main
 git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
@@ -110,7 +110,7 @@ git tag 1.1.0 -a -m '.'"
                         await Tag(path, tagName, sha);
                     }
 
-                    await Checkout(path, "master");
+                    await Checkout(path, "main");
                 });
 
             _ = "Then the versions are as expected"

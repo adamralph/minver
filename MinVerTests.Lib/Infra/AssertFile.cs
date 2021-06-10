@@ -1,5 +1,8 @@
+using System;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
+using Xunit;
 using Xunit.Sdk;
 
 namespace MinVerTests.Lib.Infra
@@ -8,15 +11,27 @@ namespace MinVerTests.Lib.Infra
     {
         public static async Task Contains(string expectedPath, string actual)
         {
-            if (actual != await File.ReadAllTextAsync(expectedPath))
+            var actualPath = Path.Combine(
+                Path.GetDirectoryName(expectedPath),
+                Path.GetFileNameWithoutExtension(expectedPath) + "-actual" + Path.GetExtension(expectedPath));
+
+            if (File.Exists(actualPath))
             {
-                var actualPath = Path.Combine(
-                    Path.GetDirectoryName(expectedPath),
-                    Path.GetFileNameWithoutExtension(expectedPath) + "-actual" + Path.GetExtension(expectedPath));
+                File.Delete(actualPath);
+            }
 
-                await File.WriteAllTextAsync(actualPath, actual);
+            var expected = await File.ReadAllTextAsync(expectedPath);
 
-                throw new XunitException($"{actualPath} does not contain the contents of {expectedPath}.");
+            try
+            {
+                Assert.Equal(expected, actual);
+            }
+            catch (EqualException ex)
+            {
+                await File.WriteAllTextAsync(actualPath, actual, Encoding.UTF8);
+
+                throw new XunitException(
+                    $"{ex.Message}{Environment.NewLine}{Environment.NewLine}Expected file: {expectedPath}{Environment.NewLine}Actual file: {actualPath}");
             }
         }
     }

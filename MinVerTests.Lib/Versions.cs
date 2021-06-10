@@ -96,7 +96,7 @@ git tag 1.1.0 -a -m '.'";
             await Checkout(path, "main");
 
             // assert
-            await AssertFile.Contains($"../../../versions.txt", await GetGraph(path));
+            await AssertFile.Contains("../../../versions.txt", await GetGraph(path));
         }
 
         [Fact]

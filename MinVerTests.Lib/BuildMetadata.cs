@@ -1,90 +1,87 @@
 using System.Reflection;
+using System.Threading.Tasks;
 using MinVer.Lib;
 using MinVerTests.Infra;
-using Xbehave;
 using Xunit;
 using static MinVerTests.Infra.Git;
-using Version = MinVer.Lib.Version;
 
 namespace MinVerTests.Lib
 {
     public static class BuildMetadata
     {
-        [Scenario]
-        [Example(default, "0.0.0-alpha.0")]
-        [Example("a", "0.0.0-alpha.0+a")]
-        public static void NoCommits(string buildMetadata, string expectedVersion, string path, Version actualVersion)
+        [Theory]
+        [InlineData(default, "0.0.0-alpha.0")]
+        [InlineData("a", "0.0.0-alpha.0+a")]
+        public static async Task NoCommits(string buildMetadata, string expectedVersion)
         {
-            _ = $"Given an empty git repository in {path = MethodBase.GetCurrentMethod().GetTestDirectory(buildMetadata)}"
-                .x(() => EnsureEmptyRepository(path));
+            // arrange
+            var path = MethodBase.GetCurrentMethod().GetTestDirectory(buildMetadata);
+            await EnsureEmptyRepository(path);
 
-            _ = $"When the version is determined using build metadata '{buildMetadata}'"
-                .x(() => actualVersion = Versioner.GetVersion(path, default, default, buildMetadata, default, default, default));
+            // act
+            var actualVersion = Versioner.GetVersion(path, default, default, buildMetadata, default, default, default);
 
-            _ = $"Then the version is '{expectedVersion}'"
-                .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));
+            // assert
+            Assert.Equal(expectedVersion, actualVersion.ToString());
         }
 
-        [Scenario]
-        [Example(default, "0.0.0-alpha.0")]
-        [Example("a", "0.0.0-alpha.0+a")]
-        public static void NoTag(string buildMetadata, string expectedVersion, string path, Version actualVersion)
+        [Theory]
+        [InlineData(default, "0.0.0-alpha.0")]
+        [InlineData("a", "0.0.0-alpha.0+a")]
+        public static async Task NoTag(string buildMetadata, string expectedVersion)
         {
-            _ = $"Given a git repository with a commit in {path = MethodBase.GetCurrentMethod().GetTestDirectory(buildMetadata)}"
-                .x(() => EnsureEmptyRepositoryAndCommit(path));
+            // arrange
+            var path = MethodBase.GetCurrentMethod().GetTestDirectory(buildMetadata);
+            await EnsureEmptyRepositoryAndCommit(path);
 
-            _ = $"When the version is determined using build metadata '{buildMetadata}'"
-                .x(() => actualVersion = Versioner.GetVersion(path, default, default, buildMetadata, default, default, default));
+            // act
+            var actualVersion = Versioner.GetVersion(path, default, default, buildMetadata, default, default, default);
 
-            _ = $"Then the version is '{expectedVersion}'"
-                .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));
+            // assert
+            Assert.Equal(expectedVersion, actualVersion.ToString());
         }
 
-        [Scenario]
-        [Example("1.2.3+a", default, "1.2.3+a")]
-        [Example("1.2.3", "b", "1.2.3+b")]
-        [Example("1.2.3+a", "b", "1.2.3+a.b")]
-        [Example("1.2.3-pre+a", default, "1.2.3-pre+a")]
-        [Example("1.2.3-pre", "b", "1.2.3-pre+b")]
-        [Example("1.2.3-pre+a", "b", "1.2.3-pre+a.b")]
-        public static void CurrentTag(string tag, string buildMetadata, string expectedVersion, string path, Version actualVersion)
+        [Theory]
+        [InlineData("1.2.3+a", default, "1.2.3+a")]
+        [InlineData("1.2.3", "b", "1.2.3+b")]
+        [InlineData("1.2.3+a", "b", "1.2.3+a.b")]
+        [InlineData("1.2.3-pre+a", default, "1.2.3-pre+a")]
+        [InlineData("1.2.3-pre", "b", "1.2.3-pre+b")]
+        [InlineData("1.2.3-pre+a", "b", "1.2.3-pre+a.b")]
+        public static async Task CurrentTag(string tag, string buildMetadata, string expectedVersion)
         {
-            _ = $"Given a git repository with a commit in {path = MethodBase.GetCurrentMethod().GetTestDirectory((tag, buildMetadata))}"
-                .x(() => EnsureEmptyRepositoryAndCommit(path));
+            // arrange
+            var path = MethodBase.GetCurrentMethod().GetTestDirectory((tag, buildMetadata));
+            await EnsureEmptyRepositoryAndCommit(path);
+            await Tag(path, tag);
 
-            _ = $"And the commit is tagged '{tag}'"
-                .x(() => Tag(path, tag));
+            // act
+            var actualVersion = Versioner.GetVersion(path, default, default, buildMetadata, default, default, default);
 
-            _ = $"When the version is determined using build metadata '{buildMetadata}'"
-                .x(() => actualVersion = Versioner.GetVersion(path, default, default, buildMetadata, default, default, default));
-
-            _ = $"Then the version is '{expectedVersion}'"
-                .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));
+            // assert
+            Assert.Equal(expectedVersion, actualVersion.ToString());
         }
 
-        [Scenario]
-        [Example("1.2.3+a", default, "1.2.4-alpha.0.1")]
-        [Example("1.2.3", "b", "1.2.4-alpha.0.1+b")]
-        [Example("1.2.3+a", "b", "1.2.4-alpha.0.1+b")]
-        [Example("1.2.3-pre+a", default, "1.2.3-pre.1")]
-        [Example("1.2.3-pre", "b", "1.2.3-pre.1+b")]
-        [Example("1.2.3-pre+a", "b", "1.2.3-pre.1+b")]
-        public static void PreviousTag(string tag, string buildMetadata, string expectedVersion, string path, Version actualVersion)
+        [Theory]
+        [InlineData("1.2.3+a", default, "1.2.4-alpha.0.1")]
+        [InlineData("1.2.3", "b", "1.2.4-alpha.0.1+b")]
+        [InlineData("1.2.3+a", "b", "1.2.4-alpha.0.1+b")]
+        [InlineData("1.2.3-pre+a", default, "1.2.3-pre.1")]
+        [InlineData("1.2.3-pre", "b", "1.2.3-pre.1+b")]
+        [InlineData("1.2.3-pre+a", "b", "1.2.3-pre.1+b")]
+        public static async Task PreviousTag(string tag, string buildMetadata, string expectedVersion)
         {
-            _ = $"Given a git repository with a commit in {path = MethodBase.GetCurrentMethod().GetTestDirectory((tag, buildMetadata))}"
-                .x(() => EnsureEmptyRepositoryAndCommit(path));
+            // arrange
+            var path = MethodBase.GetCurrentMethod().GetTestDirectory((tag, buildMetadata));
+            await EnsureEmptyRepositoryAndCommit(path);
+            await Tag(path, tag);
+            await Commit(path);
 
-            _ = $"And the commit is tagged '{tag}'"
-                .x(() => Tag(path, tag));
+            // act
+            var actualVersion = Versioner.GetVersion(path, default, default, buildMetadata, default, default, default);
 
-            _ = "And another commit"
-                .x(() => Commit(path));
-
-            _ = $"When the version is determined using build metadata '{buildMetadata}'"
-                .x(() => actualVersion = Versioner.GetVersion(path, default, default, buildMetadata, default, default, default));
-
-            _ = $"Then the version is '{expectedVersion}'"
-                .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));
+            // assert
+            Assert.Equal(expectedVersion, actualVersion.ToString());
         }
     }
 }

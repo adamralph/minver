@@ -6,24 +6,19 @@ using CliWrap;
 using MinVer.Lib;
 using MinVerTests.Infra;
 using MinVerTests.Lib.Infra;
-using Xbehave;
 using Xunit;
 using static MinVerTests.Infra.FileSystem;
 using static MinVerTests.Infra.Git;
-using Version = MinVer.Lib.Version;
 
 namespace MinVerTests.Lib
 {
     public static class Versions
     {
-#if NET5_0_OR_GREATER
-        private static readonly Dictionary<string, string> historicalCommands = new()
-#else
-        private static readonly Dictionary<string, string> historicalCommands = new Dictionary<string, string>
-#endif
+        [Fact]
+        public static async Task RepoWithHistory()
         {
-            {
-                "general",
+            // arrange
+            var historicalCommands =
 @"git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
@@ -66,81 +61,70 @@ git tag 1.1.0-beta.10
 git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
 git tag 1.1.0-rc.1
-git tag 1.1.0 -a -m '.'"
+git tag 1.1.0 -a -m '.'";
+
+            var path = MethodBase.GetCurrentMethod().GetTestDirectory();
+
+            await EnsureEmptyRepositoryAndCommit(path);
+
+            foreach (var command in historicalCommands.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                var nameAndArgs = command.Split(" ", 2);
+                _ = await Cli.Wrap(nameAndArgs[0]).WithArguments(nameAndArgs[1]).WithWorkingDirectory(path).ExecuteAsync();
+                await Task.Delay(200);
             }
-        };
 
-        [Scenario]
-        [Example("general")]
-        public static void RepoWithHistory(string name, string path)
-        {
-            _ = $"Given a git repository with a history of branches and/or tags in {path = MethodBase.GetCurrentMethod().GetTestDirectory(name)}"
-                .x(async () =>
-                {
-                    await EnsureEmptyRepositoryAndCommit(path);
+            // act
+            var versionCounts = new Dictionary<string, int>();
+            foreach (var sha in await GetCommitShas(path))
+            {
+                await Checkout(path, sha);
 
-                    foreach (var command in historicalCommands[name].Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
-                    {
-                        var nameAndArgs = command.Split(" ", 2);
-                        _ = await Cli.Wrap(nameAndArgs[0]).WithArguments(nameAndArgs[1]).WithWorkingDirectory(path).ExecuteAsync();
-                        await Task.Delay(200);
-                    }
-                });
+                var version = Versioner.GetVersion(path, default, default, default, default, default, default);
+                var versionString = version.ToString();
+                var tagName = $"v/{versionString}";
 
-            _ = "When the version is determined for every commit"
-                .x(async () =>
-                {
-                    var versionCounts = new Dictionary<string, int>();
-                    foreach (var sha in await GetCommitShas(path))
-                    {
-                        await Checkout(path, sha);
+                _ = versionCounts.TryGetValue(versionString, out var oldVersionCount);
+                var versionCount = oldVersionCount + 1;
+                versionCounts[versionString] = versionCount;
 
-                        var version = Versioner.GetVersion(path, default, default, default, default, default, default);
-                        var versionString = version.ToString();
-                        var tagName = $"v/{versionString}";
+                tagName = versionCount > 1 ? $"v({versionCount})/{versionString}" : tagName;
 
-                        _ = versionCounts.TryGetValue(versionString, out var oldVersionCount);
-                        var versionCount = oldVersionCount + 1;
-                        versionCounts[versionString] = versionCount;
+                await Tag(path, tagName, sha);
+            }
 
-                        tagName = versionCount > 1
-                            ? $"v({versionCount})/{versionString}"
-                            : tagName;
+            await Checkout(path, "main");
 
-                        await Tag(path, tagName, sha);
-                    }
-
-                    await Checkout(path, "main");
-                });
-
-            _ = "Then the versions are as expected"
-                .x(async () => await AssertFile.Contains($"../../../{name}.txt", await GetGraph(path)));
+            // assert
+            await AssertFile.Contains($"../../../versions.txt", await GetGraph(path));
         }
 
-        [Scenario]
-        public static void EmptyRepo(string path, Version version)
+        [Fact]
+        public static async Task EmptyRepo()
         {
-            _ = $"Given an empty git repository in {path = MethodBase.GetCurrentMethod().GetTestDirectory()}"
-                .x(() => EnsureEmptyRepository(path));
+            // arrange
+            var path = MethodBase.GetCurrentMethod().GetTestDirectory();
+            await EnsureEmptyRepository(path);
 
-            _ = "When the version is determined"
-                .x(() => version = Versioner.GetVersion(path, default, default, default, default, default, default));
+            // act
+            var version = Versioner.GetVersion(path, default, default, default, default, default, default);
 
-            _ = "Then the version is 0.0.0-alpha.0"
-                .x(() => Assert.Equal("0.0.0-alpha.0", version.ToString()));
+            // assert
+            Assert.Equal("0.0.0-alpha.0", version.ToString());
         }
 
-        [Scenario]
-        public static void NoRepo(string path, Version version)
+        [Fact]
+        public static void NoRepo()
         {
-            _ = $"Given an empty directory {path = MethodBase.GetCurrentMethod().GetTestDirectory()}"
-                .x(() => EnsureEmptyDirectory(path));
+            // arrange
+            var path = MethodBase.GetCurrentMethod().GetTestDirectory();
+            EnsureEmptyDirectory(path);
 
-            _ = "When the version is determined"
-                .x(() => version = Versioner.GetVersion(path, default, default, default, default, default, default));
+            // act
+            var version = Versioner.GetVersion(path, default, default, default, default, default, default);
 
-            _ = "Then the version is 0.0.0-alpha.0"
-                .x(() => Assert.Equal("0.0.0-alpha.0", version.ToString()));
+            // assert
+            Assert.Equal("0.0.0-alpha.0", version.ToString());
         }
     }
 }

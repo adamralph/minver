@@ -1,35 +1,31 @@
 using System.Reflection;
+using System.Threading.Tasks;
 using MinVer.Lib;
 using MinVerTests.Infra;
-using Xbehave;
 using Xunit;
 using static MinVerTests.Infra.Git;
-using Version = MinVer.Lib.Version;
 
 namespace MinVerTests.Lib
 {
     public static class AutoIncrement
     {
-        [Scenario]
-        [Example("1.2.3", VersionPart.Major, "2.0.0-alpha.0.1")]
-        [Example("1.2.3", VersionPart.Minor, "1.3.0-alpha.0.1")]
-        [Example("1.2.3", VersionPart.Patch, "1.2.4-alpha.0.1")]
-        public static void RtmVersionIncrement(string tag, VersionPart autoIncrement, string expectedVersion, string path, Version actualVersion)
+        [Theory]
+        [InlineData("1.2.3", VersionPart.Major, "2.0.0-alpha.0.1")]
+        [InlineData("1.2.3", VersionPart.Minor, "1.3.0-alpha.0.1")]
+        [InlineData("1.2.3", VersionPart.Patch, "1.2.4-alpha.0.1")]
+        public static async Task RtmVersionIncrement(string tag, VersionPart autoIncrement, string expectedVersion)
         {
-            _ = $"Given a git repository with a commit in {path = MethodBase.GetCurrentMethod().GetTestDirectory(autoIncrement)}"
-                .x(() => EnsureEmptyRepositoryAndCommit(path));
+            // arrange
+            var path = MethodBase.GetCurrentMethod().GetTestDirectory((tag, autoIncrement));
+            await EnsureEmptyRepositoryAndCommit(path);
+            await Tag(path, tag);
+            await Commit(path);
 
-            _ = $"And the commit is tagged '{tag}'"
-                .x(() => Tag(path, tag));
+            // act
+            var actualVersion = Versioner.GetVersion(path, default, default, default, autoIncrement, default, default);
 
-            _ = "And another commit"
-                .x(() => Commit(path));
-
-            _ = $"When the version is determined using auto-increment '{autoIncrement}'"
-                .x(() => actualVersion = Versioner.GetVersion(path, default, default, default, autoIncrement, default, default));
-
-            _ = $"Then the version is '{expectedVersion}'"
-                .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));
+            // assert
+            Assert.Equal(expectedVersion, actualVersion.ToString());
         }
     }
 }

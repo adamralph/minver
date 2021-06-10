@@ -1,29 +1,29 @@
 using System.Reflection;
+using System.Threading.Tasks;
 using MinVer.Lib;
 using MinVerTests.Infra;
-using Xbehave;
 using Xunit;
 using static MinVerTests.Infra.Git;
-using Version = MinVer.Lib.Version;
 
 namespace MinVerTests.Lib
 {
     public static class DefaultPreReleasePhases
     {
-        [Scenario]
-        [Example(default, "0.0.0-alpha.0")]
-        [Example("", "0.0.0-alpha.0")]
-        [Example("preview", "0.0.0-preview.0")]
-        public static void DefaultPreReleasePhase(string phase, string expectedVersion, string path, Version actualVersion)
+        [Theory]
+        [InlineData(default, "0.0.0-alpha.0")]
+        [InlineData("", "0.0.0-alpha.0")]
+        [InlineData("preview", "0.0.0-preview.0")]
+        public static async Task DefaultPreReleasePhase(string phase, string expectedVersion)
         {
-            _ = $"Given a git repository with a commit in {path = MethodBase.GetCurrentMethod().GetTestDirectory(phase)}"
-                .x(() => EnsureEmptyRepositoryAndCommit(path));
+            // arrange
+            var path = MethodBase.GetCurrentMethod().GetTestDirectory(phase);
+            await EnsureEmptyRepositoryAndCommit(path);
 
-            _ = $"When the version is determined using the default pre-release phase '{phase}'"
-                .x(() => actualVersion = Versioner.GetVersion(path, default, default, default, default, phase, default));
+            // act
+            var actualVersion = Versioner.GetVersion(path, default, default, default, default, phase, default);
 
-            _ = $"Then the version is '{expectedVersion}'"
-                .x(() => Assert.Equal(expectedVersion, actualVersion.ToString()));
+            // assert
+            Assert.Equal(expectedVersion, actualVersion.ToString());
         }
     }
 }

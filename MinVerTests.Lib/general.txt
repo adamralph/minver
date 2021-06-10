@@ -1,4 +1,4 @@
-* ' (HEAD -> master, tag: v/1.1.0, tag: 1.1.0-rc.1, tag: 1.1.0)'
+* ' (HEAD -> main, tag: v/1.1.0, tag: 1.1.0-rc.1, tag: 1.1.0)'
 * ' (tag: v/1.1.0-beta.10.1)'
 * ' (tag: v/1.1.0-beta.10, tag: 1.1.0-beta.2, tag: 1.1.0-beta.10)'
 *   ' (tag: v/1.1.0-alpha.1.2)'

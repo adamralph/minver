@@ -20,7 +20,6 @@
         "Sdks",
         "shas",
         "Versioner",
-        "Xbehave",
         "Xunit"
       ]
     },
@@ -30,7 +29,6 @@
         "netcoreapp",
         "netstandard",
         "visualstudio",
-        "Xbehave",
         "xunit"
       ]
     },

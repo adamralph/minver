@@ -74,4 +74,4 @@ Target("eyeball-logs", DependsOn("eyeball-minver-logs", "eyeball-minver-cli-logs
 
 Target("default", DependsOn("test-lib", "test-packages", "eyeball-logs"));
 
-await RunTargetsAndExitAsync(args, ex => ex is SimpleExec.NonZeroExitCodeException);
+await RunTargetsAndExitAsync(args, ex => ex is SimpleExec.ExitCodeException);

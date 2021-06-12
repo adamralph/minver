@@ -6,10 +6,10 @@
 _[![MinVer NuGet version](https://img.shields.io/nuget/v/MinVer.svg?style=flat&label=nuget%3A%20MinVer)](https://www.nuget.org/packages/MinVer)_
 _[![minver-cli NuGet version](https://img.shields.io/nuget/v/minver-cli.svg?style=flat&label=nuget%3A%20minver-cli)](https://www.nuget.org/packages/minver-cli)_
 
-_[![Build status](https://github.com/adamralph/minver/workflows/.github/workflows/ci.yml/badge.svg)](https://github.com/adamralph/minver/actions)_
-_[![CodeQL analysis](https://github.com/adamralph/minver/workflows/.github/workflows/codeql-analysis.yml/badge.svg)](https://github.com/adamralph/minver/actions?query=workflow%3A.github%2Fworkflows%2Fcodeql-analysis.yml)_
-_[![Lint](https://github.com/adamralph/minver/workflows/.github/workflows/lint.yml/badge.svg)](https://github.com/adamralph/minver/actions?query=workflow%3A.github%2Fworkflows%2Flint.yml)_
-_[![Spell check](https://github.com/adamralph/minver/workflows/.github/workflows/spell-check.yml/badge.svg)](https://github.com/adamralph/minver/actions?query=workflow%3A.github%2Fworkflows%2Fspell-check.yml)_
+_[![Build status](https://github.com/adamralph/minver/workflows/.github/workflows/ci.yml/badge.svg)](https://github.com/adamralph/minver/actions/workflows/ci.yml?query=branch%3Amain)_
+_[![CodeQL analysis](https://github.com/adamralph/minver/workflows/.github/workflows/codeql-analysis.yml/badge.svg)](https://github.com/adamralph/minver/actions/workflows/codeql-analysis.yml?query=branch%3Amain)_
+_[![Lint](https://github.com/adamralph/minver/workflows/.github/workflows/lint.yml/badge.svg)](https://github.com/adamralph/minver/actions/workflows/lint.yml?query=branch%3Amain)_
+_[![Spell check](https://github.com/adamralph/minver/workflows/.github/workflows/spell-check.yml/badge.svg)](https://github.com/adamralph/minver/actions/workflows/spell-check.yml?query=branch%3Amain)_
 
 A minimalist [.NET package](https://www.nuget.org/packages/MinVer) for versioning .NET SDK-style projects using Git tags.
 

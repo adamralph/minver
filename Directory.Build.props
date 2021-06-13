@@ -4,10 +4,15 @@
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <!-- MinVer doesn't use MinVer for versioning because
 the environment variables for the build and for the package tests
 would interfere with each other. -->
     <Version Condition="'$(CI_VERSION)' != ''">$(CI_VERSION)</Version>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(CI)' != ''">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
 </Project>

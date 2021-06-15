@@ -8,15 +8,12 @@ namespace MinVerTests.Infra
 {
     public static class TestDirectory
     {
-        private static readonly long runId = DateTimeOffset.UtcNow.UtcTicks;
-
         public static string Get(string testSuiteName, string testName, object tag = null) =>
             Path.Combine(
                 Path.GetTempPath(),
                 testSuiteName,
-                runId.ToString(CultureInfo.InvariantCulture),
+                TestContext.RunId.ToString(CultureInfo.InvariantCulture),
                 $"{testName}{(tag == null ? "" : (tag.GetType().Name.StartsWith("ValueTuple", StringComparison.Ordinal) ? tag : $"({tag})"))}");
-
 
         public static string GetTestDirectory(this MethodBase testMethod, object tag = null, [CallerMemberName] string testMethodName = "") =>
             Get(testMethod?.DeclaringType?.Assembly.GetName().Name, $"{testMethod.DeclaringType.GetReflectedType().Name}.{testMethodName}", tag);

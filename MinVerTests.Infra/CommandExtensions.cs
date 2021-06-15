@@ -33,6 +33,10 @@ $@"
 
 `{command.Arguments}`
 
+## Working directory path
+
+`{command.WorkingDirPath}`
+
 ## Environment variables
 
 ```text

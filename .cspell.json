@@ -73,6 +73,7 @@
     "Ananth",
     "analyzers",
     "bootstrapper",
+    "globbing",
     "markdownlint",
     "MinVer",
     "MyGet",

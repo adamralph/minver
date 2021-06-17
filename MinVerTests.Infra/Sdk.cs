@@ -121,7 +121,7 @@ $@"{{
                 .WithArguments(args => args
                     .Add("build")
                     .Add("--no-restore")
-                    .AddIf("--nologo", !(Version?.StartsWith("2.", StringComparison.Ordinal) ?? false))
+                    .AddIf(!(Version?.StartsWith("2.", StringComparison.Ordinal) ?? false), "--nologo")
                 )
                 .WithEnvironmentVariables(env => env
                     .SetFrom(environmentVariables)

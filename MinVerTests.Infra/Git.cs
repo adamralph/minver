@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CliWrap;
@@ -32,8 +31,11 @@ namespace MinVerTests.Infra
         }
 
         public static async Task<string> GetGraph(string path) =>
-            (await Cli.Wrap("git").WithArguments("log --graph --pretty=format:'%d'").WithWorkingDirectory(path).ExecuteBufferedAsync())
-                .StandardOutput;
+            await Cli.Wrap("git")
+                .WithArguments("log --graph --pretty=format:'%d'")
+                .WithWorkingDirectory(path)
+                .ExecuteBufferedAsync()
+                .Select(r => r.StandardOutput);
 
         public static Task Tag(string path, string tag) =>
             Cli.Wrap("git").WithArguments($"tag {tag}").WithWorkingDirectory(path).ExecuteAsync();
@@ -44,10 +46,18 @@ namespace MinVerTests.Infra
         public static Task AnnotatedTag(string path, string tag, string message) =>
             Cli.Wrap("git").WithArguments($"tag {tag} -a -m '{message}'").WithWorkingDirectory(path).ExecuteAsync();
 
-        public static async Task<IEnumerable<string>> GetCommitShas(string path) =>
-            (await Cli.Wrap("git").WithArguments("log --pretty=format:\"%H\"").WithWorkingDirectory(path).ExecuteBufferedAsync())
-                .StandardOutput
-                .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+        public static async Task<IEnumerable<string>> GetCommitShas(string path)
+        {
+            var stdOutLines = new List<string>();
+
+            await Cli.Wrap("git")
+                .WithArguments("log --pretty=format:\"%H\"")
+                .WithWorkingDirectory(path)
+                .WithStandardOutputPipe(PipeTarget.ToDelegate(stdOutLines.Add))
+                .ExecuteAsync();
+
+            return stdOutLines;
+        }
 
         public static Task Checkout(string path, string sha) =>
             Cli.Wrap("git").WithArguments($"checkout {sha}").WithWorkingDirectory(path).ExecuteAsync();

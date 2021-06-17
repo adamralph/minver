@@ -28,7 +28,7 @@ namespace MinVerTests.Infra
             CreateGlobalJsonIfRequired(path);
 
             _ = await Cli.Wrap("dotnet").WithArguments($"new sln --name test --output {path}")
-                .WithEnvironmentVariables(builder => builder.SetSdk().Build())
+                .WithEnvironmentVariables(builder => builder.SetSdk())
                 .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync().ConfigureAwait(false);
 
             string previousProjectName = null;
@@ -47,12 +47,12 @@ namespace MinVerTests.Infra
                     var previousProjectFileName = Path.Combine(path, previousProjectName, $"{previousProjectName}.csproj");
 
                     _ = await Cli.Wrap("dotnet").WithArguments($"add {projectFileName} reference {previousProjectFileName}")
-                        .WithEnvironmentVariables(builder => builder.SetSdk().Build())
+                        .WithEnvironmentVariables(builder => builder.SetSdk())
                         .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync().ConfigureAwait(false);
                 }
 
                 _ = await Cli.Wrap("dotnet").WithArguments($"sln add {projectName}")
-                    .WithEnvironmentVariables(builder => builder.SetSdk().Build())
+                    .WithEnvironmentVariables(builder => builder.SetSdk())
                     .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync().ConfigureAwait(false);
 
                 previousProjectName = projectName;
@@ -75,15 +75,15 @@ namespace MinVerTests.Infra
             var minVerPackageVersion = Path.GetFileNameWithoutExtension(Directory.EnumerateFiles(source, "*.nupkg").First()).Split("MinVer.", 2)[1];
 
             _ = await Cli.Wrap("dotnet").WithArguments($"new classlib --name {name} --output {path}")
-                .WithEnvironmentVariables(builder => builder.SetSdk().Build())
+                .WithEnvironmentVariables(builder => builder.SetSdk())
                 .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync().ConfigureAwait(false);
 
             _ = await Cli.Wrap("dotnet").WithArguments($"add package MinVer --source {source} --version {minVerPackageVersion} --package-directory packages")
-                .WithEnvironmentVariables(builder => builder.SetSdk().Build())
+                .WithEnvironmentVariables(builder => builder.SetSdk())
                 .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync().ConfigureAwait(false);
 
             _ = await Cli.Wrap("dotnet").WithArguments($"restore --source {source} --packages packages")
-                .WithEnvironmentVariables(builder => builder.SetSdk().Build())
+                .WithEnvironmentVariables(builder => builder.SetSdk())
                 .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync().ConfigureAwait(false);
         }
 
@@ -118,16 +118,15 @@ $@"{{
             _ = environmentVariables.TryAdd("NoPackageAnalysis", "true");
 
             var result = await Cli.Wrap("dotnet")
-                .WithArguments($"build --no-restore{((Version?.StartsWith("2.", StringComparison.Ordinal) ?? false) ? "" : " --nologo")}")
-                .WithEnvironmentVariables(builder =>
-                {
-                    foreach (var pair in environmentVariables)
-                    {
-                        _ = builder.Set(pair.Key, pair.Value);
-                    }
-
-                    _ = builder.SetSdk().Build();
-                })
+                .WithArguments(args => args
+                    .Add("build")
+                    .Add("--no-restore")
+                    .AddIf("--nologo", !(Version?.StartsWith("2.", StringComparison.Ordinal) ?? false))
+                )
+                .WithEnvironmentVariables(env => env
+                    .SetFrom(environmentVariables)
+                    .SetSdk()
+                )
                 .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync().ConfigureAwait(false);
 
             var matcher = new Matcher().AddInclude("**/bin/Debug/*.nupkg");

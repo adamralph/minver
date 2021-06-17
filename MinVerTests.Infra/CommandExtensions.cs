@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CliWrap;
 using CliWrap.Buffered;
+using CliWrap.Builders;
 using CliWrap.Exceptions;
 
 namespace MinVerTests.Infra
@@ -63,6 +65,26 @@ $@"
             await File.WriteAllTextAsync(Path.Combine(command.WorkingDirPath, $"command-{index:D2}.md"), log).ConfigureAwait(false);
 
             return result.ExitCode == 0 || validation == CommandResultValidation.None ? result : throw new CommandExecutionException(command, result.ExitCode, log);
+        }
+
+        public static EnvironmentVariablesBuilder SetFrom(this EnvironmentVariablesBuilder env, IEnumerable<KeyValuePair<string, string>> source)
+        {
+            foreach (var (key, value) in source)
+            {
+                env.Set(key, value);
+            }
+
+            return env;
+        }
+
+        public static ArgumentsBuilder AddIf(this ArgumentsBuilder args, string value, bool condition)
+        {
+            if (condition)
+            {
+                args.Add(value);
+            }
+
+            return args;
         }
     }
 }

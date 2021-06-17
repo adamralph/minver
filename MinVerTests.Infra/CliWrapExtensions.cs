@@ -11,7 +11,7 @@ using CliWrap.Exceptions;
 
 namespace MinVerTests.Infra
 {
-    internal static class CommandExtensions
+    internal static class CliWrapExtensions
     {
         private static int index;
 
@@ -21,7 +21,7 @@ namespace MinVerTests.Infra
 
             var result = await command.WithValidation(CommandResultValidation.None).ExecuteBufferedAsync();
 
-            var index = Interlocked.Increment(ref CommandExtensions.index);
+            var index = Interlocked.Increment(ref CliWrapExtensions.index);
 
             var log =
 $@"
@@ -77,7 +77,7 @@ $@"
             return env;
         }
 
-        public static ArgumentsBuilder AddIf(this ArgumentsBuilder args, string value, bool condition)
+        public static ArgumentsBuilder AddIf(this ArgumentsBuilder args, bool condition, string value)
         {
             if (condition)
             {

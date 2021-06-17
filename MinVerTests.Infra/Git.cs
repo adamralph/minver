@@ -35,7 +35,7 @@ namespace MinVerTests.Infra
                 .WithArguments("log --graph --pretty=format:'%d'")
                 .WithWorkingDirectory(path)
                 .ExecuteBufferedAsync()
-                .Select(r => r.StandardOutput);
+                .Select(result => result.StandardOutput);
 
         public static Task Tag(string path, string tag) =>
             Cli.Wrap("git").WithArguments($"tag {tag}").WithWorkingDirectory(path).ExecuteAsync();

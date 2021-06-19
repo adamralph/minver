@@ -5,17 +5,25 @@ using System.Reflection;
 using System.Threading.Tasks;
 using MinVerTests.Infra;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace MinVerTests.Packages
 {
-    public static class MultipleProjects
+    public class MultipleProjects
     {
+        private readonly ITestOutputHelper output;
+
+        public MultipleProjects(ITestOutputHelper output) => this.output = output;
+
         [Fact]
-        public static async Task MultipleTagPrefixes()
+        public async Task MultipleTagPrefixes()
         {
             // arrange
             var path = MethodBase.GetCurrentMethod().GetTestDirectory();
-            await Sdk.CreateSolution(path, new[] { "project0", "project1", "project2", "project3" });
+
+            void log(string line) => this.output.WriteLine(line);
+
+            await Sdk.CreateSolution(path, new[] { "project0", "project1", "project2", "project3" }, log: log);
 
             var props =
 $@"<Project>
@@ -41,7 +49,7 @@ $@"<Project>
             var expected3 = Package.WithVersion(5, 6, 7);
 
             // act
-            var (packages, @out) = await Sdk.Build(path);
+            var (packages, @out) = await Sdk.Build(path, log);
 
             // assert
             Assert.NotNull(@out);

@@ -15,15 +15,22 @@ namespace MinVerTests.Infra
     {
         private static int index;
 
-        public static async Task<BufferedCommandResult> ExecuteBufferedLoggedAsync(this Command command)
+        public static async Task<BufferedCommandResult> ExecuteBufferedLoggedAsync(this Command command, Action<string> log)
         {
+            if (log != null)
+            {
+                log($"{DateTimeOffset.UtcNow:R} (command): {command}");
+                command = command.WithStandardErrorPipe(PipeTarget.ToDelegate(line => log($"{DateTimeOffset.UtcNow:R} (stderr): {line}")));
+                command = command.WithStandardOutputPipe(PipeTarget.ToDelegate(line => log($"{DateTimeOffset.UtcNow:R} (stdout): {line}")));
+            }
+
             var validation = command.Validation;
 
             var result = await command.WithValidation(CommandResultValidation.None).ExecuteBufferedAsync();
 
             var index = Interlocked.Increment(ref CliWrapExtensions.index);
 
-            var log =
+            var markdown =
 $@"
 # Command {index}
 
@@ -62,9 +69,9 @@ $@"
 ```
 ";
 
-            await File.WriteAllTextAsync(Path.Combine(command.WorkingDirPath, $"command-{index:D2}.md"), log).ConfigureAwait(false);
+            await File.WriteAllTextAsync(Path.Combine(command.WorkingDirPath, $"command-{index:D2}.md"), markdown).ConfigureAwait(false);
 
-            return result.ExitCode == 0 || validation == CommandResultValidation.None ? result : throw new CommandExecutionException(command, result.ExitCode, log);
+            return result.ExitCode == 0 || validation == CommandResultValidation.None ? result : throw new CommandExecutionException(command, result.ExitCode, markdown);
         }
 
         public static EnvironmentVariablesBuilder SetFrom(this EnvironmentVariablesBuilder env, IEnumerable<KeyValuePair<string, string>> source)

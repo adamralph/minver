@@ -19,7 +19,7 @@ namespace MinVerTests.Infra
 
         public static string Version { get; } = Environment.GetEnvironmentVariable("MINVER_TESTS_SDK");
 
-        public static async Task CreateSolution(string path, string[] projectNames, string configuration = Configuration.Current)
+        public static async Task CreateSolution(string path, string[] projectNames, string configuration = Configuration.Current, Action<string> log = null)
         {
             projectNames ??= Array.Empty<string>();
 
@@ -29,7 +29,7 @@ namespace MinVerTests.Infra
 
             _ = await Cli.Wrap("dotnet").WithArguments($"new sln --name test --output {path}")
                 .WithEnvironmentVariables(builder => builder.SetSdk())
-                .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync().ConfigureAwait(false);
+                .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync(log).ConfigureAwait(false);
 
             string previousProjectName = null;
             foreach (var projectName in projectNames)
@@ -38,7 +38,7 @@ namespace MinVerTests.Infra
 
                 FileSystem.EnsureEmptyDirectory(projectPath);
 
-                await CreateProject(projectPath, configuration, projectName).ConfigureAwait(false);
+                await CreateProject(projectPath, configuration, projectName, log).ConfigureAwait(false);
 
                 // ensure deterministic build order
                 if (previousProjectName != null)
@@ -48,27 +48,27 @@ namespace MinVerTests.Infra
 
                     _ = await Cli.Wrap("dotnet").WithArguments($"add {projectFileName} reference {previousProjectFileName}")
                         .WithEnvironmentVariables(builder => builder.SetSdk())
-                        .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync().ConfigureAwait(false);
+                        .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync(log).ConfigureAwait(false);
                 }
 
                 _ = await Cli.Wrap("dotnet").WithArguments($"sln add {projectName}")
                     .WithEnvironmentVariables(builder => builder.SetSdk())
-                    .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync().ConfigureAwait(false);
+                    .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync(log).ConfigureAwait(false);
 
                 previousProjectName = projectName;
             }
         }
 
-        public static async Task CreateProject(string path, string configuration = Configuration.Current)
+        public static async Task CreateProject(string path, string configuration = Configuration.Current, Action<string> log = null)
         {
             FileSystem.EnsureEmptyDirectory(path);
 
             CreateGlobalJsonIfRequired(path);
 
-            await CreateProject(path, configuration, "test").ConfigureAwait(false);
+            await CreateProject(path, configuration, "test", log).ConfigureAwait(false);
         }
 
-        private static async Task CreateProject(string path, string configuration, string name)
+        private static async Task CreateProject(string path, string configuration, string name, Action<string> log)
         {
             var source = Solution.GetFullPath($"MinVer/bin/{configuration}/");
 
@@ -76,15 +76,15 @@ namespace MinVerTests.Infra
 
             _ = await Cli.Wrap("dotnet").WithArguments($"new classlib --name {name} --output {path}")
                 .WithEnvironmentVariables(builder => builder.SetSdk())
-                .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync().ConfigureAwait(false);
+                .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync(log).ConfigureAwait(false);
 
             _ = await Cli.Wrap("dotnet").WithArguments($"add package MinVer --source {source} --version {minVerPackageVersion} --package-directory packages")
                 .WithEnvironmentVariables(builder => builder.SetSdk())
-                .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync().ConfigureAwait(false);
+                .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync(log).ConfigureAwait(false);
 
             _ = await Cli.Wrap("dotnet").WithArguments($"restore --source {source} --packages packages")
                 .WithEnvironmentVariables(builder => builder.SetSdk())
-                .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync().ConfigureAwait(false);
+                .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync(log).ConfigureAwait(false);
         }
 
         private static void CreateGlobalJsonIfRequired(string path)
@@ -103,14 +103,14 @@ $@"{{
             }
         }
 
-        public static async Task<(Package, string)> BuildProject(string path, params (string, string)[] envVars)
+        public static async Task<(Package, string)> BuildProject(string path, Action<string> log = null, params (string, string)[] envVars)
         {
-            var (packages, @out) = await Build(path, envVars).ConfigureAwait(false);
+            var (packages, @out) = await Build(path, log, envVars).ConfigureAwait(false);
 
             return (packages.Single(), @out);
         }
 
-        public static async Task<(List<Package>, string)> Build(string path, params (string, string)[] envVars)
+        public static async Task<(List<Package>, string)> Build(string path, Action<string> log = null, params (string, string)[] envVars)
         {
             var environmentVariables = envVars.ToDictionary(envVar => envVar.Item1, envVar => envVar.Item2, StringComparer.OrdinalIgnoreCase);
             _ = environmentVariables.TryAdd("MinVerVerbosity".ToAltCase(), "diagnostic");
@@ -127,7 +127,7 @@ $@"{{
                     .SetFrom(environmentVariables)
                     .SetSdk()
                 )
-                .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync().ConfigureAwait(false);
+                .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync(log).ConfigureAwait(false);
 
             var matcher = new Matcher().AddInclude("**/bin/Debug/*.nupkg");
             var packageFileNames = matcher.GetResultsInFullPath(path).OrderBy(_ => _);

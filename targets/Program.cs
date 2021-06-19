@@ -15,7 +15,7 @@ Target(
     "test-packages",
     "test the MinVer package and the minver-cli console app",
     DependsOn("build"),
-    () => RunAsync("dotnet", "test ./MinVerTests.Packages --configuration Release --no-build --nologo --verbosity normal"));
+    () => RunAsync("dotnet", "test ./MinVerTests.Packages --configuration Release --no-build --nologo --verbosity normal --logger \"console;verbosity=detailed\""));
 
 Target(
     "eyeball-minver-logs",

@@ -57,7 +57,7 @@
       "languageId": "csproj"
     },
     {
-      "filename": ".cspell.json",
+      "filename": ".cspell.json,*.svg",
       "enabled": false
     },
     {

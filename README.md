@@ -1,5 +1,5 @@
 <!-- markdownlint-disable-next-line MD041 -->
-<img src="assets/minver.png" width="100" />
+![MinVer](/assets/minver.svg)
 
 # MinVer
 

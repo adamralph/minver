@@ -18,10 +18,11 @@ namespace MinVerTests.Packages
         [Fact]
         public async Task MultipleTagPrefixes()
         {
-            // arrange
-            var path = MethodBase.GetCurrentMethod().GetTestDirectory();
+            void log(string message) => this.output.Log(message);
 
-            void log(string line) => this.output.WriteLine(line);
+            // arrange
+            log("arrange");
+            var path = MethodBase.GetCurrentMethod().GetTestDirectory();
 
             await Sdk.CreateSolution(path, new[] { "project0", "project1", "project2", "project3" }, log: log);
 
@@ -49,9 +50,11 @@ $@"<Project>
             var expected3 = Package.WithVersion(5, 6, 7);
 
             // act
+            log("act");
             var (packages, @out) = await Sdk.Build(path, log);
 
             // assert
+            log("assert");
             Assert.NotNull(@out);
 
             var versionCalculations = @out

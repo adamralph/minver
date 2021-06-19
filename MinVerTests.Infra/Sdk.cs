@@ -129,25 +129,42 @@ $@"{{
                 )
                 .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync(log).ConfigureAwait(false);
 
+            log?.Invoke("Read packages...");
+
             var matcher = new Matcher().AddInclude("**/bin/Debug/*.nupkg");
             var packageFileNames = matcher.GetResultsInFullPath(path).OrderBy(_ => _);
-            var getPackages = packageFileNames.Select(async fileName => await GetPackage(fileName).ConfigureAwait(false));
+            var getPackages = packageFileNames.Select(async fileName => await GetPackage(fileName, log).ConfigureAwait(false));
             var packages = await Task.WhenAll(getPackages).ConfigureAwait(false);
 
             return (packages.ToList(), result.StandardOutput);
         }
 
-        private static async Task<Package> GetPackage(string fileName)
+        private static async Task<Package> GetPackage(string fileName, Action<string> log)
         {
             var extractedDirectoryName = Path.Combine(Path.GetDirectoryName(fileName), Path.GetFileNameWithoutExtension(fileName));
-            ZipFile.ExtractToDirectory(fileName, extractedDirectoryName);
 
-            var nuspec = await File.ReadAllTextAsync(Directory.EnumerateFiles(extractedDirectoryName, "*.nuspec").First()).ConfigureAwait(false);
+            log?.Invoke($"Extracting '{fileName}' to '{extractedDirectoryName}'...");
+            ZipFile.ExtractToDirectory(fileName, extractedDirectoryName);
+            log?.Invoke($"Finished extracting '{fileName}' to '{extractedDirectoryName}'");
+
+            log?.Invoke($"Finding nuspec...");
+            var nuspecFileName = Directory.EnumerateFiles(extractedDirectoryName, "*.nuspec").First();
+            log?.Invoke($"Finished finding nuspec");
+
+            log?.Invoke($"Reading '{nuspecFileName}'...");
+            var nuspec = await File.ReadAllTextAsync(nuspecFileName).ConfigureAwait(false);
+            log?.Invoke($"Finished reading '{nuspecFileName}'");
+
             var nuspecVersion = nuspec.Split("<version>")[1].Split("</version>")[0];
 
+            log?.Invoke($"Finding assembly...");
             var assemblyFileName = Directory.EnumerateFiles(extractedDirectoryName, "*.dll", new EnumerationOptions { RecurseSubdirectories = true }).First();
+            log?.Invoke($"Finished finding assembly");
 
+            log?.Invoke($"Getting assembly version...");
             var systemAssemblyVersion = GetAssemblyVersion(assemblyFileName);
+            log?.Invoke($"Finished getting assembly version");
+
             var assemblyVersion = new AssemblyVersion(systemAssemblyVersion.Major, systemAssemblyVersion.Minor, systemAssemblyVersion.Build, systemAssemblyVersion.Revision);
 
             var fileVersionInfo = FileVersionInfo.GetVersionInfo(assemblyFileName);

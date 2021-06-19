@@ -12,8 +12,7 @@ namespace MinVerTests.Infra
             var environmentVariables = envVars.ToDictionary(envVar => envVar.Item1, envVar => envVar.Item2, StringComparer.OrdinalIgnoreCase);
             _ = environmentVariables.TryAdd("MinVerVerbosity".ToAltCase(), "trace");
 
-            var result = await Cli.Wrap("dotnet")
-                .WithArguments($"exec {GetPath(configuration)}")
+            var result = await Cli.Wrap("dotnet").WithArguments($"exec {GetPath(configuration)}")
                 .WithEnvironmentVariables(environmentVariables)
                 .WithWorkingDirectory(workingDirectory).ExecuteBufferedLoggedAsync(log).ConfigureAwait(false);
 

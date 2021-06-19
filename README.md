@@ -1,5 +1,5 @@
 <!-- markdownlint-disable-next-line MD041 -->
-![MinVer](https://raw.githubusercontent.com/adamralph/minver/84a42f0405d111dada8e394378e2880d233e7236/assets/minver.svg)
+![MinVer](https://raw.githubusercontent.com/adamralph/minver/28ce6ec69c4489c034f7eea78665a0cc9980eb81/assets/minver.svg)
 
 # MinVer
 

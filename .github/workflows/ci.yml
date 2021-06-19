@@ -11,28 +11,56 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        job:
-          - os: macos-10.15
-            build: ./build.sh
-          - os: ubuntu-18.04
-            build: ./build.sh
-          - os: ubuntu-20.04
-            build: ./build.sh
-            push: true
-          - os: windows-2016
-            build: ./build.cmd
-          - os: windows-2019
-            build: ./build.cmd
-        tests:
-          - framework: netcoreapp2.1
-            sdk: "2.1.816"
-          - framework: netcoreapp3.1
-            sdk: "3.1.410"
-          - framework: net5.0
-            sdk: "5.0.301"
-            push: true
-          - framework: net6.0
-            sdk: "6.0.100-preview.4.21255.9"
+        include:
+          - job:
+              os: macos-10.15
+              build: ./build.sh
+            tests:
+              framework: net5.0
+              sdk: "5.0.301"
+          - job:
+              os: ubuntu-18.04
+              build: ./build.sh
+            tests:
+              framework: net5.0
+              sdk: "5.0.301"
+          - job:
+              os: ubuntu-20.04
+              build: ./build.sh
+            tests:
+              framework: netcoreapp2.1
+              sdk: "2.1.816"
+          - job:
+              os: ubuntu-20.04
+              build: ./build.sh
+            tests:
+              framework: netcoreapp3.1
+              sdk: "3.1.410"
+          - job:
+              os: ubuntu-20.04
+              build: ./build.sh
+              push: true
+            tests:
+              framework: net5.0
+              sdk: "5.0.301"
+          - job:
+              os: ubuntu-20.04
+              build: ./build.sh
+            tests:
+              framework: net6.0
+              sdk: "6.0.100-preview.4.21255.9"
+          - job:
+              os: windows-2016
+              build: ./build.cmd
+            tests:
+              framework: net5.0
+              sdk: "5.0.301"
+          - job:
+              os: windows-2019
+              build: ./build.cmd
+            tests:
+              framework: net5.0
+              sdk: "5.0.301"
     name: ${{ matrix.job.os }}-${{ matrix.tests.framework }}
     runs-on: ${{ matrix.job.os }}
     steps:

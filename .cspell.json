@@ -79,6 +79,7 @@
     "MyGet",
     "Nerdbank",
     "netcoreapp",
-    "NuGet"
+    "NuGet",
+    "Parallelization"
   ]
 }

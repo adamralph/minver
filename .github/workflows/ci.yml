@@ -48,7 +48,7 @@ jobs:
               build: ./build.sh
             tests:
               framework: net6.0
-              sdk: "6.0.100-preview.4.21255.9"
+              sdk: "6.0.100-preview.5.21302.13"
           - job:
               os: windows-2016
               build: ./build.cmd

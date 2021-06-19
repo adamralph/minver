@@ -38,10 +38,10 @@ $@"<Project>
             File.WriteAllText(Path.Combine(path, "project1", "Directory.Build.props"), props);
             File.WriteAllText(Path.Combine(path, "project3", "Directory.Build.props"), props);
 
-            await Git.Init(path);
-            await Git.Commit(path);
-            await Git.Tag(path, "2.3.4");
-            await Git.Tag(path, "v5.6.7");
+            await Git.Init(path, log);
+            await Git.Commit(path, log);
+            await Git.Tag(path, "2.3.4", log);
+            await Git.Tag(path, "v5.6.7", log);
 
             var expected0 = Package.WithVersion(2, 3, 4);
             var expected1 = Package.WithVersion(5, 6, 7);

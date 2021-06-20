@@ -9,13 +9,13 @@ Target(
     "test-lib",
     "test the MinVer.Lib library",
     DependsOn("build"),
-    () => RunAsync("dotnet", $"test ./MinVerTests.Lib --framework {Environment.GetEnvironmentVariable("MINVER_TESTS_FRAMEWORK") ?? "net5.0"} --configuration Release --no-build --nologo --verbosity normal"));
+    () => RunAsync("dotnet", $"test ./MinVerTests.Lib --framework {Environment.GetEnvironmentVariable("MINVER_TESTS_FRAMEWORK") ?? "net5.0"} --configuration Release --no-build --nologo --verbosity normal --logger GitHubActions"));
 
 Target(
     "test-packages",
     "test the MinVer package and the minver-cli console app",
     DependsOn("build"),
-    () => RunAsync("dotnet", "test ./MinVerTests.Packages --configuration Release --no-build --nologo --verbosity normal --logger \"console;verbosity=detailed\""));
+    () => RunAsync("dotnet", "test ./MinVerTests.Packages --configuration Release --no-build --nologo --verbosity normal --logger \"console;verbosity=detailed\" --logger GitHubActions"));
 
 Target(
     "eyeball-minver-logs",

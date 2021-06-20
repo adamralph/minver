@@ -19,14 +19,15 @@ namespace MinVerTests.Infra
         {
             if (log != null)
             {
-                log($"{DateTimeOffset.UtcNow:R} (command): {command}");
-                command = command.WithStandardErrorPipe(PipeTarget.ToDelegate(line => log($"{DateTimeOffset.UtcNow:R} (stderr): {line}")));
-                command = command.WithStandardOutputPipe(PipeTarget.ToDelegate(line => log($"{DateTimeOffset.UtcNow:R} (stdout): {line}")));
+                command = command.WithStandardErrorPipe(PipeTarget.ToDelegate(line => log($"stderr: {line}")));
+                command = command.WithStandardOutputPipe(PipeTarget.ToDelegate(line => log($"stdout: {line}")));
             }
 
             var validation = command.Validation;
 
+            log?.Invoke($"Running command: {command}");
             var result = await command.WithValidation(CommandResultValidation.None).ExecuteBufferedAsync();
+            log?.Invoke($"Finished running command: {command}");
 
             var index = Interlocked.Increment(ref CliWrapExtensions.index);
 
@@ -69,7 +70,11 @@ $@"
 ```
 ";
 
-            await File.WriteAllTextAsync(Path.Combine(command.WorkingDirPath, $"command-{index:D2}.md"), markdown).ConfigureAwait(false);
+            var markdownFileName = Path.Combine(command.WorkingDirPath, $"command-{index:D2}.md");
+
+            log?.Invoke($"Writing markdown to '{markdownFileName}'...");
+            await File.WriteAllTextAsync(markdownFileName, markdown).ConfigureAwait(false);
+            log?.Invoke($"Finished writing markdown to '{markdownFileName}'");
 
             return result.ExitCode == 0 || validation == CommandResultValidation.None ? result : throw new CommandExecutionException(command, result.ExitCode, markdown);
         }

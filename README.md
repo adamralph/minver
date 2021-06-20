@@ -1,7 +1,6 @@
-<!-- markdownlint-disable-next-line MD041 -->
-![MinVer](https://raw.githubusercontent.com/adamralph/minver/28ce6ec69c4489c034f7eea78665a0cc9980eb81/assets/minver.svg)
-
 # MinVer
+
+![MinVer](https://raw.githubusercontent.com/adamralph/minver/28ce6ec69c4489c034f7eea78665a0cc9980eb81/assets/minver.svg)
 
 _[![MinVer NuGet version](https://img.shields.io/nuget/v/MinVer.svg?style=flat&label=nuget%3A%20MinVer)](https://www.nuget.org/packages/MinVer)_
 _[![minver-cli NuGet version](https://img.shields.io/nuget/v/minver-cli.svg?style=flat&label=nuget%3A%20minver-cli)](https://www.nuget.org/packages/minver-cli)_

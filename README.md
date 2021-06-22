@@ -301,6 +301,8 @@ Yes! MinVer is also available as a [command line tool](https://www.nuget.org/pac
 
 Sometimes you may want to version both .NET projects and other outputs, such as non-.NET projects, or a container image, in the same build. In those scenarios, you should use both the command line tool _and_ the regular MinVer package. Before building any .NET projects, your build script should run the command line tool and set the [`MINVERVERSIONOVERRIDE`](#options) environment variable to the calculated version. The MinVer package will then use that value rather than calculating the version a second time. This ensures that the command line tool and the MinVer package produce the same version.
 
+If the components of the version are required outside the context of a .NET project, they can easily be extracted from the version which is returned by the command line tool. The major, minor, and patch numbers can be separated from the pre-release identifiers by splitting the version by the first instance of `-`. The major, minor, and patch numbers and the pre-release identifiers can then be separated by splitting by `.`.
+
 ### Can I disable MinVer?
 
 Yes! Set [`MinVerSkip`](#options) to `true`. For example, MinVer can be disabled for debug builds:

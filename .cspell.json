@@ -1,85 +1,43 @@
 {
   "version": "0.1",
   "language": "en-GB",
-  "languageSettings": [
-    {
-      "languageId": "bash",
-      "words": [
-        "adamralph",
-        "nupkg",
-        "pipefail"
-      ]
-    },
-    {
-      "languageId": "csharp",
-      "words": [
-        "Arity",
-        "gpgsign",
-        "nologo",
-        "nupkg",
-        "Sdks",
-        "shas",
-        "Versioner",
-        "Xunit"
-      ]
-    },
-    {
-      "languageId": "csproj",
-      "words": [
-        "netcoreapp",
-        "netstandard",
-        "visualstudio",
-        "xunit"
-      ]
-    },
-    {
-      "languageId": "markdown",
-      "words": [
-        "MINVERBUILDMETADATA",
-        "MINVERVERSIONOVERRIDE"
-      ]
-    },
-    {
-      "languageId": "targets",
-      "words": [
-        "diag",
-        "quot"
-      ]
-    }
-  ],
   "overrides": [
     {
       "filename": "{*.cmd,*.cs,*.csproj,*.sh}",
       "language": "en-US"
     },
     {
-      "filename": "*.csproj",
-      "languageId": "csproj"
-    },
-    {
       "filename": ".cspell.json,*.svg",
       "enabled": false
-    },
-    {
-      "filename": "*.sh",
-      "languageId": "bash"
-    },
-    {
-      "filename": "*.targets",
-      "languageId": "targets"
     }
   ],
   "words": [
-    "Ananth",
+    "ADAMRALPH",
     "analyzers",
+    "Ananth",
+    "autobuild",
     "bootstrapper",
+    "codeql",
+    "diag",
     "globbing",
+    "gpgsign",
     "markdownlint",
     "MinVer",
+    "MINVERBUILDMETADATA",
+    "MINVERVERSIONOVERRIDE",
     "MyGet",
     "Nerdbank",
     "netcoreapp",
+    "netstandard",
+    "NOLOGO",
     "NuGet",
-    "Parallelization"
+    "nupkg",
+    "Parallelization",
+    "quot",
+    "refs",
+    "shas",
+    "SHFMT",
+    "Versioner",
+    "xunit"
   ]
 }

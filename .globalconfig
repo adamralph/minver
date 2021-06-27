@@ -1,4 +1,6 @@
 is_global = true
 
+dotnet_analyzer_diagnostic.severity = warning
+
 # CA1014: Mark assemblies with CLSCompliantAttribute
 dotnet_diagnostic.CA1014.severity = none

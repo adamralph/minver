@@ -83,7 +83,7 @@ $@"
         {
             foreach (var (key, value) in source)
             {
-                env.Set(key, value);
+                env = env.Set(key, value);
             }
 
             return env;
@@ -93,7 +93,7 @@ $@"
         {
             if (condition)
             {
-                args.Add(value);
+                args = args.Add(value);
             }
 
             return args;

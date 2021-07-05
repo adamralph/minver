@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.6.0
+
+### Enhancements
+
+- [#549: add README.md to packages](https://github.com/adamralph/minver/pull/549)
+
+### Fixed bugs
+
+- [#542: source stepping doesn't work](https://github.com/adamralph/minver/pull/542)
+
 ## 2.5.0
 
 ### Enhancements

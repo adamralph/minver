@@ -216,7 +216,7 @@ For example, if you prefix your tag names with "v", e.g. `v1.2.3`:
 
 Yes! MinVer doesn't care about branches. It's all about the tags!
 
-That means MinVer is compatible with [Git Flow](https://nvie.com/posts/a-successful-git-branching-model/), [GitHub Flow](https://guides.github.com/introduction/flow/), [Release Flow](https://docs.microsoft.com/en-us/azure/devops/learn/devops-at-microsoft/release-flow), and any other exotic flow.
+That means MinVer is compatible with [Git Flow](https://nvie.com/posts/a-successful-git-branching-model/), [GitHub Flow](https://guides.github.com/introduction/flow/), [Release Flow](https://devblogs.microsoft.com/devops/release-flow-how-we-do-branching-on-the-vsts-team/), and any other exotic flow.
 
 ### Can I include build metadata in the version?
 

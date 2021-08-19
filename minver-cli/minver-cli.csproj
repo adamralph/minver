@@ -13,7 +13,7 @@
     <PackageReleaseNotes>https://github.com/adamralph/minver/blob/main/CHANGELOG.md</PackageReleaseNotes>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <RollForward>major</RollForward>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <ToolCommandName>minver</ToolCommandName>
   </PropertyGroup>
 

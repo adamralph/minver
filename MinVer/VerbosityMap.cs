@@ -15,7 +15,7 @@ namespace MinVer
             Add(Verbosity.Detailed, 1);
             Add(Verbosity.Diagnostic, 4);
 
-            void Add(Verbosity verbosity, int shortLength)
+            static void Add(Verbosity verbosity, int shortLength)
             {
                 map.Add(verbosity.ToString(), verbosity);
                 map.Add(verbosity.ToString().Substring(0, shortLength), verbosity);

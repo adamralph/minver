@@ -2,11 +2,7 @@
 
   <PropertyGroup>
     <RollForward>major</RollForward>
-    <TargetFrameworks>netcoreapp2.1;netcoreapp3.1;net5.0</TargetFrameworks>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <CopyLocalLockFileAssemblies Condition="'$(TargetFramework)' == 'netcoreapp2.1'">true</CopyLocalLockFileAssemblies>
+    <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>

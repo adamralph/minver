@@ -20,6 +20,6 @@ namespace MinVerTests.Infra
         }
 
         public static string GetPath(string configuration) =>
-            Solution.GetFullPath($"minver-cli/bin/{configuration}/netcoreapp2.1/minver-cli.dll");
+            Solution.GetFullPath($"minver-cli/bin/{configuration}/netcoreapp3.1/minver-cli.dll");
     }
 }

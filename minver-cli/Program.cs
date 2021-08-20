@@ -23,9 +23,6 @@ namespace MinVer
             var buildMetaOption = app.Option("-b|--build-metadata <BUILD_METADATA>", "", CommandOptionType.SingleValue);
             var defaultPreReleasePhaseOption = app.Option("-d|--default-pre-release-phase <PHASE>", "alpha (default), preview, etc.", CommandOptionType.SingleValue);
             var minMajorMinorOption = app.Option("-m|--minimum-major-minor <MINIMUM_MAJOR_MINOR>", MajorMinor.ValidValues, CommandOptionType.SingleValue);
-#if MINVER_CLI
-            var workDirOption = app.Option("-r|--repo <REPO>", "DEPRECATED — use the workingDirectory argument instead", CommandOptionType.SingleValue);
-#endif
             var tagPrefixOption = app.Option("-t|--tag-prefix <TAG_PREFIX>", "", CommandOptionType.SingleValue);
             var verbosityOption = app.Option("-v|--verbosity <VERBOSITY>", VerbosityMap.ValidValues, CommandOptionType.SingleValue);
 #if MINVER
@@ -34,31 +31,13 @@ namespace MinVer
 
             app.OnExecute(() =>
             {
-                // optional argument — https://github.com/adamralph/minver/issues/436
-                var workDir = ".";
+                var workDir = !string.IsNullOrEmpty(workDirArg.Value) ? workDirArg.Value : ".";
 
-#if MINVER_CLI
-                if (!string.IsNullOrEmpty(workDirOption.Value()))
+                if (!Directory.Exists(workDir))
                 {
-                    Logger.Warn("-r|--repo <REPO> is DEPRECATED — use the workingDirectory argument instead");
-                }
-#endif
-
-                if (!string.IsNullOrEmpty(workDirArg.Value))
-                {
-                    if (!Directory.Exists(workDir = workDirArg.Value))
-                    {
-                        Logger.ErrorWorkDirDoesNotExist(workDirArg.Value);
-                        return 2;
-                    }
-                }
-#if MINVER_CLI
-                else if (!string.IsNullOrEmpty(workDirOption.Value()) && !Directory.Exists(workDir = workDirOption.Value()))
-                {
-                    Logger.ErrorWorkDirDoesNotExist(workDirOption.Value());
+                    Logger.ErrorWorkDirDoesNotExist(workDir);
                     return 2;
                 }
-#endif
 
                 if (!Options.TryParse(
                     autoIncrementOption.Value(),

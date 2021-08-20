@@ -103,25 +103,16 @@ namespace MinVer.Lib
                 ? this
                 : new Version(minMajorMinor.Major, minMajorMinor.Minor, 0, new[] { defaultPreReleasePhase, "0" }, this.height, this.buildMetadata);
 
-        public Version WithHeight(int height, VersionPart autoIncrement, string defaultPreReleasePhase)
-        {
-            if (this.preReleaseIdentifiers.Count == 0 && height > 0)
-            {
-                switch (autoIncrement)
+        public Version WithHeight(int height, VersionPart autoIncrement, string defaultPreReleasePhase) =>
+            this.preReleaseIdentifiers.Count == 0 && height > 0
+                ? autoIncrement switch
                 {
-                    case VersionPart.Major:
-                        return new Version(this.major + 1, 0, 0, new[] { defaultPreReleasePhase, "0" }, height, null);
-                    case VersionPart.Minor:
-                        return new Version(this.major, this.minor + 1, 0, new[] { defaultPreReleasePhase, "0" }, height, null);
-                    case VersionPart.Patch:
-                        return new Version(this.major, this.minor, this.patch + 1, new[] { defaultPreReleasePhase, "0" }, height, null);
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(autoIncrement));
+                    VersionPart.Major => new Version(this.major + 1, 0, 0, new[] { defaultPreReleasePhase, "0" }, height, null),
+                    VersionPart.Minor => new Version(this.major, this.minor + 1, 0, new[] { defaultPreReleasePhase, "0" }, height, null),
+                    VersionPart.Patch => new Version(this.major, this.minor, this.patch + 1, new[] { defaultPreReleasePhase, "0" }, height, null),
+                    _ => throw new ArgumentOutOfRangeException(nameof(autoIncrement)),
                 }
-            }
-
-            return new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, height, height == 0 ? this.buildMetadata : null);
-        }
+                : new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, height, height == 0 ? this.buildMetadata : null);
 
         public Version AddBuildMetadata(string buildMetadata)
         {
@@ -132,7 +123,7 @@ namespace MinVer.Lib
         public static bool TryParse(string text, out Version version) => (version = ParseOrDefault(text, null)) != null;
 
         public static Version ParseOrDefault(string text, string prefix) =>
-            text == null || !text.StartsWith(prefix ?? "", StringComparison.OrdinalIgnoreCase) ? null : ParseOrDefault(text.Substring(prefix?.Length ?? 0));
+            text == null || !text.StartsWith(prefix ?? "", StringComparison.OrdinalIgnoreCase) ? null : ParseOrDefault(text[(prefix?.Length ?? 0)..]);
 
         private static Version ParseOrDefault(string text)
         {
@@ -168,7 +159,7 @@ namespace MinVer.Lib
                 code = (code * 23) + this.patch.GetHashCode();
                 code = (code * 23) + this.preReleaseIdentifiers.GetHashCode();
                 code = (code * 23) + this.height.GetHashCode();
-                code = (code * 23) + this.buildMetadata.GetHashCode();
+                code = (code * 23) + this.buildMetadata.GetHashCode(StringComparison.Ordinal);
 
                 return code;
             }

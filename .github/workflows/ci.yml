@@ -28,12 +28,6 @@ jobs:
               os: ubuntu-20.04
               build: ./build.sh
             tests:
-              framework: netcoreapp2.1
-              sdk: "2.1.816"
-          - job:
-              os: ubuntu-20.04
-              build: ./build.sh
-            tests:
               framework: netcoreapp3.1
               sdk: "3.1.410"
           - job:

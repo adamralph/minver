@@ -33,7 +33,7 @@ namespace MinVer.Lib
                 ? output
                     .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
                     .Select(line => line.Split(new[] { ' ' }, 2))
-                    .Select(tokens => new Tag(tokens[1].Substring(10).RemoveFromEnd("^{}"), tokens[0]))
+                    .Select(tokens => new Tag(tokens[1][10..].RemoveFromEnd("^{}"), tokens[0]))
                 : Enumerable.Empty<Tag>();
 
         private static string RemoveFromEnd(this string text, string value) =>

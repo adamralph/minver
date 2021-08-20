@@ -15,7 +15,7 @@ namespace MinVerTests.Packages
 
         public MultipleProjects(ITestOutputHelper output) => this.output = output;
 
-        // for some reason, when using SDK 2.1 or 3.1,
+        // for some reason, when using SDK 3.1,
         // there is a 15 minute delay after the `dotnet build` command,
         // so we only run this test on SDK 5.0 and later
         [Net5PlusFact]

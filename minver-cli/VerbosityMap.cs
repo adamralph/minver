@@ -15,7 +15,7 @@ namespace MinVer
             Add(Verbosity.Debug);
             Add(Verbosity.Trace);
 
-            void Add(Verbosity verbosity)
+            static void Add(Verbosity verbosity)
             {
                 map.Add(verbosity.ToString(), verbosity);
                 map.Add(verbosity.ToString().Substring(0, 1), verbosity);

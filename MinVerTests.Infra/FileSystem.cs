@@ -25,11 +25,7 @@ namespace MinVerTests.Infra
             // Directory.Delete fails if anything in the tree has the read-only attribute set. ¯\_(ツ)_/¯
             ResetAttributes(new DirectoryInfo(path));
 
-#if NET
             static void ResetAttributes(DirectoryInfo directory)
-#else
-            void ResetAttributes(DirectoryInfo directory)
-#endif
             {
                 foreach (var childDirectory in directory.GetDirectories())
                 {

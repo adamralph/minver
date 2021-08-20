@@ -31,7 +31,7 @@ namespace MinVer
 
             app.OnExecute(() =>
             {
-                var workDir = !string.IsNullOrEmpty(workDirArg.Value) ? workDirArg.Value : ".";
+                var workDir = workDirArg.Value ?? ".";
 
                 if (!Directory.Exists(workDir))
                 {

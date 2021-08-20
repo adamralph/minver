@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.6.0
+## 3.0.0
 
 ### Enhancements
 
@@ -9,6 +9,11 @@
 ### Fixed bugs
 
 - [#542: source stepping doesn't work](https://github.com/adamralph/minver/pull/542)
+
+### Other
+
+- [#451: **[BREAKING]** Remove deprecated working directory option from minver-cli](https://github.com/adamralph/minver/issues/451)
+- [#586: **[BREAKING]** drop support for .NET Core 2.1](https://github.com/adamralph/minver/pull/586)
 
 ## 2.5.0
 

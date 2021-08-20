@@ -31,16 +31,12 @@ namespace MinVer
 
             app.OnExecute(() =>
             {
-                // optional argument — https://github.com/adamralph/minver/issues/436
-                var workDir = ".";
+                var workDir = !string.IsNullOrEmpty(workDirArg.Value) ? workDirArg.Value : ".";
 
-                if (!string.IsNullOrEmpty(workDirArg.Value))
+                if (!Directory.Exists(workDir))
                 {
-                    if (!Directory.Exists(workDir = workDirArg.Value))
-                    {
-                        Logger.ErrorWorkDirDoesNotExist(workDirArg.Value);
-                        return 2;
-                    }
+                    Logger.ErrorWorkDirDoesNotExist(workDir);
+                    return 2;
                 }
 
                 if (!Options.TryParse(

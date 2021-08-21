@@ -19,6 +19,12 @@ jobs:
               framework: net5.0
               sdk: "5.0.400"
           - job:
+              os: macos-11
+              build: ./build.sh
+            tests:
+              framework: net5.0
+              sdk: "5.0.400"
+          - job:
               os: ubuntu-18.04
               build: ./build.sh
             tests:

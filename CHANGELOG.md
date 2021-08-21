@@ -9,6 +9,7 @@
 ### Fixed bugs
 
 - [#542: source stepping doesn't work](https://github.com/adamralph/minver/pull/542)
+- [#589: **[BREAKING]** An empty working directory argument or option (deprecated) is ignored in minver-cli](https://github.com/adamralph/minver/pull/589)
 
 ### Other
 

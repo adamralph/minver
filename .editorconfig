@@ -20,6 +20,7 @@ csharp_style_expression_bodied_properties                                 = true
 csharp_style_var_elsewhere                                                = true
 csharp_style_var_for_built_in_types                                       = true
 csharp_style_var_when_type_is_apparent                                    = true
+dotnet_diagnostic.IDE0130.severity                                        = none  # https://github.com/dotnet/roslyn/issues/55550
 file_header_template                                                      = unset
 indent_size                                                               = 4
 

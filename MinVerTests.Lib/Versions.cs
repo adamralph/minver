@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
-using CliWrap;
 using MinVer.Lib;
 using MinVerTests.Infra;
 using MinVerTests.Lib.Infra;
 using Xunit;
 using static MinVerTests.Infra.FileSystem;
 using static MinVerTests.Infra.Git;
+using static SimpleExec.Command;
 
 namespace MinVerTests.Lib
 {
@@ -70,7 +70,7 @@ git tag 1.1.0 -a -m '.'";
             foreach (var command in historicalCommands.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
             {
                 var nameAndArgs = command.Split(" ", 2);
-                _ = await Cli.Wrap(nameAndArgs[0]).WithArguments(nameAndArgs[1]).WithWorkingDirectory(path).ExecuteAsync();
+                _ = await ReadAsync(nameAndArgs[0], nameAndArgs[1], path);
                 await Task.Delay(200);
             }
 

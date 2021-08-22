@@ -7,9 +7,8 @@ using System.IO.Compression;
 using System.Linq;
 using System.Runtime.Loader;
 using System.Threading.Tasks;
-using CliWrap;
-using CliWrap.Builders;
 using Microsoft.Extensions.FileSystemGlobbing;
+using SimpleExec;
 
 namespace MinVerTests.Infra
 {
@@ -19,7 +18,7 @@ namespace MinVerTests.Infra
 
         public static string Version { get; } = Environment.GetEnvironmentVariable("MINVER_TESTS_SDK");
 
-        public static async Task CreateSolution(string path, string[] projectNames, string configuration = Configuration.Current, Action<string> log = null)
+        public static async Task CreateSolution(string path, string[] projectNames, string configuration = Configuration.Current)
         {
             projectNames ??= Array.Empty<string>();
 
@@ -27,9 +26,7 @@ namespace MinVerTests.Infra
 
             CreateGlobalJsonIfRequired(path);
 
-            _ = await Cli.Wrap("dotnet").WithArguments($"new sln --name test --output {path}")
-                .WithEnvironmentVariables(builder => builder.SetSdk())
-                .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync(log).ConfigureAwait(false);
+            _ = await DotNet($"new sln --name test --output {path}", path).ConfigureAwait(false);
 
             string previousProjectName = null;
             foreach (var projectName in projectNames)
@@ -38,7 +35,7 @@ namespace MinVerTests.Infra
 
                 FileSystem.EnsureEmptyDirectory(projectPath);
 
-                await CreateProject(projectPath, configuration, projectName, log).ConfigureAwait(false);
+                await CreateProject(projectPath, configuration, projectName).ConfigureAwait(false);
 
                 // ensure deterministic build order
                 if (previousProjectName != null)
@@ -46,45 +43,33 @@ namespace MinVerTests.Infra
                     var projectFileName = Path.Combine(path, projectName, $"{projectName}.csproj");
                     var previousProjectFileName = Path.Combine(path, previousProjectName, $"{previousProjectName}.csproj");
 
-                    _ = await Cli.Wrap("dotnet").WithArguments($"add {projectFileName} reference {previousProjectFileName}")
-                        .WithEnvironmentVariables(builder => builder.SetSdk())
-                        .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync(log).ConfigureAwait(false);
+                    _ = await DotNet($"add {projectFileName} reference {previousProjectFileName}", path).ConfigureAwait(false);
                 }
 
-                _ = await Cli.Wrap("dotnet").WithArguments($"sln add {projectName}")
-                    .WithEnvironmentVariables(builder => builder.SetSdk())
-                    .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync(log).ConfigureAwait(false);
+                _ = await DotNet($"sln add {projectName}", path).ConfigureAwait(false);
 
                 previousProjectName = projectName;
             }
         }
 
-        public static async Task CreateProject(string path, string configuration = Configuration.Current, Action<string> log = null)
+        public static async Task CreateProject(string path, string configuration = Configuration.Current)
         {
             FileSystem.EnsureEmptyDirectory(path);
 
             CreateGlobalJsonIfRequired(path);
 
-            await CreateProject(path, configuration, "test", log).ConfigureAwait(false);
+            await CreateProject(path, configuration, "test").ConfigureAwait(false);
         }
 
-        private static async Task CreateProject(string path, string configuration, string name, Action<string> log)
+        private static async Task CreateProject(string path, string configuration, string name)
         {
             var source = Solution.GetFullPath($"MinVer/bin/{configuration}/");
 
             var minVerPackageVersion = Path.GetFileNameWithoutExtension(Directory.EnumerateFiles(source, "*.nupkg").First()).Split("MinVer.", 2)[1];
 
-            _ = await Cli.Wrap("dotnet").WithArguments($"new classlib --name {name} --output {path}")
-                .WithEnvironmentVariables(builder => builder.SetSdk())
-                .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync(log).ConfigureAwait(false);
-
-            _ = await Cli.Wrap("dotnet").WithArguments($"add package MinVer --source {source} --version {minVerPackageVersion} --package-directory packages")
-                .WithEnvironmentVariables(builder => builder.SetSdk())
-                .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync(log).ConfigureAwait(false);
-
-            _ = await Cli.Wrap("dotnet").WithArguments($"restore --source {source} --packages packages")
-                .WithEnvironmentVariables(builder => builder.SetSdk())
-                .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync(log).ConfigureAwait(false);
+            _ = await DotNet($"new classlib --name {name} --output {path}", path).ConfigureAwait(false);
+            _ = await DotNet($"add package MinVer --source {source} --version {minVerPackageVersion} --package-directory packages", path).ConfigureAwait(false);
+            _ = await DotNet($"restore --source {source} --packages packages", path).ConfigureAwait(false);
         }
 
         private static void CreateGlobalJsonIfRequired(string path)
@@ -103,68 +88,60 @@ $@"{{
             }
         }
 
-        public static async Task<(Package, string)> BuildProject(string path, Action<string> log = null, params (string, string)[] envVars)
+        public static async Task<(Package, Result)> BuildProject(string path, params (string, string)[] envVars)
         {
-            var (packages, @out) = await Build(path, log, envVars).ConfigureAwait(false);
+            var (packages, result) = await Build(path, envVars).ConfigureAwait(false);
 
-            return (packages.Single(), @out);
+            return (packages.Single(), result);
         }
 
-        public static async Task<(List<Package>, string)> Build(string path, Action<string> log = null, params (string, string)[] envVars)
+        public static async Task<(List<Package>, Result)> Build(string path, params (string, string)[] envVars)
         {
             var environmentVariables = envVars.ToDictionary(envVar => envVar.Item1, envVar => envVar.Item2, StringComparer.OrdinalIgnoreCase);
             _ = environmentVariables.TryAdd("MinVerVerbosity".ToAltCase(), "diagnostic");
             _ = environmentVariables.TryAdd("GeneratePackageOnBuild", "true");
             _ = environmentVariables.TryAdd("NoPackageAnalysis", "true");
 
-            var result = await Cli.Wrap("dotnet")
-                .WithArguments(args => args
-                    .Add("build")
-                    .Add("--no-restore")
-                    .AddIf(!(Version?.StartsWith("2.", StringComparison.Ordinal) ?? false), "--nologo")
-                )
-                .WithEnvironmentVariables(env => env
-                    .SetFrom(environmentVariables)
-                    .SetSdk()
-                )
-                .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync(log).ConfigureAwait(false);
-
-            log?.Invoke("Read packages...");
+            var result = await DotNet(
+                $"build --no-restore{(!(Version?.StartsWith("2.", StringComparison.Ordinal) ?? false) ? " --nologo" : "")}",
+                path,
+                environmentVariables).ConfigureAwait(false);
 
             var matcher = new Matcher().AddInclude("**/bin/Debug/*.nupkg");
             var packageFileNames = matcher.GetResultsInFullPath(path).OrderBy(_ => _);
-            var getPackages = packageFileNames.Select(async fileName => await GetPackage(fileName, log).ConfigureAwait(false));
+            var getPackages = packageFileNames.Select(async fileName => await GetPackage(fileName).ConfigureAwait(false));
             var packages = await Task.WhenAll(getPackages).ConfigureAwait(false);
 
-            return (packages.ToList(), result.StandardOutput);
+            return (packages.ToList(), result);
         }
 
-        private static async Task<Package> GetPackage(string fileName, Action<string> log)
+        private static Task<Result> DotNet(string args, string path, IDictionary<string, string> envVars = null)
+        {
+            envVars ??= new Dictionary<string, string>();
+
+            if (!string.IsNullOrWhiteSpace(Version) && !string.IsNullOrWhiteSpace(dotnetRoot))
+            {
+                envVars["MSBuildExtensionsPath"] = Path.Combine(dotnetRoot, "sdk", Version, "") + Path.DirectorySeparatorChar;
+                envVars["MSBuildSDKsPath"] = Path.Combine(dotnetRoot, "sdk", Version, "Sdks");
+            }
+
+            return CommandEx.ReadLoggedAsync("dotnet", args, path, envVars);
+        }
+
+        private static async Task<Package> GetPackage(string fileName)
         {
             var extractedDirectoryName = Path.Combine(Path.GetDirectoryName(fileName), Path.GetFileNameWithoutExtension(fileName));
 
-            log?.Invoke($"Extracting '{fileName}' to '{extractedDirectoryName}'...");
             ZipFile.ExtractToDirectory(fileName, extractedDirectoryName);
-            log?.Invoke($"Finished extracting '{fileName}' to '{extractedDirectoryName}'");
 
-            log?.Invoke($"Finding nuspec...");
             var nuspecFileName = Directory.EnumerateFiles(extractedDirectoryName, "*.nuspec").First();
-            log?.Invoke($"Finished finding nuspec");
 
-            log?.Invoke($"Reading '{nuspecFileName}'...");
             var nuspec = await File.ReadAllTextAsync(nuspecFileName).ConfigureAwait(false);
-            log?.Invoke($"Finished reading '{nuspecFileName}'");
-
             var nuspecVersion = nuspec.Split("<version>")[1].Split("</version>")[0];
 
-            log?.Invoke($"Finding assembly...");
             var assemblyFileName = Directory.EnumerateFiles(extractedDirectoryName, "*.dll", new EnumerationOptions { RecurseSubdirectories = true }).First();
-            log?.Invoke($"Finished finding assembly");
 
-            log?.Invoke($"Getting assembly version...");
             var systemAssemblyVersion = GetAssemblyVersion(assemblyFileName);
-            log?.Invoke($"Finished getting assembly version");
-
             var assemblyVersion = new AssemblyVersion(systemAssemblyVersion.Major, systemAssemblyVersion.Minor, systemAssemblyVersion.Build, systemAssemblyVersion.Revision);
 
             var fileVersionInfo = FileVersionInfo.GetVersionInfo(assemblyFileName);
@@ -172,13 +149,6 @@ $@"{{
 
             return new Package(nuspecVersion, assemblyVersion, fileVersion);
         }
-
-        private static EnvironmentVariablesBuilder SetSdk(this EnvironmentVariablesBuilder builder) =>
-            string.IsNullOrWhiteSpace(Version) || string.IsNullOrWhiteSpace(dotnetRoot)
-            ? builder
-            : builder
-                .Set("MSBuildExtensionsPath", Path.Combine(dotnetRoot, "sdk", Version, "") + Path.DirectorySeparatorChar)
-                .Set("MSBuildSDKsPath", Path.Combine(dotnetRoot, "sdk", Version, "Sdks"));
 
         private static Version GetAssemblyVersion(string assemblyFileName)
         {

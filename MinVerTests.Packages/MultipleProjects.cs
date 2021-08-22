@@ -5,29 +5,21 @@ using System.Reflection;
 using System.Threading.Tasks;
 using MinVerTests.Infra;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace MinVerTests.Packages
 {
     public class MultipleProjects
     {
-        private readonly ITestOutputHelper output;
-
-        public MultipleProjects(ITestOutputHelper output) => this.output = output;
-
         // for some reason, when using SDK 3.1,
         // there is a 15 minute delay after the `dotnet build` command,
         // so we only run this test on SDK 5.0 and later
         [Net5PlusFact]
         public async Task MultipleTagPrefixes()
         {
-            void log(string message) => this.output.Log(message);
-
             // arrange
-            log("arrange");
             var path = MethodBase.GetCurrentMethod().GetTestDirectory();
 
-            await Sdk.CreateSolution(path, new[] { "project0", "project1", "project2", "project3" }, log: log);
+            await Sdk.CreateSolution(path, new[] { "project0", "project1", "project2", "project3" });
 
             var props =
 $@"<Project>
@@ -42,10 +34,10 @@ $@"<Project>
             File.WriteAllText(Path.Combine(path, "project1", "Directory.Build.props"), props);
             File.WriteAllText(Path.Combine(path, "project3", "Directory.Build.props"), props);
 
-            await Git.Init(path, log);
-            await Git.Commit(path, log);
-            await Git.Tag(path, "2.3.4", log);
-            await Git.Tag(path, "v5.6.7", log);
+            await Git.Init(path);
+            await Git.Commit(path);
+            await Git.Tag(path, "2.3.4");
+            await Git.Tag(path, "v5.6.7");
 
             var expected0 = Package.WithVersion(2, 3, 4);
             var expected1 = Package.WithVersion(5, 6, 7);
@@ -53,14 +45,12 @@ $@"<Project>
             var expected3 = Package.WithVersion(5, 6, 7);
 
             // act
-            log("act");
-            var (packages, @out) = await Sdk.Build(path, log);
+            var (actual, sdk) = await Sdk.Build(path);
 
             // assert
-            log("assert");
-            Assert.NotNull(@out);
+            Assert.NotNull(sdk.StandardOutput);
 
-            var versionCalculations = @out
+            var versionCalculations = sdk.StandardOutput
                 .Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(line => line.Trim())
                 .Where(line => line.StartsWith("MinVer: Calculated version ", StringComparison.OrdinalIgnoreCase));
@@ -73,7 +63,7 @@ $@"<Project>
                 message => Assert.Equal("MinVer: Calculated version 5.6.7.", message));
 
             Assert.Collection(
-                packages,
+                actual,
                 package => Assert.Equal(expected0, package),
                 package => Assert.Equal(expected1, package),
                 package => Assert.Equal(expected2, package),

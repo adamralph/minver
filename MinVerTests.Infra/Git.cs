@@ -1,8 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using CliWrap;
-using CliWrap.Buffered;
 
 namespace MinVerTests.Infra
 {
@@ -14,8 +11,8 @@ namespace MinVerTests.Infra
             await Commit(path).ConfigureAwait(false);
         }
 
-        public static Task Commit(string path, Action<string> log = null) =>
-            Cli.Wrap("git").WithArguments("commit -m '.' --allow-empty").WithWorkingDirectory(path).ExecuteBufferedLoggedAsync(log);
+        public static Task Commit(string path) =>
+            CommandEx.ReadLoggedAsync("git", "commit -m '.' --allow-empty", path);
 
         public static async Task EnsureEmptyRepository(string path)
         {
@@ -23,43 +20,30 @@ namespace MinVerTests.Infra
             await Init(path).ConfigureAwait(false);
         }
 
-        public static async Task Init(string path, Action<string> log = null)
+        public static async Task Init(string path)
         {
-            _ = await Cli.Wrap("git").WithArguments("init --initial-branch=main").WithWorkingDirectory(path).ExecuteBufferedLoggedAsync(log).ConfigureAwait(false);
-            _ = await Cli.Wrap("git").WithArguments("config user.email johndoe@tempuri.org").WithWorkingDirectory(path).ExecuteBufferedLoggedAsync(log).ConfigureAwait(false);
-            _ = await Cli.Wrap("git").WithArguments("config user.name John Doe").WithWorkingDirectory(path).ExecuteBufferedLoggedAsync(log).ConfigureAwait(false);
-            _ = await Cli.Wrap("git").WithArguments("config commit.gpgsign false").WithWorkingDirectory(path).ExecuteBufferedLoggedAsync(log).ConfigureAwait(false);
+            _ = await CommandEx.ReadLoggedAsync("git", "init --initial-branch=main", path).ConfigureAwait(false);
+            _ = await CommandEx.ReadLoggedAsync("git", "config user.email johndoe@tempuri.org", path).ConfigureAwait(false);
+            _ = await CommandEx.ReadLoggedAsync("git", "config user.name John Doe", path).ConfigureAwait(false);
+            _ = await CommandEx.ReadLoggedAsync("git", "config commit.gpgsign false", path).ConfigureAwait(false);
         }
 
-        public static async Task<string> GetGraph(string path, Action<string> log = null) =>
-            (await Cli.Wrap("git").WithArguments("log --graph --pretty=format:'%d'")
-                .WithWorkingDirectory(path).ExecuteBufferedLoggedAsync(log).ConfigureAwait(false))
-            .StandardOutput;
+        public static async Task<string> GetGraph(string path) =>
+            (await CommandEx.ReadLoggedAsync("git", "log --graph --pretty=format:'%d'", path).ConfigureAwait(false)).StandardOutput;
 
-        public static Task Tag(string path, string tag, Action<string> log = null) =>
-            Cli.Wrap("git").WithArguments($"tag {tag}").WithWorkingDirectory(path).ExecuteBufferedLoggedAsync(log);
+        public static Task Tag(string path, string tag) =>
+            CommandEx.ReadLoggedAsync("git", $"tag {tag}", path);
 
-        public static Task Tag(string path, string tagName, string sha, Action<string> log = null) =>
-            Cli.Wrap("git").WithArguments($"tag {tagName} {sha}").WithWorkingDirectory(path).ExecuteBufferedLoggedAsync(log);
+        public static Task Tag(string path, string tag, string sha) =>
+            CommandEx.ReadLoggedAsync("git", $"tag {tag} {sha}", path);
 
-        public static Task AnnotatedTag(string path, string tag, string message, Action<string> log = null) =>
-            Cli.Wrap("git").WithArguments($"tag {tag} -a -m '{message}'").WithWorkingDirectory(path).ExecuteBufferedLoggedAsync(log);
+        public static Task AnnotatedTag(string path, string tag, string message) =>
+            CommandEx.ReadLoggedAsync("git", $"tag {tag} -a -m '{message}'", path);
 
-        public static async Task<IEnumerable<string>> GetCommitShas(string path, Action<string> log = null)
-        {
-            var stdOutLines = new List<string>();
+        public static async Task<IEnumerable<string>> GetCommitShas(string path) =>
+            (await CommandEx.ReadLoggedAsync("git", "log --pretty=format:\"%H\"", path).ConfigureAwait(false)).StandardOutput.Split('\r', '\n');
 
-            _ = await Cli.Wrap("git")
-                .WithArguments("log --pretty=format:\"%H\"")
-                .WithWorkingDirectory(path)
-                .WithStandardOutputPipe(PipeTarget.ToDelegate(stdOutLines.Add))
-                .ExecuteBufferedLoggedAsync(log)
-                .ConfigureAwait(false);
-
-            return stdOutLines;
-        }
-
-        public static Task Checkout(string path, string sha, Action<string> log = null) =>
-            Cli.Wrap("git").WithArguments($"checkout {sha}").WithWorkingDirectory(path).ExecuteBufferedLoggedAsync(log);
+        public static Task Checkout(string path, string sha) =>
+            CommandEx.ReadLoggedAsync("git", $"checkout {sha}", path);
     }
 }

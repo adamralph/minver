@@ -9,6 +9,6 @@ jobs:
       - uses: actions/checkout@v2
       - uses: github/super-linter@v4.6.1
         env:
-          FILTER_REGEX_EXCLUDE: \bLICENSE$|\bversions\.txt$
+          FILTER_REGEX_EXCLUDE: \bcodeql-analysis\.yml$|\bLICENSE$|\bversions\.txt$
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_SHELL_SHFMT: false

@@ -1,6 +1,6 @@
-<img src="assets/minver.png" width="100" />
-
 # MinVer
+
+<img src="assets/minver.png" width="100" />
 
 _[![MinVer NuGet version](https://img.shields.io/nuget/v/MinVer.svg?style=flat&label=nuget%3A%20MinVer)](https://www.nuget.org/packages/MinVer)_
 _[![minver-cli NuGet version](https://img.shields.io/nuget/v/minver-cli.svg?style=flat&label=nuget%3A%20minver-cli)](https://www.nuget.org/packages/minver-cli)_

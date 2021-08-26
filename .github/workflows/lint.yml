@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: github/super-linter@v3
+      - uses: github/super-linter@v3.17.1
         env:
           FILTER_REGEX_EXCLUDE: \bLICENSE$|\bgeneral\.txt$
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -14,9 +14,11 @@ jobs:
         job:
           - os: macos-10.15
             build: ./build.sh
-          - os: ubuntu-16.04
+          - os: macos-11
             build: ./build.sh
           - os: ubuntu-18.04
+            build: ./build.sh
+          - os: ubuntu-20.04
             build: ./build.sh
             push: true
           - os: windows-2016
@@ -24,28 +26,24 @@ jobs:
           - os: windows-2019
             build: ./build.cmd
         tests:
-          - sdk: 2.1.300
-            framework: netcoreapp2.1
-          - sdk: 2.1.811
-            framework: netcoreapp2.1
-          - sdk: 3.1.100
+          - sdk: 3.1.412
             framework: netcoreapp3.1
-          - sdk: 3.1.404
-            framework: netcoreapp3.1
-          - sdk: 5.0.100
+          - sdk: 5.0.400
             framework: net5.0
             push: true
+          - sdk: 6.0.100-preview.7.21379.14
+            framework: net5.0
     name: ${{ matrix.job.os }}-${{ matrix.tests.sdk }}
     runs-on: ${{ matrix.job.os }}
     steps:
       - name: setup-dotnet tests-sdk
-        if: matrix.tests.sdk != '5.0.100'
+        if: matrix.tests.sdk != '5.0.400'
         uses: actions/setup-dotnet@v1.7.2
         with:
           dotnet-version: "${{ matrix.tests.sdk }}"
       - uses: actions/setup-dotnet@v1.7.2
         with:
-          dotnet-version: "5.0.100"
+          dotnet-version: "5.0.400"
       - run: dotnet --info
       - uses: actions/checkout@v2.3.4
       - env:

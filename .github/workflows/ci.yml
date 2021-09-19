@@ -73,6 +73,12 @@ jobs:
             tests:
               framework: net6.0
               sdk: "6.0.100-rc.1.21458.32"
+          - job:
+              os: windows-2022
+              build: ./build.cmd
+            tests:
+              framework: net5.0
+              sdk: "5.0.401"
     name: ${{ matrix.job.os }}-${{ matrix.tests.framework }}
     runs-on: ${{ matrix.job.os }}
     steps:

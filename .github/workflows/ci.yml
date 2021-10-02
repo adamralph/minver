@@ -29,7 +29,7 @@ jobs:
               build: ./build.sh
             tests:
               framework: net6.0
-              sdk: "6.0.100-rc.1.21458.32"
+              sdk: "6.0.100-rc.1.21463.6"
           - job:
               os: ubuntu-18.04
               build: ./build.sh
@@ -54,7 +54,7 @@ jobs:
               build: ./build.sh
             tests:
               framework: net6.0
-              sdk: "6.0.100-rc.1.21458.32"
+              sdk: "6.0.100-rc.1.21463.6"
           - job:
               os: windows-2016
               build: ./build.cmd
@@ -72,7 +72,7 @@ jobs:
               build: ./build.cmd
             tests:
               framework: net6.0
-              sdk: "6.0.100-rc.1.21458.32"
+              sdk: "6.0.100-rc.1.21463.6"
           - job:
               os: windows-2022
               build: ./build.cmd

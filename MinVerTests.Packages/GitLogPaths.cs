@@ -21,6 +21,8 @@ namespace MinVerTests.Packages
             using var _ = File.Create(Path.Combine(path, "a"));
             using var __ = File.Create(Path.Combine(path, "b"));
 
+            await Task.Delay(1000);
+
             await Git.Add(path);
             await Git.Commit(path);
 

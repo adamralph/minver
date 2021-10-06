@@ -29,7 +29,7 @@ namespace MinVer
             var versionOverrideOption = app.Option("-o|--version-override <VERSION>", "", CommandOptionType.SingleValue);
 #endif
 
-            var gitLogPaths = app.Option("-glp|--git-log-paths <GIT_LOG_PATHS>", "The paths to use when retreiving commit history using git-log. See https://www.git-scm.com/docs/git-log", CommandOptionType.SingleValue);
+            var gitLogPaths = app.Option("-glp|--git-log-paths <GIT_LOG_PATHS>", "The paths to pass to git-log when retreiving commit history", CommandOptionType.SingleValue);
 
             app.OnExecute(() =>
             {
@@ -51,6 +51,7 @@ namespace MinVer
 #if MINVER
                     versionOverrideOption.Value(),
 #endif
+                    gitLogPaths.Value(),
                     out var options))
                 {
                     return 2;
@@ -81,7 +82,7 @@ namespace MinVer
                     return 0;
                 }
 
-                var version = Versioner.GetVersion(workDir, options.TagPrefix, options.MinMajorMinor, options.BuildMeta, options.AutoIncrement, options.DefaultPreReleasePhase, log);
+                var version = Versioner.GetVersion(workDir, options.GitLogPaths, options.TagPrefix, options.MinMajorMinor, options.BuildMeta, options.AutoIncrement, options.DefaultPreReleasePhase, log);
 
                 Console.Out.WriteLine(version);
 

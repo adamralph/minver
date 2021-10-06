@@ -19,7 +19,7 @@ namespace MinVerTests.Lib
             await EnsureEmptyRepository(path);
 
             // act
-            var actualVersion = Versioner.GetVersion(path, default, default, buildMetadata, default, default, default);
+            var actualVersion = Versioner.GetVersion(path, default, default, default, buildMetadata, default, default, default);
 
             // assert
             Assert.Equal(expectedVersion, actualVersion.ToString());
@@ -35,7 +35,7 @@ namespace MinVerTests.Lib
             await EnsureEmptyRepositoryAndCommit(path);
 
             // act
-            var actualVersion = Versioner.GetVersion(path, default, default, buildMetadata, default, default, default);
+            var actualVersion = Versioner.GetVersion(path, default, default, default, buildMetadata, default, default, default);
 
             // assert
             Assert.Equal(expectedVersion, actualVersion.ToString());
@@ -56,7 +56,7 @@ namespace MinVerTests.Lib
             await Tag(path, tag);
 
             // act
-            var actualVersion = Versioner.GetVersion(path, default, default, buildMetadata, default, default, default);
+            var actualVersion = Versioner.GetVersion(path, default, default, default, buildMetadata, default, default, default);
 
             // assert
             Assert.Equal(expectedVersion, actualVersion.ToString());
@@ -78,7 +78,7 @@ namespace MinVerTests.Lib
             await Commit(path);
 
             // act
-            var actualVersion = Versioner.GetVersion(path, default, default, buildMetadata, default, default, default);
+            var actualVersion = Versioner.GetVersion(path, default, default, default, buildMetadata, default, default, default);
 
             // assert
             Assert.Equal(expectedVersion, actualVersion.ToString());

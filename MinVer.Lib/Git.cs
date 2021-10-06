@@ -10,7 +10,7 @@ namespace MinVer.Lib
 
         public static Commit GetHeadOrDefault(string directory, string gitLogPaths, ILogger log)
         {
-            if (!GitCommand.TryRun($"log --pretty=format:\"%H %P\" -- {gitLogPaths}", directory, log, out var output))
+            if (!GitCommand.TryRun($"log --pretty=format:\"%H %P\" --full-history -- {gitLogPaths}", directory, log, out var output))
             {
                 return null;
             }

@@ -66,6 +66,8 @@ namespace MinVer
                 options.VersionOverride = versionOverride;
             }
 
+            options.GitLogPaths = GetEnvVar("MinVerGitLogPaths");
+
             return true;
         }
 
@@ -94,6 +96,7 @@ namespace MinVer
 #if MINVER
             string versionOverrideOption,
 #endif
+            string gitLogPaths,
             out Options options)
         {
             options = new Options();
@@ -149,6 +152,8 @@ namespace MinVer
             }
 #endif
 
+            options.GitLogPaths = gitLogPaths;
+
             return true;
         }
 
@@ -162,6 +167,7 @@ namespace MinVer
                 TagPrefix = this.TagPrefix ?? other.TagPrefix,
                 Verbosity = this.Verbosity == default ? other.Verbosity : this.Verbosity,
                 VersionOverride = this.VersionOverride ?? other.VersionOverride,
+                GitLogPaths = this.GitLogPaths ?? other.GitLogPaths,
             };
 
         public VersionPart AutoIncrement { get; private set; }
@@ -177,5 +183,7 @@ namespace MinVer
         public Verbosity Verbosity { get; private set; }
 
         public Lib.Version VersionOverride { get; private set; }
+
+        public string GitLogPaths { get; private set; }
     }
 }

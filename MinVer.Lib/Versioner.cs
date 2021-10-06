@@ -2,7 +2,7 @@ namespace MinVer.Lib
 {
     public static class Versioner
     {
-        public static Version GetVersion(string workDir, string tagPrefix, MajorMinor minMajorMinor, string buildMeta, VersionPart autoIncrement, string defaultPreReleasePhase, ILogger log)
+        public static Version GetVersion(string workDir, string gitLogPaths, string tagPrefix, MajorMinor minMajorMinor, string buildMeta, VersionPart autoIncrement, string defaultPreReleasePhase, ILogger log)
         {
             log ??= new NullLogger();
 
@@ -10,7 +10,7 @@ namespace MinVer.Lib
                 ? "alpha"
                 : defaultPreReleasePhase;
 
-            var version = GetVersion(workDir, tagPrefix, autoIncrement, defaultPreReleasePhase, log).AddBuildMetadata(buildMeta);
+            var version = GetVersion(workDir, gitLogPaths, tagPrefix, autoIncrement, defaultPreReleasePhase, log).AddBuildMetadata(buildMeta);
 
             var calculatedVersion = version.Satisfying(minMajorMinor, defaultPreReleasePhase);
 
@@ -31,9 +31,9 @@ namespace MinVer.Lib
             return calculatedVersion;
         }
 
-        private static Version GetVersion(string workDir, string tagPrefix, VersionPart autoIncrement, string defaultPreReleasePhase, ILogger log)
+        private static Version GetVersion(string workDir, string gitLogPaths, string tagPrefix, VersionPart autoIncrement, string defaultPreReleasePhase, ILogger log)
         {
-            if (!Repository.TryCreateRepo(workDir, out var repo, log))
+            if (!Repository.TryCreateRepo(workDir, gitLogPaths, out var repo, log))
             {
                 var version = new Version(defaultPreReleasePhase);
 

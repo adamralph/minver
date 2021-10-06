@@ -15,7 +15,7 @@ namespace MinVer.Lib
             this.tags = tags;
         }
 
-        public static bool TryCreateRepo(string workDir, out Repository repository, ILogger log)
+        public static bool TryCreateRepo(string workDir, string gitLogPaths, out Repository repository, ILogger log)
         {
             repository = null;
 
@@ -24,7 +24,7 @@ namespace MinVer.Lib
                 return false;
             }
 
-            var head = Git.GetHeadOrDefault(workDir, log);
+            var head = Git.GetHeadOrDefault(workDir, gitLogPaths, log);
             var tags = head != null ? Git.GetTagsOrEmpty(workDir, log) : Enumerable.Empty<Tag>();
 
             repository = new Repository(head, tags);

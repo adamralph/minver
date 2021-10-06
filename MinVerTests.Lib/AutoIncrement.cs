@@ -22,7 +22,7 @@ namespace MinVerTests.Lib
             await Commit(path);
 
             // act
-            var actualVersion = Versioner.GetVersion(path, default, default, default, autoIncrement, default, default);
+            var actualVersion = Versioner.GetVersion(path, default, default, default, default, autoIncrement, default, default);
 
             // assert
             Assert.Equal(expectedVersion, actualVersion.ToString());

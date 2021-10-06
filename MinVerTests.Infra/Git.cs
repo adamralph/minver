@@ -11,6 +11,9 @@ namespace MinVerTests.Infra
             await Commit(path).ConfigureAwait(false);
         }
 
+        public static Task Add(string path) =>
+            CommandEx.ReadLoggedAsync("git", "add .", path);
+
         public static Task Commit(string path) =>
             CommandEx.ReadLoggedAsync("git", "commit -m '.' --allow-empty", path);
 

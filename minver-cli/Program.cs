@@ -29,6 +29,8 @@ namespace MinVer
             var versionOverrideOption = app.Option("-o|--version-override <VERSION>", "", CommandOptionType.SingleValue);
 #endif
 
+            var gitLogPaths = app.Option("-glp|--git-log-paths <GIT_LOG_PATHS>", "The paths to use when retreiving commit history using git-log. See https://www.git-scm.com/docs/git-log", CommandOptionType.SingleValue);
+
             app.OnExecute(() =>
             {
                 var workDir = workDirArg.Value ?? ".";

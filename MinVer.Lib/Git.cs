@@ -8,9 +8,9 @@ namespace MinVer.Lib
     {
         public static bool IsWorkingDirectory(string directory, ILogger log) => GitCommand.TryRun("status --short", directory, log, out _);
 
-        public static Commit GetHeadOrDefault(string directory, ILogger log)
+        public static Commit GetHeadOrDefault(string directory, string gitLogPaths, ILogger log)
         {
-            if (!GitCommand.TryRun("log --pretty=format:\"%H %P\"", directory, log, out var output))
+            if (!GitCommand.TryRun($"log --pretty=format:\"%H %P\" -- {gitLogPaths}", directory, log, out var output))
             {
                 return null;
             }

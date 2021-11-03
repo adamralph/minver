@@ -91,6 +91,7 @@ namespace MinVer
             string minMajorMinorOption,
             string tagPrefixOption,
             string verbosityOption,
+            bool writeGitHubActionOutput,
 #if MINVER
             string versionOverrideOption,
 #endif
@@ -136,6 +137,8 @@ namespace MinVer
                 options.Verbosity = verbosity;
             }
 
+            options.ShowGitHubActionOutput = writeGitHubActionOutput;
+
 #if MINVER
             if (!string.IsNullOrEmpty(versionOverrideOption))
             {
@@ -162,6 +165,7 @@ namespace MinVer
                 TagPrefix = this.TagPrefix ?? other.TagPrefix,
                 Verbosity = this.Verbosity == default ? other.Verbosity : this.Verbosity,
                 VersionOverride = this.VersionOverride ?? other.VersionOverride,
+                ShowGitHubActionOutput = this.ShowGitHubActionOutput ? this.ShowGitHubActionOutput : other.ShowGitHubActionOutput,
             };
 
         public VersionPart AutoIncrement { get; private set; }
@@ -177,5 +181,7 @@ namespace MinVer
         public Verbosity Verbosity { get; private set; }
 
         public Lib.Version VersionOverride { get; private set; }
+
+        public bool ShowGitHubActionOutput { get; private set; }
     }
 }

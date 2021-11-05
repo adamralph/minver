@@ -91,7 +91,7 @@ jobs:
         with:
           dotnet-version: "5.0.401"
       - run: dotnet --info
-      - uses: actions/checkout@v2.3.5
+      - uses: actions/checkout@v2.4.0
       - env:
           CI_VERSION: ${{ secrets.CI_VERSION }}
           MINVER_TESTS_SDK: ${{ matrix.tests.sdk }}

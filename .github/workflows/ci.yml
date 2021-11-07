@@ -17,79 +17,79 @@ jobs:
               build: ./build.sh
             tests:
               framework: net5.0
-              sdk: "5.0.401"
+              sdk: "5.0.402"
           - job:
               os: macos-11
               build: ./build.sh
             tests:
               framework: net5.0
-              sdk: "5.0.401"
+              sdk: "5.0.402"
           - job:
               os: macos-11
               build: ./build.sh
             tests:
               framework: net6.0
-              sdk: "6.0.100-rc.1.21463.6"
+              sdk: "6.0.100-rc.2.21505.57"
           - job:
               os: ubuntu-18.04
               build: ./build.sh
             tests:
               framework: net5.0
-              sdk: "5.0.401"
+              sdk: "5.0.402"
           - job:
               os: ubuntu-20.04
               build: ./build.sh
             tests:
               framework: netcoreapp3.1
-              sdk: "3.1.413"
+              sdk: "3.1.414"
           - job:
               os: ubuntu-20.04
               build: ./build.sh
               push: true
             tests:
               framework: net5.0
-              sdk: "5.0.401"
+              sdk: "5.0.402"
           - job:
               os: ubuntu-20.04
               build: ./build.sh
             tests:
               framework: net6.0
-              sdk: "6.0.100-rc.1.21463.6"
+              sdk: "6.0.100-rc.2.21505.57"
           - job:
               os: windows-2016
               build: ./build.cmd
             tests:
               framework: net5.0
-              sdk: "5.0.401"
+              sdk: "5.0.402"
           - job:
               os: windows-2019
               build: ./build.cmd
             tests:
               framework: net5.0
-              sdk: "5.0.401"
+              sdk: "5.0.402"
           - job:
               os: windows-2019
               build: ./build.cmd
             tests:
               framework: net6.0
-              sdk: "6.0.100-rc.1.21463.6"
+              sdk: "6.0.100-rc.2.21505.57"
           - job:
               os: windows-2022
               build: ./build.cmd
             tests:
               framework: net5.0
-              sdk: "5.0.401"
+              sdk: "5.0.402"
     name: ${{ matrix.job.os }}-${{ matrix.tests.framework }}
     runs-on: ${{ matrix.job.os }}
     steps:
       - name: setup-dotnet tests-sdk
-        if: ${{ matrix.tests.sdk != '5.0.401' }}
+        if: ${{ matrix.tests.sdk != '5.0.402' }}
         uses: actions/setup-dotnet@v1.8.2
         with:
           dotnet-version: "${{ matrix.tests.sdk }}"
       - uses: actions/setup-dotnet@v1.8.2
         with:
-          dotnet-version: "5.0.401"
+          dotnet-version: "5.0.402"
       - run: dotnet --info
       - uses: actions/checkout@v2.4.0
       - env:

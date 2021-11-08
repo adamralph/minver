@@ -18,7 +18,7 @@ namespace MinVer
             static void Add(Verbosity verbosity)
             {
                 map.Add(verbosity.ToString(), verbosity);
-                map.Add(verbosity.ToString().Substring(0, 1), verbosity);
+                map.Add(verbosity.ToString()[..1], verbosity);
             }
         }
 

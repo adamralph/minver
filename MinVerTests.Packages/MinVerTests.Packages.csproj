@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <RollForward>major</RollForward>
-    <TargetFrameworks>net5.0</TargetFrameworks>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>

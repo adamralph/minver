@@ -1,3 +1,4 @@
+#pragma warning disable CA1812 // https://github.com/dotnet/roslyn-analyzers/issues/5628
 using System;
 using MinVerTests.Infra;
 using static Bullseye.Targets;

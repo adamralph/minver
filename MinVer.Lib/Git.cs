@@ -37,6 +37,6 @@ namespace MinVer.Lib
                 : Enumerable.Empty<Tag>();
 
         private static string RemoveFromEnd(this string text, string value) =>
-            text.EndsWith(value, StringComparison.OrdinalIgnoreCase) ? text.Substring(0, text.Length - value.Length) : text;
+            text.EndsWith(value, StringComparison.OrdinalIgnoreCase) ? text[..^value.Length] : text;
     }
 }

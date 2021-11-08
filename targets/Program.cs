@@ -3,19 +3,27 @@ using MinVerTests.Infra;
 using static Bullseye.Targets;
 using static SimpleExec.Command;
 
+var testFx = Environment.GetEnvironmentVariable("MINVER_TESTS_FRAMEWORK") ?? "net5.0";
+var testLoggers = "--logger \"console;verbosity=normal\"";
+
+if (Environment.GetEnvironmentVariable("GITHUB_ACTIONS")?.ToUpperInvariant() == "TRUE")
+{
+    testLoggers += " --logger GitHubActions";
+}
+
 Target("build", () => RunAsync("dotnet", "build --configuration Release --nologo --verbosity quiet"));
 
 Target(
     "test-lib",
     "test the MinVer.Lib library",
     DependsOn("build"),
-    () => RunAsync("dotnet", $"test ./MinVerTests.Lib --framework {Environment.GetEnvironmentVariable("MINVER_TESTS_FRAMEWORK") ?? "net5.0"} --configuration Release --no-build --nologo --verbosity normal --logger GitHubActions"));
+    () => RunAsync("dotnet", $"test ./MinVerTests.Lib --framework {testFx} --configuration Release --no-build --nologo {testLoggers}"));
 
 Target(
     "test-packages",
     "test the MinVer package and the minver-cli console app",
     DependsOn("build"),
-    () => RunAsync("dotnet", "test ./MinVerTests.Packages --configuration Release --no-build --nologo --verbosity normal --logger \"console;verbosity=detailed\" --logger GitHubActions"));
+    () => RunAsync("dotnet", $"test ./MinVerTests.Packages --configuration Release --no-build --nologo {testLoggers}"));
 
 Target(
     "eyeball-minver-logs",

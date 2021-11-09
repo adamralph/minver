@@ -8,7 +8,7 @@ namespace MinVer.Lib
 
         public string Sha { get; }
 
-        public string ShortSha => this.Sha.Substring(0, 7);
+        public string ShortSha => this.Sha[..7];
 
         public List<Commit> Parents { get; } = new List<Commit>();
     }

@@ -20,7 +20,6 @@ csharp_style_expression_bodied_properties                                 = true
 csharp_style_var_elsewhere                                                = true
 csharp_style_var_for_built_in_types                                       = true
 csharp_style_var_when_type_is_apparent                                    = true
-dotnet_diagnostic.IDE0130.severity                                        = none  # https://github.com/dotnet/roslyn/issues/55550
 dotnet_style_qualification_for_event                                      = true
 dotnet_style_qualification_for_field                                      = true
 dotnet_style_qualification_for_method                                     = true

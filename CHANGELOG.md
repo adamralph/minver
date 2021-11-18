@@ -103,7 +103,7 @@
 - [#1: Determine version for a commit](https://github.com/adamralph/minver/issues/1)
 - [#2: Default version when there no commits](https://github.com/adamralph/minver/issues/2)
 - [#3: MSBuild integration](https://github.com/adamralph/minver/issues/3)
-- [#28: Default version when the directory is not a git repo](https://github.com/adamralph/minver/issues/28)
+- [#28: Default version when the directory is not a Git repository](https://github.com/adamralph/minver/issues/28)
 - [#49: Tag prefixes](https://github.com/adamralph/minver/pull/49)
 - [#57: add verbose logging option](https://github.com/adamralph/minver/pull/57)
 - [#63: Specify the minimum major and minor version](https://github.com/adamralph/minver/issues/63)

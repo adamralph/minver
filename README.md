@@ -14,7 +14,7 @@ A minimalist [.NET package](https://www.nuget.org/packages/MinVer) for versionin
 
 Platform support: all platforms supported by .NET SDK-style projects.
 
-Also available as a [command line tool](#can-i-use-minver-to-version-software-which-is-not-built-using-a-net-sdk-style-project) for use in any Git repository.
+Also available as a [command-line tool](#can-i-use-minver-to-version-software-which-is-not-built-using-a-net-sdk-style-project) for use in any Git repository.
 
 - [Prerequisites](#prerequisites)
 - [Quick start](#quick-start)
@@ -116,7 +116,7 @@ Note that the option names are case-insensitive.
 - [Can I auto-increment the minor or major version after an RTM tag instead of the patch version?](#can-i-auto-increment-the-minor-or-major-version-after-an-rtm-tag-instead-of-the-patch-version) _(yes)_
 - [Can I change the default pre-release phase from "alpha" to something else?](#can-i-change-the-default-pre-release-phase-from-alpha-to-something-else) _(yes)_
 - [Can I use the version calculated by MinVer for other purposes?](#can-i-use-the-version-calculated-by-minver-for-other-purposes) _(yes)_
-- [Can I version multiple projects in a single repo independently?](#can-i-version-multiple-projects-in-a-single-repo-independently) _(yes)_
+- [Can I version multiple projects in a single repository independently?](#can-i-version-multiple-projects-in-a-single-repository-independently) _(yes)_
 - [Can I get log output to see how MinVer calculates the version?](#can-i-get-log-output-to-see-how-minver-calculates-the-version) _(yes)_
 - [Can I use MinVer to version software which is not built using a .NET SDK style project?](#can-i-use-minver-to-version-software-which-is-not-built-using-a-net-sdk-style-project) _(yes)_
 - [Can I disable MinVer?](#can-i-disable-minver) _(yes)_
@@ -141,7 +141,7 @@ To some degree, MinVer is a subset of what GitVersion is. It's much simpler and 
 - No inference of version from commit messages.
 - No inference of version from CI build server environment variables.
 - No creation of metadata code artifacts.
-- No automatic fetching of tags, etc. from the repo.
+- No automatic fetching of tags, etc. from the repository.
 - One package instead of a series of packages.
 - No support for `AssemblyInfo.cs`.
 
@@ -285,9 +285,9 @@ Or for projects which _do_ create NuGet packages, you may want to adjust the ass
 </Target>
 ```
 
-### Can I version multiple projects in a single repo independently?
+### Can I version multiple projects in a single repository independently?
 
-Yes! You can do this by using a specific tag prefix for each project. For example, if you have a "main" project and an "extension" project, you could specify `<MinVerTagPrefix>main-</MinVerTagPrefix>` in the main project and `<MinVerTagPrefix>ext-</MinVerTagPrefix>` in the extension project. To release version `1.0.0` of the main project you'd tag the repo with `main-1.0.0`. To release version `1.1.0` of the extension project you'd tag the repo with `ext-1.1.0`.
+Yes! You can do this by using a specific tag prefix for each project. For example, if you have a "main" project and an "extension" project, you could specify `<MinVerTagPrefix>main-</MinVerTagPrefix>` in the main project and `<MinVerTagPrefix>ext-</MinVerTagPrefix>` in the extension project. To release version `1.0.0` of the main project you'd tag the repository with `main-1.0.0`. To release version `1.1.0` of the extension project you'd tag the repository with `ext-1.1.0`.
 
 ### Can I get log output to see how MinVer calculates the version?
 
@@ -297,11 +297,11 @@ In a future version of MinVer, the verbosity level may be inherited from MSBuild
 
 ### Can I use MinVer to version software which is not built using a .NET SDK style project?
 
-Yes! MinVer is also available as a [command line tool](https://www.nuget.org/packages/minver-cli). Run `minver --help` for usage. The calculated version is printed to standard output (stdout).
+Yes! MinVer is also available as a [command-line tool](https://www.nuget.org/packages/minver-cli). Run `minver --help` for usage. The calculated version is printed to standard output (stdout).
 
-Sometimes you may want to version both .NET projects and other outputs, such as non-.NET projects, or a container image, in the same build. In those scenarios, you should use both the command line tool _and_ the regular MinVer package. Before building any .NET projects, your build script should run the command line tool and set the [`MINVERVERSIONOVERRIDE`](#options) environment variable to the calculated version. The MinVer package will then use that value rather than calculating the version a second time. This ensures that the command line tool and the MinVer package produce the same version.
+Sometimes you may want to version both .NET projects and other outputs, such as non-.NET projects, or a container image, in the same build. In those scenarios, you should use both the command-line tool _and_ the regular MinVer package. Before building any .NET projects, your build script should run the command-line tool and set the [`MINVERVERSIONOVERRIDE`](#options) environment variable to the calculated version. The MinVer package will then use that value rather than calculating the version a second time. This ensures that the command-line tool and the MinVer package produce the same version.
 
-If the components of the version are required outside the context of a .NET project, they can easily be extracted from the version which is returned by the command line tool. The major, minor, and patch numbers can be separated from the pre-release identifiers by splitting the version by the first instance of `-`. The major, minor, and patch numbers and the pre-release identifiers can then be separated by splitting by `.`.
+If the components of the version are required outside the context of a .NET project, they can easily be extracted from the version which is returned by the command-line tool. The major, minor, and patch numbers can be separated from the pre-release identifiers by splitting the version by the first instance of `-`. The major, minor, and patch numbers and the pre-release identifiers can then be separated by splitting by `.`.
 
 ### Can I disable MinVer?
 

@@ -1,0 +1,9 @@
+{
+  "rules": {
+    "terminology": {
+      "exclude": [
+        "pre[- ]release(s)?"
+      ]
+    }
+  }
+}

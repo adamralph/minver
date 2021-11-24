@@ -78,10 +78,10 @@ jobs:
     steps:
       - name: setup-dotnet tests-sdk
         if: ${{ matrix.tests.sdk != '6.0.100' }}
-        uses: actions/setup-dotnet@v1.8.2
+        uses: actions/setup-dotnet@v1.9.0
         with:
           dotnet-version: "${{ matrix.tests.sdk }}"
-      - uses: actions/setup-dotnet@v1.8.2
+      - uses: actions/setup-dotnet@v1.9.0
         with:
           dotnet-version: "6.0.100"
       - run: dotnet --info

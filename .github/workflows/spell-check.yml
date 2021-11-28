@@ -1,3 +1,4 @@
+name: spell-check
 on:
   push:
     branches: [main, release-*]

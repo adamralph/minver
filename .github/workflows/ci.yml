@@ -59,14 +59,14 @@ jobs:
               os: windows-2019
               build: ./build.cmd
             tests:
-              framework: net5.0
-              sdk: "5.0.402"
-          - job:
-              os: windows-2019
-              build: ./build.cmd
-            tests:
               framework: net6.0
               sdk: "6.0.100"
+          - job:
+              os: windows-2022
+              build: ./build.cmd
+            tests:
+              framework: net5.0
+              sdk: "5.0.402"
           - job:
               os: windows-2022
               build: ./build.cmd

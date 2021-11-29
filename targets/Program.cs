@@ -43,7 +43,7 @@ Target(
 
         await RunAsync(
             "dotnet",
-            $"build --no-restore{((Sdk.Version?.StartsWith("2.", StringComparison.Ordinal) ?? false) ? "" : " --nologo")}",
+            $"build --no-restore{(Sdk.Version.StartsWith("2.", StringComparison.Ordinal) ? "" : " --nologo")}",
             path,
             configureEnvironment: env =>
             {

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using MinVer.Lib;
@@ -76,13 +77,15 @@ git tag 1.1.0 -a -m '.'
                 await Task.Delay(200);
             }
 
+            var log = new TestLogger();
+
             // act
             var versionCounts = new Dictionary<string, int>();
             foreach (var sha in await GetCommitShas(path))
             {
                 await Checkout(path, sha);
 
-                var version = Versioner.GetVersion(path, default, default, default, default, default, default);
+                var version = Versioner.GetVersion(path, "", MajorMinor.Zero, "", default, "", log);
                 var versionString = version.ToString();
                 var tagName = $"v/{versionString}";
 
@@ -97,6 +100,8 @@ git tag 1.1.0 -a -m '.'
 
             await Checkout(path, "main");
 
+            await File.WriteAllTextAsync(Path.Combine(path, "log.txt"), log.ToString());
+
             // assert
             await AssertFile.Contains("../../../versions.txt", await GetGraph(path));
         }
@@ -109,7 +114,7 @@ git tag 1.1.0 -a -m '.'
             await EnsureEmptyRepository(path);
 
             // act
-            var version = Versioner.GetVersion(path, default, default, default, default, default, default);
+            var version = Versioner.GetVersion(path, "", MajorMinor.Zero, "", default, "", NullLogger.Instance);
 
             // assert
             Assert.Equal("0.0.0-alpha.0", version.ToString());
@@ -123,7 +128,7 @@ git tag 1.1.0 -a -m '.'
             EnsureEmptyDirectory(path);
 
             // act
-            var version = Versioner.GetVersion(path, default, default, default, default, default, default);
+            var version = Versioner.GetVersion(path, "", MajorMinor.Zero, "", default, "", NullLogger.Instance);
 
             // assert
             Assert.Equal("0.0.0-alpha.0", version.ToString());

@@ -1,9 +1,23 @@
+using System;
+
 namespace MinVer.Lib
 {
     public class MajorMinor
     {
+        public static MajorMinor Zero { get; } = new MajorMinor(0, 0);
+
         public MajorMinor(int major, int minor)
         {
+            if (major < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(major), major, "The major version is less than zero.");
+            }
+
+            if (minor < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(minor), minor, "The minor version is less than zero.");
+            }
+
             this.Major = major;
             this.Minor = minor;
         }
@@ -18,7 +32,7 @@ namespace MinVer.Lib
 
         public static bool TryParse(string value, out MajorMinor majorMinor)
         {
-            majorMinor = null;
+            majorMinor = Zero;
 
             if (string.IsNullOrWhiteSpace(value))
             {

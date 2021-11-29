@@ -68,10 +68,10 @@ git merge bar baz --no-edit --no-ff --strategy=octopus
             var log = new TestLogger();
 
             // act
-            _ = Versioner.GetVersion(path, default, minMajorMinor, default, default, default, log);
+            _ = Versioner.GetVersion(path, "", minMajorMinor, "", default, "", log);
 
             // assert
-            var logMessages = string.Join(Environment.NewLine, log.Messages.Select(message => message.ToString()));
+            var logMessages = log.ToString();
 
             var shas = (await ReadAsync("git", "log --pretty=format:\"%H\"", path))
                 .StandardOutput

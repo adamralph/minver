@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using MinVer.Lib;
 
 namespace MinVerTests.Lib.Infra
@@ -44,5 +46,7 @@ namespace MinVerTests.Lib.Infra
             this.messages.Add(new LogMessage(LogLevel.Warn, message, 0));
             return true;
         }
+
+        public override string ToString() => string.Join(Environment.NewLine, this.Messages.Select(message => message.ToString()));
     }
 }

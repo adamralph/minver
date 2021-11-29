@@ -16,7 +16,7 @@ namespace MinVerTests.Infra
         private static readonly ConcurrentDictionary<string, int> indices = new ConcurrentDictionary<string, int>();
 #endif
 
-        public static async Task<Result> ReadLoggedAsync(string name, string args = "", string workingDirectory = "", IEnumerable<KeyValuePair<string, string>> envVars = null)
+        public static async Task<Result> ReadLoggedAsync(string name, string args = "", string workingDirectory = "", IEnumerable<KeyValuePair<string, string>>? envVars = null)
         {
             envVars = (envVars ?? Enumerable.Empty<KeyValuePair<string, string>>()).ToList();
 

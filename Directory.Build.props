@@ -6,6 +6,7 @@
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <Nullable>enable</Nullable>
     <!-- MinVer doesn't use MinVer for versioning because
 the environment variables for the build and for the package tests
 would interfere with each other. -->

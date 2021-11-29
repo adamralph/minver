@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -8,7 +9,7 @@ namespace MinVer.Lib
     {
         public static Version GetVersion(string workDir, string tagPrefix, MajorMinor minMajorMinor, string buildMeta, VersionPart autoIncrement, string defaultPreReleasePhase, ILogger log)
         {
-            log ??= new NullLogger();
+            log = log ?? throw new ArgumentNullException(nameof(log));
 
             defaultPreReleasePhase = string.IsNullOrEmpty(defaultPreReleasePhase)
                 ? "alpha"
@@ -20,7 +21,7 @@ namespace MinVer.Lib
 
             _ = calculatedVersion != version
                 ? log.IsInfoEnabled && log.Info($"Bumping version to {calculatedVersion} to satisfy minimum major minor {minMajorMinor}.")
-                : minMajorMinor != null && log.IsDebugEnabled && log.Debug($"The calculated version {calculatedVersion} satisfies the minimum major minor {minMajorMinor}.");
+                : log.IsDebugEnabled && log.Debug($"The calculated version {calculatedVersion} satisfies the minimum major minor {minMajorMinor}.");
 
             _ = log.IsInfoEnabled && log.Info($"Calculated version {calculatedVersion}.");
 
@@ -38,9 +39,7 @@ namespace MinVer.Lib
                 return version;
             }
 
-            var head = Git.GetHeadOrDefault(workDir, log);
-
-            if (head == null)
+            if (!Git.TryGetHead(workDir, out var head, log))
             {
                 var version = new Version(defaultPreReleasePhase);
 
@@ -56,7 +55,7 @@ namespace MinVer.Lib
                 .ThenByDescending(candidate => candidate.Index).ToList();
 
             var tagWidth = log.IsDebugEnabled ? orderedCandidates.Max(candidate => candidate.Tag?.Length ?? 2) : 0;
-            var versionWidth = log.IsDebugEnabled ? orderedCandidates.Max(candidate => candidate.Version?.ToString().Length ?? 4) : 0;
+            var versionWidth = log.IsDebugEnabled ? orderedCandidates.Max(candidate => candidate.Version.ToString().Length) : 0;
             var heightWidth = log.IsDebugEnabled ? orderedCandidates.Max(candidate => candidate.Height).ToString(CultureInfo.CurrentCulture).Length : 0;
 
             if (log.IsDebugEnabled)
@@ -69,7 +68,7 @@ namespace MinVer.Lib
 
             var selectedCandidate = orderedCandidates.Last();
 
-            _ = selectedCandidate.Tag == null && log.IsInfoEnabled && log.Info($"No commit found with a valid SemVer 2.0 version{(tagPrefix == null ? null : $" prefixed with '{tagPrefix}'")}. Using default version {selectedCandidate.Version}.");
+            _ = string.IsNullOrEmpty(selectedCandidate.Tag) && log.IsInfoEnabled && log.Info($"No commit found with a valid SemVer 2.0 version{(string.IsNullOrEmpty(tagPrefix) ? "" : $" prefixed with '{tagPrefix}'")}. Using default version {selectedCandidate.Version}.");
             _ = log.IsInfoEnabled && log.Info($"Using{(log.IsDebugEnabled && orderedCandidates.Count > 1 ? "    " : " ")}{selectedCandidate.ToString(tagWidth, versionWidth, heightWidth)}.");
 
             return selectedCandidate.Version.WithHeight(selectedCandidate.Height, autoIncrement, defaultPreReleasePhase);
@@ -77,141 +76,109 @@ namespace MinVer.Lib
 
         private static List<Candidate> GetCandidates(Commit head, IEnumerable<(string Name, string Sha)> tags, string tagPrefix, string defaultPreReleasePhase, ILogger log)
         {
-            var tagsAndVersions = tags
-                .Select(tag => (tag, Version.ParseOrDefault(tag.Name, tagPrefix)))
-                .OrderBy(tagAndVersion => tagAndVersion.Item2)
-                .ThenBy(tagsAndVersion => tagsAndVersion.tag.Name)
-                .ToList();
+            var tagsAndVersions = new List<(string Name, string Sha, Version Version)>();
 
-            var commitsChecked = new HashSet<string>();
-            var count = 0;
-            var height = 0;
-            var candidates = new List<Candidate>();
-            var commitsToCheck = new Stack<(Commit, int, Commit)>();
-            var commit = head;
-            Commit previousCommit = null;
-
-            _ = log.IsTraceEnabled && log.Trace($"Starting at commit {commit.ShortSha} (height {height})...");
-
-            while (true)
+            foreach (var (Name, Sha) in tags)
             {
-                var parentCount = 0;
-
-                if (commitsChecked.Add(commit.Sha))
+                if (Version.TryParse(Name, out var version, tagPrefix))
                 {
-                    ++count;
-
-                    var commitTagsAndVersions = tagsAndVersions.Where(tagAndVersion => tagAndVersion.tag.Sha == commit.Sha).ToList();
-                    var foundVersion = false;
-
-                    foreach (var (tag, commitVersion) in commitTagsAndVersions)
-                    {
-                        var candidate = new Candidate { Commit = commit, Height = height, Tag = tag.Name, Version = commitVersion, Index = candidates.Count };
-
-                        foundVersion = foundVersion || candidate.Version != null;
-
-                        _ = log.IsTraceEnabled && log.Trace($"Found {(candidate.Version == null ? "non-" : null)}version tag {candidate}.");
-
-                        candidates.Add(candidate);
-                    }
-
-                    if (!foundVersion)
-                    {
-                        if (log.IsTraceEnabled)
-                        {
-                            var parentIndex = 0;
-                            Commit firstParent = null;
-
-                            foreach (var parent in commit.Parents)
-                            {
-                                switch (parentIndex)
-                                {
-                                    case 0:
-                                        firstParent = parent;
-                                        break;
-                                    case 1:
-                                        _ = log.Trace($"History diverges from {commit.ShortSha} (height {height}) to:");
-                                        _ = log.Trace($"- {firstParent.ShortSha} (height {height + 1})");
-                                        goto default;
-                                    default:
-                                        _ = log.Trace($"- {parent.ShortSha} (height {height + 1})");
-                                        break;
-                                }
-
-                                ++parentIndex;
-                                parentCount = parentIndex;
-                            }
-                        }
-
-                        foreach (var parent in ((IEnumerable<Commit>)commit.Parents).Reverse())
-                        {
-                            commitsToCheck.Push((parent, height + 1, commit));
-                        }
-
-                        if (commitsToCheck.Count == 0 || commitsToCheck.Peek().Item2 <= height)
-                        {
-                            var candidate = new Candidate { Commit = commit, Height = height, Tag = null, Version = new Version(defaultPreReleasePhase), Index = candidates.Count };
-
-                            _ = log.IsTraceEnabled && log.Trace($"Found root commit {candidate}.");
-
-                            candidates.Add(candidate);
-                        }
-                    }
+                    tagsAndVersions.Add((Name, Sha, version));
                 }
                 else
                 {
-                    _ = log.IsTraceEnabled && log.Trace($"History converges from {previousCommit.ShortSha} (height {height - 1}) back to previously seen commit {commit.ShortSha} (height {height}). Abandoning path.");
-                }
-
-                if (commitsToCheck.Count == 0)
-                {
-                    break;
-                }
-
-                if (log.IsTraceEnabled)
-                {
-                    previousCommit = commit;
-                }
-
-                var oldHeight = height;
-                Commit child;
-                (commit, height, child) = commitsToCheck.Pop();
-
-                if (log.IsTraceEnabled)
-                {
-                    if (parentCount > 1)
-                    {
-                        _ = log.Trace($"Following path from {child.ShortSha} (height {height - 1}) through first parent {commit.ShortSha} (height {height})...");
-                    }
-                    else if (height <= oldHeight)
-                    {
-                        _ = commitsToCheck.Any() && commitsToCheck.Peek().Item2 == height
-                            ? log.Trace($"Backtracking to {child.ShortSha} (height {height - 1}) and following path through next parent {commit.ShortSha} (height {height})...")
-                            : log.Trace($"Backtracking to {child.ShortSha} (height {height - 1}) and following path through last parent {commit.ShortSha} (height {height})...");
-                    }
+                    _ = log.IsDebugEnabled && log.Debug($"Ignoring non-version tag {{ Name: {Name}, Sha: {Sha} }}.");
                 }
             }
 
-            _ = log.IsDebugEnabled && log.Debug($"{count:N0} commits checked.");
+            tagsAndVersions = tagsAndVersions
+                .OrderBy(tagAndVersion => tagAndVersion.Version)
+                .ThenBy(tagsAndVersion => tagsAndVersion.Name)
+                .ToList();
+
+            var itemsToCheck = new Stack<(Commit Commit, int Height, Commit? Child)>();
+            itemsToCheck.Push((head, 0, null));
+
+            var checkedShas = new HashSet<string>();
+            var candidates = new List<Candidate>();
+
+            while (itemsToCheck.TryPop(out var item))
+            {
+                _ = item.Child != null && log.IsTraceEnabled && log.Trace($"Checking parents of commit {item.Child}...");
+                _ = log.IsTraceEnabled && log.Trace($"Checking commit {item.Commit} (height {item.Height})...");
+
+                if (!checkedShas.Add(item.Commit.Sha))
+                {
+                    _ = log.IsTraceEnabled && log.Trace($"Commit {item.Commit} already checked. Abandoning path.");
+                    continue;
+                }
+
+                var commitTagsAndVersions = tagsAndVersions.Where(tagAndVersion => tagAndVersion.Sha == item.Commit.Sha).ToList();
+
+                if (commitTagsAndVersions.Any())
+                {
+                    foreach (var (name, sha, version) in commitTagsAndVersions)
+                    {
+                        var candidate = new Candidate(item.Commit, item.Height, name, version, candidates.Count);
+                        _ = log.IsTraceEnabled && log.Trace($"Found version tag {candidate}.");
+                        candidates.Add(candidate);
+                    }
+
+                    continue;
+                }
+
+                _ = log.IsTraceEnabled && log.Trace($"Found no version tags on commit {item.Commit}.");
+
+                if (!item.Commit.Parents.Any())
+                {
+                    candidates.Add(new Candidate(item.Commit, item.Height, "", new Version(defaultPreReleasePhase), candidates.Count));
+                    _ = log.IsTraceEnabled && log.Trace($"Found root commit {candidates.Last()}.");
+                    continue;
+                }
+
+                if (log.IsTraceEnabled)
+                {
+                    _ = log.Trace($"Commit {item.Commit} has {item.Commit.Parents.Count} parent(s):");
+                    foreach (var parent in item.Commit.Parents)
+                    {
+                        _ = log.Trace($"- {parent}");
+                    }
+                }
+
+                foreach (var parent in ((IEnumerable<Commit>)item.Commit.Parents).Reverse())
+                {
+                    itemsToCheck.Push((parent, item.Height + 1, item.Commit));
+                }
+            }
+
+            _ = log.IsDebugEnabled && log.Debug($"{checkedShas.Count:N0} commits checked.");
             return candidates;
         }
 
         private class Candidate
         {
-            public Commit Commit { get; set; }
+            public Candidate(Commit commit, int height, string tag, Version version, int index)
+            {
+                this.Commit = commit;
+                this.Height = height;
+                this.Tag = tag;
+                this.Version = version;
+                this.Index = index;
+            }
 
-            public int Height { get; set; }
+            public Commit Commit { get; }
 
-            public string Tag { get; set; }
+            public int Height { get; }
 
-            public Version Version { get; set; }
+            public string Tag { get; }
 
-            public int Index { get; set; }
+            public Version Version { get; }
+
+            public int Index { get; }
 
             public override string ToString() => this.ToString(0, 0, 0);
 
             public string ToString(int tagWidth, int versionWidth, int heightWidth) =>
-                $"{{ {nameof(this.Commit)}: {this.Commit.ShortSha}, {nameof(this.Tag)}: {$"{(this.Tag == null ? "null" : $"'{this.Tag}'")},".PadRight(tagWidth + 3)} {nameof(this.Version)}: {$"{this.Version?.ToString() ?? "null"},".PadRight(versionWidth + 1)} {nameof(this.Height)}: {this.Height.ToString(CultureInfo.CurrentCulture).PadLeft(heightWidth)} }}";
+                $"{{ {nameof(this.Commit)}: {this.Commit.ShortSha}, {nameof(this.Tag)}: {$"'{this.Tag}',".PadRight(tagWidth + 3)} {nameof(this.Version)}: {$"{this.Version},".PadRight(versionWidth + 1)} {nameof(this.Height)}: {this.Height.ToString(CultureInfo.CurrentCulture).PadLeft(heightWidth)} }}";
         }
     }
 }

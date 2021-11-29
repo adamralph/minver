@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 #if MINVER_CLI
 using System.Linq;
 #endif
@@ -8,63 +9,80 @@ namespace MinVer
 {
     internal class Options
     {
-#if MINVER_CLI
-        public static bool TryParseEnvVars(out Options options)
+        public Options(
+            VersionPart autoIncrement,
+            string buildMeta,
+            string defaultPreReleasePhase,
+            MajorMinor minMajorMinor,
+            string tagPrefix,
+            Verbosity verbosity,
+            Lib.Version? versionOverride)
         {
-            options = new Options();
+            this.AutoIncrement = autoIncrement;
+            this.BuildMeta = buildMeta;
+            this.DefaultPreReleasePhase = defaultPreReleasePhase;
+            this.MinMajorMinor = minMajorMinor;
+            this.TagPrefix = tagPrefix;
+            this.Verbosity = verbosity;
+            this.VersionOverride = versionOverride;
+        }
+
+#if MINVER_CLI
+        public static bool TryParseEnvVars([NotNullWhen(returnValue: true)] out Options? options)
+        {
+            options = null;
+
+            var autoIncrement = default(VersionPart);
+            var minMajorMinor = MajorMinor.Zero;
+            var verbosity = default(Verbosity);
+            var versionOverride = default(Lib.Version?);
 
             var autoIncrementEnvVar = GetEnvVar("MinVerAutoIncrement");
             if (!string.IsNullOrEmpty(autoIncrementEnvVar))
             {
-                if (!Enum.TryParse<VersionPart>(autoIncrementEnvVar, true, out var autoIncrement))
+                if (!Enum.TryParse(autoIncrementEnvVar, true, out autoIncrement))
                 {
                     Logger.ErrorInvalidEnvVar("MinVerAutoIncrement", autoIncrementEnvVar, VersionPartExtensions.ValidValues);
                     return false;
                 }
-
-                options.AutoIncrement = autoIncrement;
             }
 
-            options.BuildMeta = GetEnvVar("MinVerBuildMetadata");
-            options.DefaultPreReleasePhase = GetEnvVar("MinVerDefaultPreReleasePhase");
+            var buildMeta = GetEnvVar("MinVerBuildMetadata");
+            var defaultPreReleasePhase = GetEnvVar("MinVerDefaultPreReleasePhase");
 
             var minMajorMinorEnvVar = GetEnvVar("MinVerMinimumMajorMinor");
             if (!string.IsNullOrEmpty(minMajorMinorEnvVar))
             {
-                if (!MajorMinor.TryParse(minMajorMinorEnvVar, out var minMajorMinor))
+                if (!MajorMinor.TryParse(minMajorMinorEnvVar, out minMajorMinor))
                 {
                     Logger.ErrorInvalidEnvVar("MinVerMinimumMajorMinor", minMajorMinorEnvVar, MajorMinor.ValidValues);
                     return false;
                 }
-
-                options.MinMajorMinor = minMajorMinor;
             }
 
-            options.TagPrefix = GetEnvVar("MinVerTagPrefix");
+            var tagPrefix = GetEnvVar("MinVerTagPrefix");
 
             var verbosityEnvVar = GetEnvVar("MinVerVerbosity");
             if (!string.IsNullOrEmpty(verbosityEnvVar))
             {
-                if (!VerbosityMap.TryMap(verbosityEnvVar, out var verbosity))
+                if (!VerbosityMap.TryMap(verbosityEnvVar, out verbosity))
                 {
                     Logger.ErrorInvalidEnvVar("MinVerVerbosity", verbosityEnvVar, VerbosityMap.ValidValues);
                     return false;
                 }
-
-                options.Verbosity = verbosity;
             }
 
             var versionOverrideEnvVar = GetEnvVar("MinVerVersionOverride");
             if (!string.IsNullOrEmpty(versionOverrideEnvVar))
             {
-                if (!Lib.Version.TryParse(versionOverrideEnvVar, out var versionOverride))
+                if (!Lib.Version.TryParse(versionOverrideEnvVar, out versionOverride))
                 {
-                    Logger.ErrorInvalidEnvVar("MinVerVersionOverride", versionOverrideEnvVar, null);
+                    Logger.ErrorInvalidEnvVar("MinVerVersionOverride", versionOverrideEnvVar, "");
                     return false;
                 }
-
-                options.VersionOverride = versionOverride;
             }
+
+            options = new Options(autoIncrement, buildMeta, defaultPreReleasePhase, minMajorMinor, tagPrefix, verbosity, versionOverride);
 
             return true;
         }
@@ -79,8 +97,8 @@ namespace MinVer
                 .FirstOrDefault(k => string.Equals(k, name, StringComparison.OrdinalIgnoreCase));
 
             return key == null
-                ? null
-                : (string)vars[key];
+                ? ""
+                : (string?)vars[key] ?? "";
         }
 #endif
 
@@ -94,75 +112,59 @@ namespace MinVer
 #if MINVER
             string versionOverrideOption,
 #endif
-            out Options options)
+            [NotNullWhen(returnValue: true)] out Options? options)
         {
-            options = new Options();
+            options = null;
 
-            if (!string.IsNullOrEmpty(autoIncrementOption))
+            var autoIncrement = default(VersionPart);
+            var minMajorMinor = MajorMinor.Zero;
+            var verbosity = default(Verbosity);
+            var versionOverride = default(Lib.Version?);
+
+            if (!string.IsNullOrEmpty(autoIncrementOption) &&
+                !Enum.TryParse(autoIncrementOption, true, out autoIncrement))
             {
-                if (!Enum.TryParse<VersionPart>(autoIncrementOption, true, out var autoIncrement))
-                {
-                    Logger.ErrorInvalidAutoIncrement(autoIncrementOption);
-                    return false;
-                }
-
-                options.AutoIncrement = autoIncrement;
+                Logger.ErrorInvalidAutoIncrement(autoIncrementOption);
+                return false;
             }
 
-            options.BuildMeta = buildMetaOption;
-            options.DefaultPreReleasePhase = defaultPreReleasePhaseOption;
-
-            if (!string.IsNullOrEmpty(minMajorMinorOption))
+            if (!string.IsNullOrEmpty(minMajorMinorOption) &&
+                !MajorMinor.TryParse(minMajorMinorOption, out minMajorMinor))
             {
-                if (!MajorMinor.TryParse(minMajorMinorOption, out var minMajorMinor))
-                {
-                    Logger.ErrorInvalidMinMajorMinor(minMajorMinorOption);
-                    return false;
-                }
-
-                options.MinMajorMinor = minMajorMinor;
+                Logger.ErrorInvalidMinMajorMinor(minMajorMinorOption);
+                return false;
             }
 
-            options.TagPrefix = tagPrefixOption;
-
-            if (!string.IsNullOrEmpty(verbosityOption))
+            if (!string.IsNullOrEmpty(verbosityOption) &&
+                !VerbosityMap.TryMap(verbosityOption, out verbosity))
             {
-                if (!VerbosityMap.TryMap(verbosityOption, out var verbosity))
-                {
-                    Logger.ErrorInvalidVerbosity(verbosityOption);
-                    return false;
-                }
-
-                options.Verbosity = verbosity;
+                Logger.ErrorInvalidVerbosity(verbosityOption);
+                return false;
             }
 
 #if MINVER
-            if (!string.IsNullOrEmpty(versionOverrideOption))
+            if (!string.IsNullOrEmpty(versionOverrideOption) &&
+                !Lib.Version.TryParse(versionOverrideOption, out versionOverride))
             {
-                if (!Lib.Version.TryParse(versionOverrideOption, out var versionOverride))
-                {
-                    Logger.ErrorInvalidVersionOverride(versionOverrideOption);
-                    return false;
-                }
-
-                options.VersionOverride = versionOverride;
+                Logger.ErrorInvalidVersionOverride(versionOverrideOption);
+                return false;
             }
 #endif
+
+            options = new Options(autoIncrement, buildMetaOption, defaultPreReleasePhaseOption, minMajorMinor, tagPrefixOption, verbosity, versionOverride);
 
             return true;
         }
 
         public Options Mask(Options other) =>
-            new Options
-            {
-                AutoIncrement = this.AutoIncrement == default ? other.AutoIncrement : this.AutoIncrement,
-                BuildMeta = this.BuildMeta ?? other.BuildMeta,
-                DefaultPreReleasePhase = this.DefaultPreReleasePhase ?? other.DefaultPreReleasePhase,
-                MinMajorMinor = this.MinMajorMinor ?? other.MinMajorMinor,
-                TagPrefix = this.TagPrefix ?? other.TagPrefix,
-                Verbosity = this.Verbosity == default ? other.Verbosity : this.Verbosity,
-                VersionOverride = this.VersionOverride ?? other.VersionOverride,
-            };
+            new Options(
+                this.AutoIncrement == default ? other.AutoIncrement : this.AutoIncrement,
+                string.IsNullOrEmpty(this.BuildMeta) ? other.BuildMeta : this.BuildMeta,
+                string.IsNullOrEmpty(this.DefaultPreReleasePhase) ? other.DefaultPreReleasePhase : this.DefaultPreReleasePhase,
+                this.MinMajorMinor == MajorMinor.Zero ? other.MinMajorMinor : this.MinMajorMinor,
+                string.IsNullOrEmpty(this.TagPrefix) ? other.TagPrefix : this.TagPrefix,
+                this.Verbosity == default ? other.Verbosity : this.Verbosity,
+                this.VersionOverride ?? other.VersionOverride);
 
         public VersionPart AutoIncrement { get; private set; }
 
@@ -176,6 +178,6 @@ namespace MinVer
 
         public Verbosity Verbosity { get; private set; }
 
-        public Lib.Version VersionOverride { get; private set; }
+        public Lib.Version? VersionOverride { get; private set; }
     }
 }

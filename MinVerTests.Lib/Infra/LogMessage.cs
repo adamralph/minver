@@ -8,6 +8,6 @@ namespace MinVerTests.Lib.Infra
         public string Text { get; }
         public int Code { get; }
 
-        public override string ToString() => $"{this.Level}: {(this.Code != 0 ? $"{this.Code}" : "")}{this.Text}";
+        public override string ToString() => $"{this.Level}:".PadRight(7) + $"{(this.Code != 0 ? $"{this.Code}" : "")}{this.Text}";
     }
 }

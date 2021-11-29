@@ -8,17 +8,13 @@ namespace MinVerTests.Packages
     {
         public override string Skip
         {
-            get => base.Skip ??
+            get => !string.IsNullOrEmpty(base.Skip)
+                ? base.Skip
+                :
                 (
-                    (
-                        Sdk.Version != null &&
-                        (
-                            Sdk.Version.StartsWith("2.", StringComparison.Ordinal) ||
-                            Sdk.Version.StartsWith("3.", StringComparison.Ordinal)
-                        )
-                    )
+                    Sdk.Version.StartsWith("2.", StringComparison.Ordinal) || Sdk.Version.StartsWith("3.", StringComparison.Ordinal)
                     ? "Not .NET 5 or later"
-                    : null
+                    : ""
                 );
 
             set => base.Skip = value;

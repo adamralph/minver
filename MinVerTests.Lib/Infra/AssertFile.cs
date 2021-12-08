@@ -7,7 +7,7 @@ using Xunit.Sdk;
 
 namespace MinVerTests.Lib.Infra
 {
-    public static class AssertFile
+    internal static class AssertFile
     {
         public static async Task Contains(string expectedPath, string actual)
         {
@@ -22,6 +22,9 @@ namespace MinVerTests.Lib.Infra
 
             var expected = await File.ReadAllTextAsync(expectedPath);
 
+            expected = Normalize(expected);
+            actual = Normalize(actual);
+
             try
             {
                 Assert.Equal(expected, actual);
@@ -33,6 +36,22 @@ namespace MinVerTests.Lib.Infra
                 throw new XunitException(
                     $"{ex.Message}{Environment.NewLine}{Environment.NewLine}Expected file: {expectedPath}{Environment.NewLine}Actual file: {actualPath}");
             }
+        }
+
+        private static string Normalize(string text)
+        {
+            text = text
+                .Replace("\r\n", "\n", StringComparison.Ordinal)
+                .Replace("\r", "\n", StringComparison.Ordinal)
+                .Replace(" \n", "\n", StringComparison.Ordinal)
+                .Replace("\n", "\r\n", StringComparison.Ordinal);
+
+            if (!text.EndsWith("\r\n", StringComparison.Ordinal))
+            {
+                text += "\r\n";
+            }
+
+            return text;
         }
     }
 }

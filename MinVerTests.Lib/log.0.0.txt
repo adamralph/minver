@@ -1,0 +1,53 @@
+Trace: Running Git: git status --short
+Trace: Git exit code: 0
+Trace: Git stdout:
+?? command-read-00.md
+?? command-read-01.md
+?? command-read-02.md
+?? command-read-03.md
+
+Trace: Git stderr:
+
+Trace: Running Git: git log --pretty=format:"%H %P"
+Trace: Git exit code: 0
+Trace: Git stdout:
+5 2 3 4
+4 2
+3 2
+2 0 1
+1 0
+0
+Trace: Git stderr:
+
+Trace: Running Git: git show-ref --tags --dereference
+Trace: Git exit code: 0
+Trace: Git stdout:
+1 refs/tags/1.0.0-foo.1
+0 refs/tags/not-a-version
+
+Trace: Git stderr:
+
+Trace: Starting at commit 5 (height 0)...
+Trace: History diverges from 5 (height 0) to:
+Trace: - 2 (height 1)
+Trace: - 3 (height 1)
+Trace: - 4 (height 1)
+Trace: Following path from 5 (height 0) through first parent 2 (height 1)...
+Trace: History diverges from 2 (height 1) to:
+Trace: - 0 (height 2)
+Trace: - 1 (height 2)
+Trace: Following path from 2 (height 1) through first parent 0 (height 2)...
+Trace: Found non-version tag { Commit: 0, Tag: 'not-a-version', Version: null, Height: 2 }.
+Trace: Found root commit { Commit: 0, Tag: null, Version: 0.0.0-alpha.0, Height: 2 }.
+Trace: Backtracking to 2 (height 1) and following path through last parent 1 (height 2)...
+Trace: Found version tag { Commit: 1, Tag: '1.0.0-foo.1', Version: 1.0.0-foo.1, Height: 2 }.
+Trace: Backtracking to 5 (height 0) and following path through next parent 3 (height 1)...
+Trace: History converges from 3 (height 1) back to previously seen commit 2 (height 2). Abandoning path.
+Trace: Backtracking to 5 (height 0) and following path through last parent 4 (height 1)...
+Trace: History converges from 4 (height 1) back to previously seen commit 2 (height 2). Abandoning path.
+Debug: 6 commits checked.
+Debug: Ignoring { Commit: 0, Tag: 'not-a-version', Version: null,          Height: 2 }.
+Debug: Ignoring { Commit: 0, Tag: null,            Version: 0.0.0-alpha.0, Height: 2 }.
+Info: Using    { Commit: 1, Tag: '1.0.0-foo.1',   Version: 1.0.0-foo.1,   Height: 2 }.
+Debug: The calculated version 1.0.0-foo.1.2 satisfies the minimum major minor 0.0.
+Info: Calculated version 1.0.0-foo.1.2.

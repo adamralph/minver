@@ -1,8 +1,8 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using SimpleExec;
 
@@ -10,9 +10,13 @@ namespace MinVerTests.Infra
 {
     internal static class CommandEx
     {
-        private static int index;
+#if NET5_0_OR_GREATER
+        private static readonly ConcurrentDictionary<string, int> indices = new();
+#else
+        private static readonly ConcurrentDictionary<string, int> indices = new ConcurrentDictionary<string, int>();
+#endif
 
-        public static async Task<Result> ReadLoggedAsync(string name, string args = null, string workingDirectory = null, IEnumerable<KeyValuePair<string, string>> envVars = null)
+        public static async Task<Result> ReadLoggedAsync(string name, string args = "", string workingDirectory = "", IEnumerable<KeyValuePair<string, string>> envVars = null)
         {
             envVars = (envVars ?? Enumerable.Empty<KeyValuePair<string, string>>()).ToList();
 
@@ -28,7 +32,13 @@ namespace MinVerTests.Infra
                     }
                 }).ConfigureAwait(false);
 
-            var index = Interlocked.Increment(ref CommandEx.index);
+            var index = 0;
+
+            lock (indices)
+            {
+                index = indices.GetOrAdd(workingDirectory, 0);
+                indices[workingDirectory] = index + 1;
+            }
 
             var markdown =
 $@"

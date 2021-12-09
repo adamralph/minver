@@ -45,7 +45,7 @@ namespace MinVerTests.Lib
 
             if (isRedundant)
             {
-                Assert.Contains(logger.DebugMessages, message => message.Contains($"The calculated version {actualVersion} satisfies the minimum major minor {major}.{minor}.", StringComparison.Ordinal));
+                Assert.Contains(logger.Messages, message => message.Text.Contains($"The calculated version {actualVersion} satisfies the minimum major minor {major}.{minor}.", StringComparison.Ordinal));
             }
         }
 

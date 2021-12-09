@@ -19,7 +19,8 @@ namespace MinVerTests.Lib
         {
             // arrange
             var historicalCommands =
-@"git commit --allow-empty -m '.'
+@"
+git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
 git tag 0.0.0-alpha.1
@@ -61,7 +62,8 @@ git tag 1.1.0-beta.10
 git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
 git tag 1.1.0-rc.1
-git tag 1.1.0 -a -m '.'";
+git tag 1.1.0 -a -m '.'
+";
 
             var path = MethodBase.GetCurrentMethod().GetTestDirectory();
 

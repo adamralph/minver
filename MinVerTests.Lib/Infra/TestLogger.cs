@@ -3,32 +3,26 @@ using MinVer.Lib;
 
 namespace MinVerTests.Lib.Infra
 {
-    public class TestLogger : ILogger
+    internal class TestLogger : ILogger
     {
 #if NET5_0_OR_GREATER
-        private readonly List<string> debugMessages = new();
+        private readonly List<LogMessage> messages = new();
 #else
-        private readonly List<string> debugMessages = new List<string>();
+        private readonly List<LogMessage> messages = new List<LogMessage>();
 #endif
 
         public bool IsTraceEnabled => true;
 
         public bool IsDebugEnabled => true;
 
-        public IEnumerable<string> DebugMessages => this.debugMessages;
+        public IEnumerable<LogMessage> Messages => this.messages;
 
-        public void Trace(string message)
-        {
-        }
+        public void Trace(string message) => this.messages.Add(new LogMessage(LogLevel.Trace, message, 0));
 
-        public void Debug(string message) => this.debugMessages.Add(message);
+        public void Debug(string message) => this.messages.Add(new LogMessage(LogLevel.Debug, message, 0));
 
-        public void Info(string message)
-        {
-        }
+        public void Info(string message) => this.messages.Add(new LogMessage(LogLevel.Info, message, 0));
 
-        public void Warn(int code, string message)
-        {
-        }
+        public void Warn(int code, string message) => this.messages.Add(new LogMessage(LogLevel.Warn, message, 0));
     }
 }

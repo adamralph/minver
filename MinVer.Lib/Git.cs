@@ -28,13 +28,13 @@ namespace MinVer.Lib
             return commits.Values.FirstOrDefault();
         }
 
-        public static IEnumerable<Tag> GetTagsOrEmpty(string directory, ILogger log) =>
+        public static IEnumerable<(string Name, string Sha)> GetTags(string directory, ILogger log) =>
             GitCommand.TryRun("show-ref --tags --dereference", directory, log, out var output)
                 ? output
                     .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
                     .Select(line => line.Split(new[] { ' ' }, 2))
-                    .Select(tokens => new Tag(tokens[1][10..].RemoveFromEnd("^{}"), tokens[0]))
-                : Enumerable.Empty<Tag>();
+                    .Select(tokens => (tokens[1][10..].RemoveFromEnd("^{}"), tokens[0]))
+                : Enumerable.Empty<(string, string)>();
 
         private static string RemoveFromEnd(this string text, string value) =>
             text.EndsWith(value, StringComparison.OrdinalIgnoreCase) ? text[..^value.Length] : text;

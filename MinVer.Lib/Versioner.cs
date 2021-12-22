@@ -57,7 +57,7 @@ namespace MinVer.Lib
                 return version;
             }
 
-            var tags = Git.GetTagsOrEmpty(workDir, log);
+            var tags = Git.GetTags(workDir, log);
 
             var orderedCandidates = GetCandidates(head, tags, tagPrefix, defaultPreReleasePhase, log)
                 .OrderBy(candidate => candidate.Version)
@@ -87,7 +87,7 @@ namespace MinVer.Lib
             return selectedCandidate.Version.WithHeight(selectedCandidate.Height, autoIncrement, defaultPreReleasePhase);
         }
 
-        private static List<Candidate> GetCandidates(Commit head, IEnumerable<Tag> tags, string tagPrefix, string defaultPreReleasePhase, ILogger log)
+        private static List<Candidate> GetCandidates(Commit head, IEnumerable<(string Name, string Sha)> tags, string tagPrefix, string defaultPreReleasePhase, ILogger log)
         {
             var tagsAndVersions = tags
                 .Select(tag => (tag, Version.ParseOrDefault(tag.Name, tagPrefix)))

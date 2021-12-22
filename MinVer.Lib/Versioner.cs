@@ -47,11 +47,8 @@ namespace MinVer.Lib
             }
 
             var head = Git.GetHeadOrDefault(workDir, log);
-            var tags = head != null ? Git.GetTagsOrEmpty(workDir, log) : Enumerable.Empty<Tag>();
 
-            var commit = head;
-
-            if (commit == null)
+            if (head == null)
             {
                 var version = new Version(defaultPreReleasePhase);
 
@@ -60,6 +57,38 @@ namespace MinVer.Lib
                 return version;
             }
 
+            var tags = Git.GetTagsOrEmpty(workDir, log);
+
+            var orderedCandidates = GetCandidates(head, tags, tagPrefix, defaultPreReleasePhase, log)
+                .OrderBy(candidate => candidate.Version)
+                .ThenByDescending(candidate => candidate.Index).ToList();
+
+            var tagWidth = log.IsDebugEnabled ? orderedCandidates.Max(candidate => candidate.Tag?.Length ?? 2) : 0;
+            var versionWidth = log.IsDebugEnabled ? orderedCandidates.Max(candidate => candidate.Version?.ToString().Length ?? 4) : 0;
+            var heightWidth = log.IsDebugEnabled ? orderedCandidates.Max(candidate => candidate.Height).ToString(CultureInfo.CurrentCulture).Length : 0;
+
+            if (log.IsDebugEnabled)
+            {
+                foreach (var candidate in orderedCandidates.Take(orderedCandidates.Count - 1))
+                {
+                    log.Debug($"Ignoring {candidate.ToString(tagWidth, versionWidth, heightWidth)}.");
+                }
+            }
+
+            var selectedCandidate = orderedCandidates.Last();
+
+            if (selectedCandidate.Tag == null)
+            {
+                log.Info($"No commit found with a valid SemVer 2.0 version{(tagPrefix == null ? null : $" prefixed with '{tagPrefix}'")}. Using default version {selectedCandidate.Version}.");
+            }
+
+            log.Info($"Using{(log.IsDebugEnabled && orderedCandidates.Count > 1 ? "    " : " ")}{selectedCandidate.ToString(tagWidth, versionWidth, heightWidth)}.");
+
+            return selectedCandidate.Version.WithHeight(selectedCandidate.Height, autoIncrement, defaultPreReleasePhase);
+        }
+
+        private static List<Candidate> GetCandidates(Commit head, IEnumerable<Tag> tags, string tagPrefix, string defaultPreReleasePhase, ILogger log)
+        {
             var tagsAndVersions = tags
                 .Select(tag => (tag, Version.ParseOrDefault(tag.Name, tagPrefix)))
                 .OrderBy(tagAndVersion => tagAndVersion.Item2)
@@ -71,6 +100,7 @@ namespace MinVer.Lib
             var height = 0;
             var candidates = new List<Candidate>();
             var commitsToCheck = new Stack<(Commit, int, Commit)>();
+            var commit = head;
             Commit previousCommit = null;
 
             if (log.IsTraceEnabled)
@@ -192,31 +222,7 @@ namespace MinVer.Lib
             }
 
             log.Debug($"{count:N0} commits checked.");
-
-            var orderedCandidates = candidates.OrderBy(candidate => candidate.Version).ThenByDescending(candidate => candidate.Index).ToList();
-
-            var tagWidth = log.IsDebugEnabled ? orderedCandidates.Max(candidate => candidate.Tag?.Length ?? 2) : 0;
-            var versionWidth = log.IsDebugEnabled ? orderedCandidates.Max(candidate => candidate.Version?.ToString().Length ?? 4) : 0;
-            var heightWidth = log.IsDebugEnabled ? orderedCandidates.Max(candidate => candidate.Height).ToString(CultureInfo.CurrentCulture).Length : 0;
-
-            if (log.IsDebugEnabled)
-            {
-                foreach (var candidate in orderedCandidates.Take(orderedCandidates.Count - 1))
-                {
-                    log.Debug($"Ignoring {candidate.ToString(tagWidth, versionWidth, heightWidth)}.");
-                }
-            }
-
-            var selectedCandidate = orderedCandidates.Last();
-
-            if (selectedCandidate.Tag == null)
-            {
-                log.Info($"No commit found with a valid SemVer 2.0 version{(tagPrefix == null ? null : $" prefixed with '{tagPrefix}'")}. Using default version {selectedCandidate.Version}.");
-            }
-
-            log.Info($"Using{(log.IsDebugEnabled && orderedCandidates.Count > 1 ? "    " : " ")}{selectedCandidate.ToString(tagWidth, versionWidth, heightWidth)}.");
-
-            return selectedCandidate.Version.WithHeight(selectedCandidate.Height, autoIncrement, defaultPreReleasePhase);
+            return candidates;
         }
 
         private class Candidate

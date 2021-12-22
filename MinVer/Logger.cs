@@ -13,37 +13,18 @@ namespace MinVer
 
         public bool IsDebugEnabled => this.verbosity >= Verbosity.Detailed;
 
-        public void Trace(string message)
-        {
-            if (this.verbosity >= Verbosity.Diagnostic)
-            {
-                Message(message);
-            }
-        }
+        public bool IsInfoEnabled => this.verbosity >= Verbosity.Normal;
 
-        public void Debug(string message)
-        {
-            if (this.verbosity >= Verbosity.Detailed)
-            {
-                Message(message);
-            }
-        }
+        // warnings are deliberately shown at quiet level
+        public bool IsWarnEnabled => this.verbosity >= Verbosity.Quiet;
 
-        public void Info(string message)
-        {
-            if (this.verbosity >= Verbosity.Normal)
-            {
-                Message(message);
-            }
-        }
+        public bool Trace(string message) => this.IsTraceEnabled && Message(message);
 
-        public void Warn(int code, string message)
-        {
-            if (this.verbosity >= Verbosity.Quiet)
-            {
-                Message($"warning MINVER{code:D4} : {message}");
-            }
-        }
+        public bool Debug(string message) => this.IsDebugEnabled && Message(message);
+
+        public bool Info(string message) => this.IsInfoEnabled && Message(message);
+
+        public bool Warn(int code, string message) => this.IsWarnEnabled && Message($"warning MINVER{code:D4} : {message}");
 
         public static void ErrorWorkDirDoesNotExist(string workDir) =>
             Error(1002, $"Working directory '{workDir}' does not exist.");
@@ -64,7 +45,7 @@ namespace MinVer
 
         private static void Error(int code, string message) => Message($"error MINVER{code:D4} : {message}");
 
-        private static void Message(string message)
+        private static bool Message(string message)
         {
             if (message.Contains('\r', StringComparison.OrdinalIgnoreCase) || message.Contains('\n', StringComparison.OrdinalIgnoreCase))
             {
@@ -73,6 +54,8 @@ namespace MinVer
             }
 
             Console.Error.WriteLine($"MinVer: {message}");
+
+            return true;
         }
     }
 }

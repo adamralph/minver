@@ -18,19 +18,11 @@ namespace MinVer.Lib
 
             var calculatedVersion = version.Satisfying(minMajorMinor, defaultPreReleasePhase);
 
-            if (calculatedVersion != version)
-            {
-                log.Info($"Bumping version to {calculatedVersion} to satisfy minimum major minor {minMajorMinor}.");
-            }
-            else
-            {
-                if (minMajorMinor != null)
-                {
-                    log.Debug($"The calculated version {calculatedVersion} satisfies the minimum major minor {minMajorMinor}.");
-                }
-            }
+            _ = calculatedVersion != version
+                ? log.IsInfoEnabled && log.Info($"Bumping version to {calculatedVersion} to satisfy minimum major minor {minMajorMinor}.")
+                : minMajorMinor != null && log.IsDebugEnabled && log.Debug($"The calculated version {calculatedVersion} satisfies the minimum major minor {minMajorMinor}.");
 
-            log.Info($"Calculated version {calculatedVersion}.");
+            _ = log.IsInfoEnabled && log.Info($"Calculated version {calculatedVersion}.");
 
             return calculatedVersion;
         }
@@ -41,7 +33,7 @@ namespace MinVer.Lib
             {
                 var version = new Version(defaultPreReleasePhase);
 
-                log.Warn(1001, $"'{workDir}' is not a valid Git working directory. Using default version {version}.");
+                _ = log.IsWarnEnabled && log.Warn(1001, $"'{workDir}' is not a valid Git working directory. Using default version {version}.");
 
                 return version;
             }
@@ -52,7 +44,7 @@ namespace MinVer.Lib
             {
                 var version = new Version(defaultPreReleasePhase);
 
-                log.Info($"No commits found. Using default version {version}.");
+                _ = log.IsInfoEnabled && log.Info($"No commits found. Using default version {version}.");
 
                 return version;
             }
@@ -71,18 +63,14 @@ namespace MinVer.Lib
             {
                 foreach (var candidate in orderedCandidates.Take(orderedCandidates.Count - 1))
                 {
-                    log.Debug($"Ignoring {candidate.ToString(tagWidth, versionWidth, heightWidth)}.");
+                    _ = log.Debug($"Ignoring {candidate.ToString(tagWidth, versionWidth, heightWidth)}.");
                 }
             }
 
             var selectedCandidate = orderedCandidates.Last();
 
-            if (selectedCandidate.Tag == null)
-            {
-                log.Info($"No commit found with a valid SemVer 2.0 version{(tagPrefix == null ? null : $" prefixed with '{tagPrefix}'")}. Using default version {selectedCandidate.Version}.");
-            }
-
-            log.Info($"Using{(log.IsDebugEnabled && orderedCandidates.Count > 1 ? "    " : " ")}{selectedCandidate.ToString(tagWidth, versionWidth, heightWidth)}.");
+            _ = selectedCandidate.Tag == null && log.IsInfoEnabled && log.Info($"No commit found with a valid SemVer 2.0 version{(tagPrefix == null ? null : $" prefixed with '{tagPrefix}'")}. Using default version {selectedCandidate.Version}.");
+            _ = log.IsInfoEnabled && log.Info($"Using{(log.IsDebugEnabled && orderedCandidates.Count > 1 ? "    " : " ")}{selectedCandidate.ToString(tagWidth, versionWidth, heightWidth)}.");
 
             return selectedCandidate.Version.WithHeight(selectedCandidate.Height, autoIncrement, defaultPreReleasePhase);
         }
@@ -103,10 +91,7 @@ namespace MinVer.Lib
             var commit = head;
             Commit previousCommit = null;
 
-            if (log.IsTraceEnabled)
-            {
-                log.Trace($"Starting at commit {commit.ShortSha} (height {height})...");
-            }
+            _ = log.IsTraceEnabled && log.Trace($"Starting at commit {commit.ShortSha} (height {height})...");
 
             while (true)
             {
@@ -125,10 +110,7 @@ namespace MinVer.Lib
 
                         foundVersion = foundVersion || candidate.Version != null;
 
-                        if (log.IsTraceEnabled)
-                        {
-                            log.Trace($"Found {(candidate.Version == null ? "non-" : null)}version tag {candidate}.");
-                        }
+                        _ = log.IsTraceEnabled && log.Trace($"Found {(candidate.Version == null ? "non-" : null)}version tag {candidate}.");
 
                         candidates.Add(candidate);
                     }
@@ -148,11 +130,11 @@ namespace MinVer.Lib
                                         firstParent = parent;
                                         break;
                                     case 1:
-                                        log.Trace($"History diverges from {commit.ShortSha} (height {height}) to:");
-                                        log.Trace($"- {firstParent.ShortSha} (height {height + 1})");
+                                        _ = log.Trace($"History diverges from {commit.ShortSha} (height {height}) to:");
+                                        _ = log.Trace($"- {firstParent.ShortSha} (height {height + 1})");
                                         goto default;
                                     default:
-                                        log.Trace($"- {parent.ShortSha} (height {height + 1})");
+                                        _ = log.Trace($"- {parent.ShortSha} (height {height + 1})");
                                         break;
                                 }
 
@@ -170,10 +152,7 @@ namespace MinVer.Lib
                         {
                             var candidate = new Candidate { Commit = commit, Height = height, Tag = null, Version = new Version(defaultPreReleasePhase), Index = candidates.Count };
 
-                            if (log.IsTraceEnabled)
-                            {
-                                log.Trace($"Found root commit {candidate}.");
-                            }
+                            _ = log.IsTraceEnabled && log.Trace($"Found root commit {candidate}.");
 
                             candidates.Add(candidate);
                         }
@@ -181,10 +160,7 @@ namespace MinVer.Lib
                 }
                 else
                 {
-                    if (log.IsTraceEnabled)
-                    {
-                        log.Trace($"History converges from {previousCommit.ShortSha} (height {height - 1}) back to previously seen commit {commit.ShortSha} (height {height}). Abandoning path.");
-                    }
+                    _ = log.IsTraceEnabled && log.Trace($"History converges from {previousCommit.ShortSha} (height {height - 1}) back to previously seen commit {commit.ShortSha} (height {height}). Abandoning path.");
                 }
 
                 if (commitsToCheck.Count == 0)
@@ -205,23 +181,18 @@ namespace MinVer.Lib
                 {
                     if (parentCount > 1)
                     {
-                        log.Trace($"Following path from {child.ShortSha} (height {height - 1}) through first parent {commit.ShortSha} (height {height})...");
+                        _ = log.Trace($"Following path from {child.ShortSha} (height {height - 1}) through first parent {commit.ShortSha} (height {height})...");
                     }
                     else if (height <= oldHeight)
                     {
-                        if (commitsToCheck.Any() && commitsToCheck.Peek().Item2 == height)
-                        {
-                            log.Trace($"Backtracking to {child.ShortSha} (height {height - 1}) and following path through next parent {commit.ShortSha} (height {height})...");
-                        }
-                        else
-                        {
-                            log.Trace($"Backtracking to {child.ShortSha} (height {height - 1}) and following path through last parent {commit.ShortSha} (height {height})...");
-                        }
+                        _ = commitsToCheck.Any() && commitsToCheck.Peek().Item2 == height
+                            ? log.Trace($"Backtracking to {child.ShortSha} (height {height - 1}) and following path through next parent {commit.ShortSha} (height {height})...")
+                            : log.Trace($"Backtracking to {child.ShortSha} (height {height - 1}) and following path through last parent {commit.ShortSha} (height {height})...");
                     }
                 }
             }
 
-            log.Debug($"{count:N0} commits checked.");
+            _ = log.IsDebugEnabled && log.Debug($"{count:N0} commits checked.");
             return candidates;
         }
 

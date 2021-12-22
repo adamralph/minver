@@ -65,14 +65,11 @@ namespace MinVer
 
                 var log = new Logger(options.Verbosity);
 
-                if (log.IsDebugEnabled)
-                {
-                    log.Debug($"MinVer {informationalVersion}.");
-                }
+                _ = log.IsDebugEnabled && log.Debug($"MinVer {informationalVersion}.");
 
                 if (options.VersionOverride != null)
                 {
-                    log.Info($"Using version override {options.VersionOverride}.");
+                    _ = log.IsInfoEnabled && log.Info($"Using version override {options.VersionOverride}.");
 
                     Console.Out.WriteLine(options.VersionOverride);
 

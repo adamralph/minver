@@ -25,7 +25,7 @@ namespace MinVer.Lib
             process.Exited += (s, e) => tcs.SetResult(default);
             process.EnableRaisingEvents = true;
 
-            log.Trace($"Running Git: {process.StartInfo.FileName} {process.StartInfo.Arguments}");
+            _ = log.IsTraceEnabled && log.Trace($"Running Git: {process.StartInfo.FileName} {process.StartInfo.Arguments}");
 
             try
             {
@@ -46,9 +46,9 @@ namespace MinVer.Lib
             output = readOutput.Result;
             var error = readError.Result;
 
-            log.Trace($"Git exit code: {exitCode}");
-            log.Trace($"Git stdout:{Environment.NewLine}{output}");
-            log.Trace($"Git stderr:{Environment.NewLine}{error}");
+            _ = log.IsTraceEnabled && log.Trace($"Git exit code: {exitCode}");
+            _ = log.IsTraceEnabled && log.Trace($"Git stdout:{Environment.NewLine}{output}");
+            _ = log.IsTraceEnabled && log.Trace($"Git stderr:{Environment.NewLine}{error}");
 
             return exitCode == 0;
         }

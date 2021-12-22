@@ -6,12 +6,16 @@ namespace MinVer.Lib
 
         bool IsDebugEnabled { get; }
 
-        void Trace(string message);
+        bool IsInfoEnabled { get; }
 
-        void Debug(string message);
+        bool IsWarnEnabled { get; }
 
-        void Info(string message);
+        bool Trace(string message);
 
-        void Warn(int code, string message);
+        bool Debug(string message);
+
+        bool Info(string message);
+
+        bool Warn(int code, string message);
     }
 }

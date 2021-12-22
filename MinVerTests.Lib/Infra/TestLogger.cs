@@ -15,14 +15,34 @@ namespace MinVerTests.Lib.Infra
 
         public bool IsDebugEnabled => true;
 
+        public bool IsInfoEnabled => true;
+
+        public bool IsWarnEnabled => true;
+
         public IEnumerable<LogMessage> Messages => this.messages;
 
-        public void Trace(string message) => this.messages.Add(new LogMessage(LogLevel.Trace, message, 0));
+        public bool Trace(string message)
+        {
+            this.messages.Add(new LogMessage(LogLevel.Trace, message, 0));
+            return true;
+        }
 
-        public void Debug(string message) => this.messages.Add(new LogMessage(LogLevel.Debug, message, 0));
+        public bool Debug(string message)
+        {
+            this.messages.Add(new LogMessage(LogLevel.Debug, message, 0));
+            return true;
+        }
 
-        public void Info(string message) => this.messages.Add(new LogMessage(LogLevel.Info, message, 0));
+        public bool Info(string message)
+        {
+            this.messages.Add(new LogMessage(LogLevel.Info, message, 0));
+            return true;
+        }
 
-        public void Warn(int code, string message) => this.messages.Add(new LogMessage(LogLevel.Warn, message, 0));
+        public bool Warn(int code, string message)
+        {
+            this.messages.Add(new LogMessage(LogLevel.Warn, message, 0));
+            return true;
+        }
     }
 }

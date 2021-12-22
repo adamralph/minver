@@ -13,39 +13,17 @@ namespace MinVer
 
         public bool IsDebugEnabled => this.verbosity >= Verbosity.Debug;
 
-        public void Trace(string message)
-        {
-            if (this.verbosity >= Verbosity.Trace)
-            {
-                Message(message);
-            }
-        }
+        public bool IsInfoEnabled => this.verbosity >= Verbosity.Info;
 
-        public void Debug(string message)
-        {
-            if (this.verbosity >= Verbosity.Debug)
-            {
-                Message(message);
-            }
-        }
+        public bool IsWarnEnabled => this.verbosity >= Verbosity.Warn;
 
-        public void Info(string message)
-        {
-            if (this.verbosity >= Verbosity.Info)
-            {
-                Message(message);
-            }
-        }
+        public bool Trace(string message) => this.IsTraceEnabled && Message(message);
 
-        public void Warn(int code, string message)
-        {
-            if (this.verbosity >= Verbosity.Warn)
-            {
-                Message($"warning : {message}");
-            }
-        }
+        public bool Debug(string message) => this.IsDebugEnabled && Message(message);
 
-        public static void Warn(string message) => Message($"warning : {message}");
+        public bool Info(string message) => this.IsInfoEnabled && Message(message);
+
+        public bool Warn(int code, string message) => this.IsWarnEnabled && Message($"warning : {message}");
 
         public static void ErrorInvalidEnvVar(string name, string value, string validValueString)
         {
@@ -73,7 +51,7 @@ namespace MinVer
 
         private static void Error(string message) => Message($"error : {message}");
 
-        private static void Message(string message)
+        private static bool Message(string message)
         {
             if (message.Contains('\r', StringComparison.OrdinalIgnoreCase) || message.Contains('\n', StringComparison.OrdinalIgnoreCase))
             {
@@ -82,6 +60,8 @@ namespace MinVer
             }
 
             Console.Error.WriteLine($"MinVer: {message}");
+
+            return true;
         }
     }
 }

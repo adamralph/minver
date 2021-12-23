@@ -12,7 +12,7 @@ namespace MinVerTests.Lib.Infra
         public static async Task Contains(string expectedPath, string actual)
         {
             var actualPath = Path.Combine(
-                Path.GetDirectoryName(expectedPath),
+                Path.GetDirectoryName(expectedPath) ?? "",
                 Path.GetFileNameWithoutExtension(expectedPath) + "-actual" + Path.GetExtension(expectedPath));
 
             if (File.Exists(actualPath))

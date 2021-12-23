@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace MinVer.Lib
@@ -8,24 +9,34 @@ namespace MinVer.Lib
     {
         public static bool IsWorkingDirectory(string directory, ILogger log) => GitCommand.TryRun("status --short", directory, log, out _);
 
-        public static Commit GetHeadOrDefault(string directory, ILogger log)
+        public static bool TryGetHead(string directory, [NotNullWhen(returnValue: true)] out Commit? head, ILogger log)
         {
+            head = null;
+
             if (!GitCommand.TryRun("log --pretty=format:\"%H %P\"", directory, log, out var output))
             {
-                return null;
+                return false;
+            }
+
+            var lines = output.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+            if (lines.Length == 0)
+            {
+                return false;
             }
 
             var commits = new Dictionary<string, Commit>();
 
-            foreach (var shas in output
-                .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(line => line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)))
+            foreach (var shas in lines
+                .Select<string, string[]>(line => line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)))
             {
                 commits.GetOrAdd(shas[0], () => new Commit(shas[0]))
                     .Parents.AddRange(shas.Skip(1).Select(parentSha => commits.GetOrAdd(parentSha, () => new Commit(parentSha))));
             }
 
-            return commits.Values.FirstOrDefault();
+            head = commits.Values.First();
+
+            return true;
         }
 
         public static IEnumerable<(string Name, string Sha)> GetTags(string directory, ILogger log) =>

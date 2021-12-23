@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using MinVer.Lib;
 using MinVerTests.Infra;
+using MinVerTests.Lib.Infra;
 using Xunit;
 using static MinVerTests.Infra.Git;
 
@@ -19,7 +20,7 @@ namespace MinVerTests.Lib
             await EnsureEmptyRepository(path);
 
             // act
-            var actualVersion = Versioner.GetVersion(path, default, default, buildMetadata, default, default, default);
+            var actualVersion = Versioner.GetVersion(path, "", MajorMinor.Zero, buildMetadata, default, "", NullLogger.Instance);
 
             // assert
             Assert.Equal(expectedVersion, actualVersion.ToString());
@@ -35,7 +36,7 @@ namespace MinVerTests.Lib
             await EnsureEmptyRepositoryAndCommit(path);
 
             // act
-            var actualVersion = Versioner.GetVersion(path, default, default, buildMetadata, default, default, default);
+            var actualVersion = Versioner.GetVersion(path, "", MajorMinor.Zero, buildMetadata, default, "", NullLogger.Instance);
 
             // assert
             Assert.Equal(expectedVersion, actualVersion.ToString());
@@ -56,7 +57,7 @@ namespace MinVerTests.Lib
             await Tag(path, tag);
 
             // act
-            var actualVersion = Versioner.GetVersion(path, default, default, buildMetadata, default, default, default);
+            var actualVersion = Versioner.GetVersion(path, "", MajorMinor.Zero, buildMetadata, default, "", NullLogger.Instance);
 
             // assert
             Assert.Equal(expectedVersion, actualVersion.ToString());
@@ -78,7 +79,7 @@ namespace MinVerTests.Lib
             await Commit(path);
 
             // act
-            var actualVersion = Versioner.GetVersion(path, default, default, buildMetadata, default, default, default);
+            var actualVersion = Versioner.GetVersion(path, "", MajorMinor.Zero, buildMetadata, default, "", NullLogger.Instance);
 
             // assert
             Assert.Equal(expectedVersion, actualVersion.ToString());

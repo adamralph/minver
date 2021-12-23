@@ -40,14 +40,14 @@ namespace MinVer
                 }
 
                 if (!Options.TryParse(
-                    autoIncrementOption.Value(),
-                    buildMetaOption.Value(),
-                    defaultPreReleasePhaseOption.Value(),
-                    minMajorMinorOption.Value(),
-                    tagPrefixOption.Value(),
-                    verbosityOption.Value(),
+                    autoIncrementOption.Value() ?? "",
+                    buildMetaOption.Value() ?? "",
+                    defaultPreReleasePhaseOption.Value() ?? "",
+                    minMajorMinorOption.Value() ?? "",
+                    tagPrefixOption.Value() ?? "",
+                    verbosityOption.Value() ?? "",
 #if MINVER
-                    versionOverrideOption.Value(),
+                    versionOverrideOption.Value() ?? "",
 #endif
                     out var options))
                 {

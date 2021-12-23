@@ -22,7 +22,7 @@ namespace MinVer.Lib
             };
 
             var tcs = new TaskCompletionSource<object>();
-            process.Exited += (s, e) => tcs.SetResult(default);
+            process.Exited += (s, e) => tcs.SetResult(0);
             process.EnableRaisingEvents = true;
 
             _ = log.IsTraceEnabled && log.Trace($"Running Git: {process.StartInfo.FileName} {process.StartInfo.Arguments}");

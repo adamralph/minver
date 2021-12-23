@@ -19,7 +19,7 @@ namespace MinVerTests.Lib
             await EnsureEmptyRepository(path);
 
             // act
-            var actualVersion = Versioner.GetVersion(path, default, new MajorMinor(1, 2), default, default, default, default);
+            var actualVersion = Versioner.GetVersion(path, "", new MajorMinor(1, 2), "", default, "", NullLogger.Instance);
 
             // assert
             Assert.Equal("1.2.0-alpha.0", actualVersion.ToString());
@@ -38,7 +38,7 @@ namespace MinVerTests.Lib
             var logger = new TestLogger();
 
             // act
-            var actualVersion = Versioner.GetVersion(path, default, new MajorMinor(major, minor), default, default, default, logger);
+            var actualVersion = Versioner.GetVersion(path, "", new MajorMinor(major, minor), "", default, "", logger);
 
             // assert
             Assert.Equal(expectedVersion, actualVersion.ToString());
@@ -57,7 +57,7 @@ namespace MinVerTests.Lib
             await EnsureEmptyRepositoryAndCommit(path);
 
             // act
-            var actualVersion = Versioner.GetVersion(path, default, new MajorMinor(1, 0), default, default, default, default);
+            var actualVersion = Versioner.GetVersion(path, "", new MajorMinor(1, 0), "", default, "", NullLogger.Instance);
 
             // assert
             Assert.Equal("1.0.0-alpha.0", actualVersion.ToString());

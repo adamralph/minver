@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using static System.Math;
 
@@ -14,14 +15,14 @@ namespace MinVer.Lib
         private readonly int height;
         private readonly string buildMetadata;
 
-        public Version(string defaultPreReleasePhase) : this(0, 0, 0, new List<string> { defaultPreReleasePhase, "0" }, 0, null) { }
+        public Version(string defaultPreReleasePhase) : this(0, 0, 0, new List<string> { defaultPreReleasePhase, "0" }, 0, "") { }
 
         private Version(int major, int minor, int patch, IEnumerable<string> preReleaseIdentifiers, int height, string buildMetadata)
         {
             this.major = major;
             this.minor = minor;
             this.patch = patch;
-            this.preReleaseIdentifiers = preReleaseIdentifiers?.ToList() ?? new List<string>();
+            this.preReleaseIdentifiers = preReleaseIdentifiers.ToList();
             this.height = height;
             this.buildMetadata = buildMetadata;
         }
@@ -29,7 +30,7 @@ namespace MinVer.Lib
         public override string ToString() =>
             $"{this.major}.{this.minor}.{this.patch}{(this.preReleaseIdentifiers.Count == 0 ? "" : $"-{string.Join(".", this.preReleaseIdentifiers)}")}{(this.height == 0 ? "" : $".{this.height}")}{(string.IsNullOrEmpty(this.buildMetadata) ? "" : $"+{this.buildMetadata}")}";
 
-        public int CompareTo(Version other)
+        public int CompareTo(Version? other)
         {
             if (other == null)
             {
@@ -98,21 +99,25 @@ namespace MinVer.Lib
             return this.height.CompareTo(other.height);
         }
 
-        public Version Satisfying(MajorMinor minMajorMinor, string defaultPreReleasePhase) =>
-            minMajorMinor == null || minMajorMinor.Major < this.major || (minMajorMinor.Major == this.major && minMajorMinor.Minor <= this.minor)
+        public Version Satisfying(MajorMinor minMajorMinor, string defaultPreReleasePhase)
+        {
+            minMajorMinor ??= MajorMinor.Zero;
+
+            return minMajorMinor.Major < this.major || (minMajorMinor.Major == this.major && minMajorMinor.Minor <= this.minor)
                 ? this
                 : new Version(minMajorMinor.Major, minMajorMinor.Minor, 0, new[] { defaultPreReleasePhase, "0" }, this.height, this.buildMetadata);
+        }
 
         public Version WithHeight(int height, VersionPart autoIncrement, string defaultPreReleasePhase) =>
             this.preReleaseIdentifiers.Count == 0 && height > 0
                 ? autoIncrement switch
                 {
-                    VersionPart.Major => new Version(this.major + 1, 0, 0, new[] { defaultPreReleasePhase, "0" }, height, null),
-                    VersionPart.Minor => new Version(this.major, this.minor + 1, 0, new[] { defaultPreReleasePhase, "0" }, height, null),
-                    VersionPart.Patch => new Version(this.major, this.minor, this.patch + 1, new[] { defaultPreReleasePhase, "0" }, height, null),
+                    VersionPart.Major => new Version(this.major + 1, 0, 0, new[] { defaultPreReleasePhase, "0" }, height, ""),
+                    VersionPart.Minor => new Version(this.major, this.minor + 1, 0, new[] { defaultPreReleasePhase, "0" }, height, ""),
+                    VersionPart.Patch => new Version(this.major, this.minor, this.patch + 1, new[] { defaultPreReleasePhase, "0" }, height, ""),
                     _ => throw new ArgumentOutOfRangeException(nameof(autoIncrement)),
                 }
-                : new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, height, height == 0 ? this.buildMetadata : null);
+                : new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, height, height == 0 ? this.buildMetadata : "");
 
         public Version AddBuildMetadata(string buildMetadata)
         {
@@ -120,31 +125,39 @@ namespace MinVer.Lib
             return new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, this.height, $"{this.buildMetadata}{separator}{buildMetadata}");
         }
 
-        public static bool TryParse(string text, out Version version) => (version = ParseOrDefault(text, null)) != null;
-
-        public static Version ParseOrDefault(string text, string prefix) =>
-            text == null || !text.StartsWith(prefix ?? "", StringComparison.OrdinalIgnoreCase) ? null : ParseOrDefault(text[(prefix?.Length ?? 0)..]);
-
-        private static Version ParseOrDefault(string text)
+        public static bool TryParse(string text, [NotNullWhen(returnValue: true)] out Version? version, string prefix = "")
         {
-            var versionAndMeta = text.Split(new[] { '+' }, 2);
-            var numbersAndPre = versionAndMeta[0].Split(new[] { '-' }, 2);
+            text ??= "";
+            prefix ??= "";
 
-            return ParseOrDefault(
-                numbersAndPre[0].Split('.'),
-                numbersAndPre.Length > 1 ? numbersAndPre[1].Split('.') : null,
-                versionAndMeta.Length > 1 ? versionAndMeta[1] : null);
+            version = null;
+
+            if (!text.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            var versionAndMeta = text[prefix.Length..].Split(new[] { '+' }, 2);
+            var numbersAndPre = versionAndMeta[0].Split(new[] { '-' }, 2);
+            var numbers = numbersAndPre[0].Split('.');
+
+            if (numbers.Length != 3 ||
+                !int.TryParse(numbers[0], out var major) ||
+                !int.TryParse(numbers[1], out var minor) ||
+                !int.TryParse(numbers[2], out var patch))
+            {
+                return false;
+            }
+
+            var pre = numbersAndPre.Length > 1 ? numbersAndPre[1].Split('.') : Enumerable.Empty<string>();
+            var meta = versionAndMeta.Length > 1 ? versionAndMeta[1] : "";
+
+            version = new Version(major, minor, patch, pre, 0, meta);
+
+            return true;
         }
 
-        private static Version ParseOrDefault(string[] numbers, IEnumerable<string> pre, string meta) =>
-            numbers?.Length == 3 &&
-                    int.TryParse(numbers[0], out var major) &&
-                    int.TryParse(numbers[1], out var minor) &&
-                    int.TryParse(numbers[2], out var patch)
-                ? new Version(major, minor, patch, pre, 0, meta)
-                : null;
-
-        public override bool Equals(object obj) =>
+        public override bool Equals(object? obj) =>
             ReferenceEquals(this, obj) ||
             (!(obj is null) && obj is Version && this.CompareTo(obj as Version) == 0);
 
@@ -165,16 +178,16 @@ namespace MinVer.Lib
             }
         }
 
-        public static bool operator ==(Version left, Version right) => left is null ? right is null : left.Equals(right);
+        public static bool operator ==(Version? left, Version? right) => left is null ? right is null : left.Equals(right);
 
-        public static bool operator !=(Version left, Version right) => !(left == right);
+        public static bool operator !=(Version? left, Version? right) => !(left == right);
 
-        public static bool operator <(Version left, Version right) => left is null ? right is object : left.CompareTo(right) < 0;
+        public static bool operator <(Version? left, Version? right) => left is null ? right is object : left.CompareTo(right) < 0;
 
-        public static bool operator <=(Version left, Version right) => left is null || left.CompareTo(right) <= 0;
+        public static bool operator <=(Version? left, Version? right) => left is null || left.CompareTo(right) <= 0;
 
-        public static bool operator >(Version left, Version right) => left is object && left.CompareTo(right) > 0;
+        public static bool operator >(Version? left, Version? right) => left is object && left.CompareTo(right) > 0;
 
-        public static bool operator >=(Version left, Version right) => left is null ? right is null : left.CompareTo(right) >= 0;
+        public static bool operator >=(Version? left, Version? right) => left is null ? right is null : left.CompareTo(right) >= 0;
     }
 }

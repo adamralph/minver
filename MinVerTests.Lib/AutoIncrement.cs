@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using MinVer.Lib;
 using MinVerTests.Infra;
+using MinVerTests.Lib.Infra;
 using Xunit;
 using static MinVerTests.Infra.Git;
 
@@ -22,7 +23,7 @@ namespace MinVerTests.Lib
             await Commit(path);
 
             // act
-            var actualVersion = Versioner.GetVersion(path, default, default, default, autoIncrement, default, default);
+            var actualVersion = Versioner.GetVersion(path, "", MajorMinor.Zero, "", autoIncrement, "", NullLogger.Instance);
 
             // assert
             Assert.Equal(expectedVersion, actualVersion.ToString());

@@ -10,10 +10,10 @@ namespace MinVerTests.Packages
 {
     public class MultipleProjects
     {
-        // for some reason, when using SDK 3.1,
+        // for some reason, when using SDK < 6.0,
         // there is a 15 minute delay after the `dotnet build` command,
-        // so we only run this test on SDK 5.0 and later
-        [Net5PlusFact]
+        // so we only run this test on SDK 6.0 and later
+        [Net6PlusFact]
         public async Task MultipleTagPrefixes()
         {
             // arrange

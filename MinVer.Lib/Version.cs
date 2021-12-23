@@ -17,12 +17,12 @@ namespace MinVer.Lib
 
         public Version(string defaultPreReleasePhase) : this(0, 0, 0, new List<string> { defaultPreReleasePhase, "0" }, 0, "") { }
 
-        private Version(int major, int minor, int patch, IEnumerable<string> preReleaseIdentifiers, int height, string buildMetadata)
+        private Version(int major, int minor, int patch, List<string> preReleaseIdentifiers, int height, string buildMetadata)
         {
             this.major = major;
             this.minor = minor;
             this.patch = patch;
-            this.preReleaseIdentifiers = preReleaseIdentifiers.ToList();
+            this.preReleaseIdentifiers = preReleaseIdentifiers;
             this.height = height;
             this.buildMetadata = buildMetadata;
         }
@@ -105,16 +105,16 @@ namespace MinVer.Lib
 
             return minMajorMinor.Major < this.major || (minMajorMinor.Major == this.major && minMajorMinor.Minor <= this.minor)
                 ? this
-                : new Version(minMajorMinor.Major, minMajorMinor.Minor, 0, new[] { defaultPreReleasePhase, "0" }, this.height, this.buildMetadata);
+                : new Version(minMajorMinor.Major, minMajorMinor.Minor, 0, new List<string> { defaultPreReleasePhase, "0" }, this.height, this.buildMetadata);
         }
 
         public Version WithHeight(int height, VersionPart autoIncrement, string defaultPreReleasePhase) =>
             this.preReleaseIdentifiers.Count == 0 && height > 0
                 ? autoIncrement switch
                 {
-                    VersionPart.Major => new Version(this.major + 1, 0, 0, new[] { defaultPreReleasePhase, "0" }, height, ""),
-                    VersionPart.Minor => new Version(this.major, this.minor + 1, 0, new[] { defaultPreReleasePhase, "0" }, height, ""),
-                    VersionPart.Patch => new Version(this.major, this.minor, this.patch + 1, new[] { defaultPreReleasePhase, "0" }, height, ""),
+                    VersionPart.Major => new Version(this.major + 1, 0, 0, new List<string> { defaultPreReleasePhase, "0" }, height, ""),
+                    VersionPart.Minor => new Version(this.major, this.minor + 1, 0, new List<string> { defaultPreReleasePhase, "0" }, height, ""),
+                    VersionPart.Patch => new Version(this.major, this.minor, this.patch + 1, new List<string> { defaultPreReleasePhase, "0" }, height, ""),
                     _ => throw new ArgumentOutOfRangeException(nameof(autoIncrement)),
                 }
                 : new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, height, height == 0 ? this.buildMetadata : "");
@@ -149,7 +149,7 @@ namespace MinVer.Lib
                 return false;
             }
 
-            var pre = numbersAndPre.Length > 1 ? numbersAndPre[1].Split('.') : Enumerable.Empty<string>();
+            var pre = numbersAndPre.Length > 1 ? numbersAndPre[1].Split('.').ToList() : new List<string>();
             var meta = versionAndMeta.Length > 1 ? versionAndMeta[1] : "";
 
             version = new Version(major, minor, patch, pre, 0, meta);

@@ -46,13 +46,13 @@ jobs:
           - job:
               os: ubuntu-20.04
               build: ./build.sh
-              push: true
             tests:
               framework: net5.0
               sdk: "5.0.404"
           - job:
               os: ubuntu-20.04
               build: ./build.sh
+              push: true
             tests:
               framework: net6.0
               sdk: "6.0.101"

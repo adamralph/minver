@@ -17,15 +17,15 @@ namespace MinVerTests.Packages
             var expected = Package.WithVersion(0, 0, 0, new[] { "alpha", "0" });
 
             // act
-            var (actual, sdk) = await Sdk.BuildProject(path);
-            var cli = await MinVerCli.ReadAsync(path);
+            var (actual, sdkStandardOutput, _) = await Sdk.BuildProject(path);
+            var (cliStandardOutput, cliStandardError) = await MinVerCli.ReadAsync(path);
 
             // assert
             Assert.Equal(expected, actual);
-            Assert.Contains("MINVER1001", sdk.StandardOutput, StringComparison.Ordinal);
+            Assert.Contains("MINVER1001", sdkStandardOutput, StringComparison.Ordinal);
 
-            Assert.Equal(expected.Version, cli.StandardOutput.Trim());
-            Assert.Contains("not a valid Git working directory", cli.StandardError, StringComparison.Ordinal);
+            Assert.Equal(expected.Version, cliStandardOutput.Trim());
+            Assert.Contains("not a valid Git working directory", cliStandardError, StringComparison.Ordinal);
         }
     }
 }

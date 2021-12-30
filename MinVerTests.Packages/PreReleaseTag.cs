@@ -21,12 +21,12 @@ namespace MinVerTests.Packages
             var expected = Package.WithVersion(2, 3, 4, new[] { "alpha", "5" });
 
             // act
-            var (actual, _) = await Sdk.BuildProject(path);
-            var cli = await MinVerCli.ReadAsync(path);
+            var (actual, _, _) = await Sdk.BuildProject(path);
+            var (cliStandardOutput, _) = await MinVerCli.ReadAsync(path);
 
             // assert
             Assert.Equal(expected, actual);
-            Assert.Equal(expected.Version, cli.StandardOutput.Trim());
+            Assert.Equal(expected.Version, cliStandardOutput.Trim());
         }
     }
 }

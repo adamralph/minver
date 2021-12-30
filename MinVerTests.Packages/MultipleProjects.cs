@@ -45,12 +45,12 @@ $@"<Project>
             var expected3 = Package.WithVersion(5, 6, 7);
 
             // act
-            var (actual, sdk) = await Sdk.Build(path);
+            var (actual, standardOutput, _) = await Sdk.Build(path);
 
             // assert
-            Assert.NotNull(sdk.StandardOutput);
+            Assert.NotNull(standardOutput);
 
-            var versionCalculations = sdk.StandardOutput
+            var versionCalculations = standardOutput
                 .Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(line => line.Trim())
                 .Where(line => line.StartsWith("MinVer: Calculated version ", StringComparison.OrdinalIgnoreCase));

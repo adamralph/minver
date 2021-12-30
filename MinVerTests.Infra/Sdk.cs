@@ -8,7 +8,6 @@ using System.Linq;
 using System.Runtime.Loader;
 using System.Threading.Tasks;
 using Microsoft.Extensions.FileSystemGlobbing;
-using SimpleExec;
 
 namespace MinVerTests.Infra
 {
@@ -88,21 +87,21 @@ $@"{{
             }
         }
 
-        public static async Task<(Package Package, Result Result)> BuildProject(string path, params (string, string)[] envVars)
+        public static async Task<(Package Package, string StandardOutput, string StandardError)> BuildProject(string path, params (string, string)[] envVars)
         {
-            var (packages, result) = await Build(path, envVars).ConfigureAwait(false);
+            var (packages, standardOutput, standardError) = await Build(path, envVars).ConfigureAwait(false);
 
-            return (packages.Single(), result);
+            return (packages.Single(), standardOutput, standardError);
         }
 
-        public static async Task<(List<Package>, Result)> Build(string path, params (string, string)[] envVars)
+        public static async Task<(List<Package>, string StandardOutput, string StandardError)> Build(string path, params (string, string)[] envVars)
         {
             var environmentVariables = envVars.ToDictionary(envVar => envVar.Item1, envVar => envVar.Item2, StringComparer.OrdinalIgnoreCase);
             _ = environmentVariables.TryAdd("MinVerVerbosity".ToAltCase(), "diagnostic");
             _ = environmentVariables.TryAdd("GeneratePackageOnBuild", "true");
             _ = environmentVariables.TryAdd("NoPackageAnalysis", "true");
 
-            var result = await DotNet(
+            var (standardOutput, standardError) = await DotNet(
                 $"build --no-restore{(!Version.StartsWith("2.", StringComparison.Ordinal) ? " --nologo" : "")}",
                 path,
                 environmentVariables).ConfigureAwait(false);
@@ -112,10 +111,10 @@ $@"{{
             var getPackages = packageFileNames.Select(async fileName => await GetPackage(fileName).ConfigureAwait(false));
             var packages = await Task.WhenAll(getPackages).ConfigureAwait(false);
 
-            return (packages.ToList(), result);
+            return (packages.ToList(), standardOutput, standardError);
         }
 
-        private static Task<Result> DotNet(string args, string path, IDictionary<string, string>? envVars = null)
+        private static Task<(string StandardOutput, string StandardError)> DotNet(string args, string path, IDictionary<string, string>? envVars = null)
         {
             envVars ??= new Dictionary<string, string>();
 

@@ -20,7 +20,7 @@ namespace MinVerTests.Packages
             // act
             try
             {
-                actual = (await Sdk.BuildProject(path, envVars: envVars)).Result.StandardOutput;
+                actual = (await Sdk.BuildProject(path, envVars: envVars)).StandardOutput;
             }
 #pragma warning disable CA1031 // Do not catch general exception types
             catch (Exception ex)

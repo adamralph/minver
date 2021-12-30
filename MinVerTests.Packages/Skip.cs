@@ -17,7 +17,7 @@ namespace MinVerTests.Packages
             var expected = Package.WithVersion(1, 0, 0);
 
             // act
-            var (actual, _) = await Sdk.BuildProject(path, envVars: envVars);
+            var (actual, _, _) = await Sdk.BuildProject(path, envVars: envVars);
 
             // assert
             Assert.Equal(expected, actual);

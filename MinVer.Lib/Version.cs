@@ -101,7 +101,7 @@ namespace MinVer.Lib
 
         public Version Satisfying(MajorMinor minMajorMinor, string defaultPreReleasePhase)
         {
-            minMajorMinor ??= MajorMinor.Zero;
+            minMajorMinor = minMajorMinor ?? throw new ArgumentNullException(nameof(minMajorMinor));
 
             return minMajorMinor.Major < this.major || (minMajorMinor.Major == this.major && minMajorMinor.Minor <= this.minor)
                 ? this

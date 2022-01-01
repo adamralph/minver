@@ -23,9 +23,11 @@ namespace MinVer
         }
 
         // spell-checker:disable
-        public static string ValidValues => "q[uiet], m[inimal] (default), n[ormal], d[etailed], or diag[nostic] (case insensitive)";
+        public static string ValidValues => "q[uiet], m[inimal], n[ormal], d[etailed], or diag[nostic] (case insensitive)";
 
         // spell-checker:enable
+        public static string Default => "minimal";
+
         public static bool TryMap(string value, out Verbosity verbosity) => map.TryGetValue(value, out verbosity);
     }
 }

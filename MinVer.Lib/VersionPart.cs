@@ -9,6 +9,8 @@ namespace MinVer.Lib
 
     public static class VersionPartExtensions
     {
-        public static string ValidValues => "major, minor, or patch (default)";
+        public static string ValidValues => "major, minor, or patch";
+
+        public static string Default => "patch";
     }
 }

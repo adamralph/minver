@@ -5,7 +5,7 @@
       "name": ".NET Core Launch (console)",
       "type": "coreclr",
       "request": "launch",
-      "program": "${workspaceFolder}/targets/bin/Debug/net5.0/Targets.dll",
+      "program": "${workspaceFolder}/targets/bin/Debug/net6.0/Targets.dll",
       "args": [
         "default"
       ],

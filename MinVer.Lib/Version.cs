@@ -101,7 +101,7 @@ namespace MinVer.Lib
 
         public Version Satisfying(MajorMinor minMajorMinor, string defaultPreReleasePhase)
         {
-            minMajorMinor ??= MajorMinor.Zero;
+            minMajorMinor = minMajorMinor ?? throw new ArgumentNullException(nameof(minMajorMinor));
 
             return minMajorMinor.Major < this.major || (minMajorMinor.Major == this.major && minMajorMinor.Minor <= this.minor)
                 ? this
@@ -127,8 +127,8 @@ namespace MinVer.Lib
 
         public static bool TryParse(string text, [NotNullWhen(returnValue: true)] out Version? version, string prefix = "")
         {
-            text ??= "";
-            prefix ??= "";
+            text = text ?? throw new ArgumentNullException(nameof(text));
+            prefix = prefix ?? throw new ArgumentNullException(nameof(prefix));
 
             version = null;
 

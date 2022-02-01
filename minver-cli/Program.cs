@@ -40,14 +40,14 @@ namespace MinVer
                 }
 
                 if (!Options.TryParse(
-                    autoIncrementOption.Value() ?? "",
-                    buildMetaOption.Value() ?? "",
-                    defaultPreReleasePhaseOption.Value() ?? "",
-                    minMajorMinorOption.Value() ?? "",
-                    tagPrefixOption.Value() ?? "",
-                    verbosityOption.Value() ?? "",
+                    autoIncrementOption.Value(),
+                    buildMetaOption.Value(),
+                    defaultPreReleasePhaseOption.Value(),
+                    minMajorMinorOption.Value(),
+                    tagPrefixOption.Value(),
+                    verbosityOption.Value(),
 #if MINVER
-                    versionOverrideOption.Value() ?? "",
+                    versionOverrideOption.Value(),
 #endif
                     out var options))
                 {
@@ -63,7 +63,7 @@ namespace MinVer
                 options = options.Mask(envOptions);
 #endif
 
-                var log = new Logger(options.Verbosity);
+                var log = new Logger(options.Verbosity ?? default);
 
                 _ = log.IsDebugEnabled && log.Debug($"MinVer {informationalVersion}.");
 
@@ -76,7 +76,7 @@ namespace MinVer
                     return 0;
                 }
 
-                var version = Versioner.GetVersion(workDir, options.TagPrefix, options.MinMajorMinor, options.BuildMeta, options.AutoIncrement, options.DefaultPreReleasePhase, log);
+                var version = Versioner.GetVersion(workDir, options.TagPrefix ?? "", options.MinMajorMinor ?? MajorMinor.Zero, options.BuildMeta ?? "", options.AutoIncrement ?? default, options.DefaultPreReleasePhase ?? "", log);
 
                 Console.Out.WriteLine(version);
 

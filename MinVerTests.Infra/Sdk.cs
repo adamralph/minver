@@ -20,7 +20,7 @@ namespace MinVerTests.Infra
 
         public static async Task CreateSolution(string path, string[] projectNames, string configuration = Configuration.Current)
         {
-            projectNames ??= Array.Empty<string>();
+            projectNames = projectNames ?? throw new ArgumentNullException(nameof(projectNames));
 
             FileSystem.EnsureEmptyDirectory(path);
 

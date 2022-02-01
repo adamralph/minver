@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MinVer
 {
     internal static class VerbosityMap
     {
-        private static readonly Dictionary<string, Verbosity> map = new Dictionary<string, Verbosity>(StringComparer.OrdinalIgnoreCase);
+        private static readonly Dictionary<string, Verbosity?> map = new Dictionary<string, Verbosity?>(StringComparer.OrdinalIgnoreCase);
 
         static VerbosityMap()
         {
@@ -26,6 +27,6 @@ namespace MinVer
         public static string ValidValues => "q[uiet], m[inimal] (default), n[ormal], d[etailed], or diag[nostic] (case insensitive)";
 
         // spell-checker:enable
-        public static bool TryMap(string value, out Verbosity verbosity) => map.TryGetValue(value, out verbosity);
+        public static bool TryMap(string value, [NotNullWhen(returnValue: true)] out Verbosity? verbosity) => map.TryGetValue(value, out verbosity);
     }
 }

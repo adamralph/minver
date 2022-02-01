@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MinVer.Lib
 {
@@ -30,9 +31,9 @@ namespace MinVer.Lib
 
         public static string ValidValues => "1.0, 1.1, 2.0, etc.";
 
-        public static bool TryParse(string value, out MajorMinor majorMinor)
+        public static bool TryParse(string value, [NotNullWhen(returnValue: true)] out MajorMinor? majorMinor)
         {
-            majorMinor = Zero;
+            majorMinor = null;
 
             if (string.IsNullOrWhiteSpace(value))
             {

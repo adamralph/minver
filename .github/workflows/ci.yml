@@ -83,6 +83,7 @@ jobs:
             ${{ matrix.tests.sdk }}
             6.0.101
       - run: dotnet --info
+      - run: git --version
       - uses: actions/checkout@v2.4.0
       - env:
           CI_VERSION: ${{ secrets.CI_VERSION }}

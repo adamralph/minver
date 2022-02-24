@@ -3,6 +3,7 @@
   <PropertyGroup>
     <MSBuildAllProjects Condition="'$(MSBuildAssemblyVersion)' == '' Or '$(MSBuildAssemblyVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <GetPackageVersionDependsOn>$(GetPackageVersionDependsOn);MinVer</GetPackageVersionDependsOn>
+    <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);MinVer</GenerateNuspecDependsOn>
   </PropertyGroup>
 
   <PropertyGroup>

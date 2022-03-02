@@ -84,7 +84,7 @@ jobs:
             6.0.101
       - run: dotnet --info
       - run: git --version
-      - uses: actions/checkout@v2.4.0
+      - uses: actions/checkout@v3.0.0
       - env:
           CI_VERSION: ${{ secrets.CI_VERSION }}
           MINVER_TESTS_SDK: ${{ matrix.tests.sdk }}

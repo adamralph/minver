@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <MSBuildAllProjects Condition="'$(MSBuildAssemblyVersion)' == '' Or '$(MSBuildAssemblyVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);MinVer</GenerateNuspecDependsOn>
     <GetPackageVersionDependsOn>$(GetPackageVersionDependsOn);MinVer</GetPackageVersionDependsOn>
   </PropertyGroup>
 
@@ -11,7 +12,7 @@
     <NoWarn>$(NoWarn);NU5105</NoWarn>
   </PropertyGroup>
 
-  <Target Name="MinVer" BeforeTargets="BeforeCompile;GetAssemblyVersion;CoreCompile;GenerateNuspec" Condition="'$(DesignTimeBuild)' != 'true' AND '$(MinVerSkip)' != 'true'">
+  <Target Name="MinVer" BeforeTargets="Clean;BeforeCompile;GetAssemblyVersion;CoreCompile" Condition="'$(DesignTimeBuild)' != 'true' AND '$(MinVerSkip)' != 'true'">
     <Error Condition="'$(UsingMicrosoftNETSdk)' != 'true'" Code="MINVER0001" Text="MinVer only works in SDK-style projects." />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MSBuildProjectDirectory=$(MSBuildProjectDirectory)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerAutoIncrement=$(MinVerAutoIncrement)" />

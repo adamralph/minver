@@ -52,23 +52,39 @@ namespace MinVerTests.Infra
             }
         }
 
-        public static async Task CreateProject(string path, string configuration = Configuration.Current)
+        public static async Task CreateProject(string path, string configuration = Configuration.Current, bool multiTarget = false)
         {
             FileSystem.EnsureEmptyDirectory(path);
 
             CreateGlobalJsonIfRequired(path);
 
-            await CreateProject(path, configuration, "test").ConfigureAwait(false);
+            await CreateProject(path, configuration, "test", multiTarget).ConfigureAwait(false);
         }
 
-        private static async Task CreateProject(string path, string configuration, string name)
+        private static async Task CreateProject(string path, string configuration, string name, bool multiTarget = false)
         {
-            var source = Solution.GetFullPath($"MinVer/bin/{configuration}/");
+            _ = await DotNet($"new classlib --name {name} --output {path}{(multiTarget ? " --langVersion 8.0" : "")}", path).ConfigureAwait(false);
 
+            var source = Solution.GetFullPath($"MinVer/bin/{configuration}/");
             var minVerPackageVersion = Path.GetFileNameWithoutExtension(Directory.EnumerateFiles(source, "*.nupkg").First()).Split("MinVer.", 2)[1];
 
-            _ = await DotNet($"new classlib --name {name} --output {path}", path).ConfigureAwait(false);
             _ = await DotNet($"add package MinVer --source {source} --version {minVerPackageVersion} --package-directory packages", path).ConfigureAwait(false);
+
+            if (multiTarget)
+            {
+                var project = Path.Combine(path, $"{name}.csproj");
+                var lines = await File.ReadAllLinesAsync(project).ConfigureAwait(false);
+
+                var editedLines = lines
+                    .Select(line => line.Contains("<TargetFramework>", StringComparison.OrdinalIgnoreCase)
+                        ? line
+                            .Replace("TargetFramework", "TargetFrameworks", StringComparison.OrdinalIgnoreCase)
+                            .Replace("</TargetFrameworks>", ";netstandard2.1</TargetFrameworks>", StringComparison.Ordinal)
+                        : line);
+
+                await File.WriteAllLinesAsync(project, editedLines).ConfigureAwait(false);
+            }
+
             _ = await DotNet($"restore --source {source} --packages packages", path).ConfigureAwait(false);
         }
 
@@ -115,7 +131,19 @@ $@"{{
             return (packages.ToList(), result);
         }
 
-        private static Task<Result> DotNet(string args, string path, IDictionary<string, string>? envVars = null)
+        public static async Task<Result> Pack(string path, params (string, string)[] envVars)
+        {
+            var environmentVariables = envVars.ToDictionary(envVar => envVar.Item1, envVar => envVar.Item2, StringComparer.OrdinalIgnoreCase);
+            _ = environmentVariables.TryAdd("MinVerVerbosity".ToAltCase(), "diagnostic");
+            _ = environmentVariables.TryAdd("NoPackageAnalysis", "true");
+
+            return await DotNet(
+                $"pack --no-restore{(!Version.StartsWith("2.", StringComparison.Ordinal) ? " --nologo" : "")}",
+                path,
+                environmentVariables).ConfigureAwait(false);
+        }
+
+        public static Task<Result> DotNet(string args, string path, IDictionary<string, string>? envVars = null)
         {
             envVars ??= new Dictionary<string, string>();
 

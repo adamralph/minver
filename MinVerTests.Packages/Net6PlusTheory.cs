@@ -4,9 +4,9 @@ using Xunit;
 
 namespace MinVerTests.Packages
 {
-    public sealed class Net6PlusFact : FactAttribute
+    public sealed class Net6PlusTheory : TheoryAttribute
     {
-        public Net6PlusFact(string reason) => this.Reason = reason;
+        public Net6PlusTheory(string reason) => this.Reason = reason;
 
         public string Reason { get; }
 

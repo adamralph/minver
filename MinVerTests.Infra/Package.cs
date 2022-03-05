@@ -6,12 +6,18 @@ namespace MinVerTests.Infra
 {
     public record Package(string Version, AssemblyVersion AssemblyVersion, FileVersion FileVersion)
     {
-        public static Package WithVersion(int Major, int Minor, int Patch, IEnumerable<string>? PreReleaseIdentifiers = null, int Height = 0, string BuildMetadata = "")
+        public static Package WithVersion(int major, int minor, int patch, IEnumerable<string>? preReleaseIdentifiers = null, int height = 0, string buildMetadata = "")
         {
-            var version = $"{Major}.{Minor}.{Patch}{(!(PreReleaseIdentifiers?.Any() ?? false) ? "" : $"-{string.Join(".", PreReleaseIdentifiers)}")}{(Height == 0 ? "" : $".{Height}")}{(string.IsNullOrEmpty(BuildMetadata) ? "" : $"+{BuildMetadata}")}";
+            var preReleaseToken = preReleaseIdentifiers == null ? "" : GetPreReleaseToken(preReleaseIdentifiers.ToList());
+            var heightToken = height == 0 ? "" : $".{height}";
+            var buildMetadataToken = string.IsNullOrEmpty(buildMetadata) ? "" : $"+{buildMetadata}";
 
-            return new Package(version, new AssemblyVersion(Major, 0, 0, 0), new FileVersion(Major, Minor, Patch, 0, version));
+            var version = $"{major}.{minor}.{patch}{preReleaseToken}{heightToken}{buildMetadataToken}";
+
+            return new Package(version, new AssemblyVersion(major, 0, 0, 0), new FileVersion(major, minor, patch, 0, version));
         }
+
+        private static string GetPreReleaseToken(IReadOnlyList<string> preReleaseIdentifiers) => preReleaseIdentifiers.Any() ? $"-{string.Join(".", preReleaseIdentifiers)}" : "";
     }
 }
 #endif

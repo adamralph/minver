@@ -78,15 +78,15 @@ namespace MinVer.Lib
         {
             var tagsAndVersions = new List<(string Name, string Sha, Version Version)>();
 
-            foreach (var (Name, Sha) in tags)
+            foreach (var (name, sha) in tags)
             {
-                if (Version.TryParse(Name, out var version, tagPrefix))
+                if (Version.TryParse(name, out var version, tagPrefix))
                 {
-                    tagsAndVersions.Add((Name, Sha, version));
+                    tagsAndVersions.Add((name, sha, version));
                 }
                 else
                 {
-                    _ = log.IsDebugEnabled && log.Debug($"Ignoring non-version tag {{ Name: {Name}, Sha: {Sha} }}.");
+                    _ = log.IsDebugEnabled && log.Debug($"Ignoring non-version tag {{ Name: {name}, Sha: {sha} }}.");
                 }
             }
 
@@ -116,7 +116,7 @@ namespace MinVer.Lib
 
                 if (commitTagsAndVersions.Any())
                 {
-                    foreach (var (name, sha, version) in commitTagsAndVersions)
+                    foreach (var (name, _, version) in commitTagsAndVersions)
                     {
                         var candidate = new Candidate(item.Commit, item.Height, name, version, candidates.Count);
                         _ = log.IsTraceEnabled && log.Trace($"Found version tag {candidate}.");

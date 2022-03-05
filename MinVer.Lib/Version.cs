@@ -37,22 +37,22 @@ namespace MinVer.Lib
                 return 1;
             }
 
-            var major = this.major.CompareTo(other.major);
-            if (major != 0)
+            var majorComparison = this.major.CompareTo(other.major);
+            if (majorComparison != 0)
             {
-                return major;
+                return majorComparison;
             }
 
-            var minor = this.minor.CompareTo(other.minor);
-            if (minor != 0)
+            var minorComparison = this.minor.CompareTo(other.minor);
+            if (minorComparison != 0)
             {
-                return minor;
+                return minorComparison;
             }
 
-            var patch = this.patch.CompareTo(other.patch);
-            if (patch != 0)
+            var patchComparison = this.patch.CompareTo(other.patch);
+            if (patchComparison != 0)
             {
-                return patch;
+                return patchComparison;
             }
 
             if (this.preReleaseIdentifiers.Count > 0 && other.preReleaseIdentifiers.Count == 0)
@@ -108,21 +108,21 @@ namespace MinVer.Lib
                 : new Version(minMajorMinor.Major, minMajorMinor.Minor, 0, new List<string> { defaultPreReleasePhase, "0" }, this.height, this.buildMetadata);
         }
 
-        public Version WithHeight(int height, VersionPart autoIncrement, string defaultPreReleasePhase) =>
-            this.preReleaseIdentifiers.Count == 0 && height > 0
+        public Version WithHeight(int newHeight, VersionPart autoIncrement, string defaultPreReleasePhase) =>
+            this.preReleaseIdentifiers.Count == 0 && newHeight > 0
                 ? autoIncrement switch
                 {
-                    VersionPart.Major => new Version(this.major + 1, 0, 0, new List<string> { defaultPreReleasePhase, "0" }, height, ""),
-                    VersionPart.Minor => new Version(this.major, this.minor + 1, 0, new List<string> { defaultPreReleasePhase, "0" }, height, ""),
-                    VersionPart.Patch => new Version(this.major, this.minor, this.patch + 1, new List<string> { defaultPreReleasePhase, "0" }, height, ""),
+                    VersionPart.Major => new Version(this.major + 1, 0, 0, new List<string> { defaultPreReleasePhase, "0" }, newHeight, ""),
+                    VersionPart.Minor => new Version(this.major, this.minor + 1, 0, new List<string> { defaultPreReleasePhase, "0" }, newHeight, ""),
+                    VersionPart.Patch => new Version(this.major, this.minor, this.patch + 1, new List<string> { defaultPreReleasePhase, "0" }, newHeight, ""),
                     _ => throw new ArgumentOutOfRangeException(nameof(autoIncrement)),
                 }
-                : new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, height, height == 0 ? this.buildMetadata : "");
+                : new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, newHeight, newHeight == 0 ? this.buildMetadata : "");
 
-        public Version AddBuildMetadata(string buildMetadata)
+        public Version AddBuildMetadata(string newBuildMetadata)
         {
-            var separator = !string.IsNullOrEmpty(this.buildMetadata) && !string.IsNullOrEmpty(buildMetadata) ? "." : "";
-            return new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, this.height, $"{this.buildMetadata}{separator}{buildMetadata}");
+            var separator = !string.IsNullOrEmpty(this.buildMetadata) && !string.IsNullOrEmpty(newBuildMetadata) ? "." : "";
+            return new Version(this.major, this.minor, this.patch, this.preReleaseIdentifiers, this.height, $"{this.buildMetadata}{separator}{newBuildMetadata}");
         }
 
         public static bool TryParse(string text, [NotNullWhen(returnValue: true)] out Version? version, string prefix = "")

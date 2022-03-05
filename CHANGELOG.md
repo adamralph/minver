@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.0
+
+### Enhancements
+
+- [#653: Bump McMaster.Extensions.CommandLineUtils from 3.1.0 to 4.0.0](https://github.com/adamralph/minver/pull/653)
+
 ## 3.0.0
 
 ### Enhancements
@@ -10,6 +16,10 @@
 
 - [#542: source stepping doesn't work](https://github.com/adamralph/minver/pull/542)
 - [#589: **[BREAKING]** An empty working directory argument or option (deprecated) is ignored in minver-cli](https://github.com/adamralph/minver/pull/589)
+- [#665: Cannot set auto-increment to patch in the command-line tool when the env var is set to something else](https://github.com/adamralph/minver/issues/665)
+- [#666: Cannot set verbosity to info in the command-line tool when the env var is set to something else](https://github.com/adamralph/minver/issues/666)
+- [#682: Packages are redundantly recreated](https://github.com/adamralph/minver/issues/682)
+- [#683: Packages are not cleaned](https://github.com/adamralph/minver/issues/683)
 
 ### Other
 

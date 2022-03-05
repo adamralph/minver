@@ -45,7 +45,7 @@ namespace MinVerTests.Packages
             var envVars = ("MinVerBuildMetadata", "build.123");
             var args = $"--build-metadata {value}";
 
-            var expected = Package.WithVersion(0, 0, 0, new[] { "alpha", "0" }, 0);
+            var expected = Package.WithVersion(0, 0, 0, new[] { "alpha", "0" });
 
             // act
             var (cliStandardOutput, _) = await MinVerCli.ReadAsync(path, args: args, envVars: envVars);

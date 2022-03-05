@@ -48,7 +48,7 @@ $@"<Project>
             Assert.NotNull(standardOutput);
 
             var versionCalculations = standardOutput
-                .Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(line => line.Trim())
                 .Where(line => line.StartsWith("MinVer: Calculated version ", StringComparison.OrdinalIgnoreCase));
 

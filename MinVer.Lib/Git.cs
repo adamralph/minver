@@ -28,7 +28,7 @@ namespace MinVer.Lib
             var commits = new Dictionary<string, Commit>();
 
             foreach (var shas in lines
-                .Select<string, string[]>(line => line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)))
+                .Select(line => line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)))
             {
                 commits.GetOrAdd(shas[0], () => new Commit(shas[0]))
                     .Parents.AddRange(shas.Skip(1).Select(parentSha => commits.GetOrAdd(parentSha, () => new Commit(parentSha))));

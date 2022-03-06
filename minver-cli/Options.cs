@@ -13,6 +13,7 @@ namespace MinVer
             VersionPart? autoIncrement,
             string? buildMeta,
             string? defaultPreReleasePhase,
+            bool? ignoreHeight,
             MajorMinor? minMajorMinor,
             string? tagPrefix,
             Verbosity? verbosity,
@@ -21,6 +22,7 @@ namespace MinVer
             this.AutoIncrement = autoIncrement;
             this.BuildMeta = buildMeta;
             this.DefaultPreReleasePhase = defaultPreReleasePhase;
+            this.IgnoreHeight = ignoreHeight;
             this.MinMajorMinor = minMajorMinor;
             this.TagPrefix = tagPrefix;
             this.Verbosity = verbosity;
@@ -33,6 +35,7 @@ namespace MinVer
             options = null;
 
             VersionPart? autoIncrement = null;
+            bool? ignoreHeight = null;
             MajorMinor? minMajorMinor = null;
             Verbosity? verbosity = null;
             Lib.Version? versionOverride = null;
@@ -54,6 +57,20 @@ namespace MinVer
             var buildMeta = GetEnvVar("MinVerBuildMetadata");
 
             var defaultPreReleasePhase = GetEnvVar("MinVerDefaultPreReleasePhase");
+
+            var ignoreHeightEnvVar = GetEnvVar("MinVerIgnoreHeight");
+            if (!string.IsNullOrEmpty(ignoreHeightEnvVar))
+            {
+                if (bool.TryParse(ignoreHeightEnvVar, out var value))
+                {
+                    ignoreHeight = value;
+                }
+                else
+                {
+                    Logger.ErrorInvalidEnvVar("MinVerIgnoreHeight", ignoreHeightEnvVar, "true, false (case insensitive)");
+                    return false;
+                }
+            }
 
             var minMajorMinorEnvVar = GetEnvVar("MinVerMinimumMajorMinor");
             if (!string.IsNullOrEmpty(minMajorMinorEnvVar) && !MajorMinor.TryParse(minMajorMinorEnvVar, out minMajorMinor))
@@ -78,7 +95,7 @@ namespace MinVer
                 return false;
             }
 
-            options = new Options(autoIncrement, buildMeta, defaultPreReleasePhase, minMajorMinor, tagPrefix, verbosity, versionOverride);
+            options = new Options(autoIncrement, buildMeta, defaultPreReleasePhase, ignoreHeight, minMajorMinor, tagPrefix, verbosity, versionOverride);
 
             return true;
         }
@@ -100,6 +117,7 @@ namespace MinVer
             string? autoIncrementOption,
             string? buildMetaOption,
             string? defaultPreReleasePhaseOption,
+            bool? ignoreHeight,
             string? minMajorMinorOption,
             string? tagPrefixOption,
             string? verbosityOption,
@@ -148,7 +166,7 @@ namespace MinVer
             }
 #endif
 
-            options = new Options(autoIncrement, buildMetaOption, defaultPreReleasePhaseOption, minMajorMinor, tagPrefixOption, verbosity, versionOverride);
+            options = new Options(autoIncrement, buildMetaOption, defaultPreReleasePhaseOption, ignoreHeight, minMajorMinor, tagPrefixOption, verbosity, versionOverride);
 
             return true;
         }
@@ -159,6 +177,7 @@ namespace MinVer
                 this.AutoIncrement          ?? other.AutoIncrement,
                 this.BuildMeta              ?? other.BuildMeta,
                 this.DefaultPreReleasePhase ?? other.DefaultPreReleasePhase,
+                this.IgnoreHeight           ?? other.IgnoreHeight,
                 this.MinMajorMinor          ?? other.MinMajorMinor,
                 this.TagPrefix              ?? other.TagPrefix,
                 this.Verbosity              ?? other.Verbosity,
@@ -170,6 +189,8 @@ namespace MinVer
         public string? BuildMeta { get; private set; }
 
         public string? DefaultPreReleasePhase { get; private set; }
+
+        public bool? IgnoreHeight { get; private set; }
 
         public MajorMinor? MinMajorMinor { get; private set; }
 

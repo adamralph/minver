@@ -22,6 +22,7 @@ namespace MinVer
             var autoIncrementOption = app.Option("-a|--auto-increment <VERSION_PART>", VersionPartExtensions.ValidValues, CommandOptionType.SingleValue);
             var buildMetaOption = app.Option("-b|--build-metadata <BUILD_METADATA>", "", CommandOptionType.SingleValue);
             var defaultPreReleasePhaseOption = app.Option("-d|--default-pre-release-phase <PHASE>", "alpha (default), preview, etc.", CommandOptionType.SingleValue);
+            var ignoreHeightOption = app.Option<bool>("-i|--ignore-height", "Use the latest tag (or root commit) as-is, without adding height", CommandOptionType.NoValue);
             var minMajorMinorOption = app.Option("-m|--minimum-major-minor <MINIMUM_MAJOR_MINOR>", MajorMinor.ValidValues, CommandOptionType.SingleValue);
             var tagPrefixOption = app.Option("-t|--tag-prefix <TAG_PREFIX>", "", CommandOptionType.SingleValue);
             var verbosityOption = app.Option("-v|--verbosity <VERBOSITY>", VerbosityMap.ValidValues, CommandOptionType.SingleValue);
@@ -43,6 +44,7 @@ namespace MinVer
                     autoIncrementOption.Value(),
                     buildMetaOption.Value(),
                     defaultPreReleasePhaseOption.Value(),
+                    ignoreHeightOption.HasValue() ? (bool?)true : null,
                     minMajorMinorOption.Value(),
                     tagPrefixOption.Value(),
                     verbosityOption.Value(),
@@ -76,7 +78,7 @@ namespace MinVer
                     return 0;
                 }
 
-                var version = Versioner.GetVersion(workDir, options.TagPrefix ?? "", options.MinMajorMinor ?? MajorMinor.Zero, options.BuildMeta ?? "", options.AutoIncrement ?? default, options.DefaultPreReleasePhase ?? "", log);
+                var version = Versioner.GetVersion(workDir, options.TagPrefix ?? "", options.MinMajorMinor ?? MajorMinor.Zero, options.BuildMeta ?? "", options.AutoIncrement ?? default, options.DefaultPreReleasePhase ?? "", log, options.IgnoreHeight ?? false);
 
                 Console.Out.WriteLine(version);
 

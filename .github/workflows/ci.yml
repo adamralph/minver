@@ -18,25 +18,25 @@ jobs:
               build: ./build.sh
             tests:
               framework: net6.0
-              sdk: "6.0.101"
+              sdk: "6.0.200"
           - job:
               os: macos-11
               build: ./build.sh
             tests:
               framework: net5.0
-              sdk: "5.0.404"
+              sdk: "5.0.405"
           - job:
               os: macos-11
               build: ./build.sh
             tests:
               framework: net6.0
-              sdk: "6.0.101"
+              sdk: "6.0.200"
           - job:
               os: ubuntu-18.04
               build: ./build.sh
             tests:
               framework: net6.0
-              sdk: "6.0.101"
+              sdk: "6.0.200"
           - job:
               os: ubuntu-20.04
               build: ./build.sh
@@ -48,32 +48,32 @@ jobs:
               build: ./build.sh
             tests:
               framework: net5.0
-              sdk: "5.0.404"
+              sdk: "5.0.405"
           - job:
               os: ubuntu-20.04
               build: ./build.sh
               push: true
             tests:
               framework: net6.0
-              sdk: "6.0.101"
+              sdk: "6.0.200"
           - job:
               os: windows-2019
               build: ./build.cmd
             tests:
               framework: net6.0
-              sdk: "6.0.101"
+              sdk: "6.0.200"
           - job:
               os: windows-2022
               build: ./build.cmd
             tests:
               framework: net5.0
-              sdk: "5.0.404"
+              sdk: "5.0.405"
           - job:
               os: windows-2022
               build: ./build.cmd
             tests:
               framework: net6.0
-              sdk: "6.0.101"
+              sdk: "6.0.200"
     name: ${{ matrix.job.os }}-${{ matrix.tests.framework }}
     runs-on: ${{ matrix.job.os }}
     steps:
@@ -81,7 +81,7 @@ jobs:
         with:
           dotnet-version: |
             ${{ matrix.tests.sdk }}
-            6.0.101
+            6.0.200
       - run: dotnet --info
       - run: git --version
       - uses: actions/checkout@v3.0.0

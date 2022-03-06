@@ -19,36 +19,49 @@ jobs:
             tests:
               framework: net6.0
               sdk: "6.0.200"
+              sdk-major-minor: "6.0"
           - job:
               os: macos-11
               build: ./build.sh
             tests:
               framework: net5.0
               sdk: "5.0.405"
+              sdk-major-minor: "5.0"
           - job:
               os: macos-11
               build: ./build.sh
             tests:
               framework: net6.0
               sdk: "6.0.200"
+              sdk-major-minor: "6.0"
+          - job:
+              os: macos-11
+              build: ./build.sh
+            tests:
+              framework: net6.0
+              sdk: "7.0.100-preview.1.22110.4"
+              sdk-major-minor: "7.0"
           - job:
               os: ubuntu-18.04
               build: ./build.sh
             tests:
               framework: net6.0
               sdk: "6.0.200"
+              sdk-major-minor: "6.0"
           - job:
               os: ubuntu-20.04
               build: ./build.sh
             tests:
               framework: netcoreapp3.1
               sdk: "3.1.416"
+              sdk-major-minor: "3.1"
           - job:
               os: ubuntu-20.04
               build: ./build.sh
             tests:
               framework: net5.0
               sdk: "5.0.405"
+              sdk-major-minor: "5.0"
           - job:
               os: ubuntu-20.04
               build: ./build.sh
@@ -56,25 +69,44 @@ jobs:
             tests:
               framework: net6.0
               sdk: "6.0.200"
+              sdk-major-minor: "6.0"
+          - job:
+              os: ubuntu-20.04
+              build: ./build.sh
+              push: true
+            tests:
+              framework: net6.0
+              sdk: "7.0.100-preview.1.22110.4"
+              sdk-major-minor: "7.0"
           - job:
               os: windows-2019
               build: ./build.cmd
             tests:
               framework: net6.0
               sdk: "6.0.200"
+              sdk-major-minor: "6.0"
           - job:
               os: windows-2022
               build: ./build.cmd
             tests:
               framework: net5.0
               sdk: "5.0.405"
+              sdk-major-minor: "5.0"
           - job:
               os: windows-2022
               build: ./build.cmd
             tests:
               framework: net6.0
               sdk: "6.0.200"
-    name: ${{ matrix.job.os }}-${{ matrix.tests.framework }}
+              sdk-major-minor: "6.0"
+          - job:
+              os: windows-2022
+              build: ./build.cmd
+            tests:
+              framework: net6.0
+              sdk: "7.0.100-preview.1.22110.4"
+              sdk-major-minor: "7.0"
+    name: ${{ matrix.job.os }}-sdk-${{ matrix.tests.sdk-major-minor }}
     runs-on: ${{ matrix.job.os }}
     steps:
       - uses: actions/setup-dotnet@v2.0.0

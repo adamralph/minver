@@ -9,7 +9,10 @@ namespace MinVerTests.Packages
 {
     public static class Cleaning
     {
-        [RestrictedTheory(new[] { "^3.*", "^5.*" }, new[] { "OSX" }, "With SDK<6.0, or on macOS, there is sometimes a 15 minute delay after the `dotnet build` command when multi-targeting")]
+        [RestrictedTheory(
+            new[] { "^3.*", "^5.*" },
+            new[] { "OSX" },
+            "With an SDK less than what's being used to run this test, or on macOS, there is sometimes a 15 minute delay after the `dotnet build` command when multi-targeting")]
         [InlineData(false)]
         [InlineData(true)]
         public static async Task PackagesAreCleaned(bool multiTarget)

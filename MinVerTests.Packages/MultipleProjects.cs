@@ -10,7 +10,10 @@ namespace MinVerTests.Packages
 {
     public class MultipleProjects
     {
-        [RestrictedFact(new[] { "^3.*", "^5.*" }, new[] { "OSX" }, "With SDK<6.0, or on macOS, there is sometimes a 15 minute delay after the `dotnet build` command")]
+        [RestrictedFact(
+            new[] { "^3.*", "^5.*" },
+            new[] { "OSX" },
+            "With an SDK less than what's being used to run this test, or on macOS, there is sometimes a 15 minute delay after the `dotnet build` command")]
         public async Task MultipleTagPrefixes()
         {
             // arrange

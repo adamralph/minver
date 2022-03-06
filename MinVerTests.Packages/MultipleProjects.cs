@@ -10,7 +10,7 @@ namespace MinVerTests.Packages
 {
     public class MultipleProjects
     {
-        [Net6PlusFact("With SDK < 6.0 there is a 15 minute delay after the `dotnet build` command")]
+        [RestrictedFact(new[] { "^3.*", "^5.*" }, new[] { "OSX" }, "With SDK<6.0, or on macOS, there is sometimes a 15 minute delay after the `dotnet build` command")]
         public async Task MultipleTagPrefixes()
         {
             // arrange

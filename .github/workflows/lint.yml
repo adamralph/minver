@@ -1,7 +1,7 @@
 name: lint
 on:
   push:
-    branches: [main]
+    branches: [main, release-*]
   pull_request:
 jobs:
   lint:

@@ -12,7 +12,7 @@ if (Environment.GetEnvironmentVariable("GITHUB_ACTIONS")?.ToUpperInvariant() == 
     testLoggers += " --logger GitHubActions";
 }
 
-Target("build", () => RunAsync("dotnet", "build --configuration Release --nologo --verbosity quiet"));
+Target("build", () => RunAsync("dotnet", "build --configuration Release --nologo"));
 
 Target(
     "test-lib",

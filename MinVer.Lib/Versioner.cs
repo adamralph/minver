@@ -7,7 +7,7 @@ namespace MinVer.Lib
 {
     public static class Versioner
     {
-        public static Version GetVersion(string workDir, string tagPrefix, MajorMinor minMajorMinor, string buildMeta, VersionPart autoIncrement, string defaultPreReleasePhase, ILogger log)
+        public static Version GetVersion(string workDir, string tagPrefix, MajorMinor minMajorMinor, string buildMeta, VersionPart autoIncrement, string defaultPreReleasePhase, ILogger log, bool ignoreHeight = false)
         {
             log = log ?? throw new ArgumentNullException(nameof(log));
 
@@ -15,7 +15,7 @@ namespace MinVer.Lib
                 ? "alpha"
                 : defaultPreReleasePhase;
 
-            var version = GetVersion(workDir, tagPrefix, autoIncrement, defaultPreReleasePhase, log).AddBuildMetadata(buildMeta);
+            var version = GetVersion(workDir, tagPrefix, autoIncrement, defaultPreReleasePhase, log, ignoreHeight).AddBuildMetadata(buildMeta);
 
             var calculatedVersion = version.Satisfying(minMajorMinor, defaultPreReleasePhase);
 
@@ -28,7 +28,7 @@ namespace MinVer.Lib
             return calculatedVersion;
         }
 
-        private static Version GetVersion(string workDir, string tagPrefix, VersionPart autoIncrement, string defaultPreReleasePhase, ILogger log)
+        private static Version GetVersion(string workDir, string tagPrefix, VersionPart autoIncrement, string defaultPreReleasePhase, ILogger log, bool ignoreHeight)
         {
             if (!Git.IsWorkingDirectory(workDir, log))
             {
@@ -70,8 +70,11 @@ namespace MinVer.Lib
 
             _ = string.IsNullOrEmpty(selectedCandidate.Tag) && log.IsInfoEnabled && log.Info($"No commit found with a valid SemVer 2.0 version{(string.IsNullOrEmpty(tagPrefix) ? "" : $" prefixed with '{tagPrefix}'")}. Using default version {selectedCandidate.Version}.");
             _ = log.IsInfoEnabled && log.Info($"Using{(log.IsDebugEnabled && orderedCandidates.Count > 1 ? "    " : " ")}{selectedCandidate.ToString(tagWidth, versionWidth, heightWidth)}.");
+            _ = ignoreHeight && log.IsDebugEnabled && log.Debug("Ignoring height.");
 
-            return selectedCandidate.Version.WithHeight(selectedCandidate.Height, autoIncrement, defaultPreReleasePhase);
+            return ignoreHeight
+                ? selectedCandidate.Version
+                : selectedCandidate.Version.WithHeight(selectedCandidate.Height, autoIncrement, defaultPreReleasePhase);
         }
 
         private static List<Candidate> GetCandidates(Commit head, IEnumerable<(string Name, string Sha)> tags, string tagPrefix, string defaultPreReleasePhase, ILogger log)

@@ -65,6 +65,8 @@ _NOTE: The MinVer package reference should normally include `PrivateAssets="All"
 
 If the current commit does not have a version tag, another number is added to the pre-release identifiers. This is the number of commits since the latest commit with a version tag or, if no commits have a version tag, since the root commit. This is known as "height". For example, if the latest version tag found is `1.0.0-beta.1`, at a height of 42 commits, the calculated version is `1.0.0-beta.1.42`.
 
+This behaviour can be [disabled](#can-i-ignore-the-height-of-the-latest-tag-or-root-commit).
+
 ## Version numbers
 
 MinVer sets the following custom properties:
@@ -79,7 +81,7 @@ MinVer sets the following custom properties:
 Those properties are used to set the following .NET SDK properties, satisfying the official [open-source library guidance for version numbers](https://docs.microsoft.com/en-ca/dotnet/standard/library-guidance/versioning#version-numbers):
 
 | Property          | Value                                         |
-|-------------------|-----------------------------------------------|
+| ----------------- | --------------------------------------------- |
 | `AssemblyVersion` | `{MinVerMajor}.0.0.0`                         |
 | `FileVersion`     | `{MinVerMajor}.{MinVerMinor}.{MinVerPatch}.0` |
 | `PackageVersion`  | `{MinVerVersion}`                             |
@@ -89,18 +91,21 @@ This behaviour can be [customised](#can-i-use-the-version-calculated-by-minver-f
 
 ## Options
 
-Options may be specified as either MSBuild properties (for the [MinVer](https://www.nuget.org/packages/MinVer) package) or environment variables (for both the [MinVer](https://www.nuget.org/packages/MinVer) and [minver-cli](https://www.nuget.org/packages/minver-cli) packages).
+Options may be specified as either MSBuild properties (for the [MinVer](https://www.nuget.org/packages/MinVer) package), command-line options (for the [minver-cli](https://www.nuget.org/packages/minver-cli) package), or environment variables (for both the [MinVer](https://www.nuget.org/packages/MinVer) and [minver-cli](https://www.nuget.org/packages/minver-cli) packages).
 
-- [`MinVerAutoIncrement`](#can-i-auto-increment-the-minor-or-major-version-after-an-rtm-tag-instead-of-the-patch-version)
-- [`MinVerBuildMetadata`](#can-i-include-build-metadata-in-the-version)
-- [`MinVerDefaultPreReleasePhase`](#can-i-change-the-default-pre-release-phase-from-alpha-to-something-else)
-- [`MinVerMinimumMajorMinor`](#can-i-bump-the-major-or-minor-version)
-- [`MinVerSkip`](#can-i-disable-minver)
-- [`MinVerTagPrefix`](#can-i-prefix-my-tag-names)
-- [`MinVerVerbosity`](#can-I-get-log-output-to-see-how-minver-calculates-the-version)
-- [`MinVerVersionOverride`](#can-i-use-minver-to-version-software-which-is-not-built-using-a-net-sdk-style-project)
+| MSBuild property or environment variable                                                                                | Command-line option                                                                                                      |
+| ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| [`MinVerAutoIncrement`](#can-i-auto-increment-the-minor-or-major-version-after-an-rtm-tag-instead-of-the-patch-version) | [`-a\|--auto-increment`](#can-i-auto-increment-the-minor-or-major-version-after-an-rtm-tag-instead-of-the-patch-version) |
+| [`MinVerBuildMetadata`](#can-i-include-build-metadata-in-the-version)                                                   | [`-b\|--build-metadata`](#can-i-include-build-metadata-in-the-version)                                                   |
+| [`MinVerDefaultPreReleasePhase`](#can-i-change-the-default-pre-release-phase-from-alpha-to-something-else)              | [`-d\|--default-pre-release-phase`](#can-i-change-the-default-pre-release-phase-from-alpha-to-something-else)            |
+| [`MinVerIgnoreHeight`](#can-i-ignore-the-height-of-the-latest-tag-or-root-commit)                                       | [`-i\|--ignore-height`](#can-i-ignore-the-height-of-the-latest-tag-or-root-commit)                                       |
+| [`MinVerMinimumMajorMinor`](#can-i-bump-the-major-or-minor-version)                                                     | [`-m\|--minimum-major-minor`](#can-i-bump-the-major-or-minor-version)                                                    |
+| [`MinVerSkip`](#can-i-disable-minver)                                                                                   | n/a (environment variable _not_ supported)                                                                               |
+| [`MinVerTagPrefix`](#can-i-prefix-my-tag-names)                                                                         | [`-t\|--tag-prefix`](#can-i-prefix-my-tag-names)                                                                         |
+| [`MinVerVerbosity`](#can-i-get-log-output-to-see-how-minver-calculates-the-version)                                     | [`-v\|--verbosity`](#can-i-get-log-output-to-see-how-minver-calculates-the-version)                                      |
+| [`MinVerVersionOverride`](#can-i-use-minver-to-version-software-which-is-not-built-using-a-net-sdk-style-project)       | n/a (environment variable supported)                                                                                     |
 
-Note that the option names are case-insensitive.
+Note that the names of the MSBuild properties and environment variables are case-insensitive.
 
 ## FAQ
 
@@ -117,6 +122,7 @@ Note that the option names are case-insensitive.
 - [Can I change the default pre-release phase from "alpha" to something else?](#can-i-change-the-default-pre-release-phase-from-alpha-to-something-else) _(yes)_
 - [Can I use the version calculated by MinVer for other purposes?](#can-i-use-the-version-calculated-by-minver-for-other-purposes) _(yes)_
 - [Can I version multiple projects in a single repository independently?](#can-i-version-multiple-projects-in-a-single-repository-independently) _(yes)_
+- [Can I ignore the height of the latest tag or root commit?](#can-i-ignore-the-height-of-the-latest-tag-or-root-commit) _(yes)_
 - [Can I get log output to see how MinVer calculates the version?](#can-i-get-log-output-to-see-how-minver-calculates-the-version) _(yes)_
 - [Can I use MinVer to version software which is not built using a .NET SDK style project?](#can-i-use-minver-to-version-software-which-is-not-built-using-a-net-sdk-style-project) _(yes)_
 - [Can I disable MinVer?](#can-i-disable-minver) _(yes)_
@@ -288,6 +294,20 @@ Or for projects which _do_ create NuGet packages, you may want to adjust the ass
 ### Can I version multiple projects in a single repository independently?
 
 Yes! You can do this by using a specific tag prefix for each project. For example, if you have a "main" project and an "extension" project, you could specify `<MinVerTagPrefix>main-</MinVerTagPrefix>` in the main project and `<MinVerTagPrefix>ext-</MinVerTagPrefix>` in the extension project. To release version `1.0.0` of the main project you'd tag the repository with `main-1.0.0`. To release version `1.1.0` of the extension project you'd tag the repository with `ext-1.1.0`.
+
+Note that changes committed to a given project will affect the versions of all other projects because every commit affects [height](#height). To prevent this, you can [ignore the height of the latest tag or root commit](#can-i-ignore-the-height-of-the-latest-tag-or-root-commit).
+
+### Can I ignore the height of the latest tag or root commit?
+
+Yes! Set [`MinVerIgnoreHeight`](#options) to `true`:
+
+```xml
+<PropertyGroup>
+  <MinVerIgnoreHeight>true</MinVerIgnoreHeight>
+</PropertyGroup>
+```
+
+This is often useful if you are [versioning multiple projects in a single repository independently](#can-i-version-multiple-projects-in-a-single-repository-independently).
 
 ### Can I get log output to see how MinVer calculates the version?
 

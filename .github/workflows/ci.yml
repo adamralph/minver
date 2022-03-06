@@ -29,7 +29,7 @@ jobs:
           - job:
               os: macos-12
             tests:
-              framework: net6.0
+              framework: net7.0
               sdk: "7.0.100"
               sdk-major-minor: "7.0"
           # old Linux, latest LTS
@@ -48,15 +48,15 @@ jobs:
               sdk-major-minor: "3.1"
           - job:
               os: ubuntu-22.04
-              upload: true
             tests:
               framework: net6.0
               sdk: "6.0.403"
               sdk-major-minor: "6.0"
           - job:
               os: ubuntu-22.04
+              upload: true
             tests:
-              framework: net6.0
+              framework: net7.0
               sdk: "7.0.100"
               sdk-major-minor: "7.0"
           # old Windows, latest LTS
@@ -76,7 +76,7 @@ jobs:
           - job:
               os: windows-2022
             tests:
-              framework: net6.0
+              framework: net7.0
               sdk: "7.0.100"
               sdk-major-minor: "7.0"
     name: ${{ matrix.job.os }}-sdk-${{ matrix.tests.sdk-major-minor }}
@@ -86,7 +86,7 @@ jobs:
         with:
           dotnet-version: |
             ${{ matrix.tests.sdk }}
-            6.0.403
+            7.0.100
       - run: dotnet --info
       - run: git --version
       - uses: actions/checkout@v3.1.0

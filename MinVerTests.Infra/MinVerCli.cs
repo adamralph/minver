@@ -21,5 +21,8 @@ namespace MinVerTests.Infra
 #if NET6_0
             Solution.GetFullPath($"minver-cli/bin/{configuration}/net6.0/minver-cli.dll");
 #endif
+#if NET7_0
+            Solution.GetFullPath($"minver-cli/bin/{configuration}/net7.0/minver-cli.dll");
+#endif
     }
 }

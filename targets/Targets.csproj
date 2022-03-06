@@ -4,7 +4,7 @@
     <IsPackable>false</IsPackable>
     <OutputType>Exe</OutputType>
     <RollForward>major</RollForward>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <LangVersion>default</LangVersion>
   </PropertyGroup>
 

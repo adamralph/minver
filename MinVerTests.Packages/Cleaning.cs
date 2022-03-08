@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -32,6 +33,27 @@ namespace MinVerTests.Packages
 
             // assert
             Assert.Empty(packages.GetResultsInFullPath(path));
+        }
+
+        [Fact]
+        public static async Task MinVerDoesNotRunWhenPackagesAreNotGeneratedOnBuild()
+        {
+            // arrange
+            var path = MethodBase.GetCurrentMethod().GetTestDirectory();
+            await Sdk.CreateProject(path);
+
+            // act
+            var result = await Sdk.DotNet(
+                "clean",
+                path,
+                new Dictionary<string, string>
+                {
+                    { "GeneratePackageOnBuild", "false" },
+                    { "MinVerVerbosity", "diagnostic" },
+                });
+
+            // assert
+            Assert.DoesNotContain("minver:", result.StandardOutput, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

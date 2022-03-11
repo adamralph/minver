@@ -1,21 +1,20 @@
-namespace MinVer.Lib
+namespace MinVer.Lib;
+
+public interface ILogger
 {
-    public interface ILogger
-    {
-        bool IsTraceEnabled { get; }
+    bool IsTraceEnabled { get; }
 
-        bool IsDebugEnabled { get; }
+    bool IsDebugEnabled { get; }
 
-        bool IsInfoEnabled { get; }
+    bool IsInfoEnabled { get; }
 
-        bool IsWarnEnabled { get; }
+    bool IsWarnEnabled { get; }
 
-        bool Trace(string message);
+    bool Trace(string message);
 
-        bool Debug(string message);
+    bool Debug(string message);
 
-        bool Info(string message);
+    bool Info(string message);
 
-        bool Warn(int code, string message);
-    }
+    bool Warn(int code, string message);
 }

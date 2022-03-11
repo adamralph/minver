@@ -13,7 +13,7 @@ namespace MinVerTests.Infra
                 Path.GetTempPath(),
                 testSuiteName,
                 TestContext.RunId.ToString(CultureInfo.InvariantCulture),
-                $"{testName}{(tag == null ? "" : (tag.GetType().Name.StartsWith("ValueTuple", StringComparison.Ordinal) ? tag : $"({tag})"))}");
+                $"{testName}{(tag == null ? "" : tag.GetType().Name.StartsWith("ValueTuple", StringComparison.Ordinal) ? tag : $"({tag})")}");
 
         public static string GetTestDirectory(this MethodBase? testMethod, object? tag = null, [CallerMemberName] string testMethodName = "")
         {

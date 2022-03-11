@@ -166,7 +166,7 @@ $@"{{
             var nuspec = await File.ReadAllTextAsync(nuspecFileName).ConfigureAwait(false);
             var nuspecVersion = nuspec.Split("<version>")[1].Split("</version>")[0];
 
-            var assemblyFileName = Directory.EnumerateFiles(extractedDirectoryName, "*.dll", new EnumerationOptions { RecurseSubdirectories = true }).First();
+            var assemblyFileName = Directory.EnumerateFiles(extractedDirectoryName, "*.dll", new EnumerationOptions { RecurseSubdirectories = true, }).First();
 
             var systemAssemblyVersion = GetAssemblyVersion(assemblyFileName);
             var assemblyVersion = new AssemblyVersion(systemAssemblyVersion.Major, systemAssemblyVersion.Minor, systemAssemblyVersion.Build, systemAssemblyVersion.Revision);

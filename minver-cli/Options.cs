@@ -5,199 +5,197 @@ using System.Linq;
 #endif
 using MinVer.Lib;
 
-namespace MinVer
+namespace MinVer;
+
+internal class Options
 {
-    internal class Options
+    private Options(
+        VersionPart? autoIncrement,
+        string? buildMeta,
+        string? defaultPreReleasePhase,
+        bool? ignoreHeight,
+        MajorMinor? minMajorMinor,
+        string? tagPrefix,
+        Verbosity? verbosity,
+        Lib.Version? versionOverride)
     {
-        public Options(
-            VersionPart? autoIncrement,
-            string? buildMeta,
-            string? defaultPreReleasePhase,
-            bool? ignoreHeight,
-            MajorMinor? minMajorMinor,
-            string? tagPrefix,
-            Verbosity? verbosity,
-            Lib.Version? versionOverride)
-        {
-            this.AutoIncrement = autoIncrement;
-            this.BuildMeta = buildMeta;
-            this.DefaultPreReleasePhase = defaultPreReleasePhase;
-            this.IgnoreHeight = ignoreHeight;
-            this.MinMajorMinor = minMajorMinor;
-            this.TagPrefix = tagPrefix;
-            this.Verbosity = verbosity;
-            this.VersionOverride = versionOverride;
-        }
+        this.AutoIncrement = autoIncrement;
+        this.BuildMeta = buildMeta;
+        this.DefaultPreReleasePhase = defaultPreReleasePhase;
+        this.IgnoreHeight = ignoreHeight;
+        this.MinMajorMinor = minMajorMinor;
+        this.TagPrefix = tagPrefix;
+        this.Verbosity = verbosity;
+        this.VersionOverride = versionOverride;
+    }
 
 #if MINVER_CLI
-        public static bool TryParseEnvVars([NotNullWhen(returnValue: true)] out Options? options)
+    public static bool TryParseEnvVars([NotNullWhen(returnValue: true)] out Options? options)
+    {
+        options = null;
+
+        VersionPart? autoIncrement = null;
+        bool? ignoreHeight = null;
+        MajorMinor? minMajorMinor = null;
+        Verbosity? verbosity = null;
+        Lib.Version? versionOverride = null;
+
+        var autoIncrementEnvVar = GetEnvVar("MinVerAutoIncrement");
+        if (!string.IsNullOrEmpty(autoIncrementEnvVar))
         {
-            options = null;
-
-            VersionPart? autoIncrement = null;
-            bool? ignoreHeight = null;
-            MajorMinor? minMajorMinor = null;
-            Verbosity? verbosity = null;
-            Lib.Version? versionOverride = null;
-
-            var autoIncrementEnvVar = GetEnvVar("MinVerAutoIncrement");
-            if (!string.IsNullOrEmpty(autoIncrementEnvVar))
+            if (Enum.TryParse<VersionPart>(autoIncrementEnvVar, true, out var versionPart))
             {
-                if (Enum.TryParse<VersionPart>(autoIncrementEnvVar, true, out var versionPart))
-                {
-                    autoIncrement = versionPart;
-                }
-                else
-                {
-                    Logger.ErrorInvalidEnvVar("MinVerAutoIncrement", autoIncrementEnvVar, VersionPartExtensions.ValidValues);
-                    return false;
-                }
+                autoIncrement = versionPart;
             }
-
-            var buildMeta = GetEnvVar("MinVerBuildMetadata");
-
-            var defaultPreReleasePhase = GetEnvVar("MinVerDefaultPreReleasePhase");
-
-            var ignoreHeightEnvVar = GetEnvVar("MinVerIgnoreHeight");
-            if (!string.IsNullOrEmpty(ignoreHeightEnvVar))
+            else
             {
-                if (bool.TryParse(ignoreHeightEnvVar, out var value))
-                {
-                    ignoreHeight = value;
-                }
-                else
-                {
-                    Logger.ErrorInvalidEnvVar("MinVerIgnoreHeight", ignoreHeightEnvVar, "true, false (case insensitive)");
-                    return false;
-                }
-            }
-
-            var minMajorMinorEnvVar = GetEnvVar("MinVerMinimumMajorMinor");
-            if (!string.IsNullOrEmpty(minMajorMinorEnvVar) && !MajorMinor.TryParse(minMajorMinorEnvVar, out minMajorMinor))
-            {
-                Logger.ErrorInvalidEnvVar("MinVerMinimumMajorMinor", minMajorMinorEnvVar, MajorMinor.ValidValues);
+                Logger.ErrorInvalidEnvVar("MinVerAutoIncrement", autoIncrementEnvVar, VersionPartExtensions.ValidValues);
                 return false;
             }
-
-            var tagPrefix = GetEnvVar("MinVerTagPrefix");
-
-            var verbosityEnvVar = GetEnvVar("MinVerVerbosity");
-            if (!string.IsNullOrEmpty(verbosityEnvVar) && !VerbosityMap.TryMap(verbosityEnvVar, out verbosity))
-            {
-                Logger.ErrorInvalidEnvVar("MinVerVerbosity", verbosityEnvVar, VerbosityMap.ValidValues);
-                return false;
-            }
-
-            var versionOverrideEnvVar = GetEnvVar("MinVerVersionOverride");
-            if (!string.IsNullOrEmpty(versionOverrideEnvVar) && !Lib.Version.TryParse(versionOverrideEnvVar, out versionOverride))
-            {
-                Logger.ErrorInvalidEnvVar("MinVerVersionOverride", versionOverrideEnvVar, "");
-                return false;
-            }
-
-            options = new Options(autoIncrement, buildMeta, defaultPreReleasePhase, ignoreHeight, minMajorMinor, tagPrefix, verbosity, versionOverride);
-
-            return true;
         }
 
-        private static string? GetEnvVar(string name)
+        var buildMeta = GetEnvVar("MinVerBuildMetadata");
+
+        var defaultPreReleasePhase = GetEnvVar("MinVerDefaultPreReleasePhase");
+
+        var ignoreHeightEnvVar = GetEnvVar("MinVerIgnoreHeight");
+        if (!string.IsNullOrEmpty(ignoreHeightEnvVar))
         {
-            var vars = Environment.GetEnvironmentVariables();
-
-            var key = vars.Keys
-                .Cast<string>()
-                .OrderBy(_ => _, StringComparer.Ordinal)
-                .FirstOrDefault(key => string.Equals(key, name, StringComparison.OrdinalIgnoreCase));
-
-            return key == null ? null : (string?)vars[key];
+            if (bool.TryParse(ignoreHeightEnvVar, out var value))
+            {
+                ignoreHeight = value;
+            }
+            else
+            {
+                Logger.ErrorInvalidEnvVar("MinVerIgnoreHeight", ignoreHeightEnvVar, "true, false (case insensitive)");
+                return false;
+            }
         }
+
+        var minMajorMinorEnvVar = GetEnvVar("MinVerMinimumMajorMinor");
+        if (!string.IsNullOrEmpty(minMajorMinorEnvVar) && !MajorMinor.TryParse(minMajorMinorEnvVar, out minMajorMinor))
+        {
+            Logger.ErrorInvalidEnvVar("MinVerMinimumMajorMinor", minMajorMinorEnvVar, MajorMinor.ValidValues);
+            return false;
+        }
+
+        var tagPrefix = GetEnvVar("MinVerTagPrefix");
+
+        var verbosityEnvVar = GetEnvVar("MinVerVerbosity");
+        if (!string.IsNullOrEmpty(verbosityEnvVar) && !VerbosityMap.TryMap(verbosityEnvVar, out verbosity))
+        {
+            Logger.ErrorInvalidEnvVar("MinVerVerbosity", verbosityEnvVar, VerbosityMap.ValidValues);
+            return false;
+        }
+
+        var versionOverrideEnvVar = GetEnvVar("MinVerVersionOverride");
+        if (!string.IsNullOrEmpty(versionOverrideEnvVar) && !Lib.Version.TryParse(versionOverrideEnvVar, out versionOverride))
+        {
+            Logger.ErrorInvalidEnvVar("MinVerVersionOverride", versionOverrideEnvVar, "");
+            return false;
+        }
+
+        options = new Options(autoIncrement, buildMeta, defaultPreReleasePhase, ignoreHeight, minMajorMinor, tagPrefix, verbosity, versionOverride);
+
+        return true;
+    }
+
+    private static string? GetEnvVar(string name)
+    {
+        var vars = Environment.GetEnvironmentVariables();
+
+        var key = vars.Keys
+            .Cast<string>()
+            .OrderBy(_ => _, StringComparer.Ordinal)
+            .FirstOrDefault(key => string.Equals(key, name, StringComparison.OrdinalIgnoreCase));
+
+        return key == null ? null : (string?)vars[key];
+    }
 #endif
 
-        public static bool TryParse(
-            string? autoIncrementOption,
-            string? buildMetaOption,
-            string? defaultPreReleasePhaseOption,
-            bool? ignoreHeight,
-            string? minMajorMinorOption,
-            string? tagPrefixOption,
-            string? verbosityOption,
+    public static bool TryParse(
+        string? autoIncrementOption,
+        string? buildMetaOption,
+        string? defaultPreReleasePhaseOption,
+        bool? ignoreHeight,
+        string? minMajorMinorOption,
+        string? tagPrefixOption,
+        string? verbosityOption,
 #if MINVER
             string? versionOverrideOption,
 #endif
-            [NotNullWhen(returnValue: true)] out Options? options)
+        [NotNullWhen(returnValue: true)] out Options? options)
+    {
+        options = null;
+
+        VersionPart? autoIncrement = null;
+        MajorMinor? minMajorMinor = null;
+        Verbosity? verbosity = null;
+        Lib.Version? versionOverride = null;
+
+        if (!string.IsNullOrEmpty(autoIncrementOption))
         {
-            options = null;
-
-            VersionPart? autoIncrement = null;
-            MajorMinor? minMajorMinor = null;
-            Verbosity? verbosity = null;
-            Lib.Version? versionOverride = null;
-
-            if (!string.IsNullOrEmpty(autoIncrementOption))
+            if (Enum.TryParse<VersionPart>(autoIncrementOption, true, out var versionPart))
             {
-                if (Enum.TryParse<VersionPart>(autoIncrementOption, true, out var versionPart))
-                {
-                    autoIncrement = versionPart;
-                }
-                else
-                {
-                    Logger.ErrorInvalidAutoIncrement(autoIncrementOption);
-                    return false;
-                }
+                autoIncrement = versionPart;
             }
-
-            if (!string.IsNullOrEmpty(minMajorMinorOption) && !MajorMinor.TryParse(minMajorMinorOption, out minMajorMinor))
+            else
             {
-                Logger.ErrorInvalidMinMajorMinor(minMajorMinorOption);
+                Logger.ErrorInvalidAutoIncrement(autoIncrementOption);
                 return false;
             }
-
-            if (!string.IsNullOrEmpty(verbosityOption) && !VerbosityMap.TryMap(verbosityOption, out verbosity))
-            {
-                Logger.ErrorInvalidVerbosity(verbosityOption);
-                return false;
-            }
-
-#if MINVER
-            if (!string.IsNullOrEmpty(versionOverrideOption) && !Lib.Version.TryParse(versionOverrideOption, out versionOverride))
-            {
-                Logger.ErrorInvalidVersionOverride(versionOverrideOption);
-                return false;
-            }
-#endif
-
-            options = new Options(autoIncrement, buildMetaOption, defaultPreReleasePhaseOption, ignoreHeight, minMajorMinor, tagPrefixOption, verbosity, versionOverride);
-
-            return true;
         }
 
-        public Options Mask(Options other) =>
-            new Options(
-#pragma warning disable format
-                this.AutoIncrement          ?? other.AutoIncrement,
-                this.BuildMeta              ?? other.BuildMeta,
-                this.DefaultPreReleasePhase ?? other.DefaultPreReleasePhase,
-                this.IgnoreHeight           ?? other.IgnoreHeight,
-                this.MinMajorMinor          ?? other.MinMajorMinor,
-                this.TagPrefix              ?? other.TagPrefix,
-                this.Verbosity              ?? other.Verbosity,
-                this.VersionOverride        ?? other.VersionOverride);
-#pragma warning restore format
+        if (!string.IsNullOrEmpty(minMajorMinorOption) && !MajorMinor.TryParse(minMajorMinorOption, out minMajorMinor))
+        {
+            Logger.ErrorInvalidMinMajorMinor(minMajorMinorOption);
+            return false;
+        }
 
-        public VersionPart? AutoIncrement { get; private set; }
+        if (!string.IsNullOrEmpty(verbosityOption) && !VerbosityMap.TryMap(verbosityOption, out verbosity))
+        {
+            Logger.ErrorInvalidVerbosity(verbosityOption);
+            return false;
+        }
 
-        public string? BuildMeta { get; private set; }
+#if MINVER
+        if (!string.IsNullOrEmpty(versionOverrideOption) && !Lib.Version.TryParse(versionOverrideOption, out versionOverride))
+        {
+            Logger.ErrorInvalidVersionOverride(versionOverrideOption);
+            return false;
+        }
+#endif
 
-        public string? DefaultPreReleasePhase { get; private set; }
+        options = new Options(autoIncrement, buildMetaOption, defaultPreReleasePhaseOption, ignoreHeight, minMajorMinor, tagPrefixOption, verbosity, versionOverride);
 
-        public bool? IgnoreHeight { get; private set; }
-
-        public MajorMinor? MinMajorMinor { get; private set; }
-
-        public string? TagPrefix { get; private set; }
-
-        public Verbosity? Verbosity { get; private set; }
-
-        public Lib.Version? VersionOverride { get; private set; }
+        return true;
     }
+
+#if MINVER_CLI
+    public Options Mask(Options other) => new(
+        this.AutoIncrement ?? other.AutoIncrement,
+        this.BuildMeta ?? other.BuildMeta,
+        this.DefaultPreReleasePhase ?? other.DefaultPreReleasePhase,
+        this.IgnoreHeight ?? other.IgnoreHeight,
+        this.MinMajorMinor ?? other.MinMajorMinor,
+        this.TagPrefix ?? other.TagPrefix,
+        this.Verbosity ?? other.Verbosity,
+        this.VersionOverride ?? other.VersionOverride);
+#endif
+
+    public VersionPart? AutoIncrement { get; }
+
+    public string? BuildMeta { get; }
+
+    public string? DefaultPreReleasePhase { get; }
+
+    public bool? IgnoreHeight { get; }
+
+    public MajorMinor? MinMajorMinor { get; }
+
+    public string? TagPrefix { get; }
+
+    public Verbosity? Verbosity { get; }
+
+    public Lib.Version? VersionOverride { get; }
 }

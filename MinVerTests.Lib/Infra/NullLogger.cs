@@ -11,7 +11,9 @@ namespace MinVerTests.Lib.Infra
             new NullLogger();
 #endif
 
-        private NullLogger() { }
+        private NullLogger()
+        {
+        }
 
         public bool IsTraceEnabled => false;
 

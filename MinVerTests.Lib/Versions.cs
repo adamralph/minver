@@ -20,7 +20,7 @@ namespace MinVerTests.Lib
         {
             // arrange
             var historicalCommands =
-@"
+                @"
 git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
@@ -70,7 +70,7 @@ git tag 1.1.0 -a -m '.'
 
             await EnsureEmptyRepositoryAndCommit(path);
 
-            foreach (var command in historicalCommands.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+            foreach (var command in historicalCommands.Split(new[] { '\r', '\n', }, StringSplitOptions.RemoveEmptyEntries))
             {
                 var nameAndArgs = command.Split(" ", 2);
                 _ = await ReadAsync(nameAndArgs[0], nameAndArgs[1], path);

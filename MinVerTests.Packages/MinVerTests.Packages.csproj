@@ -3,6 +3,7 @@
   <PropertyGroup>
     <RollForward>major</RollForward>
     <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>default</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

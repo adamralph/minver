@@ -3,32 +3,31 @@ using System.Threading.Tasks;
 using MinVerTests.Infra;
 using Xunit;
 
-namespace MinVerTests.Packages
+namespace MinVerTests.Packages;
+
+public static class TwoCommitsAfterRtmTag
 {
-    public static class TwoCommitsAfterRtmTag
+    [Fact]
+    public static async Task HasNextPatchWithHeightTwo()
     {
-        [Fact]
-        public static async Task HasNextPatchWithHeightTwo()
-        {
-            // arrange
-            var path = MethodBase.GetCurrentMethod().GetTestDirectory();
-            await Sdk.CreateProject(path);
+        // arrange
+        var path = MethodBase.GetCurrentMethod().GetTestDirectory();
+        await Sdk.CreateProject(path);
 
-            await Git.Init(path);
-            await Git.Commit(path);
-            await Git.Tag(path, "2.3.4");
-            await Git.Commit(path);
-            await Git.Commit(path);
+        await Git.Init(path);
+        await Git.Commit(path);
+        await Git.Tag(path, "2.3.4");
+        await Git.Commit(path);
+        await Git.Commit(path);
 
-            var expected = Package.WithVersion(2, 3, 5, new[] { "alpha", "0" }, 2);
+        var expected = Package.WithVersion(2, 3, 5, new[] { "alpha", "0", }, 2);
 
-            // act
-            var (actual, _, _) = await Sdk.BuildProject(path);
-            var (cliStandardOutput, _) = await MinVerCli.ReadAsync(path);
+        // act
+        var (actual, _, _) = await Sdk.BuildProject(path);
+        var (cliStandardOutput, _) = await MinVerCli.ReadAsync(path);
 
-            // assert
-            Assert.Equal(expected, actual);
-            Assert.Equal(expected.Version, cliStandardOutput.Trim());
-        }
+        // assert
+        Assert.Equal(expected, actual);
+        Assert.Equal(expected.Version, cliStandardOutput.Trim());
     }
 }

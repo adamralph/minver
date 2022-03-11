@@ -3,24 +3,23 @@ using System.Threading.Tasks;
 using MinVerTests.Infra;
 using Xunit;
 
-namespace MinVerTests.Packages
+namespace MinVerTests.Packages;
+
+public static class Skip
 {
-    public static class Skip
+    [Fact]
+    public static async Task HasDefaultSdkVersion()
     {
-        [Fact]
-        public static async Task HasDefaultSdkVersion()
-        {
-            // arrange
-            var path = MethodBase.GetCurrentMethod().GetTestDirectory();
-            await Sdk.CreateProject(path);
-            var envVars = ("MinVerSkip".ToAltCase(), "true");
-            var expected = Package.WithVersion(1, 0, 0);
+        // arrange
+        var path = MethodBase.GetCurrentMethod().GetTestDirectory();
+        await Sdk.CreateProject(path);
+        var envVars = ("MinVerSkip".ToAltCase(), "true");
+        var expected = Package.WithVersion(1, 0, 0);
 
-            // act
-            var (actual, _, _) = await Sdk.BuildProject(path, envVars: envVars);
+        // act
+        var (actual, _, _) = await Sdk.BuildProject(path, envVars);
 
-            // assert
-            Assert.Equal(expected, actual);
-        }
+        // assert
+        Assert.Equal(expected, actual);
     }
 }

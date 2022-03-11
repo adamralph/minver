@@ -1,4 +1,5 @@
 [*.cs]
+csharp_style_namespace_declarations = file_scoped:warning
 
 # CA2007: Consider calling ConfigureAwait on the awaited task
 dotnet_diagnostic.CA2007.severity = none

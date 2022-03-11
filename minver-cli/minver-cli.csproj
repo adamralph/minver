@@ -16,6 +16,7 @@
     <RootNamespace>MinVer</RootNamespace>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <ToolCommandName>minver</ToolCommandName>
+    <LangVersion>default</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

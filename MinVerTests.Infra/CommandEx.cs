@@ -26,13 +26,13 @@ namespace MinVerTests.Infra
                 workingDirectory,
                 configureEnvironment: env =>
                 {
-                    foreach (var pair in envVars)
+                    foreach (var (key, value) in envVars)
                     {
-                        env[pair.Key] = pair.Value;
+                        env[key] = value;
                     }
                 }).ConfigureAwait(false);
 
-            var index = 0;
+            int index;
 
             lock (indices)
             {

@@ -23,7 +23,7 @@ namespace MinVerTests.Lib
             var minMajorMinor = new MajorMinor(minMajor, minMinor);
 
             var historicalCommands =
-@"
+                @"
 git commit --allow-empty -m '.'
 git tag not-a-version
 git checkout -b foo
@@ -45,8 +45,8 @@ git merge bar baz --no-edit --no-ff --strategy=octopus
             await EnsureEmptyRepository(path);
 
             foreach (var item in historicalCommands
-                .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select((command, index) => new { Command = command, Index = $"{index}" }))
+                .Split(new[] { '\r', '\n', }, StringSplitOptions.RemoveEmptyEntries)
+                .Select((command, index) => new { Command = command, Index = $"{index}", }))
             {
                 if (item.Command.StartsWith("git commit", StringComparison.Ordinal))
                 {
@@ -75,16 +75,16 @@ git merge bar baz --no-edit --no-ff --strategy=octopus
 
             var shas = (await ReadAsync("git", "log --pretty=format:\"%H\"", path))
                 .StandardOutput
-                .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                .Split(new[] { '\r', '\n', }, StringSplitOptions.RemoveEmptyEntries)
                 .Reverse()
                 .ToList();
 
-            foreach (var item in shas.Select((sha, index) => new { Sha = sha, Index = index }))
+            foreach (var item in shas.Select((sha, index) => new { Sha = sha, Index = index, }))
             {
                 logMessages = logMessages.Replace(item.Sha, $"{item.Index}", StringComparison.Ordinal);
             }
 
-            foreach (var item in shas.Select((sha, index) => new { ShortSha = sha[..7], Index = index }))
+            foreach (var item in shas.Select((sha, index) => new { ShortSha = sha[..7], Index = index, }))
             {
                 logMessages = logMessages.Replace(item.ShortSha, $"{item.Index}", StringComparison.Ordinal);
             }

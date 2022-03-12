@@ -5,6 +5,7 @@
 ### Enhancements
 
 - [#653: Bump McMaster.Extensions.CommandLineUtils from 3.1.0 to 4.0.0](https://github.com/adamralph/minver/pull/653)
+- [#697: Option to ignore height](https://github.com/adamralph/minver/issues/697)
 
 ## 3.0.0
 

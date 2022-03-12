@@ -1,15 +1,17 @@
 #pragma warning disable CA1812 // https://github.com/dotnet/roslyn-analyzers/issues/5628
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using MinVerTests.Infra;
 using static Bullseye.Targets;
 using static SimpleExec.Command;
 
 var testFx = Environment.GetEnvironmentVariable("MINVER_TESTS_FRAMEWORK") ?? "net6.0";
-var testLoggers = "--logger \"console;verbosity=normal\"";
+var testLoggerArgs = new List<string> { "--logger", "\"console;verbosity=normal\"", };
 
 if (Environment.GetEnvironmentVariable("GITHUB_ACTIONS")?.ToUpperInvariant() == "TRUE")
 {
-    testLoggers += " --logger GitHubActions";
+    testLoggerArgs.AddRange(new[] { "--logger", "GitHubActions", });
 }
 
 Target("build", () => RunAsync("dotnet", "build --configuration Release --nologo"));
@@ -18,13 +20,13 @@ Target(
     "test-lib",
     "test the MinVer.Lib library",
     DependsOn("build"),
-    () => RunAsync("dotnet", $"test ./MinVerTests.Lib --framework {testFx} --configuration Release --no-build --nologo {testLoggers}"));
+    () => RunAsync("dotnet", new[] { "test", "./MinVerTests.Lib", "--framework", testFx, "--configuration", "Release", "--no-build", "--nologo", }.Concat(testLoggerArgs)));
 
 Target(
     "test-packages",
     "test the MinVer package and the minver-cli console app",
     DependsOn("build"),
-    () => RunAsync("dotnet", $"test ./MinVerTests.Packages --configuration Release --no-build --nologo {testLoggers}"));
+    () => RunAsync("dotnet", new[] { "test", "./MinVerTests.Packages", "--configuration", "Release", "--no-build", "--nologo", }.Concat(testLoggerArgs)));
 
 Target(
     "eyeball-minver-logs",
@@ -41,9 +43,16 @@ Target(
         await Git.Tag(path, "v.2.3.4-alpha.5");
         await Git.Commit(path);
 
+        var args = new List<string> { "build", "--no-restore", };
+
+        if (!Sdk.Version.StartsWith("2.", StringComparison.Ordinal))
+        {
+            args.Add("--nologo");
+        }
+
         await RunAsync(
             "dotnet",
-            $"build --no-restore{(Sdk.Version.StartsWith("2.", StringComparison.Ordinal) ? "" : " --nologo")}",
+            args,
             path,
             configureEnvironment: env =>
             {

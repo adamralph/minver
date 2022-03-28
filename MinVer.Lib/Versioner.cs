@@ -15,7 +15,12 @@ public static class Versioner
             ? "alpha"
             : defaultPreReleasePhase;
 
-        var version = GetVersion(workDir, tagPrefix, autoIncrement, defaultPreReleasePhase, log, ignoreHeight).AddBuildMetadata(buildMeta);
+        var (version, height) = GetVersion(workDir, tagPrefix, defaultPreReleasePhase, log);
+
+        _ = height.HasValue && ignoreHeight && log.IsDebugEnabled && log.Debug("Ignoring height.");
+        version = !height.HasValue || ignoreHeight ? version : version.WithHeight(height.Value, autoIncrement, defaultPreReleasePhase);
+
+        version = version.AddBuildMetadata(buildMeta);
 
         var calculatedVersion = version.Satisfying(minMajorMinor, defaultPreReleasePhase);
 
@@ -28,7 +33,7 @@ public static class Versioner
         return calculatedVersion;
     }
 
-    private static Version GetVersion(string workDir, string tagPrefix, VersionPart autoIncrement, string defaultPreReleasePhase, ILogger log, bool ignoreHeight)
+    private static (Version Version, int? Height) GetVersion(string workDir, string tagPrefix, string defaultPreReleasePhase, ILogger log)
     {
         if (!Git.IsWorkingDirectory(workDir, log))
         {
@@ -36,7 +41,7 @@ public static class Versioner
 
             _ = log.IsWarnEnabled && log.Warn(1001, $"'{workDir}' is not a valid Git working directory. Using default version {version}.");
 
-            return version;
+            return (version, default);
         }
 
         if (!Git.TryGetHead(workDir, out var head, log))
@@ -45,7 +50,7 @@ public static class Versioner
 
             _ = log.IsInfoEnabled && log.Info($"No commits found. Using default version {version}.");
 
-            return version;
+            return (version, default);
         }
 
         var tags = Git.GetTags(workDir, log);
@@ -70,11 +75,8 @@ public static class Versioner
 
         _ = string.IsNullOrEmpty(selectedCandidate.Tag) && log.IsInfoEnabled && log.Info($"No commit found with a version tag{(string.IsNullOrEmpty(tagPrefix) ? "" : $" prefixed with '{tagPrefix}'")}. Using default version {selectedCandidate.Version}.");
         _ = log.IsInfoEnabled && log.Info($"Using{(log.IsDebugEnabled && orderedCandidates.Count > 1 ? "    " : " ")}{selectedCandidate.ToString(tagWidth, versionWidth, heightWidth)}.");
-        _ = ignoreHeight && log.IsDebugEnabled && log.Debug("Ignoring height.");
 
-        return ignoreHeight
-            ? selectedCandidate.Version
-            : selectedCandidate.Version.WithHeight(selectedCandidate.Height, autoIncrement, defaultPreReleasePhase);
+        return (selectedCandidate.Version, selectedCandidate.Height);
     }
 
     private static List<Candidate> GetCandidates(Commit head, IEnumerable<(string Name, string Sha)> tags, string tagPrefix, string defaultPreReleasePhase, ILogger log)

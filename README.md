@@ -218,6 +218,8 @@ For example, if you prefix your tag names with "v", e.g. `v1.2.3`:
 </PropertyGroup>
 ```
 
+Note that the prefix is case-insensitive—in this example, both `v1.2.3` and `V1.2.3` would work.
+
 ### Can I use my own branching strategy?
 
 Yes! MinVer doesn't care about branches. It's all about the tags!

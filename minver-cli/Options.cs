@@ -14,6 +14,7 @@ internal class Options
         string? buildMeta,
         string? defaultPreReleasePhase,
         bool? ignoreHeight,
+        bool? ignoreLeadingZeros,
         MajorMinor? minMajorMinor,
         string? tagPrefix,
         Verbosity? verbosity,
@@ -23,6 +24,7 @@ internal class Options
         this.BuildMeta = buildMeta;
         this.DefaultPreReleasePhase = defaultPreReleasePhase;
         this.IgnoreHeight = ignoreHeight;
+        this.IgnoreLeadingZeros = ignoreLeadingZeros;
         this.MinMajorMinor = minMajorMinor;
         this.TagPrefix = tagPrefix;
         this.Verbosity = verbosity;
@@ -36,6 +38,7 @@ internal class Options
 
         VersionPart? autoIncrement = null;
         bool? ignoreHeight = null;
+        bool? ignoreLeadingZeros = null;
         MajorMinor? minMajorMinor = null;
         Verbosity? verbosity = null;
         Lib.Version? versionOverride = null;
@@ -72,6 +75,20 @@ internal class Options
             }
         }
 
+        var ignoreLeadingZerosVar = GetEnvVar("MinVerIgnoreLeadingZeros");
+        if (!string.IsNullOrEmpty(ignoreLeadingZerosVar))
+        {
+            if (bool.TryParse(ignoreLeadingZerosVar, out var value))
+            {
+                ignoreLeadingZeros = value;
+            }
+            else
+            {
+                Logger.ErrorInvalidEnvVar("MinVerIgnoreLeadingZeros", ignoreLeadingZerosVar, "true, false (case insensitive)");
+                return false;
+            }
+        }
+
         var minMajorMinorEnvVar = GetEnvVar("MinVerMinimumMajorMinor");
         if (!string.IsNullOrEmpty(minMajorMinorEnvVar) && !MajorMinor.TryParse(minMajorMinorEnvVar, out minMajorMinor))
         {
@@ -89,13 +106,13 @@ internal class Options
         }
 
         var versionOverrideEnvVar = GetEnvVar("MinVerVersionOverride");
-        if (!string.IsNullOrEmpty(versionOverrideEnvVar) && !Lib.Version.TryParse(versionOverrideEnvVar, out versionOverride))
+        if (!string.IsNullOrEmpty(versionOverrideEnvVar) && !Lib.Version.TryParse(versionOverrideEnvVar, ignoreLeadingZeros ?? false, out versionOverride))
         {
             Logger.ErrorInvalidEnvVar("MinVerVersionOverride", versionOverrideEnvVar, "");
             return false;
         }
 
-        options = new Options(autoIncrement, buildMeta, defaultPreReleasePhase, ignoreHeight, minMajorMinor, tagPrefix, verbosity, versionOverride);
+        options = new Options(autoIncrement, buildMeta, defaultPreReleasePhase, ignoreHeight, ignoreLeadingZeros, minMajorMinor, tagPrefix, verbosity, versionOverride);
 
         return true;
     }
@@ -118,6 +135,7 @@ internal class Options
         string? buildMetaOption,
         string? defaultPreReleasePhaseOption,
         bool? ignoreHeight,
+        bool? ignoreLeadingZeros,
         string? minMajorMinorOption,
         string? tagPrefixOption,
         string? verbosityOption,
@@ -159,14 +177,14 @@ internal class Options
         }
 
 #if MINVER
-        if (!string.IsNullOrEmpty(versionOverrideOption) && !Lib.Version.TryParse(versionOverrideOption, out versionOverride))
+        if (!string.IsNullOrEmpty(versionOverrideOption) && !Lib.Version.TryParse(versionOverrideOption, ignoreLeadingZeros ?? false, out versionOverride))
         {
             Logger.ErrorInvalidVersionOverride(versionOverrideOption);
             return false;
         }
 #endif
 
-        options = new Options(autoIncrement, buildMetaOption, defaultPreReleasePhaseOption, ignoreHeight, minMajorMinor, tagPrefixOption, verbosity, versionOverride);
+        options = new Options(autoIncrement, buildMetaOption, defaultPreReleasePhaseOption, ignoreHeight, ignoreLeadingZeros, minMajorMinor, tagPrefixOption, verbosity, versionOverride);
 
         return true;
     }
@@ -177,6 +195,7 @@ internal class Options
         this.BuildMeta ?? other.BuildMeta,
         this.DefaultPreReleasePhase ?? other.DefaultPreReleasePhase,
         this.IgnoreHeight ?? other.IgnoreHeight,
+        this.IgnoreLeadingZeros ?? other.IgnoreLeadingZeros,
         this.MinMajorMinor ?? other.MinMajorMinor,
         this.TagPrefix ?? other.TagPrefix,
         this.Verbosity ?? other.Verbosity,
@@ -190,6 +209,8 @@ internal class Options
     public string? DefaultPreReleasePhase { get; }
 
     public bool? IgnoreHeight { get; }
+
+    public bool? IgnoreLeadingZeros { get; }
 
     public MajorMinor? MinMajorMinor { get; }
 

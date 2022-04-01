@@ -23,6 +23,7 @@ internal static class Program
         var buildMetaOption = app.Option("-b|--build-metadata <BUILD_METADATA>", "", CommandOptionType.SingleValue);
         var defaultPreReleasePhaseOption = app.Option("-d|--default-pre-release-phase <PHASE>", "alpha (default), preview, etc.", CommandOptionType.SingleValue);
         var ignoreHeightOption = app.Option<bool>("-i|--ignore-height", "Use the latest tag (or root commit) as-is, without adding height", CommandOptionType.NoValue);
+        var ignoreLeadingZerosOption = app.Option<bool>("-z|--ignore-leading-zeros", "Ignore leading zeros in major, minor, and patch versions and in numeric pre-release identifiers", CommandOptionType.NoValue);
         var minMajorMinorOption = app.Option("-m|--minimum-major-minor <MINIMUM_MAJOR_MINOR>", MajorMinor.ValidValues, CommandOptionType.SingleValue);
         var tagPrefixOption = app.Option("-t|--tag-prefix <TAG_PREFIX>", "", CommandOptionType.SingleValue);
         var verbosityOption = app.Option("-v|--verbosity <VERBOSITY>", VerbosityMap.ValidValues, CommandOptionType.SingleValue);
@@ -45,6 +46,7 @@ internal static class Program
                     buildMetaOption.Value(),
                     defaultPreReleasePhaseOption.Value(),
                     ignoreHeightOption.HasValue() ? true : null,
+                    ignoreLeadingZerosOption.HasValue() ? true : null,
                     minMajorMinorOption.Value(),
                     tagPrefixOption.Value(),
                     verbosityOption.Value(),
@@ -78,7 +80,7 @@ internal static class Program
                 return 0;
             }
 
-            var version = Versioner.GetVersion(workDir, options.TagPrefix ?? "", options.MinMajorMinor ?? MajorMinor.Zero, options.BuildMeta ?? "", options.AutoIncrement ?? default, options.DefaultPreReleasePhase ?? "", log, options.IgnoreHeight ?? false);
+            var version = Versioner.GetVersion(workDir, options.TagPrefix ?? "", options.MinMajorMinor ?? MajorMinor.Zero, options.BuildMeta ?? "", options.AutoIncrement ?? default, options.DefaultPreReleasePhase ?? "", log, options.IgnoreHeight ?? false, options.IgnoreLeadingZeros ?? false);
 
             Console.Out.WriteLine(version);
 

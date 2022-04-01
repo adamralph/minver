@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using NuGet.Versioning;
 
 namespace MinVer.Lib;
@@ -57,7 +58,7 @@ public class Version : SemanticVersion
         return new Version(this.Major, this.Minor, this.Patch, this.preReleaseIdentifiers, this.height, $"{this.Metadata}{separator}{newBuildMetadata}");
     }
 
-    public static bool TryParse(string text, [NotNullWhen(returnValue: true)] out Version? version, string prefix = "")
+    public static bool TryParse(string text, bool ignoreLeadingZeros, [NotNullWhen(returnValue: true)] out Version? version, string prefix = "")
     {
         text = text ?? throw new ArgumentNullException(nameof(text));
         prefix = prefix ?? throw new ArgumentNullException(nameof(prefix));
@@ -69,6 +70,28 @@ public class Version : SemanticVersion
             return false;
         }
 
+        if (ignoreLeadingZeros)
+        {
+            var zerosRemoved = new StringBuilder();
+
+            var plusSplit = text.Split('+', 2);
+            var dashSplit = plusSplit[0].Split('-', 2);
+
+            _ = zerosRemoved.Append(RemoveLeadingZeros(dashSplit[0]));
+
+            if (dashSplit.Length == 2)
+            {
+                _ = zerosRemoved.Append('-').Append(RemoveLeadingZeros(dashSplit[1]));
+            }
+
+            if (plusSplit.Length == 2)
+            {
+                _ = zerosRemoved.Append('+').Append(plusSplit[1]);
+            }
+
+            text = zerosRemoved.ToString();
+        }
+
         if (!SemanticVersion.TryParse(text[prefix.Length..], out var semanticVersion))
         {
             return false;
@@ -77,4 +100,7 @@ public class Version : SemanticVersion
         version = new Version(semanticVersion.Major, semanticVersion.Minor, semanticVersion.Patch, semanticVersion.ReleaseLabels.ToList(), 0, semanticVersion.Metadata);
         return true;
     }
+
+    private static string RemoveLeadingZeros(string text) =>
+        string.Join('.', text.Split('.').Select(token => token.All(char.IsDigit) ? token.TrimStart('0') : token));
 }

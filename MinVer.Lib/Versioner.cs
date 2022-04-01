@@ -7,7 +7,7 @@ namespace MinVer.Lib;
 
 public static class Versioner
 {
-    public static Version GetVersion(string workDir, string tagPrefix, MajorMinor minMajorMinor, string buildMeta, VersionPart autoIncrement, string defaultPreReleasePhase, ILogger log, bool ignoreHeight = false)
+    public static Version GetVersion(string workDir, string tagPrefix, MajorMinor minMajorMinor, string buildMeta, VersionPart autoIncrement, string defaultPreReleasePhase, ILogger log, bool ignoreHeight = false, bool ignoreLeadingZeros = false)
     {
         log = log ?? throw new ArgumentNullException(nameof(log));
 
@@ -15,7 +15,7 @@ public static class Versioner
             ? "alpha"
             : defaultPreReleasePhase;
 
-        var (version, height) = GetVersion(workDir, tagPrefix, defaultPreReleasePhase, log);
+        var (version, height) = GetVersion(workDir, tagPrefix, ignoreLeadingZeros, defaultPreReleasePhase, log);
 
         _ = height.HasValue && ignoreHeight && log.IsDebugEnabled && log.Debug("Ignoring height.");
         version = !height.HasValue || ignoreHeight ? version : version.WithHeight(height.Value, autoIncrement, defaultPreReleasePhase);
@@ -33,7 +33,7 @@ public static class Versioner
         return calculatedVersion;
     }
 
-    private static (Version Version, int? Height) GetVersion(string workDir, string tagPrefix, string defaultPreReleasePhase, ILogger log)
+    private static (Version Version, int? Height) GetVersion(string workDir, string tagPrefix, bool ignoreLeadingZeros, string defaultPreReleasePhase, ILogger log)
     {
         if (!Git.IsWorkingDirectory(workDir, log))
         {
@@ -55,7 +55,7 @@ public static class Versioner
 
         var tags = Git.GetTags(workDir, log);
 
-        var orderedCandidates = GetCandidates(head, tags, tagPrefix, defaultPreReleasePhase, log)
+        var orderedCandidates = GetCandidates(head, tags, tagPrefix, ignoreLeadingZeros, defaultPreReleasePhase, log)
             .OrderBy(candidate => candidate.Version)
             .ThenByDescending(candidate => candidate.Index).ToList();
 
@@ -79,13 +79,13 @@ public static class Versioner
         return (selectedCandidate.Version, selectedCandidate.Height);
     }
 
-    private static List<Candidate> GetCandidates(Commit head, IEnumerable<(string Name, string Sha)> tags, string tagPrefix, string defaultPreReleasePhase, ILogger log)
+    private static List<Candidate> GetCandidates(Commit head, IEnumerable<(string Name, string Sha)> tags, string tagPrefix, bool ignoreLeadingZeros, string defaultPreReleasePhase, ILogger log)
     {
         var tagsAndVersions = new List<(string Name, string Sha, Version Version)>();
 
         foreach (var (name, sha) in tags)
         {
-            if (Version.TryParse(name, out var version, tagPrefix))
+            if (Version.TryParse(name, ignoreLeadingZeros, out var version, tagPrefix))
             {
                 tagsAndVersions.Add((name, sha, version));
             }

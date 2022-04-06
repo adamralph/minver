@@ -129,6 +129,7 @@ Note that the names of the MSBuild properties and environment variables are case
 - [What if the history diverges, and more than one tag or root commit is found?](#what-if-the-history-diverges-and-more-than-one-tag-or-root-commit-is-found) _(nothing bad)_
 - [What if the history diverges, and then converges again, before the latest tag (or root commit) is found?](#what-if-the-history-diverges-and-then-converges-again-before-the-latest-tag-or-root-commit-is-found) _(nothing bad)_
 - [Why is the default version sometimes used in GitHub Actions and Travis CI when a version tag exists in the history?](#why-is-the-default-version-sometimes-used-in-github-actions-and-travis-ci-when-a-version-tag-exists-in-the-history) _(shallow clones)_
+- [Why is my version tag ignored?](#why-is-my-version-tag-ignored) _(MinVer is not running, the tag is misplaced, the version is superseded, the prefix is wrong, or the version is not valid SemVer 2.0)_
 <!-- spell-checker:enable -->
 
 ### Why not use GitVersion, Nerdbank.GitVersioning, or some other tool?
@@ -313,7 +314,29 @@ This is often useful if you are [versioning multiple projects in a single reposi
 
 ### Can I get log output to see how MinVer calculates the version?
 
-Yes! [`MinVerVerbosity`](#options) can be set to `quiet`, `minimal` (default), `normal`, `detailed`, or `diagnostic`. These verbosity levels match those in MSBuild and therefore `dotnet build`, `dotnet pack`, etc. The default is `minimal`, which matches the default in MSBuild. At the `quiet` and `minimal` levels, you will see only warnings and errors. At the `normal` level you will see which commit is being used to calculate the version, and the calculated version. At the `detailed` level you will see how many commits were examined, which version tags were found but ignored, which version was calculated, etc. At the `diagnostic` level you will see how MinVer walks the commit history, in excruciating detail.
+Yes! [`MinVerVerbosity`](#options) may be set to:
+
+- `quiet`
+- `minimal` (default)
+- `normal`
+- `detailed`
+- `diagnostic`.
+
+These verbosity levels match those in MSBuild and therefore `dotnet build`, `dotnet pack`, etc. The default is `minimal`, which matches the default in MSBuild.
+
+The equivalent levels for the [minver-cli](https://www.nuget.org/packages/minver-cli) `-v|--verbosity` option are:
+
+<!-- spell-checker:disable -->
+- `e[rror]`
+- `w[arn]`
+- `i[nfo]` (default)
+- `d[ebug]`
+- `t[race]`
+<!-- spell-checker:enable -->
+
+These verbosity levels match those typically used in console applications.
+
+At the `quiet`/`error` and `minimal`/`warn` levels, you will see only warnings and errors. At the `normal`/`info` level you will see which commit is being used to calculate the version, and the calculated version. At the `detailed`/`debug` level you will see how many commits were examined, which version tags were found but ignored, which version was calculated, etc. At the `diagnostic`/`trace` level you will see how MinVer walks the commit history, in excruciating detail.
 
 In a future version of MinVer, the verbosity level may be inherited from MSBuild, in which case `MinVerVerbosity` will be deprecated.
 
@@ -363,6 +386,30 @@ For Travis CI, set the [`--depth` flag](https://docs.travis-ci.com/user/customiz
 git:
   depth: false
 ```
+
+### Why is my version tag ignored?
+
+Things to check:
+
+- MinVer is running:
+  - Is [`MinVerSkip`](#can-i-disable-minver) set?
+- The tag is in the correct place:
+  - Is the tag on the current commit or on an ancestor of the current commit?
+- The version is not superseded:
+  - Is there a version tag on a later ancestor of the current commit?
+  - Is there a version tag with a later version on the same commit?
+  - Is [`MinVerVersionOverride`](#can-i-use-minver-to-version-software-which-is-not-built-using-a-net-sdk-style-project) set?
+  - Is [`MinVerMinimumMajorMinor`](#can-i-bump-the-major-or-minor-version) set to a higher major and minor?
+- The correct prefix is used:
+  - Does the tag prefix match [`MinVerTagPrefix`](#can-i-prefix-my-tag-names)?
+- The version is valid [SemVer 2.0](https://semver.org/spec/v2.0.0.html):
+  - Are the major, minor, and patch non-negative integers?
+  - Do the major, minor, patch, or numeric pre-release identifiers have leading zeros?
+  - Do the pre-release or build metadata identifiers contain anything other than ASCII alphanumerics and hyphens [0-9A-Za-z-]?
+  - Is any pre-release or build metadata identifier empty (two or more dots in a row)?
+  - Is there more than one plus sign?
+
+If you still can't figure it out, increase [`MinVerVerbosity`](#can-i-get-log-output-to-see-how-minver-calculates-the-version) to `detailed` to see which tags are explicitly ignored.
 
 ---
 

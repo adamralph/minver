@@ -116,7 +116,7 @@ jobs:
       - run: git --version
       - uses: actions/checkout@v3.0.0
       - env:
-          VERSION: ${{ secrets.VERSION }}-$GITHUB_RUN_NUMBER
+          VERSION: ${{ secrets.VERSION }}-${{ env.GITHUB_RUN_NUMBER }}
           MINVER_TESTS_SDK: ${{ matrix.tests.sdk }}
           MINVER_TESTS_FRAMEWORK: ${{ matrix.tests.framework }}
         run: ${{ matrix.job.build }}

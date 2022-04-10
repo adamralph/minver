@@ -17,49 +17,49 @@ jobs:
               build: ./build.sh
             tests:
               framework: net6.0
-              sdk: "6.0.200"
+              sdk: "6.0.201"
               sdk-major-minor: "6.0"
           - job:
               os: macos-11
               build: ./build.sh
             tests:
               framework: net5.0
-              sdk: "5.0.405"
+              sdk: "5.0.406"
               sdk-major-minor: "5.0"
           - job:
               os: macos-11
               build: ./build.sh
             tests:
               framework: net6.0
-              sdk: "6.0.200"
+              sdk: "6.0.201"
               sdk-major-minor: "6.0"
           - job:
               os: macos-11
               build: ./build.sh
             tests:
               framework: net6.0
-              sdk: "7.0.100-preview.1.22110.4"
+              sdk: "7.0.100-preview.2.22153.17"
               sdk-major-minor: "7.0"
           - job:
               os: ubuntu-18.04
               build: ./build.sh
             tests:
               framework: net6.0
-              sdk: "6.0.200"
+              sdk: "6.0.201"
               sdk-major-minor: "6.0"
           - job:
               os: ubuntu-20.04
               build: ./build.sh
             tests:
               framework: netcoreapp3.1
-              sdk: "3.1.416"
+              sdk: "3.1.417"
               sdk-major-minor: "3.1"
           - job:
               os: ubuntu-20.04
               build: ./build.sh
             tests:
               framework: net5.0
-              sdk: "5.0.405"
+              sdk: "5.0.406"
               sdk-major-minor: "5.0"
           - job:
               os: ubuntu-20.04
@@ -67,42 +67,42 @@ jobs:
               upload: true
             tests:
               framework: net6.0
-              sdk: "6.0.200"
+              sdk: "6.0.201"
               sdk-major-minor: "6.0"
           - job:
               os: ubuntu-20.04
               build: ./build.sh
             tests:
               framework: net6.0
-              sdk: "7.0.100-preview.1.22110.4"
+              sdk: "7.0.100-preview.2.22153.17"
               sdk-major-minor: "7.0"
           - job:
               os: windows-2019
               build: ./build.cmd
             tests:
               framework: net6.0
-              sdk: "6.0.200"
+              sdk: "6.0.201"
               sdk-major-minor: "6.0"
           - job:
               os: windows-2022
               build: ./build.cmd
             tests:
               framework: net5.0
-              sdk: "5.0.405"
+              sdk: "5.0.406"
               sdk-major-minor: "5.0"
           - job:
               os: windows-2022
               build: ./build.cmd
             tests:
               framework: net6.0
-              sdk: "6.0.200"
+              sdk: "6.0.201"
               sdk-major-minor: "6.0"
           - job:
               os: windows-2022
               build: ./build.cmd
             tests:
               framework: net6.0
-              sdk: "7.0.100-preview.1.22110.4"
+              sdk: "7.0.100-preview.2.22153.17"
               sdk-major-minor: "7.0"
     name: ${{ matrix.job.os }}-sdk-${{ matrix.tests.sdk-major-minor }}
     runs-on: ${{ matrix.job.os }}
@@ -111,7 +111,7 @@ jobs:
         with:
           dotnet-version: |
             ${{ matrix.tests.sdk }}
-            6.0.200
+            6.0.201
       - run: dotnet --info
       - run: git --version
       - uses: actions/checkout@v3.0.0

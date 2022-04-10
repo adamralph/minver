@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/setup-dotnet@v2.0.0
         with:
-          dotnet-version: 6.0.200
+          dotnet-version: 6.0.201
       - uses: actions/checkout@v3.0.0
       - env:
           MINVER_VERSION: ${{ secrets.MINVER_VERSION }}

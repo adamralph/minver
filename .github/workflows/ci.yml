@@ -64,7 +64,7 @@ jobs:
           - job:
               os: ubuntu-20.04
               build: ./build.sh
-              push: true
+              upload: true
             tests:
               framework: net6.0
               sdk: "6.0.200"
@@ -120,11 +120,8 @@ jobs:
           MINVER_TESTS_SDK: ${{ matrix.tests.sdk }}
           MINVER_TESTS_FRAMEWORK: ${{ matrix.tests.framework }}
         run: ${{ matrix.job.build }}
-      - name: push
-        env:
-          API_KEY: ${{ secrets.CI_NUGET_API_KEY }}
-          SOURCE: ${{ secrets.CI_NUGET_SOURCE }}
-        if: ${{ matrix.job.push && (env.API_KEY != '' || env.SOURCE != '') && github.ref == 'refs/heads/main' }}
-        run: |
-          dotnet nuget push MinVer/**/*.nupkg --source ${{ env.SOURCE }} --api-key ${{ env.API_KEY }}
-          dotnet nuget push minver-cli/**/*.nupkg --source ${{ env.SOURCE }} --api-key ${{ env.API_KEY }}
+      - if: ${{ matrix.job.upload }}
+        uses: actions/upload-artifact@v3.0.0
+        with:
+          name: NuGet packages
+          path: ./**/*.nupkg

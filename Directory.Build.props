@@ -10,7 +10,7 @@
     <!-- MinVer doesn't use MinVer for versioning because
 the environment variables for the build and for the package tests
 would interfere with each other. -->
-    <Version Condition="'$(CI_VERSION)' != ''">$(CI_VERSION)</Version>
+    <Version Condition="'$(MINVER_VERSION)' != ''">$(MINVER_VERSION)</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(CI)' != ''">

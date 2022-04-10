@@ -2,7 +2,6 @@ name: ci
 on:
   push:
     branches: [main, release-*]
-    tags: ["*.*.*"]
   pull_request:
 env:
   DOTNET_NOLOGO: true
@@ -117,14 +116,14 @@ jobs:
       - run: git --version
       - uses: actions/checkout@v3.0.0
       - env:
-          CI_VERSION: ${{ secrets.CI_VERSION }}
+          MINVER_VERSION: ${{ secrets.MINVER_VERSION }}-ci.${{ github.run_number }}
           MINVER_TESTS_SDK: ${{ matrix.tests.sdk }}
           MINVER_TESTS_FRAMEWORK: ${{ matrix.tests.framework }}
         run: ${{ matrix.job.build }}
       - name: push
         env:
           API_KEY: ${{ secrets.MYGET_ADAMRALPH_CI_API_KEY }}
-        if: ${{ matrix.job.push && env.API_KEY != '' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')) }}
+        if: ${{ matrix.job.push && env.API_KEY != '' && github.ref == 'refs/heads/main' }}
         run: |
           dotnet nuget push MinVer/**/*.nupkg --source https://www.myget.org/F/adamralph-ci/api/v2/package --api-key ${{ env.API_KEY }}
           dotnet nuget push minver-cli/**/*.nupkg --source https://www.myget.org/F/adamralph-ci/api/v2/package --api-key ${{ env.API_KEY }}

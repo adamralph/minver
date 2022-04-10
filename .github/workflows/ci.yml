@@ -2,7 +2,6 @@ name: ci
 on:
   push:
     branches: [main, release-*]
-    tags: ["*.*.*"]
   pull_request:
 env:
   DOTNET_NOLOGO: true
@@ -117,7 +116,7 @@ jobs:
       - run: git --version
       - uses: actions/checkout@v3.0.0
       - env:
-          CI_VERSION: ${{ secrets.CI_VERSION }}
+          VERSION: ${{ secrets.VERSION }}-$GITHUB_RUN_NUMBER
           MINVER_TESTS_SDK: ${{ matrix.tests.sdk }}
           MINVER_TESTS_FRAMEWORK: ${{ matrix.tests.framework }}
         run: ${{ matrix.job.build }}

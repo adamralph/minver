@@ -122,8 +122,9 @@ jobs:
         run: ${{ matrix.job.build }}
       - name: push
         env:
-          API_KEY: ${{ secrets.MYGET_ADAMRALPH_CI_API_KEY }}
-        if: ${{ matrix.job.push && env.API_KEY != '' && github.ref == 'refs/heads/main' }}
+          API_KEY: ${{ secrets.CI_NUGET_API_KEY }}
+          SOURCE: ${{ secrets.CI_NUGET_SOURCE }}
+        if: ${{ matrix.job.push && (env.API_KEY != '' || env.SOURCE != '') && github.ref == 'refs/heads/main' }}
         run: |
-          dotnet nuget push MinVer/**/*.nupkg --source https://www.myget.org/F/adamralph-ci/api/v2/package --api-key ${{ env.API_KEY }}
-          dotnet nuget push minver-cli/**/*.nupkg --source https://www.myget.org/F/adamralph-ci/api/v2/package --api-key ${{ env.API_KEY }}
+          dotnet nuget push MinVer/**/*.nupkg --source ${{ env.SOURCE }} --api-key ${{ env.API_KEY }}
+          dotnet nuget push minver-cli/**/*.nupkg --source ${{ env.SOURCE }} --api-key ${{ env.API_KEY }}

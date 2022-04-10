@@ -1,0 +1,24 @@
+name: release
+on:
+  push:
+    tags: ["*.*.*"]
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/setup-dotnet@v2.0.0
+        with:
+          dotnet-version: 6.0.200
+      - uses: actions/checkout@v3.0.0
+      - env:
+          MINVER_VERSION: ${{ secrets.MINVER_VERSION }}
+        run: ./build.sh build
+      - name: push
+        env:
+          API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          dotnet nuget push MinVer/**/*.nupkg --api-key ${{ env.API_KEY }} --skip-duplicate
+          dotnet nuget push minver-cli/**/*.nupkg --api-key ${{ env.API_KEY }} --skip-duplicate

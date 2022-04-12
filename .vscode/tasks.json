@@ -3,7 +3,7 @@
   "tasks": [
     {
       "label": "build",
-      "command": "./build.sh",
+      "command": "./build",
       "type": "shell",
       "args": [
         "build"

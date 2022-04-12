@@ -14,56 +14,48 @@ jobs:
         include:
           - job:
               os: macos-10.15
-              build: ./build.sh
             tests:
               framework: net6.0
               sdk: "6.0.201"
               sdk-major-minor: "6.0"
           - job:
               os: macos-11
-              build: ./build.sh
             tests:
               framework: net5.0
               sdk: "5.0.406"
               sdk-major-minor: "5.0"
           - job:
               os: macos-11
-              build: ./build.sh
             tests:
               framework: net6.0
               sdk: "6.0.201"
               sdk-major-minor: "6.0"
           - job:
               os: macos-11
-              build: ./build.sh
             tests:
               framework: net6.0
               sdk: "7.0.100-preview.2.22153.17"
               sdk-major-minor: "7.0"
           - job:
               os: ubuntu-18.04
-              build: ./build.sh
             tests:
               framework: net6.0
               sdk: "6.0.201"
               sdk-major-minor: "6.0"
           - job:
               os: ubuntu-20.04
-              build: ./build.sh
             tests:
               framework: netcoreapp3.1
               sdk: "3.1.417"
               sdk-major-minor: "3.1"
           - job:
               os: ubuntu-20.04
-              build: ./build.sh
             tests:
               framework: net5.0
               sdk: "5.0.406"
               sdk-major-minor: "5.0"
           - job:
               os: ubuntu-20.04
-              build: ./build.sh
               upload: true
             tests:
               framework: net6.0
@@ -71,35 +63,30 @@ jobs:
               sdk-major-minor: "6.0"
           - job:
               os: ubuntu-20.04
-              build: ./build.sh
             tests:
               framework: net6.0
               sdk: "7.0.100-preview.2.22153.17"
               sdk-major-minor: "7.0"
           - job:
               os: windows-2019
-              build: ./build.cmd
             tests:
               framework: net6.0
               sdk: "6.0.201"
               sdk-major-minor: "6.0"
           - job:
               os: windows-2022
-              build: ./build.cmd
             tests:
               framework: net5.0
               sdk: "5.0.406"
               sdk-major-minor: "5.0"
           - job:
               os: windows-2022
-              build: ./build.cmd
             tests:
               framework: net6.0
               sdk: "6.0.201"
               sdk-major-minor: "6.0"
           - job:
               os: windows-2022
-              build: ./build.cmd
             tests:
               framework: net6.0
               sdk: "7.0.100-preview.2.22153.17"
@@ -119,7 +106,7 @@ jobs:
           MINVER_VERSION: ${{ secrets.MINVER_VERSION }}-ci.${{ github.run_number }}
           MINVER_TESTS_SDK: ${{ matrix.tests.sdk }}
           MINVER_TESTS_FRAMEWORK: ${{ matrix.tests.framework }}
-        run: ${{ matrix.job.build }}
+        run: ./build
       - if: ${{ matrix.job.upload }}
         uses: actions/upload-artifact@v3.0.0
         with:

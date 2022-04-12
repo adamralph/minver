@@ -107,7 +107,7 @@ jobs:
           MINVER_TESTS_SDK: ${{ matrix.tests.sdk }}
           MINVER_TESTS_FRAMEWORK: ${{ matrix.tests.framework }}
         run: ./build
-      - if: ${{ matrix.job.upload }}
+      - if: matrix.job.upload
         uses: actions/upload-artifact@v3.0.0
         with:
           name: NuGet packages

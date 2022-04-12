@@ -27,9 +27,9 @@ dotnet_style_qualification_for_property                                   = true
 file_header_template                                                      = unset
 indent_size                                                               = 4
 
-[*.sh]
-end_of_line                                                               = lf
-
 [*.sln]
 indent_size                                                               = 1
 indent_style                                                              = tab
+
+[build]
+end_of_line                                                               = lf

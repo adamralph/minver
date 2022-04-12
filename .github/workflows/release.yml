@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v3.0.0
       - env:
           MINVER_VERSION: ${{ secrets.MINVER_VERSION }}
-        run: ./build.sh build
+        run: ./build build
       - name: push
         env:
           API_KEY: ${{ secrets.NUGET_PUSH_API_KEY }}

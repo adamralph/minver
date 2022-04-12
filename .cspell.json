@@ -3,7 +3,7 @@
   "language": "en-GB",
   "overrides": [
     {
-      "filename": "{*.cmd,*.cs,*.csproj,*.sh,*.props,*.yml}",
+      "filename": "{*.cmd,*.cs,*.csproj,*.props,*.yml,build}",
       "language": "en-US"
     },
     {
@@ -33,6 +33,7 @@
     "NuGet",
     "nupkg",
     "Parallelization",
+    "pipefail",
     "quot",
     "refs",
     "shas",

@@ -20,5 +20,5 @@ jobs:
         env:
           SOURCE: ${{ secrets.NUGET_PUSH_SOURCE }}
           API_KEY: ${{ secrets.NUGET_PUSH_API_KEY }}
-        if: ${{ env.SOURCE != '' || env.API_KEY != '' }}
+        if: env.SOURCE != '' || env.API_KEY != ''
         run: dotnet nuget push ./**/*.nupkg --source ${{ env.SOURCE }} --api-key ${{ env.API_KEY }}

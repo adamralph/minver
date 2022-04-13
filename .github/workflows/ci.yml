@@ -16,19 +16,19 @@ jobs:
               os: macos-10.15
             tests:
               framework: net6.0
-              sdk: "6.0.201"
+              sdk: "6.0.202"
               sdk-major-minor: "6.0"
           - job:
               os: macos-11
             tests:
               framework: net5.0
-              sdk: "5.0.406"
+              sdk: "5.0.407"
               sdk-major-minor: "5.0"
           - job:
               os: macos-11
             tests:
               framework: net6.0
-              sdk: "6.0.201"
+              sdk: "6.0.202"
               sdk-major-minor: "6.0"
           - job:
               os: macos-11
@@ -40,26 +40,26 @@ jobs:
               os: ubuntu-18.04
             tests:
               framework: net6.0
-              sdk: "6.0.201"
+              sdk: "6.0.202"
               sdk-major-minor: "6.0"
           - job:
               os: ubuntu-20.04
             tests:
               framework: netcoreapp3.1
-              sdk: "3.1.417"
+              sdk: "3.1.418"
               sdk-major-minor: "3.1"
           - job:
               os: ubuntu-20.04
             tests:
               framework: net5.0
-              sdk: "5.0.406"
+              sdk: "5.0.407"
               sdk-major-minor: "5.0"
           - job:
               os: ubuntu-20.04
               upload: true
             tests:
               framework: net6.0
-              sdk: "6.0.201"
+              sdk: "6.0.202"
               sdk-major-minor: "6.0"
           - job:
               os: ubuntu-20.04
@@ -71,19 +71,19 @@ jobs:
               os: windows-2019
             tests:
               framework: net6.0
-              sdk: "6.0.201"
+              sdk: "6.0.202"
               sdk-major-minor: "6.0"
           - job:
               os: windows-2022
             tests:
               framework: net5.0
-              sdk: "5.0.406"
+              sdk: "5.0.407"
               sdk-major-minor: "5.0"
           - job:
               os: windows-2022
             tests:
               framework: net6.0
-              sdk: "6.0.201"
+              sdk: "6.0.202"
               sdk-major-minor: "6.0"
           - job:
               os: windows-2022
@@ -98,7 +98,7 @@ jobs:
         with:
           dotnet-version: |
             ${{ matrix.tests.sdk }}
-            6.0.201
+            6.0.202
       - run: dotnet --info
       - run: git --version
       - uses: actions/checkout@v3.0.0

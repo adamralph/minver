@@ -170,7 +170,7 @@ Before you create the first version tag on your branch, interim builds will use 
 
 Tag a commit in your branch with a version matching your `MAJOR.MINOR` range, using your [preferred default pre-release phase](#can-i-change-the-default-pre-release-phase-from-alpha-to-something-else) and a pre-release ordinal of 0. For example:
 
-```bash
+```shell
 git tag 1.0.0-alpha.0
 ```
 

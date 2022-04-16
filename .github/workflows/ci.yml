@@ -103,7 +103,8 @@ jobs:
       - run: git --version
       - uses: actions/checkout@v3.0.0
       - env:
-          MINVER_VERSION: ${{ secrets.MINVER_VERSION }}-ci.${{ github.run_number }}
+          CI_NUMBER: ${{ github.run_number }}
+          MINVER_VERSION: ${{ secrets.MINVER_VERSION }}
           MINVER_TESTS_SDK: ${{ matrix.tests.sdk }}
           MINVER_TESTS_FRAMEWORK: ${{ matrix.tests.framework }}
         run: ./build

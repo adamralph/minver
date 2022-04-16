@@ -11,6 +11,7 @@
 the environment variables for the build and for the package tests
 would interfere with each other. -->
     <Version Condition="'$(MINVER_VERSION)' != ''">$(MINVER_VERSION)</Version>
+    <Version Condition="'$(CI_NUMBER)' != ''">$(Version)-ci.$(CI_NUMBER)</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(CI)' != ''">

@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.0.0
+
+### Enhancements
+
+- [#720: **[BREAKING]** Restrict versions to SemVer 2.0 only](https://github.com/adamralph/minver/pull/720)
+
 ## 3.1.0
 
 ### Enhancements

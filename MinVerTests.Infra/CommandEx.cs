@@ -10,7 +10,7 @@ namespace MinVerTests.Infra
 {
     internal static class CommandEx
     {
-#if NET5_0_OR_GREATER
+#if NET6_0_OR_GREATER
         private static readonly ConcurrentDictionary<string, int> indices = new();
 #else
         private static readonly ConcurrentDictionary<string, int> indices = new ConcurrentDictionary<string, int>();

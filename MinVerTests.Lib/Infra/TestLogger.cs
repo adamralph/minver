@@ -7,7 +7,7 @@ namespace MinVerTests.Lib.Infra
 {
     internal class TestLogger : ILogger
     {
-#if NET5_0_OR_GREATER
+#if NET6_0_OR_GREATER
         private readonly List<LogMessage> messages = new();
 #else
         private readonly List<LogMessage> messages = new List<LogMessage>();

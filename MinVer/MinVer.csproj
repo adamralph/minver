@@ -18,7 +18,7 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <RollForward>major</RollForward>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFrameworks>netcoreapp3.1;net6.0</TargetFrameworks>
     <LangVersion>default</LangVersion>
   </PropertyGroup>
 
@@ -48,7 +48,7 @@
 
   <Target Name="AddMinVerOutput" BeforeTargets="_GetPackageFiles">
     <ItemGroup>
-      <None Include="$(OutputPath)\**\*" Exclude="$(OutputPath)\**\*.dev.json" Pack="true" PackagePath="minver" />
+      <None Include="$(OutputPath)\**\*" Exclude="$(OutputPath)\**\*.dev.json;$(OutputPath)\**\*.nupkg" Pack="true" PackagePath="minver" />
     </ItemGroup>
   </Target>
 

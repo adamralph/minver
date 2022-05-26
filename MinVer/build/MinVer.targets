@@ -9,6 +9,8 @@
   <PropertyGroup>
     <MinVerDetailed>low</MinVerDetailed>
     <MinVerDetailed Condition="'$(MinVerVerbosity)' == 'detailed' Or '$(MinVerVerbosity)' == 'd' Or '$(MinVerVerbosity)' == 'diagnostic' Or '$(MinVerVerbosity)' == 'diag'">high</MinVerDetailed>
+    <MinVerTargetFramework>netcoreapp3.1</MinVerTargetFramework>
+    <MinVerTargetFramework Condition="'$(MSBuildAssemblyVersion)' &gt;= '17.0'">net6.0</MinVerTargetFramework>
     <NoWarn>$(NoWarn);NU5105</NoWarn>
   </PropertyGroup>
 
@@ -41,7 +43,7 @@
       <MinVerInputs Include="--verbosity &quot;$(MinVerVerbosity)&quot;" />
       <MinVerInputs Include="--version-override &quot;$(MinVerVersionOverride)&quot;" />
     </ItemGroup>
-    <Exec Command="dotnet &quot;$(MSBuildThisFileDirectory)../minver/MinVer.dll&quot; @(MinVerInputs->'%(Identity)', ' ')" ConsoleToMSBuild="true" StandardOutputImportance="Low" >
+    <Exec Command="dotnet &quot;$(MSBuildThisFileDirectory)../minver/$(MinVerTargetFramework)/MinVer.dll&quot; @(MinVerInputs->'%(Identity)', ' ')" ConsoleToMSBuild="true" StandardOutputImportance="Low" >
       <Output TaskParameter="ConsoleOutput" ItemName="MinVerConsoleOutput" />
     </Exec>
     <ItemGroup>

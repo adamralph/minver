@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.1.0
+
+### Enhancements
+
+- [#767: .NET 6 binaries](https://github.com/adamralph/minver/issues/767)
+
 ## 4.0.0
 
 ### Enhancements

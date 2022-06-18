@@ -25,7 +25,13 @@ jobs:
               sdk: "6.0.301"
               sdk-major-minor: "6.0"
           - job:
-              os: macos-11
+              os: macos-12
+            tests:
+              framework: net6.0
+              sdk: "6.0.301"
+              sdk-major-minor: "6.0"
+          - job:
+              os: macos-12
             tests:
               framework: net6.0
               sdk: "7.0.100-preview.5.22307.18"

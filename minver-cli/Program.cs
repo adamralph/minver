@@ -78,7 +78,7 @@ internal static class Program
                 return 0;
             }
 
-            var version = Versioner.GetVersion(workDir, options.TagPrefix ?? "", options.MinMajorMinor ?? MajorMinor.Zero, options.BuildMeta ?? "", options.AutoIncrement ?? default, options.DefaultPreReleasePhase ?? "", log, options.IgnoreHeight ?? false);
+            var version = Versioner.GetVersion(workDir, options.TagPrefix ?? "", options.MinMajorMinor ?? MajorMinor.Zero, options.BuildMeta ?? "", options.AutoIncrement ?? default, options.DefaultPreReleasePhase ?? "", options.IgnoreHeight ?? false, log);
 
             Console.Out.WriteLine(version);
 

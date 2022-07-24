@@ -20,7 +20,7 @@ namespace MinVerTests.Lib
             await EnsureEmptyRepositoryAndCommit(path);
 
             // act
-            var actualVersion = Versioner.GetVersion(path, "", MajorMinor.Zero, "", default, phase, NullLogger.Instance);
+            var actualVersion = Versioner.GetVersion(path, "", MajorMinor.Zero, "", default, phase, false, NullLogger.Instance);
 
             // assert
             Assert.Equal(expectedVersion, actualVersion.ToString());

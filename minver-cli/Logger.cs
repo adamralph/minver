@@ -42,6 +42,9 @@ internal class Logger : ILogger
     public static void ErrorInvalidVerbosity(string verbosity) =>
         Error($"Invalid verbosity '{verbosity}'. Valid values are {VerbosityMap.ValidValues}.");
 
+    public static void ErrorNoGit(string message) =>
+        Error(message);
+
     private static void Error(string message) => Message($"error : {message}");
 
     private static bool Message(string message)

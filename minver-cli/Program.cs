@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using McMaster.Extensions.CommandLineUtils;
 using MinVer.Lib;
+using Version = MinVer.Lib.Version;
 
 namespace MinVer;
 
@@ -78,7 +79,16 @@ internal static class Program
                 return 0;
             }
 
-            var version = Versioner.GetVersion(workDir, options.TagPrefix ?? "", options.MinMajorMinor ?? MajorMinor.Zero, options.BuildMeta ?? "", options.AutoIncrement ?? default, options.DefaultPreReleasePhase ?? "", options.IgnoreHeight ?? false, log);
+            Version version;
+            try
+            {
+                version = Versioner.GetVersion(workDir, options.TagPrefix ?? "", options.MinMajorMinor ?? MajorMinor.Zero, options.BuildMeta ?? "", options.AutoIncrement ?? default, options.DefaultPreReleasePhase ?? "", options.IgnoreHeight ?? false, log);
+            }
+            catch (NoGitException ex)
+            {
+                Logger.ErrorNoGit(ex.Message);
+                return 2;
+            }
 
             Console.Out.WriteLine(version);
 

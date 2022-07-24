@@ -33,7 +33,7 @@ internal static class GitCommand
         }
         catch (Win32Exception ex)
         {
-            throw new InvalidOperationException("\"git\" is not present in PATH.", ex);
+            throw new NoGitException("\"git\" is not present in PATH.", ex);
         }
 
         var runProcess = tcs.Task;

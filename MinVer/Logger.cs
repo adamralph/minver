@@ -43,6 +43,9 @@ internal class Logger : ILogger
         Error(1005, $"Invalid version override '{versionOverride}'");
 #endif
 
+    public static void ErrorNoGit(string message) =>
+        Error(1007, message);
+
     private static void Error(int code, string message) => Message($"error MINVER{code:D4} : {message}");
 
     private static bool Message(string message)

@@ -24,7 +24,7 @@ public static class IgnoringHeight
         var expected = Package.WithVersion(2, 3, 4);
 
         // act
-        var (actual, _, _) = await Sdk.BuildProject(path, envVars);
+        var (actual, _, _) = await Sdk.BuildProject(path, envVars: envVars);
         var (cliStandardOutput, _) = await MinVerCli.ReadAsync(path, envVars: envVars);
 
         // assert

@@ -24,7 +24,7 @@ public static class CustomDefaultPreReleasePhase
         var expected = Package.WithVersion(2, 3, 5, new[] { "preview", "0", }, 1);
 
         // act
-        var (actual, _, _) = await Sdk.BuildProject(path, envVars);
+        var (actual, _, _) = await Sdk.BuildProject(path, envVars: envVars);
         var (cliStandardOutput, _) = await MinVerCli.ReadAsync(path, envVars: envVars);
 
         // assert

@@ -103,14 +103,14 @@ $@"{{
             }
         }
 
-        public static async Task<(Package Package, string StandardOutput, string StandardError)> BuildProject(string path, params (string, string)[] envVars)
+        public static async Task<(Package? Package, string StandardOutput, string StandardError)> BuildProject(string path, Func<int, bool>? handleExitCode = null, params (string, string)[] envVars)
         {
-            var (packages, standardOutput, standardError) = await Build(path, envVars).ConfigureAwait(false);
+            var (packages, standardOutput, standardError) = await Build(path, handleExitCode, envVars).ConfigureAwait(false);
 
-            return (packages.Single(), standardOutput, standardError);
+            return (packages.SingleOrDefault(), standardOutput, standardError);
         }
 
-        public static async Task<(List<Package>, string StandardOutput, string StandardError)> Build(string path, params (string, string)[] envVars)
+        public static async Task<(List<Package>, string StandardOutput, string StandardError)> Build(string path, Func<int, bool>? handleExitCode = null, params (string, string)[] envVars)
         {
             var environmentVariables = envVars.ToDictionary(envVar => envVar.Item1, envVar => envVar.Item2, StringComparer.OrdinalIgnoreCase);
             _ = environmentVariables.TryAdd("MinVerVerbosity".ToAltCase(), "diagnostic");
@@ -120,7 +120,8 @@ $@"{{
             var (standardOutput, standardError) = await DotNet(
                 $"build --no-restore{(!Version.StartsWith("2.", StringComparison.Ordinal) ? " --nologo" : "")}",
                 path,
-                environmentVariables).ConfigureAwait(false);
+                environmentVariables,
+                handleExitCode).ConfigureAwait(false);
 
             var matcher = new Matcher().AddInclude("**/bin/Debug/*.nupkg");
             var packageFileNames = matcher.GetResultsInFullPath(path).OrderBy(_ => _);
@@ -142,7 +143,7 @@ $@"{{
                 environmentVariables).ConfigureAwait(false);
         }
 
-        public static Task<(string StandardOutput, string StandardError)> DotNet(string args, string path, IDictionary<string, string>? envVars = null)
+        public static Task<(string StandardOutput, string StandardError)> DotNet(string args, string path, IDictionary<string, string>? envVars = null, Func<int, bool>? handleExitCode = null)
         {
             envVars ??= new Dictionary<string, string>();
 
@@ -152,7 +153,7 @@ $@"{{
                 envVars["MSBuildSDKsPath"] = Path.Combine(dotnetRoot, "sdk", Version, "Sdks");
             }
 
-            return CommandEx.ReadLoggedAsync("dotnet", args, path, envVars);
+            return CommandEx.ReadLoggedAsync("dotnet", args, path, envVars, handleExitCode);
         }
 
         private static async Task<Package> GetPackage(string fileName)

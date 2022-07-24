@@ -23,7 +23,7 @@ public static class VersionOverride
         var expected = Package.WithVersion(3, 4, 5, new[] { "alpha", "6", }, 0, "build.7");
 
         // act
-        var (actual, _, _) = await Sdk.BuildProject(path, envVars);
+        var (actual, _, _) = await Sdk.BuildProject(path, envVars: envVars);
         var (cliStandardOutput, _) = await MinVerCli.ReadAsync(path, envVars: envVars);
 
         // assert

@@ -17,7 +17,7 @@ public static class OutputVariables
         var envVars = ("MinVerVersionOverride".ToAltCase(), "2.3.4-alpha-x.5+build.6");
 
         // act
-        var (_, standardOutput, _) = await Sdk.BuildProject(path, envVars);
+        var (_, standardOutput, _) = await Sdk.BuildProject(path, envVars: envVars);
 
         // assert
         Assert.Contains("MinVer: [output] MinVerVersion=2.3.4-alpha-x.5+build.6", standardOutput, StringComparison.Ordinal);

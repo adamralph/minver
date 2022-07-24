@@ -24,7 +24,7 @@ public static class CustomAutoIncrement
         var expected = Package.WithVersion(2, 4, 0, new[] { "alpha", "0", }, 1);
 
         // act
-        var (actual, _, _) = await Sdk.BuildProject(path, envVars);
+        var (actual, _, _) = await Sdk.BuildProject(path, envVars: envVars);
         var (cliStandardOutput, _) = await MinVerCli.ReadAsync(path, envVars: envVars);
 
         // assert

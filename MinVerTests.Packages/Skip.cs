@@ -17,7 +17,7 @@ public static class Skip
         var expected = Package.WithVersion(1, 0, 0);
 
         // act
-        var (actual, _, _) = await Sdk.BuildProject(path, envVars);
+        var (actual, _, _) = await Sdk.BuildProject(path, envVars: envVars);
 
         // assert
         Assert.Equal(expected, actual);

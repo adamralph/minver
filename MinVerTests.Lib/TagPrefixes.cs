@@ -22,7 +22,7 @@ namespace MinVerTests.Lib
             await Tag(path, tag);
 
             // act
-            var actualVersion = Versioner.GetVersion(path, prefix, MajorMinor.Zero, "", default, "", NullLogger.Instance);
+            var actualVersion = Versioner.GetVersion(path, prefix, MajorMinor.Zero, "", default, "", false, NullLogger.Instance);
 
             // assert
             Assert.Equal(expectedVersion, actualVersion.ToString());

@@ -5,6 +5,7 @@
 ### Enhancements
 
 - [#774: Bump NuGet.Versioning from 6.2.0 to 6.2.1](https://github.com/adamralph/minver/pull/774)
+- [#779: Produce an MSBuild error when "git" is not present in PATH](https://github.com/adamralph/minver/issues/779)
 
 ## 4.1.0
 

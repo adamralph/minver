@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.3.0
+
+### Enhancements
+
+- [#794: Bump NuGet.Versioning from 6.2.1 to 6.3.0](https://github.com/adamralph/minver/pull/794)
+
 ## 4.2.0
 
 ### Enhancements

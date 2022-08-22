@@ -2,7 +2,7 @@ using MinVer.Lib;
 
 namespace MinVerTests.Lib.Infra
 {
-    internal class NullLogger : ILogger
+    internal sealed class NullLogger : ILogger
     {
         public static readonly NullLogger Instance =
 #if NET

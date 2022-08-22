@@ -1,100 +1,94 @@
+#pragma warning disable CA1812 // https://github.com/dotnet/roslyn-analyzers/issues/5628
 using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using McMaster.Extensions.CommandLineUtils;
+using MinVer;
 using MinVer.Lib;
 using Version = MinVer.Lib.Version;
 
-namespace MinVer;
+var informationalVersion = typeof(Versioner).Assembly.GetCustomAttributes<AssemblyInformationalVersionAttribute>().Single().InformationalVersion;
 
-internal static class Program
+using var app = new CommandLineApplication { Name = "minver", FullName = $"MinVer CLI {informationalVersion}", };
+
+app.HelpOption();
+
+var workDirArg = app.Argument("workingDirectory", "Working directory (optional)");
+
+var autoIncrementOption = app.Option("-a|--auto-increment <VERSION_PART>", VersionPartExtensions.ValidValues, CommandOptionType.SingleValue);
+var buildMetaOption = app.Option("-b|--build-metadata <BUILD_METADATA>", "", CommandOptionType.SingleValue);
+var defaultPreReleasePhaseOption = app.Option("-d|--default-pre-release-phase <PHASE>", "alpha (default), preview, etc.", CommandOptionType.SingleValue);
+var ignoreHeightOption = app.Option<bool>("-i|--ignore-height", "Use the latest tag (or root commit) as-is, without adding height", CommandOptionType.NoValue);
+var minMajorMinorOption = app.Option("-m|--minimum-major-minor <MINIMUM_MAJOR_MINOR>", MajorMinor.ValidValues, CommandOptionType.SingleValue);
+var tagPrefixOption = app.Option("-t|--tag-prefix <TAG_PREFIX>", "", CommandOptionType.SingleValue);
+var verbosityOption = app.Option("-v|--verbosity <VERBOSITY>", VerbosityMap.ValidValues, CommandOptionType.SingleValue);
+#if MINVER
+var versionOverrideOption = app.Option("-o|--version-override <VERSION>", "", CommandOptionType.SingleValue);
+#endif
+
+app.OnExecute(() =>
 {
-    private static readonly string informationalVersion = typeof(Versioner).Assembly.GetCustomAttributes<AssemblyInformationalVersionAttribute>().Single().InformationalVersion;
+    var workDir = workDirArg.Value ?? ".";
 
-    private static int Main(string[] args)
+    if (!Directory.Exists(workDir))
     {
-        using var app = new CommandLineApplication { Name = "minver", FullName = $"MinVer CLI {informationalVersion}", };
+        Logger.ErrorWorkDirDoesNotExist(workDir);
+        return 2;
+    }
 
-        app.HelpOption();
-
-        var workDirArg = app.Argument("workingDirectory", "Working directory (optional)");
-
-        var autoIncrementOption = app.Option("-a|--auto-increment <VERSION_PART>", VersionPartExtensions.ValidValues, CommandOptionType.SingleValue);
-        var buildMetaOption = app.Option("-b|--build-metadata <BUILD_METADATA>", "", CommandOptionType.SingleValue);
-        var defaultPreReleasePhaseOption = app.Option("-d|--default-pre-release-phase <PHASE>", "alpha (default), preview, etc.", CommandOptionType.SingleValue);
-        var ignoreHeightOption = app.Option<bool>("-i|--ignore-height", "Use the latest tag (or root commit) as-is, without adding height", CommandOptionType.NoValue);
-        var minMajorMinorOption = app.Option("-m|--minimum-major-minor <MINIMUM_MAJOR_MINOR>", MajorMinor.ValidValues, CommandOptionType.SingleValue);
-        var tagPrefixOption = app.Option("-t|--tag-prefix <TAG_PREFIX>", "", CommandOptionType.SingleValue);
-        var verbosityOption = app.Option("-v|--verbosity <VERBOSITY>", VerbosityMap.ValidValues, CommandOptionType.SingleValue);
+    if (!Options.TryParse(
+        autoIncrementOption.Value(),
+        buildMetaOption.Value(),
+        defaultPreReleasePhaseOption.Value(),
+        ignoreHeightOption.HasValue() ? true : null,
+        minMajorMinorOption.Value(),
+        tagPrefixOption.Value(),
+        verbosityOption.Value(),
 #if MINVER
-        var versionOverrideOption = app.Option("-o|--version-override <VERSION>", "", CommandOptionType.SingleValue);
+        versionOverrideOption.Value(),
 #endif
-
-        app.OnExecute(() =>
-        {
-            var workDir = workDirArg.Value ?? ".";
-
-            if (!Directory.Exists(workDir))
-            {
-                Logger.ErrorWorkDirDoesNotExist(workDir);
-                return 2;
-            }
-
-            if (!Options.TryParse(
-                    autoIncrementOption.Value(),
-                    buildMetaOption.Value(),
-                    defaultPreReleasePhaseOption.Value(),
-                    ignoreHeightOption.HasValue() ? true : null,
-                    minMajorMinorOption.Value(),
-                    tagPrefixOption.Value(),
-                    verbosityOption.Value(),
-#if MINVER
-                    versionOverrideOption.Value(),
-#endif
-                    out var options))
-            {
-                return 2;
-            }
+        out var options))
+    {
+        return 2;
+    }
 
 #if MINVER_CLI
-            if (!Options.TryParseEnvVars(out var envOptions))
-            {
-                return 2;
-            }
+    if (!Options.TryParseEnvVars(out var envOptions))
+    {
+        return 2;
+    }
 
-            options = options.Mask(envOptions);
+    options = options.Mask(envOptions);
 #endif
 
-            var log = new Logger(options.Verbosity ?? default);
+    var log = new Logger(options.Verbosity ?? default);
 
-            _ = log.IsDebugEnabled && log.Debug($"MinVer {informationalVersion}.");
+    _ = log.IsDebugEnabled && log.Debug($"MinVer {informationalVersion}.");
 
-            if (options.VersionOverride != null)
-            {
-                _ = log.IsInfoEnabled && log.Info($"Using version override {options.VersionOverride}.");
+    if (options.VersionOverride != null)
+    {
+        _ = log.IsInfoEnabled && log.Info($"Using version override {options.VersionOverride}.");
 
-                Console.Out.WriteLine(options.VersionOverride);
+        Console.Out.WriteLine(options.VersionOverride);
 
-                return 0;
-            }
-
-            Version version;
-            try
-            {
-                version = Versioner.GetVersion(workDir, options.TagPrefix ?? "", options.MinMajorMinor ?? MajorMinor.Zero, options.BuildMeta ?? "", options.AutoIncrement ?? default, options.DefaultPreReleasePhase ?? "", options.IgnoreHeight ?? false, log);
-            }
-            catch (NoGitException ex)
-            {
-                Logger.ErrorNoGit(ex.Message);
-                return 2;
-            }
-
-            Console.Out.WriteLine(version);
-
-            return 0;
-        });
-
-        return app.Execute(args);
+        return 0;
     }
-}
+
+    Version version;
+    try
+    {
+        version = Versioner.GetVersion(workDir, options.TagPrefix ?? "", options.MinMajorMinor ?? MajorMinor.Zero, options.BuildMeta ?? "", options.AutoIncrement ?? default, options.DefaultPreReleasePhase ?? "", options.IgnoreHeight ?? false, log);
+    }
+    catch (NoGitException ex)
+    {
+        Logger.ErrorNoGit(ex.Message);
+        return 2;
+    }
+
+    Console.Out.WriteLine(version);
+
+    return 0;
+});
+
+return app.Execute(args);

@@ -3,7 +3,7 @@ using MinVer.Lib;
 
 namespace MinVer;
 
-internal class Logger : ILogger
+internal sealed class Logger : ILogger
 {
     private readonly Verbosity verbosity;
 

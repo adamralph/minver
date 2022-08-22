@@ -159,7 +159,7 @@ public static class Versioner
         return candidates;
     }
 
-    private class Candidate
+    private sealed class Candidate
     {
         public Candidate(Commit commit, int height, string tag, Version version, int index)
         {

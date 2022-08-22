@@ -5,7 +5,7 @@ using MinVer.Lib;
 
 namespace MinVerTests.Lib.Infra
 {
-    internal class TestLogger : ILogger
+    internal sealed class TestLogger : ILogger
     {
 #if NET6_0_OR_GREATER
         private readonly List<LogMessage> messages = new();

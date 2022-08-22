@@ -7,7 +7,7 @@ using MinVer.Lib;
 
 namespace MinVer;
 
-internal class Options
+internal sealed class Options
 {
     private Options(
         VersionPart? autoIncrement,

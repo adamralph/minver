@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace MinVer.Lib;
 
-internal class Commit
+internal sealed class Commit
 {
     public Commit(string sha) => this.Sha = sha;
 

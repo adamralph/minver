@@ -1,6 +1,6 @@
 namespace MinVerTests.Lib.Infra
 {
-    internal class LogMessage
+    internal sealed class LogMessage
     {
         public LogMessage(LogLevel level, string text, int code) => (this.Level, this.Text, this.Code) = (level, text, code);
 

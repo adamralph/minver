@@ -76,7 +76,7 @@ jobs:
     name: ${{ matrix.job.os }}-sdk-${{ matrix.tests.sdk-major-minor }}
     runs-on: ${{ matrix.job.os }}
     steps:
-      - uses: actions/setup-dotnet@v3.0.1
+      - uses: actions/setup-dotnet@v3.0.2
         with:
           dotnet-version: |
             ${{ matrix.tests.sdk }}

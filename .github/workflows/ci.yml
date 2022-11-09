@@ -12,12 +12,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # old macOS, latest LTS
           - job:
               os: macos-11
             tests:
               framework: net6.0
               sdk: "6.0.403"
               sdk-major-minor: "6.0"
+          # current macOS, latest LTS and latest
           - job:
               os: macos-12
             tests:
@@ -30,12 +32,14 @@ jobs:
               framework: net6.0
               sdk: "7.0.100"
               sdk-major-minor: "7.0"
+          # old Linux, latest LTS
           - job:
               os: ubuntu-20.04
             tests:
               framework: net6.0
               sdk: "6.0.403"
               sdk-major-minor: "6.0"
+          # current Linux, all
           - job:
               os: ubuntu-22.04
             tests:
@@ -55,12 +59,14 @@ jobs:
               framework: net6.0
               sdk: "7.0.100"
               sdk-major-minor: "7.0"
+          # old Windows, latest LTS
           - job:
               os: windows-2019
             tests:
               framework: net6.0
               sdk: "6.0.403"
               sdk-major-minor: "6.0"
+          # current Windows, latest LTS and latest
           - job:
               os: windows-2022
             tests:

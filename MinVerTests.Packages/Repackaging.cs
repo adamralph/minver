@@ -9,7 +9,7 @@ namespace MinVerTests.Packages;
 public static class Repackaging
 {
     [RestrictedTheory(
-        new[] { "^3.*", "^5.*", },
+        new[] { "^3.*", "^5.*", "^6.*", },
         new[] { "OSX", },
         "With an SDK less than what's being used to run this test, or on macOS, there is sometimes a 15 minute delay after the `dotnet build` command when multi-targeting")]
     [InlineData(false)]

@@ -6,6 +6,7 @@
 
 - [#794: Bump NuGet.Versioning from 6.2.1 to 6.3.0](https://github.com/adamralph/minver/pull/794)
 - [#818: Bump NuGet.Versioning from 6.3.0 to 6.3.1](https://github.com/adamralph/minver/pull/818)
+- [#836: Bump NuGet.Versioning from 6.3.1 to 6.4.0](https://github.com/adamralph/minver/pull/836)
 
 ## 4.2.0
 

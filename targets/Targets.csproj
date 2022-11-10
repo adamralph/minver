@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Bullseye" Version="4.2.0-beta.1" />
+    <PackageReference Include="Bullseye" Version="4.2.0" />
     <PackageReference Include="SimpleExec" Version="11.0.0" />
   </ItemGroup>
 

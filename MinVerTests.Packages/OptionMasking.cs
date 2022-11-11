@@ -55,6 +55,31 @@ public static class OptionMasking
     }
 
     [Theory]
+    [InlineData("alpha.0")]
+    public static async Task DefaultPreReleaseIdentifiersBackToDefault(string value)
+    {
+        // arrange
+        var path = MethodBase.GetCurrentMethod().GetTestDirectory();
+        FileSystem.EnsureEmptyDirectory(path);
+
+        await Git.Init(path);
+        await Git.Commit(path);
+        await Git.Tag(path, "2.3.4");
+        await Git.Commit(path);
+
+        var envVars = ("MinVerDefaultPreReleaseIdentifiers".ToAltCase(), "preview.0");
+        var args = $"--default-pre-release-identifiers {value}";
+
+        var expected = Package.WithVersion(2, 3, 5, new[] { "alpha", "0", }, 1);
+
+        // act
+        var (cliStandardOutput, _) = await MinVerCli.ReadAsync(path, args: args, envVars: envVars);
+
+        // assert
+        Assert.Equal(expected.Version, cliStandardOutput.Trim());
+    }
+
+    [Theory]
     [InlineData("alpha")]
     public static async Task DefaultPreReleasePhaseBackToDefault(string value)
     {

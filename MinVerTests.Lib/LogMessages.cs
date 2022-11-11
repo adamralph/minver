@@ -68,7 +68,7 @@ git merge bar baz --no-edit --no-ff --strategy=octopus
             var log = new TestLogger();
 
             // act
-            _ = Versioner.GetVersion(path, "", minMajorMinor, "", default, "", false, log);
+            _ = Versioner.GetVersion(path, "", minMajorMinor, "", default, PreReleaseIdentifiers.Default, false, log);
 
             // assert
             var logMessages = log.ToString();

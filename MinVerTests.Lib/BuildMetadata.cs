@@ -20,7 +20,7 @@ namespace MinVerTests.Lib
             await EnsureEmptyRepository(path);
 
             // act
-            var actualVersion = Versioner.GetVersion(path, "", MajorMinor.Zero, buildMetadata, default, "", false, NullLogger.Instance);
+            var actualVersion = Versioner.GetVersion(path, "", MajorMinor.Default, buildMetadata, default, PreReleaseIdentifiers.Default, false, NullLogger.Instance);
 
             // assert
             Assert.Equal(expectedVersion, actualVersion.ToString());
@@ -36,7 +36,7 @@ namespace MinVerTests.Lib
             await EnsureEmptyRepositoryAndCommit(path);
 
             // act
-            var actualVersion = Versioner.GetVersion(path, "", MajorMinor.Zero, buildMetadata, default, "", false, NullLogger.Instance);
+            var actualVersion = Versioner.GetVersion(path, "", MajorMinor.Default, buildMetadata, default, PreReleaseIdentifiers.Default, false, NullLogger.Instance);
 
             // assert
             Assert.Equal(expectedVersion, actualVersion.ToString());
@@ -57,7 +57,7 @@ namespace MinVerTests.Lib
             await Tag(path, tag);
 
             // act
-            var actualVersion = Versioner.GetVersion(path, "", MajorMinor.Zero, buildMetadata, default, "", false, NullLogger.Instance);
+            var actualVersion = Versioner.GetVersion(path, "", MajorMinor.Default, buildMetadata, default, PreReleaseIdentifiers.Default, false, NullLogger.Instance);
 
             // assert
             Assert.Equal(expectedVersion, actualVersion.ToString());
@@ -79,7 +79,7 @@ namespace MinVerTests.Lib
             await Commit(path);
 
             // act
-            var actualVersion = Versioner.GetVersion(path, "", MajorMinor.Zero, buildMetadata, default, "", false, NullLogger.Instance);
+            var actualVersion = Versioner.GetVersion(path, "", MajorMinor.Default, buildMetadata, default, PreReleaseIdentifiers.Default, false, NullLogger.Instance);
 
             // assert
             Assert.Equal(expectedVersion, actualVersion.ToString());

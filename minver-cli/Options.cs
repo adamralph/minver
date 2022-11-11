@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 #if MINVER_CLI
 using System.Linq;
@@ -12,6 +13,7 @@ internal sealed class Options
     private Options(
         VersionPart? autoIncrement,
         string? buildMeta,
+        IEnumerable<string>? defaultPreReleaseIdentifiers,
         string? defaultPreReleasePhase,
         bool? ignoreHeight,
         MajorMinor? minMajorMinor,
@@ -21,6 +23,7 @@ internal sealed class Options
     {
         this.AutoIncrement = autoIncrement;
         this.BuildMeta = buildMeta;
+        this.DefaultPreReleaseIdentifiers = defaultPreReleaseIdentifiers;
         this.DefaultPreReleasePhase = defaultPreReleasePhase;
         this.IgnoreHeight = ignoreHeight;
         this.MinMajorMinor = minMajorMinor;
@@ -35,6 +38,7 @@ internal sealed class Options
         options = null;
 
         VersionPart? autoIncrement = null;
+        IEnumerable<string>? defaultPreReleaseIdentifiers = null;
         bool? ignoreHeight = null;
         MajorMinor? minMajorMinor = null;
         Verbosity? verbosity = null;
@@ -55,6 +59,12 @@ internal sealed class Options
         }
 
         var buildMeta = GetEnvVar("MinVerBuildMetadata");
+
+        var defaultPreReleaseIdentifiersEnvVar = GetEnvVar("MinVerDefaultPreReleaseIdentifiers");
+        if (!string.IsNullOrEmpty(defaultPreReleaseIdentifiersEnvVar))
+        {
+            defaultPreReleaseIdentifiers = defaultPreReleaseIdentifiersEnvVar.Split('.');
+        }
 
         var defaultPreReleasePhase = GetEnvVar("MinVerDefaultPreReleasePhase");
 
@@ -95,7 +105,7 @@ internal sealed class Options
             return false;
         }
 
-        options = new Options(autoIncrement, buildMeta, defaultPreReleasePhase, ignoreHeight, minMajorMinor, tagPrefix, verbosity, versionOverride);
+        options = new Options(autoIncrement, buildMeta, defaultPreReleaseIdentifiers, defaultPreReleasePhase, ignoreHeight, minMajorMinor, tagPrefix, verbosity, versionOverride);
 
         return true;
     }
@@ -116,19 +126,21 @@ internal sealed class Options
     public static bool TryParse(
         string? autoIncrementOption,
         string? buildMetaOption,
+        string? defaultPreReleaseIdentifiersOption,
         string? defaultPreReleasePhaseOption,
         bool? ignoreHeight,
         string? minMajorMinorOption,
         string? tagPrefixOption,
         string? verbosityOption,
 #if MINVER
-            string? versionOverrideOption,
+        string? versionOverrideOption,
 #endif
         [NotNullWhen(returnValue: true)] out Options? options)
     {
         options = null;
 
         VersionPart? autoIncrement = null;
+        IEnumerable<string>? defaultPreReleaseIdentifiers = null;
         MajorMinor? minMajorMinor = null;
         Verbosity? verbosity = null;
         Lib.Version? versionOverride = null;
@@ -144,6 +156,11 @@ internal sealed class Options
                 Logger.ErrorInvalidAutoIncrement(autoIncrementOption);
                 return false;
             }
+        }
+
+        if (!string.IsNullOrEmpty(defaultPreReleaseIdentifiersOption))
+        {
+            defaultPreReleaseIdentifiers = defaultPreReleaseIdentifiersOption.Split('.');
         }
 
         if (!string.IsNullOrEmpty(minMajorMinorOption) && !MajorMinor.TryParse(minMajorMinorOption, out minMajorMinor))
@@ -166,7 +183,7 @@ internal sealed class Options
         }
 #endif
 
-        options = new Options(autoIncrement, buildMetaOption, defaultPreReleasePhaseOption, ignoreHeight, minMajorMinor, tagPrefixOption, verbosity, versionOverride);
+        options = new Options(autoIncrement, buildMetaOption, defaultPreReleaseIdentifiers, defaultPreReleasePhaseOption, ignoreHeight, minMajorMinor, tagPrefixOption, verbosity, versionOverride);
 
         return true;
     }
@@ -175,6 +192,7 @@ internal sealed class Options
     public Options Mask(Options other) => new(
         this.AutoIncrement ?? other.AutoIncrement,
         this.BuildMeta ?? other.BuildMeta,
+        this.DefaultPreReleaseIdentifiers ?? other.DefaultPreReleaseIdentifiers,
         this.DefaultPreReleasePhase ?? other.DefaultPreReleasePhase,
         this.IgnoreHeight ?? other.IgnoreHeight,
         this.MinMajorMinor ?? other.MinMajorMinor,
@@ -186,6 +204,8 @@ internal sealed class Options
     public VersionPart? AutoIncrement { get; }
 
     public string? BuildMeta { get; }
+
+    public IEnumerable<string>? DefaultPreReleaseIdentifiers { get; }
 
     public string? DefaultPreReleasePhase { get; }
 

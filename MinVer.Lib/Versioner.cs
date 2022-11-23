@@ -7,22 +7,20 @@ namespace MinVer.Lib;
 
 public static class Versioner
 {
-    public static Version GetVersion(string workDir, string tagPrefix, MajorMinor minMajorMinor, string buildMeta, VersionPart autoIncrement, string defaultPreReleasePhase, bool ignoreHeight, ILogger log)
+    public static Version GetVersion(string workDir, string tagPrefix, MajorMinor minMajorMinor, string buildMeta, VersionPart autoIncrement, IEnumerable<string> defaultPreReleaseIdentifiers, bool ignoreHeight, ILogger log)
     {
         log = log ?? throw new ArgumentNullException(nameof(log));
 
-        defaultPreReleasePhase = string.IsNullOrEmpty(defaultPreReleasePhase)
-            ? "alpha"
-            : defaultPreReleasePhase;
+        var defaultPreReleaseIdentifiersList = defaultPreReleaseIdentifiers.ToList();
 
-        var (version, height) = GetVersion(workDir, tagPrefix, defaultPreReleasePhase, log);
+        var (version, height) = GetVersion(workDir, tagPrefix, defaultPreReleaseIdentifiersList, log);
 
         _ = height.HasValue && ignoreHeight && log.IsDebugEnabled && log.Debug("Ignoring height.");
-        version = !height.HasValue || ignoreHeight ? version : version.WithHeight(height.Value, autoIncrement, defaultPreReleasePhase);
+        version = !height.HasValue || ignoreHeight ? version : version.WithHeight(height.Value, autoIncrement, defaultPreReleaseIdentifiersList);
 
         version = version.AddBuildMetadata(buildMeta);
 
-        var calculatedVersion = version.Satisfying(minMajorMinor, defaultPreReleasePhase);
+        var calculatedVersion = version.Satisfying(minMajorMinor, defaultPreReleaseIdentifiersList);
 
         _ = calculatedVersion != version
             ? log.IsInfoEnabled && log.Info($"Bumping version to {calculatedVersion} to satisfy minimum major minor {minMajorMinor}.")
@@ -33,11 +31,11 @@ public static class Versioner
         return calculatedVersion;
     }
 
-    private static (Version Version, int? Height) GetVersion(string workDir, string tagPrefix, string defaultPreReleasePhase, ILogger log)
+    private static (Version Version, int? Height) GetVersion(string workDir, string tagPrefix, List<string> defaultPreReleaseIdentifiers, ILogger log)
     {
         if (!Git.IsWorkingDirectory(workDir, log))
         {
-            var version = new Version(defaultPreReleasePhase);
+            var version = new Version(defaultPreReleaseIdentifiers);
 
             _ = log.IsWarnEnabled && log.Warn(1001, $"'{workDir}' is not a valid Git working directory. Using default version {version}.");
 
@@ -46,7 +44,7 @@ public static class Versioner
 
         if (!Git.TryGetHead(workDir, out var head, log))
         {
-            var version = new Version(defaultPreReleasePhase);
+            var version = new Version(defaultPreReleaseIdentifiers);
 
             _ = log.IsInfoEnabled && log.Info($"No commits found. Using default version {version}.");
 
@@ -55,7 +53,7 @@ public static class Versioner
 
         var tags = Git.GetTags(workDir, log);
 
-        var orderedCandidates = GetCandidates(head, tags, tagPrefix, defaultPreReleasePhase, log)
+        var orderedCandidates = GetCandidates(head, tags, tagPrefix, defaultPreReleaseIdentifiers, log)
             .OrderBy(candidate => candidate.Version)
             .ThenByDescending(candidate => candidate.Index).ToList();
 
@@ -79,7 +77,7 @@ public static class Versioner
         return (selectedCandidate.Version, selectedCandidate.Height);
     }
 
-    private static List<Candidate> GetCandidates(Commit head, IEnumerable<(string Name, string Sha)> tags, string tagPrefix, string defaultPreReleasePhase, ILogger log)
+    private static List<Candidate> GetCandidates(Commit head, IEnumerable<(string Name, string Sha)> tags, string tagPrefix, List<string> defaultPreReleaseIdentifiers, ILogger log)
     {
         var tagsAndVersions = new List<(string Name, string Sha, Version Version)>();
 
@@ -135,7 +133,7 @@ public static class Versioner
 
             if (!item.Commit.Parents.Any())
             {
-                candidates.Add(new Candidate(item.Commit, item.Height, "", new Version(defaultPreReleasePhase), candidates.Count));
+                candidates.Add(new Candidate(item.Commit, item.Height, "", new Version(defaultPreReleaseIdentifiers), candidates.Count));
                 _ = log.IsTraceEnabled && log.Trace($"Found root commit {candidates.Last()}.");
                 continue;
             }

@@ -55,7 +55,7 @@ _NOTE: The MinVer package reference should normally include `PrivateAssets="All"
         - The version is used as-is, with [height](#height) added.
       - If the version is RTM (not pre-release):
         - The patch number is incremented, but this [can be customised](#can-i-auto-increment-the-minor-or-major-version-after-an-rtm-tag-instead-of-the-patch-version).
-        - Default pre-release identifiers are added. The default pre-release phase is "alpha", but this [can be customised](#can-i-change-the-default-pre-release-phase-from-alpha-to-something-else).
+        - Default pre-release identifiers are added. The default identifiers are `alpha.0`, but this [can be customised](#can-i-change-the-default-pre-release-identifiers-from-alpha0-to-something-else).
         - For example, if the latest version tag is `1.0.0`, the current version is `1.0.1-alpha.0`.
         - [Height](#height) is added.
     - If no commit with a version tag is found:
@@ -93,17 +93,17 @@ This behaviour can be [customised](#can-i-use-the-version-calculated-by-minver-f
 
 Options may be specified as either MSBuild properties (for the [MinVer](https://www.nuget.org/packages/MinVer) package), command-line options (for the [minver-cli](https://www.nuget.org/packages/minver-cli) package), or environment variables (for both the [MinVer](https://www.nuget.org/packages/MinVer) and [minver-cli](https://www.nuget.org/packages/minver-cli) packages).
 
-| MSBuild property or environment variable                                                                                | Command-line option                                                                                                      |
-| ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| [`MinVerAutoIncrement`](#can-i-auto-increment-the-minor-or-major-version-after-an-rtm-tag-instead-of-the-patch-version) | [`-a\|--auto-increment`](#can-i-auto-increment-the-minor-or-major-version-after-an-rtm-tag-instead-of-the-patch-version) |
-| [`MinVerBuildMetadata`](#can-i-include-build-metadata-in-the-version)                                                   | [`-b\|--build-metadata`](#can-i-include-build-metadata-in-the-version)                                                   |
-| [`MinVerDefaultPreReleasePhase`](#can-i-change-the-default-pre-release-phase-from-alpha-to-something-else)              | [`-d\|--default-pre-release-phase`](#can-i-change-the-default-pre-release-phase-from-alpha-to-something-else)            |
-| [`MinVerIgnoreHeight`](#can-i-ignore-the-height-of-the-latest-tag-or-root-commit)                                       | [`-i\|--ignore-height`](#can-i-ignore-the-height-of-the-latest-tag-or-root-commit)                                       |
-| [`MinVerMinimumMajorMinor`](#can-i-bump-the-major-or-minor-version)                                                     | [`-m\|--minimum-major-minor`](#can-i-bump-the-major-or-minor-version)                                                    |
-| [`MinVerSkip`](#can-i-disable-minver)                                                                                   | n/a (environment variable _not_ supported)                                                                               |
-| [`MinVerTagPrefix`](#can-i-prefix-my-tag-names)                                                                         | [`-t\|--tag-prefix`](#can-i-prefix-my-tag-names)                                                                         |
-| [`MinVerVerbosity`](#can-i-get-log-output-to-see-how-minver-calculates-the-version)                                     | [`-v\|--verbosity`](#can-i-get-log-output-to-see-how-minver-calculates-the-version)                                      |
-| [`MinVerVersionOverride`](#can-i-use-minver-to-version-software-which-is-not-built-using-a-net-sdk-style-project)       | n/a (environment variable supported)                                                                                     |
+| MSBuild property or environment variable                                                                                | Command-line option                                                                                                        |
+| ----------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| [`MinVerAutoIncrement`](#can-i-auto-increment-the-minor-or-major-version-after-an-rtm-tag-instead-of-the-patch-version) | [`-a\|--auto-increment`](#can-i-auto-increment-the-minor-or-major-version-after-an-rtm-tag-instead-of-the-patch-version)   |
+| [`MinVerBuildMetadata`](#can-i-include-build-metadata-in-the-version)                                                   | [`-b\|--build-metadata`](#can-i-include-build-metadata-in-the-version)                                                     |
+| [`MinVerDefaultPreReleaseIdentifiers`](#can-i-change-the-default-pre-release-identifiers-from-alpha0-to-something-else) | [`-p\|--default-pre-release-identifiers`](#can-i-change-the-default-pre-release-identifiers-from-alpha0-to-something-else) |
+| [`MinVerIgnoreHeight`](#can-i-ignore-the-height-of-the-latest-tag-or-root-commit)                                       | [`-i\|--ignore-height`](#can-i-ignore-the-height-of-the-latest-tag-or-root-commit)                                         |
+| [`MinVerMinimumMajorMinor`](#can-i-bump-the-major-or-minor-version)                                                     | [`-m\|--minimum-major-minor`](#can-i-bump-the-major-or-minor-version)                                                      |
+| [`MinVerSkip`](#can-i-disable-minver)                                                                                   | n/a (environment variable _not_ supported)                                                                                 |
+| [`MinVerTagPrefix`](#can-i-prefix-my-tag-names)                                                                         | [`-t\|--tag-prefix`](#can-i-prefix-my-tag-names)                                                                           |
+| [`MinVerVerbosity`](#can-i-get-log-output-to-see-how-minver-calculates-the-version)                                     | [`-v\|--verbosity`](#can-i-get-log-output-to-see-how-minver-calculates-the-version)                                        |
+| [`MinVerVersionOverride`](#can-i-use-minver-to-version-software-which-is-not-built-using-a-net-sdk-style-project)       | n/a (environment variable supported)                                                                                       |
 
 Note that the names of the MSBuild properties and environment variables are case-insensitive.
 
@@ -119,7 +119,7 @@ Note that the names of the MSBuild properties and environment variables are case
 - [Can I use my own branching strategy?](#can-i-use-my-own-branching-strategy) _(yes)_
 - [Can I include build metadata in the version?](#can-i-include-build-metadata-in-the-version) _(yes)_
 - [Can I auto-increment the minor or major version after an RTM tag instead of the patch version?](#can-i-auto-increment-the-minor-or-major-version-after-an-rtm-tag-instead-of-the-patch-version) _(yes)_
-- [Can I change the default pre-release phase from "alpha" to something else?](#can-i-change-the-default-pre-release-phase-from-alpha-to-something-else) _(yes)_
+- [Can I change the default pre-release identifiers from `alpha.0` to something else?](#can-i-change-the-default-pre-release-identifiers-from-alpha0-to-something-else) _(yes)_
 - [Can I use the version calculated by MinVer for other purposes?](#can-i-use-the-version-calculated-by-minver-for-other-purposes) _(yes)_
 - [Can I version multiple projects in a single repository independently?](#can-i-version-multiple-projects-in-a-single-repository-independently) _(yes)_
 - [Can I ignore the height of the latest tag or root commit?](#can-i-ignore-the-height-of-the-latest-tag-or-root-commit) _(yes)_
@@ -168,7 +168,7 @@ Before you create the first version tag on your branch, interim builds will use 
 
 #### Tag a commit
 
-Tag a commit in your branch with a version matching your `MAJOR.MINOR` range, using your [preferred default pre-release phase](#can-i-change-the-default-pre-release-phase-from-alpha-to-something-else) and a pre-release ordinal of 0. For example:
+Tag a commit in your branch with a version matching your `MAJOR.MINOR` range, using your [preferred default pre-release identifiers](#can-i-change-the-default-pre-release-identifiers-from-alpha0-to-something-else). For example:
 
 ```shell
 git tag 1.0.0-alpha.0
@@ -244,17 +244,19 @@ You can also specify build metadata in a version tag. If the tag is on the curre
 
 Yes! Specify which part of the version to auto-increment with `MinVerAutoIncrement`. By default, [MinVer will auto-increment the patch version](#how-it-works), but you can specify `minor` or `major` to increment the minor or major version instead.
 
-### Can I change the default pre-release phase from "alpha" to something else?
+### Can I change the default pre-release identifiers from `alpha.0` to something else?
 
-Yes! Specify the default pre-release phase with `MinVerDefaultPreReleasePhase`. For example, if you prefer to name your pre-releases as "preview":
+Yes! Specify the default pre-release identifiers with `MinVerDefaultPreReleaseIdentifiers`. For example, if you prefer to name your pre-releases as "preview":
 
 ```xml
 <PropertyGroup>
-  <MinVerDefaultPreReleasePhase>preview</MinVerDefaultPreReleasePhase>
+  <MinVerDefaultPreReleaseIdentifiers>preview.0</MinVerDefaultPreReleaseIdentifiers>
 </PropertyGroup>
 ```
 
-This will result in a post-RTM version of `{major}.{minor}.{patch+1}-preview.{height}`, e.g. `1.0.1-preview.1`.
+This will result in a post-RTM version of `{major}.{minor}.{patch+1}-preview.0.{height}`, e.g. `1.0.1-preview.0.1`.
+
+Note that the numeric part(s) of the default pre-release identifiers should usually be `0` (meaning "alpha 0", "preview 0", etc.), since any versions produced between an RTM tag and the next tag are not tagged for release, they are just versions produced between the RTM and the next RTM or pre-release. When you tag your first pre-release, you will typically increment the `0` to `1`, meaning "alpha 1", "preview 1", etc.
 
 ### Can I use the version calculated by MinVer for other purposes?
 

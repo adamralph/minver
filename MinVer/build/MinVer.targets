@@ -22,6 +22,7 @@
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MSBuildProjectDirectory=$(MSBuildProjectDirectory)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerAutoIncrement=$(MinVerAutoIncrement)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerBuildMetadata=$(MinVerBuildMetadata)" />
+    <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerDefaultPreReleaseIdentifiers=$(MinVerDefaultPreReleaseIdentifiers)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerDefaultPreReleasePhase=$(MinVerDefaultPreReleasePhase)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerIgnoreHeight=$(MinVerIgnoreHeight)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerMinimumMajorMinor=$(MinVerMinimumMajorMinor)" />
@@ -37,6 +38,7 @@
       <MinVerInputs Include="&quot;$(MSBuildProjectDirectory)&quot;" />
       <MinVerInputs Include="--auto-increment &quot;$(MinVerAutoIncrement)&quot;" />
       <MinVerInputs Include="--build-metadata &quot;$(MinVerBuildMetadata)&quot;" />
+      <MinVerInputs Include="--default-pre-release-identifiers &quot;$(MinVerDefaultPreReleaseIdentifiers)&quot;" />
       <MinVerInputs Include="--default-pre-release-phase &quot;$(MinVerDefaultPreReleasePhase)&quot;" />
       <MinVerInputs Include="--ignore-height" Condition="'$(MinVerIgnoreHeight)' == 'true'" />
       <MinVerInputs Include="--minimum-major-minor &quot;$(MinVerMinimumMajorMinor)&quot;" />

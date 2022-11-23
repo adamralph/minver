@@ -12,7 +12,7 @@ public class Version : SemanticVersion
     private readonly List<string> preReleaseIdentifiers;
     private readonly int height;
 
-    public Version(string defaultPreReleasePhase) : this(0, 0, 0, new List<string> { defaultPreReleasePhase, "0", }, 0, "") { }
+    public Version(IEnumerable<string> defaultPreReleaseIdentifiers) : this(0, 0, 0, defaultPreReleaseIdentifiers.ToList(), 0, "") { }
 
     private Version(int major, int minor, int patch, List<string> preReleaseIdentifiers, int height, string buildMetadata) :
         base(
@@ -31,22 +31,22 @@ public class Version : SemanticVersion
     public override string ToString(string format, IFormatProvider formatProvider) =>
         $"{this.Major}.{this.Minor}.{this.Patch}{(string.IsNullOrEmpty(this.Release) ? "" : $"-{this.Release}")}{(string.IsNullOrEmpty(this.Metadata) ? "" : $"+{this.Metadata}")}";
 
-    public Version Satisfying(MajorMinor minMajorMinor, string defaultPreReleasePhase)
+    public Version Satisfying(MajorMinor minMajorMinor, IEnumerable<string> defaultPreReleaseIdentifiers)
     {
         minMajorMinor = minMajorMinor ?? throw new ArgumentNullException(nameof(minMajorMinor));
 
         return minMajorMinor.Major < this.Major || (minMajorMinor.Major == this.Major && minMajorMinor.Minor <= this.Minor)
             ? this
-            : new Version(minMajorMinor.Major, minMajorMinor.Minor, 0, new List<string> { defaultPreReleasePhase, "0", }, this.height, this.Metadata);
+            : new Version(minMajorMinor.Major, minMajorMinor.Minor, 0, defaultPreReleaseIdentifiers.ToList(), this.height, this.Metadata);
     }
 
-    public Version WithHeight(int newHeight, VersionPart autoIncrement, string defaultPreReleasePhase) =>
+    public Version WithHeight(int newHeight, VersionPart autoIncrement, IEnumerable<string> defaultPreReleaseIdentifiers) =>
         this.preReleaseIdentifiers.Count == 0 && newHeight > 0
             ? autoIncrement switch
             {
-                VersionPart.Major => new Version(this.Major + 1, 0, 0, new List<string> { defaultPreReleasePhase, "0", }, newHeight, ""),
-                VersionPart.Minor => new Version(this.Major, this.Minor + 1, 0, new List<string> { defaultPreReleasePhase, "0", }, newHeight, ""),
-                VersionPart.Patch => new Version(this.Major, this.Minor, this.Patch + 1, new List<string> { defaultPreReleasePhase, "0", }, newHeight, ""),
+                VersionPart.Major => new Version(this.Major + 1, 0, 0, defaultPreReleaseIdentifiers.ToList(), newHeight, ""),
+                VersionPart.Minor => new Version(this.Major, this.Minor + 1, 0, defaultPreReleaseIdentifiers.ToList(), newHeight, ""),
+                VersionPart.Patch => new Version(this.Major, this.Minor, this.Patch + 1, defaultPreReleaseIdentifiers.ToList(), newHeight, ""),
                 _ => throw new ArgumentOutOfRangeException(nameof(autoIncrement)),
             }
             : new Version(this.Major, this.Minor, this.Patch, this.preReleaseIdentifiers, newHeight, newHeight == 0 ? this.Metadata : "");

@@ -5,7 +5,7 @@ namespace MinVer.Lib;
 
 public class MajorMinor
 {
-    public static MajorMinor Zero { get; } = new(0, 0);
+    public static MajorMinor Default { get; } = new(0, 0);
 
     public MajorMinor(int major, int minor)
     {

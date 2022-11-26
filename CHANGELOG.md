@@ -7,6 +7,8 @@
 - [#794: Bump NuGet.Versioning from 6.2.1 to 6.3.0](https://github.com/adamralph/minver/pull/794)
 - [#818: Bump NuGet.Versioning from 6.3.0 to 6.3.1](https://github.com/adamralph/minver/pull/818)
 - [#836: Bump NuGet.Versioning from 6.3.1 to 6.4.0](https://github.com/adamralph/minver/pull/836)
+- [#839: replace default pre-release phase with default pre-release identifiers](https://github.com/adamralph/minver/pull/839)
+- [#841: Bump McMaster.Extensions.CommandLineUtils from 4.0.1 to 4.0.2](https://github.com/adamralph/minver/pull/841)
 
 ## 4.2.0
 

@@ -95,7 +95,7 @@ jobs:
           MINVER_VERSION: ${{ secrets.MINVER_VERSION }}
           MINVER_TESTS_SDK: ${{ matrix.tests.sdk }}
           MINVER_TESTS_FRAMEWORK: ${{ matrix.tests.framework }}
-        run: ./build
+        run: ./build --verbose
       - if: matrix.job.upload
         uses: actions/upload-artifact@v3.1.1
         with:

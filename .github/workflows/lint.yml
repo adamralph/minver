@@ -7,7 +7,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.2.0
+      - uses: actions/checkout@v3.3.0
       - uses: github/super-linter@v4.10.0
         env:
           FILTER_REGEX_EXCLUDE: \bcodeql-analysis\.yml$|\bLICENSE$|\bversions\.txt$

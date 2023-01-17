@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3.3.0
-      - uses: github/super-linter@v4.10.0
+      - uses: github/super-linter@v4.10.1
         env:
           FILTER_REGEX_EXCLUDE: \bcodeql-analysis\.yml$|\bLICENSE$|\bversions\.txt$
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

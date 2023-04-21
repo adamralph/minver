@@ -36,7 +36,7 @@ Also available as a [command-line tool](#can-i-use-minver-to-version-software-wh
 
 Your project will be versioned according to the latest tag found in the commit history.
 
-**To build with GitHub Actions, [set the fetch depth appropriately](#why-is-the-default-version-sometimes-used-in-github-actions-and-travis-ci-when-a-version-tag-exists-in-the-history).**
+**To build with GitHub Actions, [set the fetch depth appropriately](#why-is-the-default-version-sometimes-used-in-github-actions-azure-pipelines-and-travis-ci-when-a-version-tag-exists-in-the-history).**
 
 ## Usage
 
@@ -128,7 +128,7 @@ Note that the names of the MSBuild properties and environment variables are case
 - [Can I disable MinVer?](#can-i-disable-minver) _(yes)_
 - [What if the history diverges, and more than one tag or root commit is found?](#what-if-the-history-diverges-and-more-than-one-tag-or-root-commit-is-found) _(nothing bad)_
 - [What if the history diverges, and then converges again, before the latest tag (or root commit) is found?](#what-if-the-history-diverges-and-then-converges-again-before-the-latest-tag-or-root-commit-is-found) _(nothing bad)_
-- [Why is the default version sometimes used in GitHub Actions and Travis CI when a version tag exists in the history?](#why-is-the-default-version-sometimes-used-in-github-actions-and-travis-ci-when-a-version-tag-exists-in-the-history) _(shallow clones)_
+- [Why is the default version sometimes used in GitHub Actions, Azure Pipelines, and Travis CI when a version tag exists in the history?](#why-is-the-default-version-sometimes-used-in-github-actions-azure-pipelines-and-travis-ci-when-a-version-tag-exists-in-the-history) _(shallow clones)_
 - [Why is my version tag ignored?](#why-is-my-version-tag-ignored) _(MinVer is not running, the tag is misplaced, the version is superseded, the prefix is wrong, or the version is not valid SemVer 2.0)_
 <!-- spell-checker:enable -->
 
@@ -368,11 +368,11 @@ MinVer will use the tag with the higher version, or the tag or root commit on th
 
 MinVer will use the height on the first path followed where the history diverges. The paths are followed in the same order that the parents of the commit are stored in git. The first parent is the commit on the branch that was the current branch when the merge was performed. The remaining parents are stored in the order that their branches were specified in the merge command.
 
-### Why is the default version sometimes used in GitHub Actions and Travis CI when a version tag exists in the history?
+### Why is the default version sometimes used in GitHub Actions, Azure Pipelines and Travis CI when a version tag exists in the history?
 
-By default, [GitHub Actions](https://github.com/features/actions/) and [Travis CI](https://travis-ci.org/) use [shallow clones](https://www.git-scm.com/docs/git-clone#Documentation/git-clone.txt---depthltdepthgt). The GitHub Actions [checkout action](https://github.com/actions/checkout) clones with a depth of only a single commit, and Travis CI clones with a depth of 50 commits. In GitHub Actions, if the latest version tag in the history is not on the current commit, it will not be found. In Travis CI, if the latest version tag in the history is at a height of more than 50 commits, it will not be found.
+By default, [GitHub Actions](https://github.com/features/actions/), [Azure Pipelines](https://azure.microsoft.com/en-us/products/devops/pipelines), and [Travis CI](https://travis-ci.org/) use [shallow clones](https://www.git-scm.com/docs/git-clone#Documentation/git-clone.txt---depthltdepthgt). The GitHub Actions [checkout action](https://github.com/actions/checkout) and Azure Pipelines default [checkout step](https://learn.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/steps-checkout) both clone with a depth of only a single commit, and Travis CI clones with a depth of 50 commits. In GitHub Actions and Azure Pipelines, if the latest version tag in the history is not on the current commit, it will not be found. In Travis CI, if the latest version tag in the history is at a height of more than 50 commits, it will not be found.
 
-To build in GitHub Actions or Travis CI, configure them to fetch a sufficient number of commits.
+To build in GitHub Actions, Azure Pipelines, or Travis CI, configure them to fetch a sufficient number of commits.
 
 For GitHub Actions, set the `fetch-depth` of the [checkout action](https://github.com/actions/checkout) to an appropriate number, or to zero for all commits. For example:
 
@@ -380,6 +380,14 @@ For GitHub Actions, set the `fetch-depth` of the [checkout action](https://githu
 - uses: actions/checkout@v2
   with:
     fetch-depth: 0
+```
+
+For Azure Pipelines, include an explicit [checkout step](https://learn.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/steps-checkout) and set the `fetchDepth` to an appropriate number, or to zero for all commits:
+
+```yaml
+steps:
+- checkout: self
+  fetchDepth: 0
 ```
 
 For Travis CI, set the [`--depth` flag](https://docs.travis-ci.com/user/customizing-the-build#git-clone-depth) to an appropriate number, or to `false` for all commits:

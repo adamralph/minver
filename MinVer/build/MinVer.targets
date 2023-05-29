@@ -9,8 +9,7 @@
   <PropertyGroup>
     <MinVerDetailed>low</MinVerDetailed>
     <MinVerDetailed Condition="'$(MinVerVerbosity)' == 'detailed' Or '$(MinVerVerbosity)' == 'd' Or '$(MinVerVerbosity)' == 'diagnostic' Or '$(MinVerVerbosity)' == 'diag'">high</MinVerDetailed>
-    <MinVerTargetFramework>netcoreapp3.1</MinVerTargetFramework>
-    <MinVerTargetFramework Condition="'$(MSBuildAssemblyVersion)' &gt;= '17.0'">net6.0</MinVerTargetFramework>
+    <MinVerTargetFramework>net6.0</MinVerTargetFramework>
     <MinVerTargetFramework Condition="'$(MSBuildAssemblyVersion)' &gt;= '17.4'">net7.0</MinVerTargetFramework>
     <NoWarn>$(NoWarn);NU5105</NoWarn>
   </PropertyGroup>

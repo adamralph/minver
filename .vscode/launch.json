@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": ".NET Core Launch (console)",
+      "name": ".NET Launch (console)",
       "type": "coreclr",
       "request": "launch",
       "program": "${workspaceFolder}/targets/bin/Debug/net7.0/Targets.dll",
@@ -12,7 +12,7 @@
       "console": "internalConsole"
     },
     {
-      "name": ".NET Core Attach",
+      "name": ".NET Attach",
       "type": "coreclr",
       "request": "attach",
       "processId": "${command:pickProcess}"

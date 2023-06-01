@@ -40,7 +40,16 @@ Your project will be versioned according to the latest tag found in the commit h
 
 ## Usage
 
-When you want to release a version of your software, whether it's a pre-release, RTM, patch, or anything else, simply create a tag with a name which is a valid [SemVer 2.x](https://semver.org/spec/v2.0.0.html) version and build your projects. MinVer will apply the version to the assemblies and packages. (If you like to prefix your tag names, see the [FAQ](#can-i-prefix-my-tag-names).)
+When you want to release a version of your software, whether it's a pre-release, RTM, patch, or anything else, simply create a tag on the commit you want to release with a name which is a valid [SemVer 2.x](https://semver.org/spec/v2.0.0.html) version. For example:
+
+```shell
+git tag 1.2.3
+git push --tags
+```
+
+When you build your software from the commit with that tag, MinVer will apply the version to the assemblies and packages. (If you like to prefix your tag names, see the [FAQ](#can-i-prefix-my-tag-names).)
+
+Bear in mind that MinVer is unaware of the branches which contain the commit, nor your release process, so [it is compatible with any branching or release strategy you choose](#can-i-use-my-own-branching-strategy).
 
 _NOTE: The MinVer package reference should normally include `PrivateAssets="All"`. See [NuGet docs](https://docs.microsoft.com/en-us/nuget/consume-packages/package-references-in-project-files#controlling-dependency-assets) for more info. If you install MinVer using an IDE or tool, this should be done for you automatically._
 

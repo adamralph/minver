@@ -386,8 +386,8 @@ For Azure Pipelines, include an explicit [checkout step](https://learn.microsoft
 
 ```yaml
 steps:
-- checkout: self
-  fetchDepth: 0
+  - checkout: self
+    fetchDepth: 0
 ```
 
 For Travis CI, set the [`--depth` flag](https://docs.travis-ci.com/user/customizing-the-build#git-clone-depth) to an appropriate number, or to `false` for all commits:

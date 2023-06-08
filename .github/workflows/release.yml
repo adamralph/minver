@@ -14,7 +14,7 @@ jobs:
           dotnet-version: 7.0.302
       - uses: actions/checkout@v3.5.2
       - env:
-          MINVER_VERSION: ${{ secrets.MINVER_VERSION }}
+          MINVER_VERSION: ${{ vars.MINVER_VERSION }}
         run: ./build build
       - name: push
         env:

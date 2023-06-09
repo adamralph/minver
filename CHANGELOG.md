@@ -1,5 +1,16 @@
 # Changelog
 
+## 5.0.0
+
+### Enhancements
+
+- [#861: Bump NuGet.Versioning from 6.4.0 to 6.5.0](https://github.com/adamralph/minver/pull/861)
+- [#879: Bump NuGet.Versioning from 6.5.0 to 6.6.0](https://github.com/adamralph/minver/pull/879)
+
+### Other
+
+- [#844: **[BREAKING]** drop support for .NET Core](https://github.com/adamralph/minver/pull/844)
+
 ## 4.3.0
 
 ### Enhancements

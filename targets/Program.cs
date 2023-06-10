@@ -1,4 +1,3 @@
-#pragma warning disable CA1812 // https://github.com/dotnet/roslyn-analyzers/issues/5628
 #pragma warning disable CA1852 // https://github.com/dotnet/roslyn-analyzers/issues/6141
 using System;
 using System.Collections.Generic;

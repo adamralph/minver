@@ -26,6 +26,6 @@ public static class AnnotatedTag
 
         // assert
         Assert.Equal(expected, actual);
-        Assert.Equal(expected.Version, cliStandardOutput.Trim());
+        Assert.Equal(expected.InformationalVersion, cliStandardOutput.Trim());
     }
 }

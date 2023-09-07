@@ -91,7 +91,7 @@ jobs:
           MINVER_TESTS_FRAMEWORK: ${{ matrix.tests.framework }}
         run: ./build --verbose
       - if: matrix.job.upload
-        uses: actions/upload-artifact@v3.1.2
+        uses: actions/upload-artifact@v3.1.3
         with:
           name: NuGet packages
           path: ./**/*.nupkg

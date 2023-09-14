@@ -14,7 +14,7 @@ public class Version : SemanticVersion
 
     public Version(IEnumerable<string> defaultPreReleaseIdentifiers) : this(0, 0, 0, defaultPreReleaseIdentifiers.ToList(), 0, "") { }
 
-    private Version(int major, int minor, int patch, List<string> preReleaseIdentifiers, int height, string buildMetadata) :
+    private Version(int major, int minor, int patch, List<string> preReleaseIdentifiers, int height, string? buildMetadata) :
         base(
             major,
             minor,
@@ -28,7 +28,7 @@ public class Version : SemanticVersion
         this.height = height;
     }
 
-    public override string ToString(string format, IFormatProvider formatProvider) =>
+    public override string ToString(string? format, IFormatProvider? formatProvider) =>
         $"{this.Major}.{this.Minor}.{this.Patch}{(string.IsNullOrEmpty(this.Release) ? "" : $"-{this.Release}")}{(string.IsNullOrEmpty(this.Metadata) ? "" : $"+{this.Metadata}")}";
 
     public Version Satisfying(MajorMinor minMajorMinor, IEnumerable<string> defaultPreReleaseIdentifiers)

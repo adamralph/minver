@@ -117,8 +117,9 @@ $@"{{
             _ = environmentVariables.TryAdd("GeneratePackageOnBuild", "true");
             _ = environmentVariables.TryAdd("NoPackageAnalysis", "true");
 
+            // -maxCpuCount:1 is required to prevent massive execution times in GitHub Actions
             var (standardOutput, standardError) = await DotNet(
-                $"build --no-restore{(!Version.StartsWith("2.", StringComparison.Ordinal) ? " --nologo" : "")}",
+                $"build -maxCpuCount:1 --no-restore{(!Version.StartsWith("2.", StringComparison.Ordinal) ? " --nologo" : "")}",
                 path,
                 environmentVariables,
                 handleExitCode).ConfigureAwait(false);
@@ -137,8 +138,9 @@ $@"{{
             _ = environmentVariables.TryAdd("MinVerVerbosity".ToAltCase(), "diagnostic");
             _ = environmentVariables.TryAdd("NoPackageAnalysis", "true");
 
+            // -maxCpuCount:1 is required to prevent massive execution times in GitHub Actions
             return await DotNet(
-                $"pack --no-restore{(!Version.StartsWith("2.", StringComparison.Ordinal) ? " --nologo" : "")}",
+                $"pack -maxCpuCount:1 --no-restore{(!Version.StartsWith("2.", StringComparison.Ordinal) ? " --nologo" : "")}",
                 path,
                 environmentVariables).ConfigureAwait(false);
         }

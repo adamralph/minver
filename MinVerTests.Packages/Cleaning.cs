@@ -32,7 +32,8 @@ public static class Cleaning
         Assert.NotEmpty(packages.GetResultsInFullPath(path));
 
         // act
-        _ = await Sdk.DotNet("clean", path, new Dictionary<string, string> { { "GeneratePackageOnBuild", "true" }, });
+        // -maxCpuCount:1 is required to prevent massive execution times in GitHub Actions
+        _ = await Sdk.DotNet("clean -maxCpuCount:1", path, new Dictionary<string, string> { { "GeneratePackageOnBuild", "true" }, });
 
         // assert
         Assert.Empty(packages.GetResultsInFullPath(path));

@@ -9,7 +9,9 @@ using Version = MinVer.Lib.Version;
 
 var informationalVersion = typeof(Versioner).Assembly.GetCustomAttributes<AssemblyInformationalVersionAttribute>().Single().InformationalVersion;
 
-using var app = new CommandLineApplication { Name = "minver", FullName = $"MinVer CLI {informationalVersion}", };
+using var app = new CommandLineApplication();
+app.Name = "minver";
+app.FullName = $"MinVer CLI {informationalVersion}";
 
 app.HelpOption();
 

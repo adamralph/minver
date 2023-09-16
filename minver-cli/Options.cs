@@ -116,7 +116,7 @@ internal sealed class Options
 
         var key = vars.Keys
             .Cast<string>()
-            .OrderBy(_ => _, StringComparer.Ordinal)
+            .OrderBy(key => key, StringComparer.Ordinal)
             .FirstOrDefault(key => string.Equals(key, name, StringComparison.OrdinalIgnoreCase));
 
         return key == null ? null : (string?)vars[key];

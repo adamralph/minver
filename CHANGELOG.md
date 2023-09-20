@@ -6,6 +6,8 @@
 
 - [#861: Bump NuGet.Versioning from 6.4.0 to 6.5.0](https://github.com/adamralph/minver/pull/861)
 - [#879: Bump NuGet.Versioning from 6.5.0 to 6.6.0](https://github.com/adamralph/minver/pull/879)
+- [#901: Bump NuGet.Versioning from 6.6.0 to 6.7.0](https://github.com/adamralph/minver/pull/901)
+- [#909: Bump McMaster.Extensions.CommandLineUtils from 4.0.2 to 4.1.0](https://github.com/adamralph/minver/pull/909)
 
 ### Other
 

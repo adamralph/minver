@@ -125,7 +125,7 @@ $@"{{
                 handleExitCode).ConfigureAwait(false);
 
             var matcher = new Matcher().AddInclude("**/bin/Debug/*.nupkg");
-            var packageFileNames = matcher.GetResultsInFullPath(path).OrderBy(_ => _);
+            var packageFileNames = matcher.GetResultsInFullPath(path).OrderBy(result => result);
             var getPackages = packageFileNames.Select(async fileName => await GetPackage(fileName).ConfigureAwait(false));
             var packages = await Task.WhenAll(getPackages).ConfigureAwait(false);
 

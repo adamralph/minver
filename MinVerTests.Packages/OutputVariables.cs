@@ -28,7 +28,8 @@ public static class OutputVariables
         Assert.Contains("MinVer: [output] MinVerBuildMetadata=build.6", standardOutput, StringComparison.Ordinal);
         Assert.Contains("MinVer: [output] AssemblyVersion=2.0.0.0", standardOutput, StringComparison.Ordinal);
         Assert.Contains("MinVer: [output] FileVersion=2.3.4.0", standardOutput, StringComparison.Ordinal);
-        Assert.Contains("MinVer: [output] PackageVersion=2.3.4-alpha-x.5+build.6", standardOutput, StringComparison.Ordinal);
-        Assert.Contains("MinVer: [output] Version=2.3.4-alpha-x.5+build.6", standardOutput, StringComparison.Ordinal);
+        Assert.Contains("MinVer: [output] InformationalVersion=2.3.4-alpha-x.5+build.6", standardOutput, StringComparison.Ordinal);
+        Assert.Contains("MinVer: [output] PackageVersion=2.3.4-alpha-x.5", standardOutput, StringComparison.Ordinal);
+        Assert.Contains("MinVer: [output] Version=2.3.4-alpha-x.5", standardOutput, StringComparison.Ordinal);
     }
 }

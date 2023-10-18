@@ -89,12 +89,13 @@ MinVer sets the following custom properties:
 
 Those properties are used to set the following .NET SDK properties, satisfying the official [open-source library guidance for version numbers](https://docs.microsoft.com/en-ca/dotnet/standard/library-guidance/versioning#version-numbers):
 
-| Property          | Value                                         |
-| ----------------- | --------------------------------------------- |
-| `AssemblyVersion` | `{MinVerMajor}.0.0.0`                         |
-| `FileVersion`     | `{MinVerMajor}.{MinVerMinor}.{MinVerPatch}.0` |
-| `PackageVersion`  | `{MinVerVersion}`                             |
-| `Version`         | `{MinVerVersion}`                             |
+| Property               | Value                                                                                                           |
+|------------------------|-----------------------------------------------------------------------------------------------------------------|
+| `AssemblyVersion`      | `{MinVerMajor}.0.0.0`                                                                                           |
+| `FileVersion`          | `{MinVerMajor}.{MinVerMinor}.{MinVerPatch}.0`                                                                   |
+| `InformationalVersion` | `{MinVerVersion}`                                                                                               |
+| `PackageVersion`       | `{MinVerMajor}.{MinVerMinor}.{MinVerPatch}` (or `{MinVerMajor}.{MinVerMinor}.{MinVerPatch}-{MinVerPreRelease}`) |
+| `Version`              | `{MinVerMajor}.{MinVerMinor}.{MinVerPatch}` (or `{MinVerMajor}.{MinVerMinor}.{MinVerPatch}-{MinVerPreRelease}`) |
 
 This behaviour can be [customised](#can-i-use-the-version-calculated-by-minver-for-other-purposes).
 
@@ -249,6 +250,17 @@ environment:
 
 You can also specify build metadata in a version tag. If the tag is on the current commit, its build metadata will be used. If the tag is on an older commit, its build metadata will be ignored. Build metadata in `MinVerBuildMetadata` will be appended to build metadata in the tag.
 
+Build metadata is only included in the [assembly informational version](https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/versioning#assembly-informational-version). You can include it elsewhere using a custom target. E.g.:
+
+```xml
+<Target Name="MyTarget" AfterTargets="MinVer" Condition="'$(MinVerBuildMetadata)' != ''" >
+  <PropertyGroup>
+    <PackageVersion>$(PackageVersion)+$(MinVerBuildMetadata)</PackageVersion>
+    <Version>$(PackageVersion)</Version>
+  </PropertyGroup>
+</Target>
+```
+
 ### Can I auto-increment the minor or major version after an RTM tag instead of the patch version?
 
 Yes! Specify which part of the version to auto-increment with `MinVerAutoIncrement`. By default, [MinVer will auto-increment the patch version](#how-it-works), but you can specify `minor` or `major` to increment the minor or major version instead.
@@ -277,7 +289,6 @@ For example, for pull requests, you may want to inject the pull request number a
 <Target Name="MyTarget" AfterTargets="MinVer" Condition="'$(APPVEYOR_PULL_REQUEST_NUMBER)' != ''" >
   <PropertyGroup>
     <PackageVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch)-pr.$(APPVEYOR_PULL_REQUEST_NUMBER).build-id.$(APPVEYOR_BUILD_ID).$(MinVerPreRelease)</PackageVersion>
-    <PackageVersion Condition="'$(MinVerBuildMetadata)' != ''">$(PackageVersion)+$(MinVerBuildMetadata)</PackageVersion>
     <Version>$(PackageVersion)</Version>
   </PropertyGroup>
 </Target>

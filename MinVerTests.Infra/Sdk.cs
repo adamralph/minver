@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.Loader;
 using System.Threading.Tasks;
 using Microsoft.Extensions.FileSystemGlobbing;
@@ -171,23 +172,26 @@ $@"{{
 
             var assemblyFileName = Directory.EnumerateFiles(extractedDirectoryName, "*.dll", new EnumerationOptions { RecurseSubdirectories = true, }).First();
 
-            var systemAssemblyVersion = GetAssemblyVersion(assemblyFileName);
+            var (systemAssemblyVersion, informationalVersion) = GetAssemblyVersions(assemblyFileName);
             var assemblyVersion = new AssemblyVersion(systemAssemblyVersion.Major, systemAssemblyVersion.Minor, systemAssemblyVersion.Build, systemAssemblyVersion.Revision);
 
             var fileVersionInfo = FileVersionInfo.GetVersionInfo(assemblyFileName);
             var fileVersion = new FileVersion(fileVersionInfo.FileMajorPart, fileVersionInfo.FileMinorPart, fileVersionInfo.FileBuildPart, fileVersionInfo.FilePrivatePart, fileVersionInfo.ProductVersion ?? "");
 
-            return new Package(nuspecVersion, assemblyVersion, fileVersion);
+            return new Package(nuspecVersion, assemblyVersion, fileVersion, informationalVersion);
         }
 
-        private static Version GetAssemblyVersion(string assemblyFileName)
+        private static (Version Version, string InformationalVersion) GetAssemblyVersions(string assemblyFileName)
         {
             var assemblyLoadContext = new AssemblyLoadContext(default, true);
             var assembly = assemblyLoadContext.LoadFromAssemblyPath(assemblyFileName);
 
             try
             {
-                return assembly.GetName().Version ?? throw new InvalidOperationException("The assembly version is null.");
+                return (
+                    assembly.GetName().Version ?? throw new InvalidOperationException("The assembly version is null."),
+                    assembly.GetCustomAttributes().OfType<AssemblyInformationalVersionAttribute>().FirstOrDefault()?.InformationalVersion ??
+                        throw new InvalidOperationException("The assembly has no informational version."));
             }
             finally
             {

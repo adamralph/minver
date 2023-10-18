@@ -12,7 +12,7 @@ jobs:
       - uses: actions/setup-dotnet@v3.2.0
         with:
           dotnet-version: 7.0.401
-      - uses: actions/checkout@v4.1.0
+      - uses: actions/checkout@v4.1.1
       - env:
           MINVER_VERSION: ${{ vars.MINVER_VERSION }}
         run: ./build build

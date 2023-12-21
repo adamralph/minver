@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/setup-dotnet@v4.0.0
         with:
-          dotnet-version: 7.0.401
+          dotnet-version: 7.0.404
       - uses: actions/checkout@v4.1.1
       - env:
           MINVER_VERSION: ${{ vars.MINVER_VERSION }}

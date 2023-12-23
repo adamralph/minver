@@ -19,7 +19,7 @@ public static class CommitAfterTagWithBuildMetadata
         await Git.Tag(path, "2.3.4+build.5");
         await Git.Commit(path);
 
-        var expected = Package.WithVersion(2, 3, 5, new[] { "alpha", "0", }, 1);
+        var expected = Package.WithVersion(2, 3, 5, ["alpha", "0",], 1);
 
         // act
         var (actual, _, _) = await Sdk.BuildProject(path);

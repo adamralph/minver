@@ -20,7 +20,7 @@ public static class MinimumMajorMinorOnTag
 
         var envVars = ("MinVerMinimumMajorMinor".ToAltCase(), "3.0");
 
-        var expected = Package.WithVersion(3, 0, 0, new[] { "alpha", "0", });
+        var expected = Package.WithVersion(3, 0, 0, ["alpha", "0",]);
 
         // act
         var (actual, _, _) = await Sdk.BuildProject(path, envVars: envVars);

@@ -6,6 +6,8 @@
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <!-- workaround for https://github.com/dotnet/roslyn/issues/41640 -->
+    <NoWarn>EnableGenerateDocumentationFile</NoWarn>
     <Nullable>enable</Nullable>
     <!-- MinVer doesn't use MinVer for versioning because
 the environment variables for the build and for the package tests

@@ -20,7 +20,7 @@ public static class VersionOverride
 
         var envVars = ("MinVerVersionOverride".ToAltCase(), "3.4.5-alpha.6+build.7");
 
-        var expected = Package.WithVersion(3, 4, 5, new[] { "alpha", "6", }, 0, "build.7");
+        var expected = Package.WithVersion(3, 4, 5, ["alpha", "6",], 0, "build.7");
 
         // act
         var (actual, _, _) = await Sdk.BuildProject(path, envVars: envVars);

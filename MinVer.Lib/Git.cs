@@ -7,6 +7,8 @@ namespace MinVer.Lib;
 
 internal static class Git
 {
+    private static readonly char[] newLineChars = ['\r', '\n',];
+
     public static bool IsWorkingDirectory(string directory, ILogger log) => GitCommand.TryRun("status --short", directory, log, out _);
 
     public static bool TryGetHead(string directory, [NotNullWhen(returnValue: true)] out Commit? head, ILogger log)
@@ -18,7 +20,7 @@ internal static class Git
             return false;
         }
 
-        var lines = output.Split(new[] { '\r', '\n', }, StringSplitOptions.RemoveEmptyEntries);
+        var lines = output.Split(newLineChars, StringSplitOptions.RemoveEmptyEntries);
 
         if (lines.Length == 0)
         {
@@ -28,7 +30,7 @@ internal static class Git
         var commits = new Dictionary<string, Commit>();
 
         foreach (var shas in lines
-            .Select(line => line.Split(new[] { ' ', }, StringSplitOptions.RemoveEmptyEntries)))
+            .Select(line => line.Split(" ", StringSplitOptions.RemoveEmptyEntries)))
         {
             commits.GetOrAdd(shas[0], () => new Commit(shas[0]))
                 .Parents.AddRange(shas.Skip(1).Select(parentSha => commits.GetOrAdd(parentSha, () => new Commit(parentSha))));
@@ -42,8 +44,8 @@ internal static class Git
     public static IEnumerable<(string Name, string Sha)> GetTags(string directory, ILogger log) =>
         GitCommand.TryRun("show-ref --tags --dereference", directory, log, out var output)
             ? output
-                .Split(new[] { '\r', '\n', }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(line => line.Split(new[] { ' ', }, 2))
+                .Split(newLineChars, StringSplitOptions.RemoveEmptyEntries)
+                .Select(line => line.Split(" ", 2))
                 .Select(tokens => (tokens[1][10..].RemoveFromEnd("^{}"), tokens[0]))
             : Enumerable.Empty<(string, string)>();
 

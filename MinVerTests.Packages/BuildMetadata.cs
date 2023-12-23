@@ -14,7 +14,7 @@ public static class BuildMetadata
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
         await Sdk.CreateProject(path);
         var envVars = ("MinVerBuildMetadata", "build.123");
-        var expected = Package.WithVersion(0, 0, 0, new[] { "alpha", "0", }, 0, "build.123");
+        var expected = Package.WithVersion(0, 0, 0, ["alpha", "0",], 0, "build.123");
 
         // act
         var (actual, _, _) = await Sdk.BuildProject(path, envVars: envVars);

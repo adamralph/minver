@@ -3,10 +3,7 @@ using System;
 namespace MinVer.Lib;
 
 #pragma warning disable CA1032 // Implement standard exception constructors
-public class NoGitException : Exception
+public class NoGitException(string message, Exception innerException) : Exception(message, innerException)
 #pragma warning restore CA1032
 {
-    public NoGitException(string message, Exception innerException) : base(message, innerException)
-    {
-    }
 }

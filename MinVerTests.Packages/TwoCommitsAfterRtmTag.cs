@@ -20,7 +20,7 @@ public static class TwoCommitsAfterRtmTag
         await Git.Commit(path);
         await Git.Commit(path);
 
-        var expected = Package.WithVersion(2, 3, 5, new[] { "alpha", "0", }, 2);
+        var expected = Package.WithVersion(2, 3, 5, ["alpha", "0",], 2);
 
         // act
         var (actual, _, _) = await Sdk.BuildProject(path);

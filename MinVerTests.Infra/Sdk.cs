@@ -52,16 +52,16 @@ namespace MinVerTests.Infra
             }
         }
 
-        public static async Task CreateProject(string path, string configuration = Configuration.Current, bool multiTarget = false)
+        public static async Task CreateProject(string path, string configuration = Configuration.Current, bool multiTarget = false, bool enableSourceLink = false)
         {
             FileSystem.EnsureEmptyDirectory(path);
 
             CreateGlobalJsonIfRequired(path);
 
-            await CreateProject(path, configuration, "test", multiTarget).ConfigureAwait(false);
+            await CreateProject(path, configuration, "test", multiTarget, enableSourceLink).ConfigureAwait(false);
         }
 
-        private static async Task CreateProject(string path, string configuration, string name, bool multiTarget = false)
+        private static async Task CreateProject(string path, string configuration, string name, bool multiTarget = false, bool enableSourceLink = false)
         {
             _ = await DotNet($"new classlib --name {name} --output {path}{(multiTarget ? " --langVersion 8.0" : "")}", path).ConfigureAwait(false);
 
@@ -70,20 +70,37 @@ namespace MinVerTests.Infra
 
             _ = await DotNet($"add package MinVer --source {source} --version {minVerPackageVersion} --package-directory packages", path).ConfigureAwait(false);
 
-            if (multiTarget)
+            var project = Path.Combine(path, $"{name}.csproj");
+            var lines = await File.ReadAllLinesAsync(project).ConfigureAwait(false);
+            var editedLines = new List<string>();
+
+            foreach (var line in lines)
             {
-                var project = Path.Combine(path, $"{name}.csproj");
-                var lines = await File.ReadAllLinesAsync(project).ConfigureAwait(false);
-
-                var editedLines = lines
-                    .Select(line => line.Contains("<TargetFramework>", StringComparison.OrdinalIgnoreCase)
-                        ? line
+                if (line.Contains("<TargetFramework>", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (multiTarget)
+                    {
+                        editedLines.Add(line
                             .Replace("TargetFramework", "TargetFrameworks", StringComparison.OrdinalIgnoreCase)
-                            .Replace("</TargetFrameworks>", ";netstandard2.1</TargetFrameworks>", StringComparison.Ordinal)
-                        : line);
+                            .Replace("</TargetFrameworks>", ";netstandard2.1</TargetFrameworks>", StringComparison.Ordinal));
+                    }
+                    else
+                    {
+                        editedLines.Add(line);
+                    }
 
-                await File.WriteAllLinesAsync(project, editedLines).ConfigureAwait(false);
+                    if (!enableSourceLink)
+                    {
+                        editedLines.Add("<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>");
+                    }
+                }
+                else
+                {
+                    editedLines.Add(line);
+                }
             }
+
+            await File.WriteAllLinesAsync(project, editedLines).ConfigureAwait(false);
 
             _ = await DotNet($"restore --source {source} --packages packages", path).ConfigureAwait(false);
         }
@@ -141,7 +158,7 @@ $@"{{
 
             // -maxCpuCount:1 is required to prevent massive execution times in GitHub Actions
             return await DotNet(
-                $"pack -maxCpuCount:1 --no-restore{(!Version.StartsWith("2.", StringComparison.Ordinal) ? " --nologo" : "")}",
+                $"pack --configuration Debug -maxCpuCount:1 --no-restore{(!Version.StartsWith("2.", StringComparison.Ordinal) ? " --nologo" : "")}",
                 path,
                 environmentVariables).ConfigureAwait(false);
         }

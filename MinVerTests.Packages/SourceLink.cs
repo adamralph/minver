@@ -1,6 +1,5 @@
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
 using MinVerTests.Infra;
 using Xunit;

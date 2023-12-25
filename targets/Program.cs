@@ -12,6 +12,8 @@ if (Environment.GetEnvironmentVariable("GITHUB_ACTIONS")?.ToUpperInvariant() == 
     testLoggerArgs.AddRange(["--logger", "GitHubActions",]);
 }
 
+Target("format", () => RunAsync("dotnet", "format --verify-no-changes"));
+
 Target("build", () => RunAsync("dotnet", "build --configuration Release --nologo"));
 
 Target(
@@ -88,6 +90,6 @@ Target(
 
 Target("eyeball-logs", DependsOn("eyeball-minver-logs", "eyeball-minver-cli-logs"));
 
-Target("default", DependsOn("test-lib", "test-packages", "eyeball-logs"));
+Target("default", DependsOn("format", "test-lib", "test-packages", "eyeball-logs"));
 
 await RunTargetsAndExitAsync(args, ex => ex is SimpleExec.ExitCodeException);

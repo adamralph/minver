@@ -17,6 +17,7 @@ csharp_style_expression_bodied_local_functions                            = true
 csharp_style_expression_bodied_methods                                    = true
 csharp_style_expression_bodied_operators                                  = true
 csharp_style_expression_bodied_properties                                 = true
+csharp_style_namespace_declarations                                       = file_scoped
 csharp_style_var_elsewhere                                                = true
 csharp_style_var_for_built_in_types                                       = true
 csharp_style_var_when_type_is_apparent                                    = true

@@ -1,12 +1,11 @@
-namespace MinVerTests.Infra
+namespace MinVerTests.Infra;
+
+internal static class Configuration
 {
-    internal static class Configuration
-    {
-        public const string Current =
+    public const string Current =
 #if DEBUG
-            "Debug";
+        "Debug";
 #elif RELEASE
             "Release";
 #endif
-    }
 }

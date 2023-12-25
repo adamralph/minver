@@ -1,6 +1,3 @@
-#if NET
-namespace MinVerTests.Infra
-{
-    public record FileVersion(int FileMajorPart, int FileMinorPart, int FileBuildPart, int FilePrivatePart, string ProductVersion);
-}
-#endif
+namespace MinVerTests.Infra;
+
+public record FileVersion(int FileMajorPart, int FileMinorPart, int FileBuildPart, int FilePrivatePart, string ProductVersion);

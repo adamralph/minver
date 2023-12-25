@@ -43,16 +43,9 @@ Target(
         await Git.Tag(path, "v.2.3.4-alpha.5");
         await Git.Commit(path);
 
-        var args = new List<string> { "build", "--no-restore", };
-
-        if (!Sdk.Version.StartsWith("2.", StringComparison.Ordinal))
-        {
-            args.Add("--nologo");
-        }
-
         await RunAsync(
             "dotnet",
-            args,
+            "build --no-restore --nologo",
             path,
             configureEnvironment: env =>
             {

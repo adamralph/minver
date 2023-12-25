@@ -1,61 +1,60 @@
 using System.IO;
 using System.Threading;
 
-namespace MinVerTests.Infra
+namespace MinVerTests.Infra;
+
+// The spin waits are required. System.IO and the file system race. ¯\_(ツ)_/¯
+public static class FileSystem
 {
-    // The spin waits are required. System.IO and the file system race. ¯\_(ツ)_/¯
-    public static class FileSystem
-    {
 #pragma warning disable CA1802 // Use literals where appropriate
-        private static readonly int millisecondsTimeout = 50;
+    private static readonly int millisecondsTimeout = 50;
 #pragma warning restore CA1802 // Use literals where appropriate
 
-        public static void EnsureEmptyDirectory(string path)
+    public static void EnsureEmptyDirectory(string path)
+    {
+        if (SpinWait.SpinUntil(() => Directory.Exists(path), millisecondsTimeout))
         {
-            if (SpinWait.SpinUntil(() => Directory.Exists(path), millisecondsTimeout))
-            {
-                DeleteDirectory(path);
-            }
-
-            CreateDirectory(path);
+            DeleteDirectory(path);
         }
 
-        private static void DeleteDirectory(string path)
+        CreateDirectory(path);
+    }
+
+    private static void DeleteDirectory(string path)
+    {
+        // Directory.Delete fails if anything in the tree has the read-only attribute set. ¯\_(ツ)_/¯
+        ResetAttributes(new DirectoryInfo(path));
+
+        static void ResetAttributes(DirectoryInfo directory)
         {
-            // Directory.Delete fails if anything in the tree has the read-only attribute set. ¯\_(ツ)_/¯
-            ResetAttributes(new DirectoryInfo(path));
-
-            static void ResetAttributes(DirectoryInfo directory)
+            foreach (var childDirectory in directory.GetDirectories())
             {
-                foreach (var childDirectory in directory.GetDirectories())
-                {
-                    ResetAttributes(childDirectory);
-                }
-
-                foreach (var file in directory.GetFiles())
-                {
-                    file.Attributes = FileAttributes.Normal;
-                }
-
-                directory.Attributes = FileAttributes.Normal;
+                ResetAttributes(childDirectory);
             }
 
-            Directory.Delete(path, true);
-
-            if (!SpinWait.SpinUntil(() => !Directory.Exists(path), millisecondsTimeout))
+            foreach (var file in directory.GetFiles())
             {
-                throw new IOException($"Failed to delete directory '{path}'.");
+                file.Attributes = FileAttributes.Normal;
             }
+
+            directory.Attributes = FileAttributes.Normal;
         }
 
-        private static void CreateDirectory(string path)
-        {
-            _ = Directory.CreateDirectory(path);
+        Directory.Delete(path, true);
 
-            if (!SpinWait.SpinUntil(() => Directory.Exists(path), millisecondsTimeout))
-            {
-                throw new IOException($"Failed to create directory '{path}'.");
-            }
+        if (!SpinWait.SpinUntil(() => !Directory.Exists(path), millisecondsTimeout))
+        {
+            throw new IOException($"Failed to delete directory '{path}'.");
+        }
+    }
+
+    private static void CreateDirectory(string path)
+    {
+        _ = Directory.CreateDirectory(path);
+
+        if (!SpinWait.SpinUntil(() => Directory.Exists(path), millisecondsTimeout))
+        {
+            throw new IOException($"Failed to create directory '{path}'.");
         }
     }
 }

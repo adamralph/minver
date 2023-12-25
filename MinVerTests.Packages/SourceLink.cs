@@ -30,7 +30,7 @@ public static class SourceLink
 
         var buildMetadata = "build.123";
         var envVars = ("MinVerBuildMetadata", buildMetadata);
-        var expected = Package.WithVersion(0, 0, 0, ["alpha", "0",], 0, $"build.123", $".{sha}");
+        var expected = Package.WithVersion(0, 0, 0, ["alpha", "0",], 0, "build.123", $".{sha}");
 
         // act
         var (actual, _, _) = await Sdk.BuildProject(path, envVars: envVars);

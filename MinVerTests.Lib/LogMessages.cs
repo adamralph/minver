@@ -45,7 +45,7 @@ git merge bar baz --no-edit --no-ff --strategy=octopus
             await EnsureEmptyRepository(path);
 
             foreach (var item in historicalCommands
-                .Split(new[] { '\r', '\n', }, StringSplitOptions.RemoveEmptyEntries)
+                .ToNonEmptyLines()
                 .Select((command, index) => new { Command = command, Index = $"{index}", }))
             {
                 if (item.Command.StartsWith("git commit", StringComparison.Ordinal))
@@ -75,7 +75,7 @@ git merge bar baz --no-edit --no-ff --strategy=octopus
 
             var shas = (await ReadAsync("git", "log --pretty=format:\"%H\"", path))
                 .StandardOutput
-                .Split(new[] { '\r', '\n', }, StringSplitOptions.RemoveEmptyEntries)
+                .ToNonEmptyLines()
                 .Reverse()
                 .ToList();
 

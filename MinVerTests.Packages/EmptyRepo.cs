@@ -15,7 +15,7 @@ public static class EmptyRepo
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
         await Sdk.CreateProject(path);
         await Git.Init(path);
-        var expected = Package.WithVersion(0, 0, 0, new[] { "alpha", "0", });
+        var expected = Package.WithVersion(0, 0, 0, ["alpha", "0",]);
 
         // act
         var (actual, sdkStandardOutput, _) = await Sdk.BuildProject(path);

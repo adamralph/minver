@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -13,10 +14,15 @@ public static class SourceLink
     {
         // arrange
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
-        await Sdk.CreateProject(path);
+        await Sdk.CreateProject(path, enableSourceLink: true);
 
-        _ = await Sdk.DotNet($"add package Microsoft.SourceLink.GitHub --version 1.1.1 --package-directory packages", path);
-        _ = await Sdk.DotNet("restore --packages packages", path);
+        if (string.IsNullOrEmpty(Sdk.Version) ||
+            int.Parse(Sdk.Version.Split(".")[0], NumberStyles.None, CultureInfo.InvariantCulture) < 8)
+        {
+            _ = await Sdk.DotNet(
+                $"add package Microsoft.SourceLink.GitHub --version 1.1.1 --package-directory packages", path);
+            _ = await Sdk.DotNet("restore --packages packages", path);
+        }
 
         await Git.Init(path);
         await Git.Commit(path);
@@ -24,7 +30,7 @@ public static class SourceLink
 
         var buildMetadata = "build.123";
         var envVars = ("MinVerBuildMetadata", buildMetadata);
-        var expected = Package.WithVersion(0, 0, 0, new[] { "alpha", "0", }, 0, $"build.123", $".{sha}");
+        var expected = Package.WithVersion(0, 0, 0, ["alpha", "0",], 0, $"build.123", $".{sha}");
 
         // act
         var (actual, _, _) = await Sdk.BuildProject(path, envVars: envVars);

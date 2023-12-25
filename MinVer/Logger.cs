@@ -3,11 +3,9 @@ using MinVer.Lib;
 
 namespace MinVer;
 
-internal sealed class Logger : ILogger
+internal sealed class Logger(Verbosity verbosity) : ILogger
 {
-    private readonly Verbosity verbosity;
-
-    public Logger(Verbosity verbosity) => this.verbosity = verbosity;
+    private readonly Verbosity verbosity = verbosity;
 
     public bool IsTraceEnabled => this.verbosity >= Verbosity.Diagnostic;
 

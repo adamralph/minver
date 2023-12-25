@@ -1,16 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using MinVerTests.Infra;
 using static Bullseye.Targets;
 using static SimpleExec.Command;
 
-var testFx = Environment.GetEnvironmentVariable("MINVER_TESTS_FRAMEWORK") ?? "net7.0";
+var testFx = Environment.GetEnvironmentVariable("MINVER_TESTS_FRAMEWORK") ?? "net8.0";
 var testLoggerArgs = new List<string> { "--logger", "\"console;verbosity=normal\"", };
 
 if (Environment.GetEnvironmentVariable("GITHUB_ACTIONS")?.ToUpperInvariant() == "TRUE")
 {
-    testLoggerArgs.AddRange(new[] { "--logger", "GitHubActions", });
+    testLoggerArgs.AddRange(["--logger", "GitHubActions",]);
 }
 
 Target("build", () => RunAsync("dotnet", "build --configuration Release --nologo"));
@@ -19,13 +18,13 @@ Target(
     "test-lib",
     "test the MinVer.Lib library",
     DependsOn("build"),
-    () => RunAsync("dotnet", new[] { "test", "./MinVerTests.Lib", "--framework", testFx, "--configuration", "Release", "--no-build", "--nologo", }.Concat(testLoggerArgs)));
+    () => RunAsync("dotnet", ["test", "./MinVerTests.Lib", "--framework", testFx, "--configuration", "Release", "--no-build", "--nologo", .. testLoggerArgs]));
 
 Target(
     "test-packages",
     "test the MinVer package and the minver-cli console app",
     DependsOn("build"),
-    () => RunAsync("dotnet", new[] { "test", "./MinVerTests.Packages", "--configuration", "Release", "--no-build", "--nologo", }.Concat(testLoggerArgs)));
+    () => RunAsync("dotnet", ["test", "./MinVerTests.Packages", "--configuration", "Release", "--no-build", "--nologo", .. testLoggerArgs]));
 
 Target(
     "eyeball-minver-logs",

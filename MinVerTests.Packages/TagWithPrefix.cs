@@ -20,7 +20,7 @@ public static class TagWithPrefix
 
         var envVars = ("MinVerTagPrefix", "v.");
 
-        var expected = Package.WithVersion(2, 3, 4, new[] { "alpha", "5", });
+        var expected = Package.WithVersion(2, 3, 4, ["alpha", "5",]);
 
         // act
         var (actual, _, _) = await Sdk.BuildProject(path, envVars: envVars);

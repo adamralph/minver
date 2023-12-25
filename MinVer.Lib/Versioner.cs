@@ -93,10 +93,12 @@ public static class Versioner
             }
         }
 
-        tagsAndVersions = tagsAndVersions
-            .OrderBy(tagAndVersion => tagAndVersion.Version)
-            .ThenBy(tagsAndVersion => tagsAndVersion.Name)
-            .ToList();
+        tagsAndVersions =
+        [
+            .. tagsAndVersions
+                .OrderBy(tagAndVersion => tagAndVersion.Version)
+                .ThenBy(tagsAndVersion => tagsAndVersion.Name)
+        ];
 
         var itemsToCheck = new Stack<(Commit Commit, int Height, Commit? Child)>();
         itemsToCheck.Push((head, 0, null));
@@ -117,7 +119,7 @@ public static class Versioner
 
             var commitTagsAndVersions = tagsAndVersions.Where(tagAndVersion => tagAndVersion.Sha == item.Commit.Sha).ToList();
 
-            if (commitTagsAndVersions.Any())
+            if (commitTagsAndVersions.Count != 0)
             {
                 foreach (var (name, _, version) in commitTagsAndVersions)
                 {
@@ -131,7 +133,7 @@ public static class Versioner
 
             _ = log.IsTraceEnabled && log.Trace($"Found no version tags on commit {item.Commit}.");
 
-            if (!item.Commit.Parents.Any())
+            if (item.Commit.Parents.Count == 0)
             {
                 candidates.Add(new Candidate(item.Commit, item.Height, "", new Version(defaultPreReleaseIdentifiers), candidates.Count));
                 _ = log.IsTraceEnabled && log.Trace($"Found root commit {candidates.Last()}.");
@@ -157,26 +159,17 @@ public static class Versioner
         return candidates;
     }
 
-    private sealed class Candidate
+    private sealed class Candidate(Commit commit, int height, string tag, Version version, int index)
     {
-        public Candidate(Commit commit, int height, string tag, Version version, int index)
-        {
-            this.Commit = commit;
-            this.Height = height;
-            this.Tag = tag;
-            this.Version = version;
-            this.Index = index;
-        }
+        public Commit Commit { get; } = commit;
 
-        public Commit Commit { get; }
+        public int Height { get; } = height;
 
-        public int Height { get; }
+        public string Tag { get; } = tag;
 
-        public string Tag { get; }
+        public Version Version { get; } = version;
 
-        public Version Version { get; }
-
-        public int Index { get; }
+        public int Index { get; } = index;
 
         public override string ToString() => this.ToString(0, 0, 0);
 

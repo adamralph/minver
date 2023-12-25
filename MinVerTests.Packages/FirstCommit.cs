@@ -17,7 +17,7 @@ public static class FirstCommit
         await Git.Init(path);
         await Git.Commit(path);
 
-        var expected = Package.WithVersion(0, 0, 0, new[] { "alpha", "0", });
+        var expected = Package.WithVersion(0, 0, 0, ["alpha", "0",]);
 
         // act
         var (actual, _, _) = await Sdk.BuildProject(path);

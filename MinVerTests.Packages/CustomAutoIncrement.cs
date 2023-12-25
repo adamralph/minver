@@ -21,7 +21,7 @@ public static class CustomAutoIncrement
 
         var envVars = ("MinVerAutoIncrement".ToAltCase(), "minor");
 
-        var expected = Package.WithVersion(2, 4, 0, new[] { "alpha", "0", }, 1);
+        var expected = Package.WithVersion(2, 4, 0, ["alpha", "0",], 1);
 
         // act
         var (actual, _, _) = await Sdk.BuildProject(path, envVars: envVars);

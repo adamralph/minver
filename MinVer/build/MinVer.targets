@@ -11,6 +11,7 @@
     <MinVerDetailed Condition="'$(MinVerVerbosity)' == 'detailed' Or '$(MinVerVerbosity)' == 'd' Or '$(MinVerVerbosity)' == 'diagnostic' Or '$(MinVerVerbosity)' == 'diag'">high</MinVerDetailed>
     <MinVerTargetFramework>net6.0</MinVerTargetFramework>
     <MinVerTargetFramework Condition="'$(MSBuildAssemblyVersion)' &gt;= '17.4'">net7.0</MinVerTargetFramework>
+    <MinVerTargetFramework Condition="'$(MSBuildAssemblyVersion)' &gt;= '17.8'">net8.0</MinVerTargetFramework>
     <NoWarn>$(NoWarn);NU5105</NoWarn>
   </PropertyGroup>
 

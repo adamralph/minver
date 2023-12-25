@@ -81,7 +81,7 @@ app.OnExecute(() =>
     var defaultPreReleaseIdentifiers = options.DefaultPreReleaseIdentifiers;
     if (!string.IsNullOrEmpty(options.DefaultPreReleasePhase))
     {
-        log.Warn(1008, $"MinVerDefaultPreReleasePhase is deprecated and will be removed in the next major version. Use MinVerDefaultPreReleaseIdentifiers instead, with an additional \"0\" identifier. For example, if you are setting MinVerDefaultPreReleasePhase to \"preview\", set MinVerDefaultPreReleaseIdentifiers to \"preview.0\" instead.");
+        log.Warn(1008, "MinVerDefaultPreReleasePhase is deprecated and will be removed in the next major version. Use MinVerDefaultPreReleaseIdentifiers instead, with an additional \"0\" identifier. For example, if you are setting MinVerDefaultPreReleasePhase to \"preview\", set MinVerDefaultPreReleaseIdentifiers to \"preview.0\" instead.");
 
         defaultPreReleaseIdentifiers ??= new[] { options.DefaultPreReleasePhase, "0", };
     }

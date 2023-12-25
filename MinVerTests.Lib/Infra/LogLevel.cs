@@ -1,10 +1,9 @@
-namespace MinVerTests.Lib.Infra
+namespace MinVerTests.Lib.Infra;
+
+internal enum LogLevel
 {
-    internal enum LogLevel
-    {
-        Trace,
-        Debug,
-        Info,
-        Warn,
-    }
+    Trace,
+    Debug,
+    Info,
+    Warn,
 }

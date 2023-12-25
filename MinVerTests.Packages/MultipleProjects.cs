@@ -19,14 +19,15 @@ public class MultipleProjects
         await Sdk.CreateSolution(path, ["project0", "project1", "project2", "project3",]);
 
         var props =
-            $@"<Project>
+            $"""
+<Project>
 
 {"  "}<PropertyGroup>
 {"    "}<MinVerTagPrefix>v</MinVerTagPrefix>
 {"  "}</PropertyGroup>
 
 </Project>
-";
+""";
 
         await File.WriteAllTextAsync(Path.Combine(path, "project1", "Directory.Build.props"), props);
         await File.WriteAllTextAsync(Path.Combine(path, "project3", "Directory.Build.props"), props);

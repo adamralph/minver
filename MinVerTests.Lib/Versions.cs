@@ -10,16 +10,16 @@ using static MinVerTests.Infra.FileSystem;
 using static MinVerTests.Infra.Git;
 using static SimpleExec.Command;
 
-namespace MinVerTests.Lib
+namespace MinVerTests.Lib;
+
+public static class Versions
 {
-    public static class Versions
+    [Fact]
+    public static async Task RepoWithHistory()
     {
-        [Fact]
-        public static async Task RepoWithHistory()
-        {
-            // arrange
-            var historicalCommands =
-                @"
+        // arrange
+        var historicalCommands =
+            @"
 git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
@@ -65,72 +65,71 @@ git tag 1.1.0-rc.1
 git tag 1.1.0 -a -m '.'
 ";
 
-            var path = MethodBase.GetCurrentMethod().GetTestDirectory();
+        var path = MethodBase.GetCurrentMethod().GetTestDirectory();
 
-            await EnsureEmptyRepositoryAndCommit(path);
+        await EnsureEmptyRepositoryAndCommit(path);
 
-            foreach (var command in historicalCommands.ToNonEmptyLines())
-            {
-                var nameAndArgs = command.Split(" ", 2);
-                _ = await ReadAsync(nameAndArgs[0], nameAndArgs[1], path);
-                await Task.Delay(200);
-            }
-
-            var log = new TestLogger();
-
-            // act
-            var versionCounts = new Dictionary<string, int>();
-            foreach (var sha in await GetCommitShas(path))
-            {
-                await Checkout(path, sha);
-
-                var version = Versioner.GetVersion(path, "", MajorMinor.Default, "", default, PreReleaseIdentifiers.Default, false, log);
-                var versionString = version.ToString();
-                var tagName = $"v/{versionString}";
-
-                _ = versionCounts.TryGetValue(versionString, out var oldVersionCount);
-                var versionCount = oldVersionCount + 1;
-                versionCounts[versionString] = versionCount;
-
-                tagName = versionCount > 1 ? $"v({versionCount})/{versionString}" : tagName;
-
-                await Tag(path, tagName, sha);
-            }
-
-            await Checkout(path, "main");
-
-            await File.WriteAllTextAsync(Path.Combine(path, "log.txt"), log.ToString());
-
-            // assert
-            await AssertFile.Contains("../../../versions.txt", await GetGraph(path));
-        }
-
-        [Fact]
-        public static async Task EmptyRepo()
+        foreach (var command in historicalCommands.ToNonEmptyLines())
         {
-            // arrange
-            var path = MethodBase.GetCurrentMethod().GetTestDirectory();
-            await EnsureEmptyRepository(path);
-
-            // act
-            var version = Versioner.GetVersion(path, "", MajorMinor.Default, "", default, PreReleaseIdentifiers.Default, false, NullLogger.Instance);
-
-            // assert
-            Assert.Equal("0.0.0-alpha.0", version.ToString());
+            var nameAndArgs = command.Split(" ", 2);
+            _ = await ReadAsync(nameAndArgs[0], nameAndArgs[1], path);
+            await Task.Delay(200);
         }
 
-        [Fact]
-        public static void NoRepo()
+        var log = new TestLogger();
+
+        // act
+        var versionCounts = new Dictionary<string, int>();
+        foreach (var sha in await GetCommitShas(path))
         {
-            // arrange
-            var path = MethodBase.GetCurrentMethod().GetTestDirectory();
-            EnsureEmptyDirectory(path);
+            await Checkout(path, sha);
 
-            // act
-            var version = Versioner.GetVersion(path, "", MajorMinor.Default, "", default, PreReleaseIdentifiers.Default, false, NullLogger.Instance);
+            var version = Versioner.GetVersion(path, "", MajorMinor.Default, "", default, PreReleaseIdentifiers.Default, false, log);
+            var versionString = version.ToString();
+            var tagName = $"v/{versionString}";
 
-            // assert
-            Assert.Equal("0.0.0-alpha.0", version.ToString());
+            _ = versionCounts.TryGetValue(versionString, out var oldVersionCount);
+            var versionCount = oldVersionCount + 1;
+            versionCounts[versionString] = versionCount;
+
+            tagName = versionCount > 1 ? $"v({versionCount})/{versionString}" : tagName;
+
+            await Tag(path, tagName, sha);
         }
+
+        await Checkout(path, "main");
+
+        await File.WriteAllTextAsync(Path.Combine(path, "log.txt"), log.ToString());
+
+        // assert
+        await AssertFile.Contains("../../../versions.txt", await GetGraph(path));
+    }
+
+    [Fact]
+    public static async Task EmptyRepo()
+    {
+        // arrange
+        var path = MethodBase.GetCurrentMethod().GetTestDirectory();
+        await EnsureEmptyRepository(path);
+
+        // act
+        var version = Versioner.GetVersion(path, "", MajorMinor.Default, "", default, PreReleaseIdentifiers.Default, false, NullLogger.Instance);
+
+        // assert
+        Assert.Equal("0.0.0-alpha.0", version.ToString());
+    }
+
+    [Fact]
+    public static void NoRepo()
+    {
+        // arrange
+        var path = MethodBase.GetCurrentMethod().GetTestDirectory();
+        EnsureEmptyDirectory(path);
+
+        // act
+        var version = Versioner.GetVersion(path, "", MajorMinor.Default, "", default, PreReleaseIdentifiers.Default, false, NullLogger.Instance);
+
+        // assert
+        Assert.Equal("0.0.0-alpha.0", version.ToString());
     }
 }

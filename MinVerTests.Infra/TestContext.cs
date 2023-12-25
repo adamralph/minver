@@ -1,9 +1,8 @@
 using System;
 
-namespace MinVerTests.Infra
+namespace MinVerTests.Infra;
+
+internal static class TestContext
 {
-    internal static class TestContext
-    {
-        public static long RunId { get; } = DateTimeOffset.UtcNow.UtcTicks;
-    }
+    public static long RunId { get; } = DateTimeOffset.UtcNow.UtcTicks;
 }

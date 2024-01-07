@@ -2,9 +2,10 @@ namespace MinVer.Lib;
 
 public enum VersionPart
 {
-    Patch = 0,
-    Minor = 1,
-    Major = 2,
+    Revision = 0,
+    Patch = 1,
+    Minor = 2,
+    Major = 3,
 }
 
 public static class VersionPartExtensions

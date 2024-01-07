@@ -24,7 +24,7 @@ public static class OptionMasking
         var envVars = ("MinVerAutoIncrement".ToAltCase(), "minor");
         var args = $"--auto-increment {value}";
 
-        var expected = Package.WithVersion(2, 3, 4, 1, ["alpha", "0",], 1);
+        var expected = Package.WithVersion(2, 3, 5, 0, ["alpha", "0",], 1);
 
         // act
         var (cliStandardOutput, _) = await MinVerCli.ReadAsync(path, args: args, envVars: envVars);
@@ -95,7 +95,7 @@ public static class OptionMasking
         var envVars = ("MinVerDefaultPreReleasePhase".ToAltCase(), "preview");
         var args = $"--default-pre-release-phase {value}";
 
-        var expected = Package.WithVersion(2, 3, 5, 16, ["alpha", "0",], 1);
+        var expected = Package.WithVersion(2, 3, 4, 16, ["alpha", "0",], 1);
 
         // act
         var (cliStandardOutput, _) = await MinVerCli.ReadAsync(path, args: args, envVars: envVars);

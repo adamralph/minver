@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
+using System.Runtime;
 using System.Runtime.Loader;
 using System.Threading.Tasks;
 using Microsoft.Extensions.FileSystemGlobbing;
@@ -204,10 +205,20 @@ public static class Sdk
         var assemblyFileName = Directory.EnumerateFiles(extractedDirectoryName, "*.dll", new EnumerationOptions { RecurseSubdirectories = true, }).First();
 
         var (systemAssemblyVersion, informationalVersion) = GetAssemblyVersions(assemblyFileName);
+        //also changing informational version because of automatic truncation
+        if (informationalVersion.Count(c => c == '.') < 3)
+        {
+            informationalVersion += ".0";
+        }
+
         var assemblyVersion = new AssemblyVersion(systemAssemblyVersion.Major, systemAssemblyVersion.Minor, systemAssemblyVersion.Build, systemAssemblyVersion.Revision);
 
         var fileVersionInfo = FileVersionInfo.GetVersionInfo(assemblyFileName);
-        var fileVersion = new FileVersion(fileVersionInfo.FileMajorPart, fileVersionInfo.FileMinorPart, fileVersionInfo.FileBuildPart, fileVersionInfo.FilePrivatePart, fileVersionInfo.ProductVersion ?? "");
+        //also changing product version because of automatic truncation
+        var productVersion = fileVersionInfo.ProductVersion?.Count(c => c == '.') < 3
+            ? $"{fileVersionInfo.ProductVersion}.0"
+            : fileVersionInfo.ProductVersion;
+        var fileVersion = new FileVersion(fileVersionInfo.FileMajorPart, fileVersionInfo.FileMinorPart, fileVersionInfo.FileBuildPart, fileVersionInfo.FilePrivatePart, productVersion ?? "");
 
         return new Package(nuspecVersion, assemblyVersion, fileVersion, informationalVersion);
     }

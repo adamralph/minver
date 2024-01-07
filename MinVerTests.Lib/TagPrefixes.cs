@@ -11,9 +11,12 @@ namespace MinVerTests.Lib;
 public static class TagPrefixes
 {
     [Theory]
-    [InlineData("2.3.4", "", "2.3.4")]
-    [InlineData("v3.4.5", "v", "3.4.5")]
-    [InlineData("version5.6.7", "version", "5.6.7")]
+    [InlineData("2.3.4.5", "", "2.3.4.5")]
+    [InlineData("v3.4.5.8", "v", "3.4.5.8")]
+    [InlineData("version5.6.7.15", "version", "5.6.7.15")]
+    [InlineData("2.3.4", "", "2.3.4.0")]
+    [InlineData("r3.4.5", "r", "3.4.5.0")]
+    [InlineData("revision5.6.7", "revision", "5.6.7.0")]
     public static async Task TagPrefix(string tag, string prefix, string expectedVersion)
     {
         // act

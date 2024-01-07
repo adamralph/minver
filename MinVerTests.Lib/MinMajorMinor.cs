@@ -22,13 +22,16 @@ public static class MinMajorMinor
         var actualVersion = Versioner.GetVersion(path, "", new MajorMinor(1, 2), "", default, PreReleaseIdentifiers.Default, false, NullLogger.Instance);
 
         // assert
-        Assert.Equal("1.2.0-alpha.0", actualVersion.ToString());
+        Assert.Equal("1.2.0.0-alpha.0", actualVersion.ToString());
     }
 
     [Theory]
-    [InlineData("4.0.0", 3, 2, "4.0.0", true)]
-    [InlineData("4.3.0", 4, 3, "4.3.0", true)]
-    [InlineData("4.3.0", 5, 4, "5.4.0-alpha.0", false)]
+    [InlineData("4.0.0.0", 3, 2, "4.0.0.0", true)]
+    [InlineData("4.3.0.0", 4, 3, "4.3.0.0", true)]
+    [InlineData("4.3.0.0", 5, 4, "5.4.0.0-alpha.0", false)]
+    [InlineData("4.0.0", 3, 2, "4.0.0.0", true)]
+    [InlineData("4.3.0", 4, 3, "4.3.0.0", true)]
+    [InlineData("4.3.0", 5, 6, "5.6.0.0-alpha.0", false)]
     public static async Task Tagged(string tag, int major, int minor, string expectedVersion, bool isRedundant)
     {
         // arrange
@@ -60,6 +63,6 @@ public static class MinMajorMinor
         var actualVersion = Versioner.GetVersion(path, "", new MajorMinor(1, 0), "", default, PreReleaseIdentifiers.Default, false, NullLogger.Instance);
 
         // assert
-        Assert.Equal("1.0.0-alpha.0", actualVersion.ToString());
+        Assert.Equal("1.0.0.0-alpha.0", actualVersion.ToString());
     }
 }

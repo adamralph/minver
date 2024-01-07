@@ -116,7 +116,7 @@ git tag 1.1.0 -a -m '.'
         var version = Versioner.GetVersion(path, "", MajorMinor.Default, "", default, PreReleaseIdentifiers.Default, false, NullLogger.Instance);
 
         // assert
-        Assert.Equal("0.0.0-alpha.0", version.ToString());
+        Assert.Equal("0.0.0.0-alpha.0", version.ToString());
     }
 
     [Fact]
@@ -130,6 +130,6 @@ git tag 1.1.0 -a -m '.'
         var version = Versioner.GetVersion(path, "", MajorMinor.Default, "", default, PreReleaseIdentifiers.Default, false, NullLogger.Instance);
 
         // assert
-        Assert.Equal("0.0.0-alpha.0", version.ToString());
+        Assert.Equal("0.0.0.0-alpha.0", version.ToString());
     }
 }

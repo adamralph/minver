@@ -185,7 +185,21 @@ public static class Sdk
         var nuspecFileName = Directory.EnumerateFiles(extractedDirectoryName, "*.nuspec").First();
 
         var nuspec = await File.ReadAllTextAsync(nuspecFileName).ConfigureAwait(false);
-        var nuspecVersion = nuspec.Split("<version>")[1].Split("</version>")[0];
+
+        //adding Revision part to value got from nuget because of automatic truncation by nuget (i have a feeling this could be done better)
+        var nuspecVersionRaw = nuspec.Split("<version>")[1].Split("</version>")[0];
+        var nuspecVersionParts = nuspecVersionRaw.Split('-', 2);
+        var containsRevision = nuspecVersionParts[0].Count(c => c == '.') > 2;
+        string nuspecVersion;
+        if (containsRevision)
+        {
+            nuspecVersion = nuspecVersionRaw;
+        }
+        else
+        {
+            nuspecVersion = $"{nuspecVersionParts[0]}.0";
+            nuspecVersion += nuspecVersionParts.Length > 1 ? $"-{nuspecVersionParts[1]}" : string.Empty;
+        }
 
         var assemblyFileName = Directory.EnumerateFiles(extractedDirectoryName, "*.dll", new EnumerationOptions { RecurseSubdirectories = true, }).First();
 

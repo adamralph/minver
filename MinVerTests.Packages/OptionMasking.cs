@@ -24,7 +24,7 @@ public static class OptionMasking
         var envVars = ("MinVerAutoIncrement".ToAltCase(), "minor");
         var args = $"--auto-increment {value}";
 
-        var expected = Package.WithVersion(2, 3, 5, ["alpha", "0",], 1);
+        var expected = Package.WithVersion(2, 3, 4, 1, ["alpha", "0",], 1);
 
         // act
         var (cliStandardOutput, _) = await MinVerCli.ReadAsync(path, args: args, envVars: envVars);
@@ -45,7 +45,7 @@ public static class OptionMasking
         var envVars = ("MinVerBuildMetadata", "build.123");
         var args = $"--build-metadata {value}";
 
-        var expected = Package.WithVersion(0, 0, 0, ["alpha", "0",]);
+        var expected = Package.WithVersion(0, 0, 0, 0, ["alpha", "0",]);
 
         // act
         var (cliStandardOutput, _) = await MinVerCli.ReadAsync(path, args: args, envVars: envVars);
@@ -64,13 +64,13 @@ public static class OptionMasking
 
         await Git.Init(path);
         await Git.Commit(path);
-        await Git.Tag(path, "2.3.4");
+        await Git.Tag(path, "2.3.5.4");
         await Git.Commit(path);
 
         var envVars = ("MinVerDefaultPreReleaseIdentifiers".ToAltCase(), "preview.0");
         var args = $"--default-pre-release-identifiers {value}";
 
-        var expected = Package.WithVersion(2, 3, 5, ["alpha", "0",], 1);
+        var expected = Package.WithVersion(2, 3, 5, 5, ["alpha", "0",], 1);
 
         // act
         var (cliStandardOutput, _) = await MinVerCli.ReadAsync(path, args: args, envVars: envVars);
@@ -89,13 +89,13 @@ public static class OptionMasking
 
         await Git.Init(path);
         await Git.Commit(path);
-        await Git.Tag(path, "2.3.4");
+        await Git.Tag(path, "2.3.4.15");
         await Git.Commit(path);
 
         var envVars = ("MinVerDefaultPreReleasePhase".ToAltCase(), "preview");
         var args = $"--default-pre-release-phase {value}";
 
-        var expected = Package.WithVersion(2, 3, 5, ["alpha", "0",], 1);
+        var expected = Package.WithVersion(2, 3, 5, 16, ["alpha", "0",], 1);
 
         // act
         var (cliStandardOutput, _) = await MinVerCli.ReadAsync(path, args: args, envVars: envVars);
@@ -119,7 +119,7 @@ public static class OptionMasking
         var envVars = ("MinVerMinimumMajorMinor".ToAltCase(), "3.0");
         var args = $"--minimum-major-minor {value}";
 
-        var expected = Package.WithVersion(2, 3, 4);
+        var expected = Package.WithVersion(2, 3, 4, 0);
 
         // act
         var (cliStandardOutput, _) = await MinVerCli.ReadAsync(path, args: args, envVars: envVars);
@@ -143,7 +143,7 @@ public static class OptionMasking
         var envVars = ("MinVerTagPrefix", "v.");
         var args = $"--tag-prefix {value}";
 
-        var expected = Package.WithVersion(2, 3, 4, ["alpha", "5",]);
+        var expected = Package.WithVersion(2, 3, 4, 0, ["alpha", "5",]);
 
         // act
         var (cliStandardOutput, _) = await MinVerCli.ReadAsync(path, args: args, envVars: envVars);

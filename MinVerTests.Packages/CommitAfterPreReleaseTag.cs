@@ -16,10 +16,10 @@ public static class CommitAfterPreReleaseTag
 
         await Git.Init(path);
         await Git.Commit(path);
-        await Git.Tag(path, "2.3.4-alpha.5");
+        await Git.Tag(path, "2.3.4.6-alpha.5");
         await Git.Commit(path);
 
-        var expected = Package.WithVersion(2, 3, 4, ["alpha", "5",], 1);
+        var expected = Package.WithVersion(2, 3, 4, 6, ["alpha", "5",], 1);
 
         // act
         var (actual, _, _) = await Sdk.BuildProject(path);

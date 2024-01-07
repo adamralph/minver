@@ -18,7 +18,7 @@ public static class NonVersionTag
         await Git.Commit(path);
         await Git.Tag(path, "foo");
 
-        var expected = Package.WithVersion(0, 0, 0, ["alpha", "0",]);
+        var expected = Package.WithVersion(0, 0, 0, 0, ["alpha", "0",]);
 
         // act
         var (actual, _, _) = await Sdk.BuildProject(path);

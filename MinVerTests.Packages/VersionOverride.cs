@@ -16,11 +16,11 @@ public static class VersionOverride
 
         await Git.Init(path);
         await Git.Commit(path);
-        await Git.Tag(path, "2.3.4");
+        await Git.Tag(path, "2.3.4.5");
 
         var envVars = ("MinVerVersionOverride".ToAltCase(), "3.4.5-alpha.6+build.7");
 
-        var expected = Package.WithVersion(3, 4, 5, ["alpha", "6",], 0, "build.7");
+        var expected = Package.WithVersion(3, 4, 5, 0, ["alpha", "6",], 0, "build.7");
 
         // act
         var (actual, _, _) = await Sdk.BuildProject(path, envVars: envVars);

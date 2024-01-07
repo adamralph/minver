@@ -10,5 +10,5 @@ public enum VersionPart
 
 public static class VersionPartExtensions
 {
-    public static string ValidValues => "major, minor, or patch (default)";
+    public static string ValidValues => "major, minor, patch or revision (default)";
 }

@@ -25,7 +25,8 @@ public static class Cleaning
 
         _ = await Sdk.BuildProject(path);
 
-        var packages = new Matcher().AddInclude("**/bin/Debug/*.nupkg");
+        //very weird, it always put the file in bin/x64/Debug and not bin/Debug changed it for now
+        var packages = new Matcher().AddInclude("**/Debug/*.nupkg");
         Assert.NotEmpty(packages.GetResultsInFullPath(path));
 
         // act

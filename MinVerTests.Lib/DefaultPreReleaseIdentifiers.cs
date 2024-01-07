@@ -11,8 +11,8 @@ namespace MinVerTests.Lib;
 public static class DefaultPreReleaseIdentifiers
 {
     [Theory]
-    [InlineData("alpha.0", "0.0.0-alpha.0")]
-    [InlineData("preview.x", "0.0.0-preview.x")]
+    [InlineData("alpha.0", "0.0.0.0-alpha.0")]
+    [InlineData("preview.x", "0.0.0.0-preview.x")]
     public static async Task Various(string identifiers, string expectedVersion)
     {
         // arrange

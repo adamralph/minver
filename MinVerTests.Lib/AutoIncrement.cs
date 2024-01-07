@@ -11,9 +11,14 @@ namespace MinVerTests.Lib;
 public static class AutoIncrement
 {
     [Theory]
-    [InlineData("1.2.3", VersionPart.Major, "2.0.0-alpha.0.1")]
-    [InlineData("1.2.3", VersionPart.Minor, "1.3.0-alpha.0.1")]
-    [InlineData("1.2.3", VersionPart.Patch, "1.2.4-alpha.0.1")]
+    [InlineData("1.2.3.4", VersionPart.Major, "2.0.0.0-alpha.0.1")]
+    [InlineData("1.2.3.4", VersionPart.Minor, "1.3.0.0-alpha.0.1")]
+    [InlineData("1.2.3.4", VersionPart.Patch, "1.2.4.0-alpha.0.1")]
+    [InlineData("1.2.3.4", VersionPart.Revision, "1.2.3.5-alpha.0.1")]
+    [InlineData("1.2.3", VersionPart.Major, "2.0.0.0-alpha.0.1")]
+    [InlineData("1.2.3", VersionPart.Minor, "1.3.0.0-alpha.0.1")]
+    [InlineData("1.2.3", VersionPart.Patch, "1.2.4.0-alpha.0.1")]
+    [InlineData("1.2.3", VersionPart.Revision, "1.2.3.1-alpha.0.1")]
     public static async Task RtmVersionIncrement(string tag, VersionPart autoIncrement, string expectedVersion)
     {
         // arrange

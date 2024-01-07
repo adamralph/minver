@@ -35,7 +35,7 @@ public class MultipleProjects
         await Git.Init(path);
         await Git.Commit(path);
         await Git.Tag(path, "2.3.4");
-        await Git.Tag(path, "v5.6.7,8");
+        await Git.Tag(path, "v5.6.7.8");
 
         var expected0 = Package.WithVersion(2, 3, 4, 0);
         var expected1 = Package.WithVersion(5, 6, 7, 8);

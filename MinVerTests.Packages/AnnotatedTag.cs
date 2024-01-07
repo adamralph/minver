@@ -16,9 +16,9 @@ public static class AnnotatedTag
 
         await Git.Init(path);
         await Git.Commit(path);
-        await Git.AnnotatedTag(path, "2.3.4-alpha.5+build.6", "foo");
+        await Git.AnnotatedTag(path, "2.3.4.6-alpha.5+build.6", "foo");
 
-        var expected = Package.WithVersion(2, 3, 4, ["alpha", "5",], 0, "build.6");
+        var expected = Package.WithVersion(2, 3, 4, 6, ["alpha", "5",], 0, "build.6");
 
         // act
         var (actual, _, _) = await Sdk.BuildProject(path);

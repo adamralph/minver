@@ -18,7 +18,7 @@ public static class RtmTag
         await Git.Commit(path);
         await Git.Tag(path, "2.3.4");
 
-        var expected = Package.WithVersion(2, 3, 4);
+        var expected = Package.WithVersion(2, 3, 4, 0);
 
         // act
         var (actual, _, _) = await Sdk.BuildProject(path);

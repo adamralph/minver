@@ -16,11 +16,11 @@ public static class TwoCommitsAfterRtmTag
 
         await Git.Init(path);
         await Git.Commit(path);
-        await Git.Tag(path, "2.3.4");
+        await Git.Tag(path, "2.3.4.5");
         await Git.Commit(path);
         await Git.Commit(path);
 
-        var expected = Package.WithVersion(2, 3, 5, ["alpha", "0",], 2);
+        var expected = Package.WithVersion(2, 3, 4, 6, ["alpha", "0",], 2);
 
         // act
         var (actual, _, _) = await Sdk.BuildProject(path);

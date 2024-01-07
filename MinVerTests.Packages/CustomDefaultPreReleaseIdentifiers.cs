@@ -22,7 +22,7 @@ public static class CustomDefaultPreReleaseIdentifiers
 
         var envVars = ("MinVerDefaultPreReleaseIdentifiers".ToAltCase(), "preview.0");
 
-        var expected = Package.WithVersion(2, 3, 5, ["preview", "0",], 1);
+        var expected = Package.WithVersion(2, 3, 4, 1, ["preview", "0",], 1);
 
         // act
         var (actual, _, _) = await Sdk.BuildProject(path, envVars: envVars);
@@ -47,7 +47,7 @@ public static class CustomDefaultPreReleaseIdentifiers
 
         var envVars = ("MinVerDefaultPreReleasePhase".ToAltCase(), "preview");
 
-        var expected = Package.WithVersion(2, 3, 5, ["preview", "0",], 1);
+        var expected = Package.WithVersion(2, 3, 4, 1, ["preview", "0",], 1);
 
         // act
         var (actual, sdkStandardOutput, _) = await Sdk.BuildProject(path, envVars: envVars);
@@ -79,7 +79,7 @@ public static class CustomDefaultPreReleaseIdentifiers
             ("MinVerDefaultPreReleasePhase", "foo"),
         };
 
-        var expected = Package.WithVersion(2, 3, 5, ["preview", "0",], 1);
+        var expected = Package.WithVersion(2, 3, 4, 1, ["preview", "0",], 1);
 
         // act
         var (actual, _, _) = await Sdk.BuildProject(path, envVars: envVars);

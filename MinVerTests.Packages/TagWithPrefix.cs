@@ -16,11 +16,11 @@ public static class TagWithPrefix
 
         await Git.Init(path);
         await Git.Commit(path);
-        await Git.Tag(path, "v.2.3.4-alpha.5");
+        await Git.Tag(path, "v.2.3.4.5-alpha.5");
 
         var envVars = ("MinVerTagPrefix", "v.");
 
-        var expected = Package.WithVersion(2, 3, 4, ["alpha", "5",]);
+        var expected = Package.WithVersion(2, 3, 4, 5, ["alpha", "5",]);
 
         // act
         var (actual, _, _) = await Sdk.BuildProject(path, envVars: envVars);

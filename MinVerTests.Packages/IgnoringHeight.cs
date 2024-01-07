@@ -16,12 +16,12 @@ public static class IgnoringHeight
 
         await Git.Init(path);
         await Git.Commit(path);
-        await Git.Tag(path, "2.3.4");
+        await Git.Tag(path, "2.3.4.6");
         await Git.Commit(path);
 
         var envVars = ("MinVerIgnoreHeight".ToAltCase(), "true".ToAltCase());
 
-        var expected = Package.WithVersion(2, 3, 4);
+        var expected = Package.WithVersion(2, 3, 4, 6);
 
         // act
         var (actual, _, _) = await Sdk.BuildProject(path, envVars: envVars);

@@ -7,18 +7,19 @@ using NuGet.Versioning;
 
 namespace MinVer.Lib;
 
-public class Version : SemanticVersion
+public class Version : NuGetVersion
 {
     private readonly List<string> preReleaseIdentifiers;
     private readonly int height;
 
-    public Version(IEnumerable<string> defaultPreReleaseIdentifiers) : this(0, 0, 0, defaultPreReleaseIdentifiers.ToList(), 0, "") { }
+    public Version(IEnumerable<string> defaultPreReleaseIdentifiers) : this(0, 0, 0, 0, defaultPreReleaseIdentifiers.ToList(), 0, "") { }
 
-    private Version(int major, int minor, int patch, List<string> preReleaseIdentifiers, int height, string? buildMetadata) :
+    private Version(int major, int minor, int patch, int revision, List<string> preReleaseIdentifiers, int height, string? buildMetadata) :
         base(
             major,
             minor,
             patch,
+            revision,
             height > 0
                 ? preReleaseIdentifiers.Append(height.ToString(CultureInfo.InvariantCulture))
                 : preReleaseIdentifiers,
@@ -37,24 +38,25 @@ public class Version : SemanticVersion
 
         return minMajorMinor.Major < this.Major || (minMajorMinor.Major == this.Major && minMajorMinor.Minor <= this.Minor)
             ? this
-            : new Version(minMajorMinor.Major, minMajorMinor.Minor, 0, defaultPreReleaseIdentifiers.ToList(), this.height, this.Metadata);
+            : new Version(minMajorMinor.Major, minMajorMinor.Minor, 0, 0, defaultPreReleaseIdentifiers.ToList(), this.height, this.Metadata);
     }
 
     public Version WithHeight(int newHeight, VersionPart autoIncrement, IEnumerable<string> defaultPreReleaseIdentifiers) =>
         this.preReleaseIdentifiers.Count == 0 && newHeight > 0
             ? autoIncrement switch
             {
-                VersionPart.Major => new Version(this.Major + 1, 0, 0, defaultPreReleaseIdentifiers.ToList(), newHeight, ""),
-                VersionPart.Minor => new Version(this.Major, this.Minor + 1, 0, defaultPreReleaseIdentifiers.ToList(), newHeight, ""),
-                VersionPart.Patch => new Version(this.Major, this.Minor, this.Patch + 1, defaultPreReleaseIdentifiers.ToList(), newHeight, ""),
+                VersionPart.Major => new Version(this.Major + 1, 0, 0, 0, defaultPreReleaseIdentifiers.ToList(), newHeight, ""),
+                VersionPart.Minor => new Version(this.Major, this.Minor + 1, 0, 0, defaultPreReleaseIdentifiers.ToList(), newHeight, ""),
+                VersionPart.Patch => new Version(this.Major, this.Minor, this.Patch + 1, 0, defaultPreReleaseIdentifiers.ToList(), newHeight, ""),
+                VersionPart.Revision => new Version(this.Major, this.Minor, this.Patch, this.Revision + 1, defaultPreReleaseIdentifiers.ToList(), newHeight, ""),
                 _ => throw new ArgumentOutOfRangeException(nameof(autoIncrement)),
             }
-            : new Version(this.Major, this.Minor, this.Patch, this.preReleaseIdentifiers, newHeight, newHeight == 0 ? this.Metadata : "");
+            : new Version(this.Major, this.Minor, this.Patch, this.Revision, this.preReleaseIdentifiers, newHeight, newHeight == 0 ? this.Metadata : "");
 
     public Version AddBuildMetadata(string newBuildMetadata)
     {
         var separator = !string.IsNullOrEmpty(this.Metadata) && !string.IsNullOrEmpty(newBuildMetadata) ? "." : "";
-        return new Version(this.Major, this.Minor, this.Patch, this.preReleaseIdentifiers, this.height, $"{this.Metadata}{separator}{newBuildMetadata}");
+        return new Version(this.Major, this.Minor, this.Patch, this.Revision, this.preReleaseIdentifiers, this.height, $"{this.Metadata}{separator}{newBuildMetadata}");
     }
 
     public static bool TryParse(string text, [NotNullWhen(returnValue: true)] out Version? version, string prefix = "")
@@ -69,12 +71,12 @@ public class Version : SemanticVersion
             return false;
         }
 
-        if (!SemanticVersion.TryParse(text[prefix.Length..], out var semanticVersion))
+        if (!NuGetVersion.TryParse(text[prefix.Length..], out var nugetVersion))
         {
             return false;
         }
 
-        version = new Version(semanticVersion.Major, semanticVersion.Minor, semanticVersion.Patch, semanticVersion.ReleaseLabels.ToList(), 0, semanticVersion.Metadata);
+        version = new Version(nugetVersion.Major, nugetVersion.Minor, nugetVersion.Patch, nugetVersion.Revision, nugetVersion.ReleaseLabels.ToList(), 0, nugetVersion.Metadata);
         return true;
     }
 }

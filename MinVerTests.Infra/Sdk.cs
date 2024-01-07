@@ -141,7 +141,8 @@ public static class Sdk
             environmentVariables,
             handleExitCode).ConfigureAwait(false);
 
-        var matcher = new Matcher().AddInclude("**/bin/Debug/*.nupkg");
+        //very weird, it always put the file in bin/x64/Debug and not bin/Debug changed it for now
+        var matcher = new Matcher().AddInclude("**/Debug/*.nupkg");
         var packageFileNames = matcher.GetResultsInFullPath(path).OrderBy(result => result);
         var getPackages = packageFileNames.Select(GetPackage);
         var packages = await Task.WhenAll(getPackages).ConfigureAwait(false);

@@ -30,7 +30,7 @@ public class Version : NuGetVersion
     }
 
     public override string ToString(string? format, IFormatProvider? formatProvider) =>
-        $"{this.Major}.{this.Minor}.{this.Patch}{(string.IsNullOrEmpty(this.Release) ? "" : $"-{this.Release}")}{(string.IsNullOrEmpty(this.Metadata) ? "" : $"+{this.Metadata}")}";
+        $"{this.Major}.{this.Minor}.{this.Patch}.{this.Revision}{(string.IsNullOrEmpty(this.Release) ? "" : $"-{this.Release}")}{(string.IsNullOrEmpty(this.Metadata) ? "" : $"+{this.Metadata}")}";
 
     public Version Satisfying(MajorMinor minMajorMinor, IEnumerable<string> defaultPreReleaseIdentifiers)
     {

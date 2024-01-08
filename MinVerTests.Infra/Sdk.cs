@@ -5,7 +5,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
-using System.Runtime;
 using System.Runtime.Loader;
 using System.Threading.Tasks;
 using Microsoft.Extensions.FileSystemGlobbing;

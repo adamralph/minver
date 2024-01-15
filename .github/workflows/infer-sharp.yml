@@ -1,0 +1,27 @@
+name: infer-sharp
+on:
+  push:
+    branches: [main, release-*]
+  pull_request:
+jobs:
+  infer-sharp:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-dotnet@v4.0.0
+        with:
+          dotnet-version: '8.0.100'
+      - uses: actions/checkout@v4.1.1
+      - run: dotnet build
+      - run: ls -al
+      - run: pwd
+      - uses: microsoft/infersharpaction@v1.5
+        with:
+          binary-path: './MinVer'
+      - run: cat infer-out/report.txt
+      - uses: actions/upload-artifact@v4.1.0
+        with:
+          name: InferSharp reports
+          path: infer-out/report.*
+      - uses: github/codeql-action/upload-sarif@v3.23.0
+        with:
+          sarif_file: infer-out/report.sarif

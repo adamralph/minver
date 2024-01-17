@@ -18,11 +18,9 @@
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <TargetFrameworks>net6.0</TargetFrameworks>
     <LangVersion>default</LangVersion>
-    <Version>6.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.8.3" PrivateAssets="All" ExcludeAssets="runtime" />
   </ItemGroup>
 

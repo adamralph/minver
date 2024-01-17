@@ -1,9 +1,10 @@
 using System;
+using Microsoft.Build.Utilities;
 using MinVer.Lib;
 
 namespace MinVer;
 
-internal sealed class Logger(Verbosity verbosity) : ILogger
+internal sealed class Logger(Verbosity verbosity, TaskLoggingHelper taskLoggingHelper) : ILogger
 {
     private readonly Verbosity verbosity = verbosity;
 
@@ -24,29 +25,29 @@ internal sealed class Logger(Verbosity verbosity) : ILogger
 
     public bool Warn(int code, string message) => this.IsWarnEnabled && Message($"warning MINVER{code:D4} : {message}");
 
-    public static void ErrorWorkDirDoesNotExist(string workDir) =>
+    public void ErrorWorkDirDoesNotExist(string workDir) =>
         Error(1002, $"Working directory '{workDir}' does not exist.");
 
-    public static void ErrorInvalidAutoIncrement(string autoIncrement) =>
+    public void ErrorInvalidAutoIncrement(string autoIncrement) =>
         Error(1006, $"Invalid auto increment '{autoIncrement}'. Valid values are {VersionPartExtensions.ValidValues}");
 
-    public static void ErrorInvalidMinMajorMinor(string minMajorMinor) =>
+    public void ErrorInvalidMinMajorMinor(string minMajorMinor) =>
         Error(1003, $"Invalid minimum MAJOR.MINOR '{minMajorMinor}'. Valid values are {MajorMinor.ValidValues}");
 
-    public static void ErrorInvalidVerbosity(string verbosity) =>
+    public void ErrorInvalidVerbosity(string verbosity) =>
         Error(1004, $"Invalid verbosity '{verbosity}'. Valid values are {VerbosityMap.ValidValues}.");
 
 #if MINVER
-    public static void ErrorInvalidVersionOverride(string versionOverride) =>
+    public void ErrorInvalidVersionOverride(string versionOverride) =>
         Error(1005, $"Invalid version override '{versionOverride}'");
 #endif
 
-    public static void ErrorNoGit(string message) =>
+    public void ErrorNoGit(string message) =>
         Error(1007, message);
 
-    private static void Error(int code, string message) => Message($"error MINVER{code:D4} : {message}");
+    private void Error(int code, string message) => Message($"error MINVER{code:D4} : {message}", true);
 
-    private static bool Message(string message)
+    private bool Message(string message, bool error = false)
     {
         if (message.Contains('\r', StringComparison.OrdinalIgnoreCase) || message.Contains('\n', StringComparison.OrdinalIgnoreCase))
         {
@@ -54,7 +55,14 @@ internal sealed class Logger(Verbosity verbosity) : ILogger
             message = string.Join($"{Environment.NewLine}MinVer: ", lines);
         }
 
-        Console.Error.WriteLine($"MinVer: {message}");
+        if (error)
+        {
+            taskLoggingHelper.LogError($"MinVer: {message}");
+        }
+        else
+        {
+            taskLoggingHelper.LogMessage($"MinVer: {message}");
+        }
 
         return true;
     }

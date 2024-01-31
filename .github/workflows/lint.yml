@@ -3,13 +3,22 @@ on:
   push:
     branches: [main, release-*]
   pull_request:
+permissions: read-all
 jobs:
   lint:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+      statuses: write
     steps:
       - uses: actions/checkout@v4.1.1
-      - uses: github/super-linter@v5.0.0
+        with:
+          fetch-depth: 0
+          filter: tree:0
+      - uses: super-linter/super-linter@v6.3.0
         env:
+          DEFAULT_BRANCH: main
           FILTER_REGEX_EXCLUDE: \bcodeql-analysis\.yml$|\bLICENSE$|\bversions\.txt$
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_SHELL_SHFMT: false

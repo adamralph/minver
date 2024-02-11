@@ -5,15 +5,13 @@ namespace MinVer;
 
 internal sealed class Logger(Verbosity verbosity) : ILogger
 {
-    private readonly Verbosity verbosity = verbosity;
+    public bool IsTraceEnabled => verbosity >= Verbosity.Trace;
 
-    public bool IsTraceEnabled => this.verbosity >= Verbosity.Trace;
+    public bool IsDebugEnabled => verbosity >= Verbosity.Debug;
 
-    public bool IsDebugEnabled => this.verbosity >= Verbosity.Debug;
+    public bool IsInfoEnabled => verbosity >= Verbosity.Info;
 
-    public bool IsInfoEnabled => this.verbosity >= Verbosity.Info;
-
-    public bool IsWarnEnabled => this.verbosity >= Verbosity.Warn;
+    public bool IsWarnEnabled => verbosity >= Verbosity.Warn;
 
     public bool Trace(string message) => this.IsTraceEnabled && Message(message);
 

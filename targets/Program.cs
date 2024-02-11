@@ -20,13 +20,13 @@ Target(
     "test-lib",
     "test the MinVer.Lib library",
     DependsOn("build"),
-    () => RunAsync("dotnet", ["test", "./MinVerTests.Lib", "--framework", testFx, "--configuration", "Release", "--no-build", "--nologo", .. testLoggerArgs]));
+    () => RunAsync("dotnet", ["test", "./MinVerTests.Lib", "--framework", testFx, "--configuration", "Release", "--no-build", "--nologo", .. testLoggerArgs,]));
 
 Target(
     "test-packages",
     "test the MinVer package and the minver-cli console app",
     DependsOn("build"),
-    () => RunAsync("dotnet", ["test", "./MinVerTests.Packages", "--configuration", "Release", "--no-build", "--nologo", .. testLoggerArgs]));
+    () => RunAsync("dotnet", ["test", "./MinVerTests.Packages", "--configuration", "Release", "--no-build", "--nologo", .. testLoggerArgs,]));
 
 Target(
     "eyeball-minver-logs",

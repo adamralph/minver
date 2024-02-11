@@ -20,7 +20,7 @@ public static class SourceLink
             int.Parse(Sdk.Version.Split(".")[0], NumberStyles.None, CultureInfo.InvariantCulture) < 8)
         {
             _ = await Sdk.DotNet(
-                $"add package Microsoft.SourceLink.GitHub --version 1.1.1 --package-directory packages", path);
+                "add package Microsoft.SourceLink.GitHub --version 1.1.1 --package-directory packages", path);
             _ = await Sdk.DotNet("restore --packages packages", path);
         }
 

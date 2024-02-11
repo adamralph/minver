@@ -77,7 +77,7 @@ public static class Versioner
         return (selectedCandidate.Version, selectedCandidate.Height);
     }
 
-    private static List<Candidate> GetCandidates(Commit head, IEnumerable<(string Name, string Sha)> tags, string tagPrefix, List<string> defaultPreReleaseIdentifiers, ILogger log)
+    private static List<Candidate> GetCandidates(Commit head, IEnumerable<(string Name, string Sha)> tags, string tagPrefix, IReadOnlyCollection<string> defaultPreReleaseIdentifiers, ILogger log)
     {
         var tagsAndVersions = new List<(string Name, string Sha, Version Version)>();
 
@@ -97,7 +97,7 @@ public static class Versioner
         [
             .. tagsAndVersions
                 .OrderBy(tagAndVersion => tagAndVersion.Version)
-                .ThenBy(tagsAndVersion => tagsAndVersion.Name)
+                .ThenBy(tagsAndVersion => tagsAndVersion.Name),
         ];
 
         var itemsToCheck = new Stack<(Commit Commit, int Height, Commit? Child)>();

@@ -3,6 +3,7 @@ on:
   push:
     branches: [main, release-*]
   pull_request:
+permissions: read-all
 jobs:
   infer-sharp:
     runs-on: ubuntu-latest

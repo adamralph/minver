@@ -3,6 +3,7 @@ on:
   push:
     branches: [main, release-*]
   pull_request:
+permissions: read-all
 env:
   DOTNET_NOLOGO: true
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true

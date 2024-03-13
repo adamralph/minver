@@ -11,7 +11,7 @@ jobs:
       - uses: actions/setup-dotnet@v4.0.0
         with:
           dotnet-version: '8.0.101'
-      - uses: actions/checkout@v4.1.1
+      - uses: actions/checkout@v4.1.2
       - run: dotnet build
       - run: ls -al
       - run: pwd

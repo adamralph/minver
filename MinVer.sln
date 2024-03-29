@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28922.388
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34723.18
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinVerTests.Lib", "MinVerTests.Lib\MinVerTests.Lib.csproj", "{57307B80-9750-4D4F-91DC-EE28EC89EDDD}"
 EndProject
@@ -16,6 +16,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinVerTests.Infra", "MinVerTests.Infra\MinVerTests.Infra.csproj", "{AA98F752-F8EF-447D-BC85-4F277CAF4B82}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinVerTests.Packages", "MinVerTests.Packages\MinVerTests.Packages.csproj", "{694ECAC7-FD05-4550-A4FB-8F497D29ECB0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinVer.MSBuild", "MinVer.MSBuild\MinVer.MSBuild.csproj", "{C0903586-F372-4B47-877F-0D8F2E2DC77B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{694ECAC7-FD05-4550-A4FB-8F497D29ECB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{694ECAC7-FD05-4550-A4FB-8F497D29ECB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{694ECAC7-FD05-4550-A4FB-8F497D29ECB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0903586-F372-4B47-877F-0D8F2E2DC77B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0903586-F372-4B47-877F-0D8F2E2DC77B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0903586-F372-4B47-877F-0D8F2E2DC77B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0903586-F372-4B47-877F-0D8F2E2DC77B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

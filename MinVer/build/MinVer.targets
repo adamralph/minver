@@ -4,7 +4,11 @@
     <MSBuildAllProjects Condition="'$(MSBuildAssemblyVersion)' == '' Or '$(MSBuildAssemblyVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);MinVer</GenerateNuspecDependsOn>
     <GetPackageVersionDependsOn>$(GetPackageVersionDependsOn);MinVer</GetPackageVersionDependsOn>
+    <MinVerTaskPath Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)task\net6.0\MinVer.MSBuild.dll</MinVerTaskPath>
+    <MinVerTaskPath Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)task\net472\MinVer.MSBuild.dll</MinVerTaskPath>
   </PropertyGroup>
+
+  <UsingTask TaskName="MinVer.MSBuild.MinVerTask" AssemblyFile="$(MinVerTaskPath)" />
 
   <PropertyGroup>
     <MinVerDetailed>low</MinVerDetailed>
@@ -29,31 +33,20 @@
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerTagPrefix=$(MinVerTagPrefix)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerVerbosity=$(MinVerVerbosity)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerVersionOverride=$(MinVerVersionOverride)" />
-    <ItemGroup>
-      <MinVerInputs Remove="@(MinVerInputs)" />
-      <MinVerConsoleOutput Remove="@(MinVerConsoleOutput)" />
-      <MinVerOutputVersion Remove="@(MinVerOutputVersion)" />
-    </ItemGroup>
-    <ItemGroup>
-      <MinVerInputs Include="&quot;$(MSBuildProjectDirectory)&quot;" />
-      <MinVerInputs Include="--auto-increment &quot;$(MinVerAutoIncrement)&quot;" />
-      <MinVerInputs Include="--build-metadata &quot;$(MinVerBuildMetadata)&quot;" />
-      <MinVerInputs Include="--default-pre-release-identifiers &quot;$(MinVerDefaultPreReleaseIdentifiers)&quot;" />
-      <MinVerInputs Include="--default-pre-release-phase &quot;$(MinVerDefaultPreReleasePhase)&quot;" />
-      <MinVerInputs Include="--ignore-height" Condition="'$(MinVerIgnoreHeight)' == 'true'" />
-      <MinVerInputs Include="--minimum-major-minor &quot;$(MinVerMinimumMajorMinor)&quot;" />
-      <MinVerInputs Include="--tag-prefix &quot;$(MinVerTagPrefix)&quot;" />
-      <MinVerInputs Include="--verbosity &quot;$(MinVerVerbosity)&quot;" />
-      <MinVerInputs Include="--version-override &quot;$(MinVerVersionOverride)&quot;" />
-    </ItemGroup>
-    <Exec Command="dotnet &quot;$(MSBuildThisFileDirectory)../minver/$(MinVerTargetFramework)/MinVer.dll&quot; @(MinVerInputs->'%(Identity)', ' ')" ConsoleToMSBuild="true" StandardOutputImportance="Low" >
-      <Output TaskParameter="ConsoleOutput" ItemName="MinVerConsoleOutput" />
-    </Exec>
-    <ItemGroup>
-      <MinVerOutputVersion Include="@(MinVerConsoleOutput)" Condition="'$([System.String]::new(`%(Identity)`).StartsWith(`MinVer:`))' != 'true'" />
-    </ItemGroup>
+    <MinVerTask GitWorkingDirectory="$(MSBuildProjectDirectory)"
+      AutoIncrement="$(MinVerAutoIncrement)"
+      BuildMetadata="$(MinVerBuildMetadata)"
+      DefaultPreReleaseIdentifiers="$(MinVerDefaultPreReleaseIdentifiers)"
+      DefaultPreReleasePhase="$(MinVerDefaultPreReleasePhase)"
+      IgnoreHeight="$(MinVerIgnoreHeight)"
+      MinimumMajorMinor="$(MinVerMinimumMajorMinor)"
+      TagPrefix="$(MinVerTagPrefix)"
+      Verbosity="$(MinVerVerbosity)"
+      VersionOverride="$(MinVerVersionOverride)"
+      TargetFramework="$(MinVerTargetFramework)">
+        <Output TaskParameter="Version" PropertyName="MinVerVersion" />
+    </MinVerTask>
     <PropertyGroup>
-      <MinVerVersion>@(MinVerOutputVersion)</MinVerVersion>
       <MinVerMajor>$(MinVerVersion.Split(`.`)[0])</MinVerMajor>
       <MinVerMinor>$(MinVerVersion.Split(`.`)[1])</MinVerMinor>
       <MinVerPatch>$(MinVerVersion.Split(`.`)[2].Split(`-`)[0].Split(`+`)[0])</MinVerPatch>

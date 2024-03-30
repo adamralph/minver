@@ -1,4 +1,5 @@
 #if NET
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 #endif
 using System.Reflection;
@@ -41,13 +42,23 @@ public class MinVerTask : ToolTask
 
     protected override MessageImportance StandardErrorLoggingImportance => this.Verbosity is not null and ("detailed" or "d" or "diagnostic" or "diag") ? MessageImportance.High : MessageImportance.Low;
 
-    protected override bool SkipTaskExecution() => base.SkipTaskExecution();
+    protected override bool SkipTaskExecution()
+    {
+        if (this.TryGetCachedResult(out var cachedVersion))
+        {
+            this.Version = cachedVersion;
+            return true;
+        }
+
+        return false;
+    }
 
     protected override void LogEventsFromTextOutput(string singleLine, MessageImportance messageImportance)
     {
         if (singleLine is not null && !singleLine.StartsWith("MinVer", StringComparison.Ordinal))
         {
             this.Version = singleLine;
+            this.CacheResult(singleLine);
         }
 
         base.LogEventsFromTextOutput(singleLine, messageImportance);
@@ -98,4 +109,28 @@ public class MinVerTask : ToolTask
 
         return builder.ToString();
     }
+
+    private void CacheResult(string version) => this.BuildEngine4.RegisterTaskObject(this.CacheKey, version, RegisteredTaskObjectLifetime.Build, allowEarlyCollection: true);
+
+#if NET
+    private bool TryGetCachedResult([NotNullWhen(returnValue: true)] out string? version)
+#else
+    private bool TryGetCachedResult(out string? version)
+#endif
+    {
+        version = (string)this.BuildEngine4.GetRegisteredTaskObject(this.CacheKey, RegisteredTaskObjectLifetime.Build);
+
+        if (version is not null)
+        {
+            this.Log.LogMessage(this.StandardErrorLoggingImportance, "MinVerTask: Result cache has value. Skipping MinVer and using cached result: {0}", version);
+        }
+        else
+        {
+            this.Log.LogMessage(this.StandardErrorLoggingImportance, "MinVerTask: Result cache is empty. Running MinVer to calculate version.");
+        }
+
+        return version is not null;
+    }
+
+    private object CacheKey => (this.AutoIncrement, this.BuildMetadata, this.DefaultPreReleaseIdentifiers, this.DefaultPreReleasePhase, this.IgnoreHeight, this.MinimumMajorMinor, this.TagPrefix, this.Verbosity, this.VersionOverride);
 }

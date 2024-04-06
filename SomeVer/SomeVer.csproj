@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net472;net8.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>default</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="buildMultiTargeting\SomeVer.targets" />
+    <None Remove="build\SomeVer.targets" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="build\SomeVer.targets" CopyToOutputDirectory="PreserveNewest"  PackagePath="build"/>
+    <Content Include="buildMultiTargeting\SomeVer.targets" CopyToOutputDirectory="PreserveNewest" PackagePath="buildMultiTargeting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MinVer.Lib\MinVer.Lib.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.9.5" />
+    <PackageReference Include="PolySharp" Version="1.14.1" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers" />
+  </ItemGroup>
+
+</Project>

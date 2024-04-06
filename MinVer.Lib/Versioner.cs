@@ -9,14 +9,37 @@ public static class Versioner
 {
     public static Version GetVersion(string workDir, string tagPrefix, MajorMinor minMajorMinor, string buildMeta, VersionPart autoIncrement, IEnumerable<string> defaultPreReleaseIdentifiers, bool ignoreHeight, ILogger log)
     {
+        var (calculatedVersion, _) = GetVersionAndCandidate(workDir, tagPrefix, minMajorMinor, buildMeta, autoIncrement, defaultPreReleaseIdentifiers, ignoreHeight, includeDefaultPreReleaseIdentifiersWithPrereleases: false, log);
+
+        return calculatedVersion;
+    }
+
+    public static VersionData GetVersionData(string workDir, string tagPrefix, MajorMinor minMajorMinor, string buildMeta, VersionPart autoIncrement, IEnumerable<string> defaultPreReleaseIdentifiers, bool ignoreHeight, bool includeDefaultPreReleaseIdentifiersWithPrereleases, ILogger log)
+    {
+        var (calculatedVersion, candidate) = GetVersionAndCandidate(workDir, tagPrefix, minMajorMinor, buildMeta, autoIncrement, defaultPreReleaseIdentifiers, ignoreHeight, includeDefaultPreReleaseIdentifiersWithPrereleases, log);
+
+        return new VersionData(
+            calculatedVersion.ToString(),
+            calculatedVersion.Major,
+            calculatedVersion.Minor,
+            calculatedVersion.Patch,
+            calculatedVersion.Release,
+            candidate?.Height ?? 0,
+            candidate?.Commit.Sha ?? string.Empty,
+            candidate?.Commit.ShortSha ?? string.Empty);
+    }
+
+    private static (Version, Candidate?) GetVersionAndCandidate(string workDir, string tagPrefix, MajorMinor minMajorMinor, string buildMeta, VersionPart autoIncrement, IEnumerable<string> defaultPreReleaseIdentifiers, bool ignoreHeight, bool includeDefaultPreReleaseIdentifiersWithPrereleases, ILogger log)
+    {
         log = log ?? throw new ArgumentNullException(nameof(log));
 
         var defaultPreReleaseIdentifiersList = defaultPreReleaseIdentifiers.ToList();
 
-        var (version, height) = GetVersion(workDir, tagPrefix, defaultPreReleaseIdentifiersList, log);
+        var (version, candidate) = GetCandidate(workDir, tagPrefix, defaultPreReleaseIdentifiersList, log);
+        var height = candidate?.Height;
 
         _ = height.HasValue && ignoreHeight && log.IsDebugEnabled && log.Debug("Ignoring height.");
-        version = !height.HasValue || ignoreHeight ? version : version.WithHeight(height.Value, autoIncrement, defaultPreReleaseIdentifiersList);
+        version = !height.HasValue || ignoreHeight ? version : version.WithHeight(height.Value, autoIncrement, defaultPreReleaseIdentifiersList, includeDefaultPreReleaseIdentifiersWithPrereleases);
 
         version = version.AddBuildMetadata(buildMeta);
 
@@ -28,10 +51,10 @@ public static class Versioner
 
         _ = log.IsInfoEnabled && log.Info($"Calculated version {calculatedVersion}.");
 
-        return calculatedVersion;
+        return (calculatedVersion, candidate);
     }
 
-    private static (Version Version, int? Height) GetVersion(string workDir, string tagPrefix, List<string> defaultPreReleaseIdentifiers, ILogger log)
+    private static (Version, Candidate?) GetCandidate(string workDir, string tagPrefix, List<string> defaultPreReleaseIdentifiers, ILogger log)
     {
         if (!Git.IsWorkingDirectory(workDir, log))
         {
@@ -74,7 +97,7 @@ public static class Versioner
         _ = string.IsNullOrEmpty(selectedCandidate.Tag) && log.IsInfoEnabled && log.Info($"No commit found with a valid SemVer 2.0 version{(string.IsNullOrEmpty(tagPrefix) ? "" : $" prefixed with '{tagPrefix}'")}. Using default version {selectedCandidate.Version}.");
         _ = log.IsInfoEnabled && log.Info($"Using{(log.IsDebugEnabled && orderedCandidates.Count > 1 ? "    " : " ")}{selectedCandidate.ToString(tagWidth, versionWidth, heightWidth)}.");
 
-        return (selectedCandidate.Version, selectedCandidate.Height);
+        return (selectedCandidate.Version, selectedCandidate);
     }
 
     private static List<Candidate> GetCandidates(Commit head, IEnumerable<(string Name, string Sha)> tags, string tagPrefix, IReadOnlyCollection<string> defaultPreReleaseIdentifiers, ILogger log)
@@ -106,8 +129,10 @@ public static class Versioner
         var checkedShas = new HashSet<string>();
         var candidates = new List<Candidate>();
 
-        while (itemsToCheck.TryPop(out var item))
+        while (itemsToCheck.Count > 0)
         {
+            var item = itemsToCheck.Pop();
+
             _ = item.Child != null && log.IsTraceEnabled && log.Trace($"Checking parents of commit {item.Child}...");
             _ = log.IsTraceEnabled && log.Trace($"Checking commit {item.Commit} (height {item.Height})...");
 

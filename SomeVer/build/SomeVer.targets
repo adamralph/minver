@@ -1,0 +1,80 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildAssemblyVersion)' == '' Or '$(MSBuildAssemblyVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);SomeVer</GenerateNuspecDependsOn>
+    <GetPackageVersionDependsOn>$(GetPackageVersionDependsOn);SomeVer</GetPackageVersionDependsOn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <SomeVerDetailed>low</SomeVerDetailed>
+    <SomeVerDetailed Condition="'$(SomeVerVerbosity)' == 'detailed' Or '$(SomeVerVerbosity)' == 'd' Or '$(SomeVerVerbosity)' == 'diagnostic' Or '$(SomeVerVerbosity)' == 'diag'">high</SomeVerDetailed>
+    <SomeVerTargetFramework>net6.0</SomeVerTargetFramework>
+    <SomeVerTargetFramework Condition="'$(MSBuildAssemblyVersion)' &gt;= '17.4'">net7.0</SomeVerTargetFramework>
+    <SomeVerTargetFramework Condition="'$(MSBuildAssemblyVersion)' &gt;= '17.8'">net8.0</SomeVerTargetFramework>
+    <NoWarn>$(NoWarn);NU5105</NoWarn>
+  </PropertyGroup>
+
+  <Target Name="_SomeVerClean" BeforeTargets="Clean" DependsOnTargets="SomeVer" Condition="'$(GeneratePackageOnBuild)' == 'true'" />
+
+  <UsingTask TaskName="SomeVerTask" AssemblyFile="..\SomeVer.dll" />
+
+  <Target Name="SomeVer" BeforeTargets="BeforeCompile;GetAssemblyVersion;CoreCompile" Condition="'$(DesignTimeBuild)' != 'true' AND '$(SomeVerSkip)' != 'true'">
+    <Error Condition="'$(UsingMicrosoftNETSdk)' != 'true'" Code="SomeVer0001" Text="SomeVer only works in SDK-style projects." />
+    <Message Importance="$(SomeVerDetailed)" Text="SomeVer: [input] MSBuildProjectDirectory=$(MSBuildProjectDirectory)" />
+    <Message Importance="$(SomeVerDetailed)" Text="SomeVer: [input] SomeVerAutoIncrement=$(SomeVerAutoIncrement)" />
+    <Message Importance="$(SomeVerDetailed)" Text="SomeVer: [input] SomeVerBuildMetadata=$(SomeVerBuildMetadata)" />
+    <Message Importance="$(SomeVerDetailed)" Text="SomeVer: [input] SomeVerDefaultPreReleaseIdentifiers=$(SomeVerDefaultPreReleaseIdentifiers)" />
+    <Message Importance="$(SomeVerDetailed)" Text="SomeVer: [input] SomeVerDefaultPreReleasePhase=$(SomeVerDefaultPreReleasePhase)" />
+    <Message Importance="$(SomeVerDetailed)" Text="SomeVer: [input] SomeVerIgnoreHeight=$(SomeVerIgnoreHeight)" />
+    <Message Importance="$(SomeVerDetailed)" Text="SomeVer: [input] SomeVerIncludeDefaultPreReleaseIdentifiersWithPrereleases=$(SomeVerIncludeDefaultPreReleaseIdentifiersWithPrereleases)" />
+    <Message Importance="$(SomeVerDetailed)" Text="SomeVer: [input] SomeVerMinimumMajorMinor=$(SomeVerMinimumMajorMinor)" />
+    <Message Importance="$(SomeVerDetailed)" Text="SomeVer: [input] SomeVerTagPrefix=$(SomeVerTagPrefix)" />
+    <Message Importance="$(SomeVerDetailed)" Text="SomeVer: [input] SomeVerVerbosity=$(SomeVerVerbosity)" />
+    <Message Importance="$(SomeVerDetailed)" Text="SomeVer: [input] SomeVerVersionOverride=$(SomeVerVersionOverride)" />
+    <ItemGroup>
+      <SomeVerInputs Remove="@(SomeVerInputs)" />
+      <SomeVerConsoleOutput Remove="@(SomeVerConsoleOutput)" />
+      <SomeVerOutputVersion Remove="@(SomeVerOutputVersion)" />
+    </ItemGroup>
+
+    <SomeVerTask
+        AutoIncrement="$(SomeVerAutoIncrement)"
+        BuildMetadata="$(SomeVerBuildMetadata)"
+        DefaultPreReleaseIdentifiers="$(SomeVerDefaultPreReleaseIdentifiers)"
+        IgnoreHeight="$(SomeVerIgnoreHeight)"
+        IncludeDefaultPreReleaseIdentifiersWithPrereleases="$(SomeVerIncludeDefaultPreReleaseIdentifiersWithPrereleases)"
+        MinimumMajorMinor="$(SomeVerMinimumMajorMinor)"
+        TagPrefix="$(SomeVerTagPrefix)"
+        WorkingDirectory="$(MSBuildProjectDirectory)">
+      <Output TaskParameter="Version" PropertyName="SomeVerVersion" />
+      <Output TaskParameter="Major" PropertyName="SomeVerMajor" />
+      <Output TaskParameter="Minor" PropertyName="SomeVerMinor" />
+      <Output TaskParameter="Patch" PropertyName="SomeVerPatch" />
+      <Output TaskParameter="Label" PropertyName="SomeVerLabel" />
+      <Output TaskParameter="Sha" PropertyName="SomeVerSha" />
+      <Output TaskParameter="ShortSha" PropertyName="SomeVerShortSha" />
+      <Output TaskParameter="Height" PropertyName="SomeVerHeight" />
+    </SomeVerTask>
+    <PropertyGroup>
+      <AssemblyVersion>$(SomeVerMajor).0.0.0</AssemblyVersion>
+      <FileVersion>$(SomeVerMajor).$(SomeVerMinor).$(SomeVerPatch).$(SomeVerHeight)</FileVersion>
+      <InformationalVersion>$(SomeVerVersion)</InformationalVersion>
+      <PackageVersion>$(SomeVerMajor).$(SomeVerMinor).$(SomeVerPatch)</PackageVersion>
+      <PackageVersion Condition="'$(SomeVerLabel)' != ''">$(PackageVersion)-$(SomeVerLabel)</PackageVersion>
+      <Version>$(PackageVersion)</Version>
+    </PropertyGroup>
+    <Message Importance="$(SomeVerDetailed)" Text="SomeVer: [output] SomeVerVersion=$(SomeVerVersion)" />
+    <Message Importance="$(SomeVerDetailed)" Text="SomeVer: [output] SomeVerMajor=$(SomeVerMajor)" />
+    <Message Importance="$(SomeVerDetailed)" Text="SomeVer: [output] SomeVerMinor=$(SomeVerMinor)" />
+    <Message Importance="$(SomeVerDetailed)" Text="SomeVer: [output] SomeVerPatch=$(SomeVerPatch)" />
+    <Message Importance="$(SomeVerDetailed)" Text="SomeVer: [output] SomeVerLabel=$(SomeVerLabel)" />
+    <Message Importance="$(SomeVerDetailed)" Text="SomeVer: [output] SomeVerBuildMetadata=$(SomeVerBuildMetadata)" />
+    <Message Importance="$(SomeVerDetailed)" Text="SomeVer: [output] AssemblyVersion=$(AssemblyVersion)" />
+    <Message Importance="$(SomeVerDetailed)" Text="SomeVer: [output] FileVersion=$(FileVersion)" />
+    <Message Importance="$(SomeVerDetailed)" Text="SomeVer: [output] InformationalVersion=$(InformationalVersion)" />
+    <Message Importance="$(SomeVerDetailed)" Text="SomeVer: [output] PackageVersion=$(PackageVersion)" />
+    <Message Importance="$(SomeVerDetailed)" Text="SomeVer: [output] Version=$(Version)" />
+  </Target>
+
+</Project>

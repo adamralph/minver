@@ -2,12 +2,13 @@
 
   <PropertyGroup>
     <IsPackable>false</IsPackable>
-    <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net472;net6.0;net7.0;net8.0</TargetFrameworks>
     <LangVersion>default</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="NuGet.Versioning" Version="6.8.0" />
+    <PackageReference Include="PolySharp" Version="1.14.1" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers" />
   </ItemGroup>
 
 </Project>

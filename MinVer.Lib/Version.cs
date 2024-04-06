@@ -40,16 +40,26 @@ public class Version : SemanticVersion
             : new Version(minMajorMinor.Major, minMajorMinor.Minor, 0, defaultPreReleaseIdentifiers.ToList(), this.height, this.Metadata);
     }
 
-    public Version WithHeight(int newHeight, VersionPart autoIncrement, IEnumerable<string> defaultPreReleaseIdentifiers) =>
-        this.preReleaseIdentifiers.Count == 0 && newHeight > 0
-            ? autoIncrement switch
+    public Version WithHeight(int newHeight, VersionPart autoIncrement, IEnumerable<string> defaultPreReleaseIdentifiers, bool includeDefaultPreReleaseIdentifiersWithPrereleases)
+    {
+        if (this.preReleaseIdentifiers.Count == 0 && newHeight > 0)
+        {
+            return autoIncrement switch
             {
                 VersionPart.Major => new Version(this.Major + 1, 0, 0, defaultPreReleaseIdentifiers.ToList(), newHeight, ""),
                 VersionPart.Minor => new Version(this.Major, this.Minor + 1, 0, defaultPreReleaseIdentifiers.ToList(), newHeight, ""),
                 VersionPart.Patch => new Version(this.Major, this.Minor, this.Patch + 1, defaultPreReleaseIdentifiers.ToList(), newHeight, ""),
                 _ => throw new ArgumentOutOfRangeException(nameof(autoIncrement)),
-            }
-            : new Version(this.Major, this.Minor, this.Patch, this.preReleaseIdentifiers, newHeight, newHeight == 0 ? this.Metadata : "");
+            };
+        }
+        else
+        {
+            var newPreReleaseIdentifiers = includeDefaultPreReleaseIdentifiersWithPrereleases && newHeight > 0
+                ? [.. this.preReleaseIdentifiers, .. defaultPreReleaseIdentifiers]
+                : this.preReleaseIdentifiers;
+            return new Version(this.Major, this.Minor, this.Patch, newPreReleaseIdentifiers, newHeight, newHeight == 0 ? this.Metadata : "");
+        }
+    }
 
     public Version AddBuildMetadata(string newBuildMetadata)
     {

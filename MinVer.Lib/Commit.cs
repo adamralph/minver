@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace MinVer.Lib;
 
 internal sealed class Commit(string sha)

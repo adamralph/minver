@@ -1,5 +1,3 @@
-using System;
-
 namespace MinVerTests.Infra;
 
 internal static class TestContext

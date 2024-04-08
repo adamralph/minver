@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using MinVerTests.Infra;
 using static Bullseye.Targets;
 using static SimpleExec.Command;

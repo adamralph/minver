@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace MinVer.Lib;
 
 internal static class DictionaryExtensions

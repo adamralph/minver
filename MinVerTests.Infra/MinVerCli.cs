@@ -1,7 +1,3 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-
 namespace MinVerTests.Infra;
 
 public static class MinVerCli

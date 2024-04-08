@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
-
 namespace MinVerTests.Infra;
 
 public record Package(string Version, AssemblyVersion AssemblyVersion, FileVersion FileVersion, string InformationalVersion)

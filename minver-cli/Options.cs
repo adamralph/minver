@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-#if MINVER_CLI
-using System.Linq;
-#endif
 using MinVer.Lib;
 
 namespace MinVer;

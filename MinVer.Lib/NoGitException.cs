@@ -1,5 +1,3 @@
-using System;
-
 namespace MinVer.Lib;
 
 #pragma warning disable CA1032 // Implement standard exception constructors

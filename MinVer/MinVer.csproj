@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="4.1.0" PrivateAssets="All" Publish="true" />
+    <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="4.1.1" PrivateAssets="All" Publish="true" />
   </ItemGroup>
 
   <ItemGroup>

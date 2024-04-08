@@ -1,4 +1,3 @@
-using System;
 using MinVer.Lib;
 
 namespace MinVer;

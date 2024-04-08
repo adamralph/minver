@@ -1,5 +1,4 @@
 using System.Reflection;
-using System.Threading.Tasks;
 using MinVerTests.Infra;
 using Xunit;
 

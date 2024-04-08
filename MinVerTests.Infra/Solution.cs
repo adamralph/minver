@@ -1,5 +1,3 @@
-using System.IO;
-
 namespace MinVerTests.Infra;
 
 internal static class Solution

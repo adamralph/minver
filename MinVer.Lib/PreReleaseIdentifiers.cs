@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace MinVer.Lib;
 
 public static class PreReleaseIdentifiers

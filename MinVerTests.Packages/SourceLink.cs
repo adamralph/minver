@@ -1,7 +1,5 @@
 using System.Globalization;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using MinVerTests.Infra;
 using Xunit;
 

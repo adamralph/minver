@@ -8,5 +8,5 @@ jobs:
   spell-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4.1.1
+      - uses: actions/checkout@v4.1.5
       - run: npx cspell@5.2.1 "**/*"

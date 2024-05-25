@@ -15,21 +15,21 @@ jobs:
         include:
           # old macOS, latest LTS
           - job:
-              os: macos-11
+              os: macos-12
             tests:
               framework: net8.0
               sdk: "8.0.101"
               sdk-major-minor: "8.0"
           # old macOS, latest LTS
           - job:
-              os: macos-12
+              os: macos-13
             tests:
               framework: net8.0
               sdk: "8.0.101"
               sdk-major-minor: "8.0"
           # current macOS, latest LTS and latest
           - job:
-              os: macos-13
+              os: macos-14
             tests:
               framework: net8.0
               sdk: "8.0.101"

@@ -47,14 +47,14 @@ public class MultipleProjects
         var versionCalculations = standardOutput
             .ToNonEmptyLines()
             .Select(line => line.Trim())
-            .Where(line => line.StartsWith("MinVer: Calculated version ", StringComparison.OrdinalIgnoreCase));
+            .Where(line => line.StartsWith("MinVer: Calculated version ", StringComparison.OrdinalIgnoreCase) || line.StartsWith("MinVerTask: Result cache has value", StringComparison.OrdinalIgnoreCase));
 
         Assert.Collection(
             versionCalculations,
             message => Assert.Equal("MinVer: Calculated version 2.3.4.", message),
             message => Assert.Equal("MinVer: Calculated version 5.6.7.", message),
-            message => Assert.Equal("MinVer: Calculated version 2.3.4.", message),
-            message => Assert.Equal("MinVer: Calculated version 5.6.7.", message));
+            message => Assert.Equal("MinVerTask: Result cache has value. Skipping MinVer and using cached result: 2.3.4", message),
+            message => Assert.Equal("MinVerTask: Result cache has value. Skipping MinVer and using cached result: 5.6.7", message));
 
         Assert.Collection(
             actual,

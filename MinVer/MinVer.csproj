@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MinVer.MSBuild\MinVer.MSBuild.csproj" ReferenceOutputAssembly="false" Private="false" />
     <ProjectReference Include="..\MinVer.Lib\MinVer.Lib.csproj" PrivateAssets="All" />
   </ItemGroup>
 
@@ -42,6 +43,8 @@
     <None Remove="buildMultiTargeting\**\*" />
     <Content Include="build\**\*" PackagePath="build" />
     <Content Include="buildMultiTargeting\**\*" PackagePath="buildMultiTargeting" />
+    <None Include="..\MinVer.MSBuild\bin\$(Configuration)\net472\MinVer.MSBuild.dll" Pack="true" PackagePath="build\task\net472" Visible="false" />
+    <None Include="..\MinVer.MSBuild\bin\$(Configuration)\net6.0\MinVer.MSBuild.dll" Pack="true" PackagePath="build\task\net6.0" Visible="false" />
   </ItemGroup>
 
   <Target Name="AddMinVerOutput" BeforeTargets="_GetPackageFiles">

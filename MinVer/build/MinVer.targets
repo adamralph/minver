@@ -46,7 +46,7 @@
       <MinVerInputs Include="--verbosity &quot;$(MinVerVerbosity)&quot;" />
       <MinVerInputs Include="--version-override &quot;$(MinVerVersionOverride)&quot;" />
     </ItemGroup>
-    <Exec Command="dotnet &quot;$(MSBuildThisFileDirectory)../minver/$(MinVerTargetFramework)/MinVer.dll&quot; @(MinVerInputs->'%(Identity)', ' ')" ConsoleToMSBuild="true" StandardOutputImportance="Low" >
+    <Exec Command="dotnet &quot;$(MSBuildThisFileDirectory)bin/$(MinVerTargetFramework)/MinVer.dll&quot; @(MinVerInputs->'%(Identity)', ' ')" ConsoleToMSBuild="true" StandardOutputImportance="Low" >
       <Output TaskParameter="ConsoleOutput" ItemName="MinVerConsoleOutput" />
     </Exec>
     <ItemGroup>

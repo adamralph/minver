@@ -80,7 +80,7 @@ app.OnExecute(() =>
     {
         log.Warn(1008, "MinVerDefaultPreReleasePhase is deprecated and will be removed in the next major version. Use MinVerDefaultPreReleaseIdentifiers instead, with an additional \"0\" identifier. For example, if you are setting MinVerDefaultPreReleasePhase to \"preview\", set MinVerDefaultPreReleaseIdentifiers to \"preview.0\" instead.");
 
-        defaultPreReleaseIdentifiers ??= new[] { options.DefaultPreReleasePhase, "0", };
+        defaultPreReleaseIdentifiers ??= [options.DefaultPreReleasePhase, "0",];
     }
 
     Version version;

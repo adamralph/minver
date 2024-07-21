@@ -6,6 +6,6 @@ internal static class Configuration
 #if DEBUG
         "Debug";
 #elif RELEASE
-            "Release";
+        "Release";
 #endif
 }

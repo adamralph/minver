@@ -4,11 +4,7 @@ namespace MinVerTests.Lib.Infra;
 
 internal sealed class TestLogger : ILogger
 {
-#if NET8_0_OR_GREATER
     private readonly List<LogMessage> messages = [];
-#else
-    private readonly List<LogMessage> messages = new();
-#endif
 
     public bool IsTraceEnabled => true;
 

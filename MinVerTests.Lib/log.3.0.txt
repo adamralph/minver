@@ -1,0 +1,32 @@
+Trace: Running Git: git status --short
+Trace: Git exit code: 0
+Trace: Git stdout:
+?? command-read-00.md
+?? command-read-01.md
+?? command-read-02.md
+?? command-read-03.md
+
+Trace: Git stderr:
+
+Trace: Running Git: git log --pretty=format:"%H %P"
+Trace: Git exit code: 0
+Trace: Git stdout:
+1 0
+0
+Trace: Git stderr:
+
+Trace: Running Git: git show-ref --tags --dereference
+Trace: Git exit code: 0
+Trace: Git stdout:
+1 refs/tags/1.0.0-foo.1
+0 refs/tags/not-a-version
+
+Trace: Git stderr:
+
+Debug: Ignoring non-version tag { Name: not-a-version, Sha: 0 }.
+Trace: Checking commit 1 (height 0)...
+Trace: Found version tag { Commit: 1, Tag: '1.0.0-foo.1', Version: 1.0.0-foo.1, Height: 0 }.
+Debug: 1 commits checked.
+Info:  Using { Commit: 1, Tag: '1.0.0-foo.1', Version: 1.0.0-foo.1, Height: 0 }.
+Debug: Ignoring minimum major minor 3.0 because the commit is tagged.
+Info:  Calculated version 1.0.0-foo.1.

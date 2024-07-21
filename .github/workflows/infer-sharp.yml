@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/setup-dotnet@v4.0.1
         with:
-          dotnet-version: '8.0.101'
+          dotnet-version: '8.0.303'
       - uses: actions/checkout@v4.1.7
       - run: dotnet build
       - run: ls -al

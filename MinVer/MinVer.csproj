@@ -18,7 +18,7 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <RollForward>major</RollForward>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
-    <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
     <LangVersion>default</LangVersion>
   </PropertyGroup>
 

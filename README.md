@@ -168,7 +168,7 @@ MinVer is a different approach and, again, simpler. Some of the differences are 
 
 Essentially, Nerdbank.GitVersioning encapsulates the injection of the version into the build process from a config file. That means versions are controlled by commits to that config file. MinVer works purely on tags. That means MinVer doesn't need some of the types of things that come with Nerdbank.GitVersioning such as the config file bootstrapper, and it means the version is controlled independently of the commits. For example, you can tag a commit as a release candidate, build it, and release it. After some time, if the release candidate has no bugs, you can tag the _same commit_ as RTM, build it, and release it.
 
-Also, Nerdbank.GitVersioning uses the git height for the patch version, which is undesirable. Either _every_ patch commit has to be released, or there will be gaps in the patch versions released.
+Also, Nerdbank.GitVersioning uses the Git height for the patch version, which is undesirable. Either _every_ patch commit has to be released, or there will be gaps in the patch versions released.
 
 ### Can I bump the major or minor version?
 
@@ -283,7 +283,7 @@ Note that the numeric part(s) of the default pre-release identifiers should usua
 
 Yes! You can use any of the [properties set by MinVer](#version-numbers), or override their values, in a target which runs after MinVer.
 
-For example, for pull requests, you may want to inject the pull request number and a variable which uniquely identifies the build into the version. E.g. using Appveyor:
+For example, for pull requests, you may want to inject the pull request number and a variable which uniquely identifies the build into the version. E.g. using AppVeyor:
 
 ```xml
 <Target Name="MyTarget" AfterTargets="MinVer" Condition="'$(APPVEYOR_PULL_REQUEST_NUMBER)' != ''" >
@@ -294,7 +294,7 @@ For example, for pull requests, you may want to inject the pull request number a
 </Target>
 ```
 
-Or for projects which do not create NuGet packages, you may want to populate [all four parts](https://docs.microsoft.com/en-us/dotnet/framework/app-domains/assembly-versioning#assembly-version-number) of `AssemblyVersion`. E.g. using Appveyor:
+Or for projects which do not create NuGet packages, you may want to populate [all four parts](https://docs.microsoft.com/en-us/dotnet/framework/app-domains/assembly-versioning#assembly-version-number) of `AssemblyVersion`. E.g. using AppVeyor:
 
 ```xml
 <Target Name="MyTarget" AfterTargets="MinVer">
@@ -305,7 +305,7 @@ Or for projects which do not create NuGet packages, you may want to populate [al
 </Target>
 ```
 
-Or for projects which _do_ create NuGet packages, you may want to adjust the assembly file version to include the build number, as recommended in the [official guidance](https://docs.microsoft.com/en-ca/dotnet/standard/library-guidance/versioning#assembly-file-version). E.g. when using Appveyor:
+Or for projects which _do_ create NuGet packages, you may want to adjust the assembly file version to include the build number, as recommended in the [official guidance](https://docs.microsoft.com/en-ca/dotnet/standard/library-guidance/versioning#assembly-file-version). E.g. when using AppVeyor:
 
 ```xml
 <Target Name="MyTarget" AfterTargets="MinVer">
@@ -382,11 +382,11 @@ Yes! Set [`MinVerSkip`](#options) to `true`. For example, MinVer can be disabled
 
 ### What if the history diverges, and more than one tag or root commit is found?
 
-MinVer will use the tag with the higher version, or the tag or root commit on the first path followed where the history diverges. The paths are followed in the same order that the parents of the commit are stored in git. The first parent is the commit on the branch that was the current branch when the merge was performed. The remaining parents are stored in the order that their branches were specified in the merge command.
+MinVer will use the tag with the higher version, or the tag or root commit on the first path followed where the history diverges. The paths are followed in the same order that the parents of the commit are stored in Git. The first parent is the commit on the branch that was the current branch when the merge was performed. The remaining parents are stored in the order that their branches were specified in the merge command.
 
 ### What if the history diverges, and then converges again, before the latest tag (or root commit) is found?
 
-MinVer will use the height on the first path followed where the history diverges. The paths are followed in the same order that the parents of the commit are stored in git. The first parent is the commit on the branch that was the current branch when the merge was performed. The remaining parents are stored in the order that their branches were specified in the merge command.
+MinVer will use the height on the first path followed where the history diverges. The paths are followed in the same order that the parents of the commit are stored in Git. The first parent is the commit on the branch that was the current branch when the merge was performed. The remaining parents are stored in the order that their branches were specified in the merge command.
 
 ### Why is the default version sometimes used in GitHub Actions, Azure Pipelines and Travis CI when a version tag exists in the history?
 

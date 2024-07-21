@@ -18,56 +18,56 @@ jobs:
               os: macos-12
             tests:
               framework: net8.0
-              sdk: "8.0.101"
+              sdk: "8.0.303"
               sdk-major-minor: "8.0"
           # old macOS, latest LTS
           - job:
               os: macos-13
             tests:
               framework: net8.0
-              sdk: "8.0.101"
+              sdk: "8.0.303"
               sdk-major-minor: "8.0"
           # current macOS, latest LTS and latest
           - job:
               os: macos-14
             tests:
               framework: net8.0
-              sdk: "8.0.101"
+              sdk: "8.0.303"
               sdk-major-minor: "8.0"
           # old Linux, latest LTS
           - job:
               os: ubuntu-20.04
             tests:
               framework: net8.0
-              sdk: "8.0.101"
+              sdk: "8.0.303"
               sdk-major-minor: "8.0"
           # current Linux, all
           - job:
               os: ubuntu-22.04
             tests:
               framework: net6.0
-              sdk: "6.0.418"
+              sdk: "6.0.424"
               sdk-major-minor: "6.0"
           - job:
               os: ubuntu-22.04
               upload: true
             tests:
               framework: net8.0
-              sdk: "8.0.101"
+              sdk: "8.0.303"
               sdk-major-minor: "8.0"
           # old Windows, latest LTS
           - job:
               os: windows-2019
             tests:
               framework: net8.0
-              sdk: "8.0.101"
+              sdk: "8.0.303"
               sdk-major-minor: "8.0"
             # current Windows, latest LTS and latest
           - job:
               os: windows-2022
             tests:
               framework: net8.0
-              sdk: "8.0.101"
+              sdk: "8.0.303"
               sdk-major-minor: "8.0"
     name: ${{ matrix.job.os }}-sdk-${{ matrix.tests.sdk-major-minor }}
     runs-on: ${{ matrix.job.os }}
@@ -76,7 +76,7 @@ jobs:
         with:
           dotnet-version: |
             ${{ matrix.tests.sdk }}
-            8.0.101
+            8.0.303
       - run: dotnet --info
       - run: git --version
       - uses: actions/checkout@v4.1.7

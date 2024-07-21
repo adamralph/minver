@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.1.0
+
+### Enhancements
+
+- [#983: Bump McMaster.Extensions.CommandLineUtils from 4.1.0 to 4.1.1](https://github.com/adamralph/minver/pull/983)
+- [#1019: Bump NuGet.Versioning from 6.8.0 to 6.10.1](https://github.com/adamralph/minver/pull/1019)
+
 ## 5.0.0
 
 ### Enhancements
@@ -31,7 +38,7 @@
 ### Enhancements
 
 - [#774: Bump NuGet.Versioning from 6.2.0 to 6.2.1](https://github.com/adamralph/minver/pull/774)
-- [#779: Produce an MSBuild error when "git" is not present in PATH](https://github.com/adamralph/minver/issues/779)
+- [#779: Produce an MSBuild error when Git is not present in PATH](https://github.com/adamralph/minver/issues/779)
 
 ## 4.1.0
 
@@ -111,7 +118,7 @@
 
 - [#312: upgrade to SourceLink 1.0.0](https://github.com/adamralph/minver/pull/312)
 - [#313: upgrade McMaster.Extensions.CommandLineUtils from 2.3.4 to 2.4.4](https://github.com/adamralph/minver/pull/313)
-- [#319: Simpler, more accurate exception message when git is not present in PATH](https://github.com/adamralph/minver/pull/319)
+- [#319: Simpler, more accurate exception message when Git is not present in PATH](https://github.com/adamralph/minver/pull/319)
 
 ## 2.1.0
 

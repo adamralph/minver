@@ -13,7 +13,7 @@ public static class LogMessages
     [Theory]
     [InlineData(0, 0)]
     [InlineData(2, 0)]
-    public static async Task RepoWithHistory(int minMajor, int minMinor)
+    public static async Task MinimumMajorMinorAfterTag(int minMajor, int minMinor)
     {
         // arrange
         var minMajorMinor = new MajorMinor(minMajor, minMinor);
@@ -67,8 +67,52 @@ git merge bar baz --no-edit --no-ff --strategy=octopus
         _ = Versioner.GetVersion(path, "", minMajorMinor, "", default, PreReleaseIdentifiers.Default, false, log);
 
         // assert
-        var logMessages = log.ToString();
+        var logMessages = await ReplaceShas(log.ToString(), path);
 
+        await AssertFile.Contains($"../../../log.{minMajorMinor}.txt", logMessages);
+    }
+
+    [Theory]
+    [InlineData(3, 0)]
+    public static async Task MinimumMajorMinorOnTag(int minMajor, int minMinor)
+    {
+        // arrange
+        var minMajorMinor = new MajorMinor(minMajor, minMinor);
+
+        var historicalCommands =
+            @"
+git commit --allow-empty -m '.'
+git tag not-a-version
+git checkout -b foo
+git commit --allow-empty -m '.'
+git tag 1.0.0-foo.1
+";
+
+        var path = MethodBase.GetCurrentMethod().GetTestDirectory(minMajorMinor);
+
+        await EnsureEmptyRepository(path);
+
+        foreach (var item in historicalCommands
+            .ToNonEmptyLines()
+            .Select((command, index) => new { Command = command, Index = $"{index}", }))
+        {
+            var nameAndArgs = item.Command.Split(" ", 2);
+            _ = await ReadAsync(nameAndArgs[0], nameAndArgs[1], path);
+        }
+
+        var log = new TestLogger();
+
+        // act
+        _ = Versioner.GetVersion(path, "", minMajorMinor, "", default, PreReleaseIdentifiers.Default, false, log);
+
+        // assert
+        var logMessages = await ReplaceShas(log.ToString(), path);
+
+        await AssertFile.Contains($"../../../log.{minMajorMinor}.txt", logMessages);
+    }
+
+    private static async Task<string> ReplaceShas(string logMessages, string path)
+    {
         var shas = (await ReadAsync("git", "log --pretty=format:\"%H\"", path))
             .StandardOutput
             .ToNonEmptyLines()
@@ -85,6 +129,6 @@ git merge bar baz --no-edit --no-ff --strategy=octopus
             logMessages = logMessages.Replace(item.ShortSha, $"{item.Index}", StringComparison.Ordinal);
         }
 
-        await AssertFile.Contains($"../../../log.{minMajorMinor}.txt", logMessages);
+        return logMessages;
     }
 }

@@ -10,25 +10,32 @@ public static class Versioner
 
         var defaultPreReleaseIdentifiersList = defaultPreReleaseIdentifiers.ToList();
 
-        var (version, height) = GetVersion(workDir, tagPrefix, defaultPreReleaseIdentifiersList, log);
+        var (version, height, isFromTag) = GetVersion(workDir, tagPrefix, defaultPreReleaseIdentifiersList, log);
 
         _ = height.HasValue && ignoreHeight && log.IsDebugEnabled && log.Debug("Ignoring height.");
         version = !height.HasValue || ignoreHeight ? version : version.WithHeight(height.Value, autoIncrement, defaultPreReleaseIdentifiersList);
 
         version = version.AddBuildMetadata(buildMeta);
 
-        var calculatedVersion = version.Satisfying(minMajorMinor, defaultPreReleaseIdentifiersList);
+        var ignoreMinMajorMinor = isFromTag && height is 0;
 
-        _ = calculatedVersion != version
-            ? log.IsInfoEnabled && log.Info($"Bumping version to {calculatedVersion} to satisfy minimum major minor {minMajorMinor}.")
-            : log.IsDebugEnabled && log.Debug($"The calculated version {calculatedVersion} satisfies the minimum major minor {minMajorMinor}.");
+        var calculatedVersion =
+            ignoreMinMajorMinor
+            ? version.Satisfying(MajorMinor.Default, defaultPreReleaseIdentifiersList)
+            : version.Satisfying(minMajorMinor, defaultPreReleaseIdentifiersList);
+
+        _ = ignoreMinMajorMinor
+            ? minMajorMinor != MajorMinor.Default && log.IsDebugEnabled && log.Debug($"Ignoring minimum major minor {minMajorMinor} because the commit is tagged.")
+            : calculatedVersion != version
+                ? log.IsInfoEnabled && log.Info($"Bumping version to {calculatedVersion} to satisfy minimum major minor {minMajorMinor}.")
+                : log.IsDebugEnabled && log.Debug($"The calculated version {calculatedVersion} satisfies the minimum major minor {minMajorMinor}.");
 
         _ = log.IsInfoEnabled && log.Info($"Calculated version {calculatedVersion}.");
 
         return calculatedVersion;
     }
 
-    private static (Version Version, int? Height) GetVersion(string workDir, string tagPrefix, List<string> defaultPreReleaseIdentifiers, ILogger log)
+    private static (Version Version, int? Height, bool IsFromTag) GetVersion(string workDir, string tagPrefix, List<string> defaultPreReleaseIdentifiers, ILogger log)
     {
         if (!Git.IsWorkingDirectory(workDir, log))
         {
@@ -36,7 +43,7 @@ public static class Versioner
 
             _ = log.IsWarnEnabled && log.Warn(1001, $"'{workDir}' is not a valid Git working directory. Using default version {version}.");
 
-            return (version, default);
+            return (version, default, default);
         }
 
         if (!Git.TryGetHead(workDir, out var head, log))
@@ -45,7 +52,7 @@ public static class Versioner
 
             _ = log.IsInfoEnabled && log.Info($"No commits found. Using default version {version}.");
 
-            return (version, default);
+            return (version, default, default);
         }
 
         var tags = Git.GetTags(workDir, log);
@@ -71,7 +78,7 @@ public static class Versioner
         _ = string.IsNullOrEmpty(selectedCandidate.Tag) && log.IsInfoEnabled && log.Info($"No commit found with a valid SemVer 2.0 version{(string.IsNullOrEmpty(tagPrefix) ? "" : $" prefixed with '{tagPrefix}'")}. Using default version {selectedCandidate.Version}.");
         _ = log.IsInfoEnabled && log.Info($"Using{(log.IsDebugEnabled && orderedCandidates.Count > 1 ? "    " : " ")}{selectedCandidate.ToString(tagWidth, versionWidth, heightWidth)}.");
 
-        return (selectedCandidate.Version, selectedCandidate.Height);
+        return (selectedCandidate.Version, selectedCandidate.Height, !string.IsNullOrEmpty(selectedCandidate.Tag));
     }
 
     private static List<Candidate> GetCandidates(Commit head, IEnumerable<(string Name, string Sha)> tags, string tagPrefix, IReadOnlyCollection<string> defaultPreReleaseIdentifiers, ILogger log)

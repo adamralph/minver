@@ -24,10 +24,10 @@ public static class MinMajorMinor
     }
 
     [Theory]
-    [InlineData("4.0.0", 3, 2, "4.0.0", true)]
-    [InlineData("4.3.0", 4, 3, "4.3.0", true)]
-    [InlineData("4.3.0", 5, 4, "5.4.0-alpha.0", false)]
-    public static async Task Tagged(string tag, int major, int minor, string expectedVersion, bool isRedundant)
+    [InlineData("4.0.0", 3, 2, "4.0.0")]
+    [InlineData("4.3.0", 4, 3, "4.3.0")]
+    [InlineData("4.3.0", 5, 4, "4.3.0")]
+    public static async Task Tagged(string tag, int major, int minor, string expectedVersion)
     {
         // arrange
         var path = MethodBase.GetCurrentMethod().GetTestDirectory((tag, major, minor));
@@ -41,10 +41,7 @@ public static class MinMajorMinor
         // assert
         Assert.Equal(expectedVersion, actualVersion.ToString());
 
-        if (isRedundant)
-        {
-            Assert.Contains(logger.Messages, message => message.Text.Contains($"The calculated version {actualVersion} satisfies the minimum major minor {major}.{minor}.", StringComparison.Ordinal));
-        }
+        Assert.Contains(logger.Messages, message => message.Text.Contains($"Ignoring minimum major minor {major}.{minor} because the commit is tagged.", StringComparison.Ordinal));
     }
 
     [Fact]

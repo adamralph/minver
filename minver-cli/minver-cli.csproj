@@ -16,7 +16,6 @@
     <RootNamespace>MinVer</RootNamespace>
     <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
     <ToolCommandName>minver</ToolCommandName>
-    <LangVersion>default</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

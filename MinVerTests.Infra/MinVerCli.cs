@@ -15,6 +15,6 @@ public static class MinVerCli
         Solution.GetFullPath($"minver-cli/bin/{configuration}/net6.0/minver-cli.dll");
 #endif
 #if NET8_0
-            Solution.GetFullPath($"minver-cli/bin/{configuration}/net8.0/minver-cli.dll");
+        Solution.GetFullPath($"minver-cli/bin/{configuration}/net8.0/minver-cli.dll");
 #endif
 }

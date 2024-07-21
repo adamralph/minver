@@ -2,11 +2,7 @@ namespace MinVerTests.Infra;
 
 public static class StringExtensions
 {
-#if NET8_0_OR_GREATER
     private static readonly char[] newLineChars = ['\r', '\n',];
-#else
-    private static readonly char[] newLineChars = { '\r', '\n', };
-#endif
 
     public static string[] ToNonEmptyLines(this string text) =>
 #pragma warning disable CA1062 // Validate arguments of public methods

@@ -50,12 +50,6 @@ jobs:
               sdk-major-minor: "6.0"
           - job:
               os: ubuntu-22.04
-            tests:
-              framework: net7.0
-              sdk: "7.0.405"
-              sdk-major-minor: "7.0"
-          - job:
-              os: ubuntu-22.04
               upload: true
             tests:
               framework: net8.0

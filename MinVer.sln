@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinVerTests.Infra", "MinVer
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinVerTests.Packages", "MinVerTests.Packages\MinVerTests.Packages.csproj", "{694ECAC7-FD05-4550-A4FB-8F497D29ECB0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSBuild.Caching", "MSBuild.Caching\MSBuild.Caching.csproj", "{3A9A6053-076E-47D4-9912-E04BD11C666F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{694ECAC7-FD05-4550-A4FB-8F497D29ECB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{694ECAC7-FD05-4550-A4FB-8F497D29ECB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{694ECAC7-FD05-4550-A4FB-8F497D29ECB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A9A6053-076E-47D4-9912-E04BD11C666F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A9A6053-076E-47D4-9912-E04BD11C666F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A9A6053-076E-47D4-9912-E04BD11C666F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A9A6053-076E-47D4-9912-E04BD11C666F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

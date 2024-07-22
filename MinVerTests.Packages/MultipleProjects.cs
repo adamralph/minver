@@ -52,8 +52,6 @@ public class MultipleProjects
         Assert.Collection(
             versionCalculations,
             message => Assert.Equal("MinVer: Calculated version 2.3.4.", message),
-            message => Assert.Equal("MinVer: Calculated version 5.6.7.", message),
-            message => Assert.Equal("MinVer: Calculated version 2.3.4.", message),
             message => Assert.Equal("MinVer: Calculated version 5.6.7.", message));
 
         Assert.Collection(

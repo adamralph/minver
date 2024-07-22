@@ -32,6 +32,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MinVer.Lib\MinVer.Lib.csproj" PrivateAssets="All" />
+    <ProjectReference Include="..\MSBuild.Caching\MSBuild.Caching.csproj" ReferenceOutputAssembly="false" Private="false" />
   </ItemGroup>
 
   <ItemGroup>
@@ -41,6 +42,8 @@
     <None Remove="buildMultiTargeting\**\*" />
     <Content Include="build\**\*" PackagePath="build" />
     <Content Include="buildMultiTargeting\**\*" PackagePath="buildMultiTargeting" />
+    <None Include="..\MSBuild.Caching\bin\$(Configuration)\net472\MSBuild.Caching.dll" Pack="true" PackagePath="build\bin\net472" Visible="false" />
+    <None Include="..\MSBuild.Caching\bin\$(Configuration)\net6.0\MSBuild.Caching.dll" Pack="true" PackagePath="build\bin\net6.0" Visible="false" />
   </ItemGroup>
 
   <Target Name="AddMinVerOutput" BeforeTargets="_GetPackageFiles">

@@ -14,6 +14,11 @@
     <NoWarn>$(NoWarn);NU5105</NoWarn>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <DotNetPath>$(DOTNET_HOST_PATH)</DotNetPath>
+    <DotNetPath Condition=" '$(DotNetPath)' == '' ">dotnet</DotNetPath>
+  </PropertyGroup>
+
   <Target Name="_MinVerClean" BeforeTargets="Clean" DependsOnTargets="MinVer" Condition="'$(GeneratePackageOnBuild)' == 'true'" />
 
   <Target Name="MinVer" BeforeTargets="BeforeCompile;GetAssemblyVersion;CoreCompile" Condition="'$(DesignTimeBuild)' != 'true' AND '$(MinVerSkip)' != 'true'">
@@ -45,7 +50,7 @@
       <MinVerInputs Include="--verbosity &quot;$(MinVerVerbosity)&quot;" />
       <MinVerInputs Include="--version-override &quot;$(MinVerVersionOverride)&quot;" />
     </ItemGroup>
-    <Exec Command="dotnet &quot;$(MSBuildThisFileDirectory)bin/$(MinVerTargetFramework)/MinVer.dll&quot; @(MinVerInputs->'%(Identity)', ' ')" ConsoleToMSBuild="true" StandardOutputImportance="Low" >
+    <Exec Command="&quot;$(DotNetPath)&quot; &quot;$(MSBuildThisFileDirectory)bin/$(MinVerTargetFramework)/MinVer.dll&quot; @(MinVerInputs->'%(Identity)', ' ')" ConsoleToMSBuild="true" StandardOutputImportance="Low" >
       <Output TaskParameter="ConsoleOutput" ItemName="MinVerConsoleOutput" />
     </Exec>
     <ItemGroup>

@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NuGet.Versioning" Version="6.10.1" />
+    <PackageReference Include="NuGet.Versioning" Version="6.10.2" />
   </ItemGroup>
 
 </Project>

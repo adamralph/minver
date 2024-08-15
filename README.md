@@ -206,6 +206,8 @@ Note that `MinVerMinimumMajorMinor` will be redundant after you create the first
 
 Also note that if the latest version tag found in the commit history has a higher `MAJOR.MINOR` than `MinVerMinimumMajorMinor`, then `MinVerMinimumMajorMinor` will be ignored.
 
+Lastly, if the the current commit has a version tag, the tag will be used as-is, even if it has a lower `MAJOR.MINOR` than `MinVerMinimumMajorMinor`.
+
 ### Can I use my own pre-release versioning scheme?
 
 Yes! MinVer doesn't care what your pre-release versioning scheme is. The default pre-release identifiers are `alpha.0`, but you can use whatever you like in your tags. If your versioning scheme is valid [SemVer 2.x](https://semver.org/spec/v2.0.0.html), it will work with MinVer.

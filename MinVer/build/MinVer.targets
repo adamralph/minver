@@ -4,7 +4,12 @@
     <MSBuildAllProjects Condition="'$(MSBuildAssemblyVersion)' == '' Or '$(MSBuildAssemblyVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);MinVer</GenerateNuspecDependsOn>
     <GetPackageVersionDependsOn>$(GetPackageVersionDependsOn);MinVer</GetPackageVersionDependsOn>
+    <MinVerMSBuildCachingPath Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)bin\net6.0\MSBuild.Caching.dll</MinVerMSBuildCachingPath>
+    <MinVerMSBuildCachingPath Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)bin\net472\MSBuild.Caching.dll</MinVerMSBuildCachingPath>
   </PropertyGroup>
+
+  <UsingTask TaskName="MSBuild.Caching.CacheGet" AssemblyFile="$(MinVerMSBuildCachingPath)" />
+  <UsingTask TaskName="MSBuild.Caching.CacheSet" AssemblyFile="$(MinVerMSBuildCachingPath)" />
 
   <PropertyGroup>
     <MinVerDetailed>low</MinVerDetailed>
@@ -34,7 +39,6 @@
       <MinVerOutputVersion Remove="@(MinVerOutputVersion)" />
     </ItemGroup>
     <ItemGroup>
-      <MinVerInputs Include="&quot;$(MSBuildProjectDirectory)&quot;" />
       <MinVerInputs Include="--auto-increment &quot;$(MinVerAutoIncrement)&quot;" />
       <MinVerInputs Include="--build-metadata &quot;$(MinVerBuildMetadata)&quot;" />
       <MinVerInputs Include="--default-pre-release-identifiers &quot;$(MinVerDefaultPreReleaseIdentifiers)&quot;" />
@@ -45,14 +49,19 @@
       <MinVerInputs Include="--verbosity &quot;$(MinVerVerbosity)&quot;" />
       <MinVerInputs Include="--version-override &quot;$(MinVerVersionOverride)&quot;" />
     </ItemGroup>
-    <Exec Command="dotnet &quot;$(MSBuildThisFileDirectory)bin/$(MinVerTargetFramework)/MinVer.dll&quot; @(MinVerInputs->'%(Identity)', ' ')" ConsoleToMSBuild="true" StandardOutputImportance="Low" >
+    <CacheGet Key="@(MinVerInputs->'%(Identity)', ' ')"><Output TaskParameter="Value" PropertyName="MinVerVersion" /></CacheGet>
+    <Message Condition="'$(MinVerVersion)' != ''" Importance="$(MinVerDetailed)" Text="MinVer: Using cached MinVerVersion $(MinVerVersion)" />
+    <Exec Condition="'$(MinVerVersion)' == ''" Command="dotnet &quot;$(MSBuildThisFileDirectory)bin/$(MinVerTargetFramework)/MinVer.dll&quot; &quot;$(MSBuildProjectDirectory)&quot; @(MinVerInputs->'%(Identity)', ' ')" ConsoleToMSBuild="true" StandardOutputImportance="Low" >
       <Output TaskParameter="ConsoleOutput" ItemName="MinVerConsoleOutput" />
     </Exec>
-    <ItemGroup>
+    <ItemGroup Condition="'$(MinVerVersion)' == ''" >
       <MinVerOutputVersion Include="@(MinVerConsoleOutput)" Condition="'$([System.String]::new(`%(Identity)`).StartsWith(`MinVer:`))' != 'true'" />
     </ItemGroup>
-    <PropertyGroup>
+    <PropertyGroup Condition="'$(MinVerVersion)' == ''" >
       <MinVerVersion>@(MinVerOutputVersion)</MinVerVersion>
+    </PropertyGroup>
+    <CacheSet Key="@(MinVerInputs->'%(Identity)', ' ')" Value="$(MinVerVersion)" />
+    <PropertyGroup>
       <MinVerMajor>$(MinVerVersion.Split(`.`)[0])</MinVerMajor>
       <MinVerMinor>$(MinVerVersion.Split(`.`)[1])</MinVerMinor>
       <MinVerPatch>$(MinVerVersion.Split(`.`)[2].Split(`-`)[0].Split(`+`)[0])</MinVerPatch>

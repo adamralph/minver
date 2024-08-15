@@ -28,13 +28,13 @@ Target(
 
 Target(
     "eyeball-minver-logs",
-    "build a test project with the MinVer package to eyeball the diagnostic logs",
+    "build a test solution with the MinVer package to eyeball the diagnostic logs",
     DependsOn("build"),
     async () =>
     {
         var path = TestDirectory.Get("MinVer.Targets", "eyeball-minver-logs");
 
-        await Sdk.CreateProject(path, "Release");
+        await Sdk.CreateSolution(path, ["project0", "project1",], "Release");
 
         await Git.Init(path);
         await Git.Commit(path);
@@ -43,7 +43,7 @@ Target(
 
         await RunAsync(
             "dotnet",
-            "build --no-restore --nologo",
+            "build --no-restore --nologo -maxCpuCount:1",
             path,
             configureEnvironment: env =>
             {

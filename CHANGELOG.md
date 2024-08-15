@@ -1,11 +1,15 @@
 # Changelog
 
-## 5.1.0
+## 6.0.0
 
 ### Enhancements
 
 - [#983: Bump McMaster.Extensions.CommandLineUtils from 4.1.0 to 4.1.1](https://github.com/adamralph/minver/pull/983)
+- [#999: **[BREAKING]** Tagged version wins even if MinVerMinimumMajorMinor is higher](https://github.com/adamralph/minver/issues/999)
 - [#1019: Bump NuGet.Versioning from 6.8.0 to 6.10.1](https://github.com/adamralph/minver/pull/1019)
+- [#1021: MSBuild caching](https://github.com/adamralph/minver/pull/1021)
+- [#1034: Respect DOTNET\_HOST\_PATH if set](https://github.com/adamralph/minver/pull/1034)
+- [#1037: Bump NuGet.Versioning from 6.10.1 to 6.11.0](https://github.com/adamralph/minver/pull/1037)
 
 ## 5.0.0
 

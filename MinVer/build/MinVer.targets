@@ -19,6 +19,11 @@
     <NoWarn>$(NoWarn);NU5105</NoWarn>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <DotNetPath>$(DOTNET_HOST_PATH)</DotNetPath>
+    <DotNetPath Condition=" '$(DotNetPath)' == '' ">dotnet</DotNetPath>
+  </PropertyGroup>
+
   <Target Name="_MinVerClean" BeforeTargets="Clean" DependsOnTargets="MinVer" Condition="'$(GeneratePackageOnBuild)' == 'true'" />
 
   <Target Name="MinVer" BeforeTargets="BeforeCompile;GetAssemblyVersion;CoreCompile" Condition="'$(DesignTimeBuild)' != 'true' AND '$(MinVerSkip)' != 'true'">
@@ -51,7 +56,7 @@
     </ItemGroup>
     <CacheGet Key="@(MinVerInputs->'%(Identity)', ' ')"><Output TaskParameter="Value" PropertyName="MinVerVersion" /></CacheGet>
     <Message Condition="'$(MinVerVersion)' != ''" Importance="$(MinVerDetailed)" Text="MinVer: Using cached MinVerVersion $(MinVerVersion)" />
-    <Exec Condition="'$(MinVerVersion)' == ''" Command="dotnet &quot;$(MSBuildThisFileDirectory)bin/$(MinVerTargetFramework)/MinVer.dll&quot; &quot;$(MSBuildProjectDirectory)&quot; @(MinVerInputs->'%(Identity)', ' ')" ConsoleToMSBuild="true" StandardOutputImportance="Low" >
+    <Exec Condition="'$(MinVerVersion)' == ''" Command="&quot;$(DotNetPath)&quot; &quot;$(MSBuildThisFileDirectory)bin/$(MinVerTargetFramework)/MinVer.dll&quot; &quot;$(MSBuildProjectDirectory)&quot; @(MinVerInputs->'%(Identity)', ' ')" ConsoleToMSBuild="true" StandardOutputImportance="Low" >
       <Output TaskParameter="ConsoleOutput" ItemName="MinVerConsoleOutput" />
     </Exec>
     <ItemGroup Condition="'$(MinVerVersion)' == ''" >

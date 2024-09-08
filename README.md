@@ -243,11 +243,11 @@ That means MinVer is compatible with [Git Flow](https://nvie.com/posts/a-success
 
 Yes! Specify [build metadata](https://semver.org/spec/v2.0.0.html#spec-item-10) with `MinVerBuildMetadata`.
 
-For example, in [`appveyor.yml`](https://www.appveyor.com/docs/appveyor-yml/):
+For example, in a GitHub Actions workflow:
 
 ```yaml
-environment:
-  MINVERBUILDMETADATA: build.%APPVEYOR_BUILD_NUMBER%
+env:
+  MINVERBUILDMETADATA: build.${{ github.run_id }}.${{ github.run_attempt}}
 ```
 
 You can also specify build metadata in a version tag. If the tag is on the current commit, its build metadata will be used. If the tag is on an older commit, its build metadata will be ignored. Build metadata in `MinVerBuildMetadata` will be appended to build metadata in the tag.
@@ -285,35 +285,24 @@ Note that the numeric part(s) of the default pre-release identifiers should usua
 
 Yes! You can use any of the [properties set by MinVer](#version-numbers), or override their values, in a target which runs after MinVer.
 
-For example, for pull requests, you may want to inject the pull request number and a variable which uniquely identifies the build into the version. E.g. using AppVeyor:
-
-```xml
-<Target Name="MyTarget" AfterTargets="MinVer" Condition="'$(APPVEYOR_PULL_REQUEST_NUMBER)' != ''" >
-  <PropertyGroup>
-    <PackageVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch)-pr.$(APPVEYOR_PULL_REQUEST_NUMBER).build-id.$(APPVEYOR_BUILD_ID).$(MinVerPreRelease)</PackageVersion>
-    <Version>$(PackageVersion)</Version>
-  </PropertyGroup>
-</Target>
-```
-
-Or for projects which do not create NuGet packages, you may want to populate [all four parts](https://docs.microsoft.com/en-us/dotnet/framework/app-domains/assembly-versioning#assembly-version-number) of `AssemblyVersion`. E.g. using AppVeyor:
+For example, for projects which do not create NuGet packages, you may want to populate [all four parts](https://docs.microsoft.com/en-us/dotnet/framework/app-domains/assembly-versioning#assembly-version-number) of `AssemblyVersion`. E.g. using GitHub Actions:
 
 ```xml
 <Target Name="MyTarget" AfterTargets="MinVer">
   <PropertyGroup>
-    <APPVEYOR_BUILD_NUMBER Condition="'$(APPVEYOR_BUILD_NUMBER)' == ''">0</APPVEYOR_BUILD_NUMBER>
-    <AssemblyVersion>$(MinVerMajor).$(MinVerMinor).$(APPVEYOR_BUILD_NUMBER).$(MinVerPatch)</AssemblyVersion>
+    <GITHUB_RUN_NUMBER Condition="'$(GITHUB_RUN_NUMBER)' == ''">0</GITHUB_RUN_NUMBER>
+    <AssemblyVersion>$(MinVerMajor).$(MinVerMinor).$(GITHUB_RUN_NUMBER).$(MinVerPatch)</AssemblyVersion>
   </PropertyGroup>
 </Target>
 ```
 
-Or for projects which _do_ create NuGet packages, you may want to adjust the assembly file version to include the build number, as recommended in the [official guidance](https://docs.microsoft.com/en-ca/dotnet/standard/library-guidance/versioning#assembly-file-version). E.g. when using AppVeyor:
+Or for projects which _do_ create NuGet packages, you may want to adjust the assembly file version to include the build number, as recommended in the [official guidance](https://docs.microsoft.com/en-ca/dotnet/standard/library-guidance/versioning#assembly-file-version). E.g. when using GitHub Actions:
 
 ```xml
 <Target Name="MyTarget" AfterTargets="MinVer">
   <PropertyGroup>
-    <APPVEYOR_BUILD_NUMBER Condition="'$(APPVEYOR_BUILD_NUMBER)' == ''">0</APPVEYOR_BUILD_NUMBER>
-    <FileVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch).$(APPVEYOR_BUILD_NUMBER)</FileVersion>
+    <GITHUB_RUN_NUMBER Condition="'$(GITHUB_RUN_NUMBER)' == ''">0</GITHUB_RUN_NUMBER>
+    <FileVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch).$(GITHUB_RUN_NUMBER)</FileVersion>
   </PropertyGroup>
 </Target>
 ```

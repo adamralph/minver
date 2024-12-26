@@ -2,4 +2,5 @@
 .vs/
 bin/
 obj/
+.DS_Store
 *.user

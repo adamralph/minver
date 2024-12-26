@@ -79,7 +79,7 @@ jobs:
             8.0.401
       - run: dotnet --info
       - run: git --version
-      - uses: actions/checkout@v4.1.7
+      - uses: actions/checkout@v4.2.2
       - env:
           CI_NUMBER: ${{ github.run_number }}
           MINVER_VERSION: ${{ vars.MINVER_VERSION }}

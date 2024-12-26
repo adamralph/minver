@@ -15,13 +15,6 @@ jobs:
         include:
           # old macOS, latest LTS
           - job:
-              os: macos-12
-            tests:
-              framework: net8.0
-              sdk: "8.0.401"
-              sdk-major-minor: "8.0"
-          # old macOS, latest LTS
-          - job:
               os: macos-13
             tests:
               framework: net8.0
@@ -41,15 +34,22 @@ jobs:
               framework: net8.0
               sdk: "8.0.401"
               sdk-major-minor: "8.0"
-          # current Linux, all
+          # old Linux, latest LTS
           - job:
               os: ubuntu-22.04
+            tests:
+              framework: net8.0
+              sdk: "8.0.401"
+              sdk-major-minor: "8.0"
+          # current Linux, all
+          - job:
+              os: ubuntu-24.04
             tests:
               framework: net6.0
               sdk: "6.0.425"
               sdk-major-minor: "6.0"
           - job:
-              os: ubuntu-22.04
+              os: ubuntu-24.04
               upload: true
             tests:
               framework: net8.0

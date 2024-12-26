@@ -11,10 +11,10 @@ public static class MinVerCli
     }
 
     public static string GetPath(string configuration) =>
-#if NET6_0
-        Solution.GetFullPath($"minver-cli/bin/{configuration}/net6.0/minver-cli.dll");
-#endif
 #if NET8_0
         Solution.GetFullPath($"minver-cli/bin/{configuration}/net8.0/minver-cli.dll");
+#endif
+#if NET9_0
+        Solution.GetFullPath($"minver-cli/bin/{configuration}/net9.0/minver-cli.dll");
 #endif
 }

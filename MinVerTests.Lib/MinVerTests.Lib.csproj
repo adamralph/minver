@@ -1,8 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <!-- https://github.com/dotnet/roslyn-analyzers/issues/7192 -->
+    <NoWarn>$(NoWarn);CA1515</NoWarn>
     <RollForward>major</RollForward>
-    <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>

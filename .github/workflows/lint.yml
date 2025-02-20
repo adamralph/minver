@@ -16,9 +16,12 @@ jobs:
         with:
           fetch-depth: 0
           filter: tree:0
-      - uses: super-linter/super-linter@v6.9.0
+      - uses: super-linter/super-linter@v7.2.1
         env:
           DEFAULT_BRANCH: main
           FILTER_REGEX_EXCLUDE: \bcodeql-analysis\.yml$|\bLICENSE$|\bversions\.txt$
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_JSON_PRETTIER: false
+          VALIDATE_MARKDOWN_PRETTIER: false
           VALIDATE_SHELL_SHFMT: false
+          VALIDATE_YAML_PRETTIER: false

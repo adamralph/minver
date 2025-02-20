@@ -1,5 +1,11 @@
 # Changelog
 
+## 6.1.0
+
+### Enhancements
+
+- [#1065: Bump NuGet.Versioning from 6.11.0 to 6.12.1](https://github.com/adamralph/minver/pull/1065)
+
 ## 6.0.0
 
 ### Enhancements

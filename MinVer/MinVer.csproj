@@ -18,7 +18,7 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <RollForward>major</RollForward>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
-    <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -43,7 +43,7 @@
     <Content Include="build\**\*" PackagePath="build" />
     <Content Include="buildMultiTargeting\**\*" PackagePath="buildMultiTargeting" />
     <None Include="..\MSBuild.Caching\bin\$(Configuration)\net472\MSBuild.Caching.dll" Pack="true" PackagePath="build\bin\net472" Visible="false" />
-    <None Include="..\MSBuild.Caching\bin\$(Configuration)\net6.0\MSBuild.Caching.dll" Pack="true" PackagePath="build\bin\net6.0" Visible="false" />
+    <None Include="..\MSBuild.Caching\bin\$(Configuration)\net8.0\MSBuild.Caching.dll" Pack="true" PackagePath="build\bin\net8.0" Visible="false" />
   </ItemGroup>
 
   <Target Name="AddMinVerOutput" BeforeTargets="_GetPackageFiles">

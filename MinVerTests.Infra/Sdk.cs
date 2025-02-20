@@ -199,10 +199,12 @@ public static class Sdk
 
         try
         {
-            return (
-                assembly.GetName().Version ?? throw new InvalidOperationException("The assembly version is null."),
+            var version = assembly.GetName().Version ?? throw new InvalidOperationException("The assembly version is null.");
+            var informationalVersion =
                 assembly.GetCustomAttributes().OfType<AssemblyInformationalVersionAttribute>().FirstOrDefault()?.InformationalVersion ??
-                throw new InvalidOperationException("The assembly has no informational version."));
+                throw new InvalidOperationException("The assembly has no informational version.");
+
+            return (version, informationalVersion);
         }
         finally
         {

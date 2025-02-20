@@ -10,7 +10,7 @@ jobs:
   release:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/setup-dotnet@v4.2.0
+      - uses: actions/setup-dotnet@v4.3.0
         with:
           dotnet-version: 9.0.102
       - uses: actions/checkout@v4.2.2

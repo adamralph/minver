@@ -5,6 +5,7 @@
 ### Enhancements
 
 - [#1065: Bump NuGet.Versioning from 6.11.0 to 6.12.1](https://github.com/adamralph/minver/pull/1065)
+- [#1085: Bump NuGet.Versioning from 6.12.1 to 6.13.1](https://github.com/adamralph/minver/pull/1085)
 
 ## 6.0.0
 

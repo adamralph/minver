@@ -17,19 +17,19 @@ Target("build", () => RunAsync("dotnet", "build --configuration Release --nologo
 Target(
     "test-lib",
     "test the MinVer.Lib library",
-    DependsOn("build"),
+    dependsOn: ["build"],
     () => RunAsync("dotnet", ["test", "./MinVerTests.Lib", "--framework", testFx, "--configuration", "Release", "--no-build", "--nologo", .. testLoggerArgs,]));
 
 Target(
     "test-packages",
     "test the MinVer package and the minver-cli console app",
-    DependsOn("build"),
+    dependsOn: ["build"],
     () => RunAsync("dotnet", ["test", "./MinVerTests.Packages", "--configuration", "Release", "--no-build", "--nologo", .. testLoggerArgs,]));
 
 Target(
     "eyeball-minver-logs",
     "build a test solution with the MinVer package to eyeball the diagnostic logs",
-    DependsOn("build"),
+    dependsOn: ["build"],
     async () =>
     {
         var path = TestDirectory.Get("MinVer.Targets", "eyeball-minver-logs");
@@ -56,7 +56,7 @@ Target(
 Target(
     "eyeball-minver-cli-logs",
     "run the minver-cli console app on a test directory to eyeball the trace logs",
-    DependsOn("build"),
+    dependsOn: ["build"],
     async () =>
     {
         var path = TestDirectory.Get("MinVer.Targets", "eyeball-minver-cli-logs");
@@ -79,8 +79,8 @@ Target(
             });
     });
 
-Target("eyeball-logs", DependsOn("eyeball-minver-logs", "eyeball-minver-cli-logs"));
+Target("eyeball-logs", dependsOn: ["eyeball-minver-logs", "eyeball-minver-cli-logs"]);
 
-Target("default", DependsOn("format", "test-lib", "test-packages", "eyeball-logs"));
+Target("default", dependsOn: ["format", "test-lib", "test-packages", "eyeball-logs"]);
 
 await RunTargetsAndExitAsync(args, ex => ex is SimpleExec.ExitCodeException);

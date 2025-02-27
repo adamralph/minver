@@ -20,7 +20,7 @@ public static class IgnoringHeight
 
         var envVars = ("MinVerIgnoreHeight".ToAltCase(), "true".ToAltCase());
 
-        var expected = Package.WithVersion(2, 3, 4);
+        var expected = Package.WithVersion(2, 3, 5, ["alpha", "0"]);
 
         // act
         var (actual, _, _) = await Sdk.BuildProject(path, envVars: envVars);

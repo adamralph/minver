@@ -34,6 +34,7 @@
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerBuildMetadata=$(MinVerBuildMetadata)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerDefaultPreReleaseIdentifiers=$(MinVerDefaultPreReleaseIdentifiers)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerDefaultPreReleasePhase=$(MinVerDefaultPreReleasePhase)" />
+    <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerIgnorePreReleaseIdentifiers=$(MinVerIgnorePreReleaseIdentifiers)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerIgnoreHeight=$(MinVerIgnoreHeight)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerMinimumMajorMinor=$(MinVerMinimumMajorMinor)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerTagPrefix=$(MinVerTagPrefix)" />
@@ -49,6 +50,7 @@
       <MinVerInputs Include="--build-metadata &quot;$(MinVerBuildMetadata)&quot;" />
       <MinVerInputs Include="--default-pre-release-identifiers &quot;$(MinVerDefaultPreReleaseIdentifiers)&quot;" />
       <MinVerInputs Include="--default-pre-release-phase &quot;$(MinVerDefaultPreReleasePhase)&quot;" />
+      <MinVerInputs Include="--ignore-pre-release-identifiers" Condition="'$(MinVerIgnorePreReleaseIdentifiers)' == 'true'" />
       <MinVerInputs Include="--ignore-height" Condition="'$(MinVerIgnoreHeight)' == 'true'" />
       <MinVerInputs Include="--minimum-major-minor &quot;$(MinVerMinimumMajorMinor)&quot;" />
       <MinVerInputs Include="--tag-prefix &quot;$(MinVerTagPrefix)&quot;" />

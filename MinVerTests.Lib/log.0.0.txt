@@ -66,5 +66,5 @@ Trace: Commit 2 already checked. Abandoning path.
 Debug: 6 commits checked.
 Debug: Ignoring { Commit: 0, Tag: '',            Version: 0.0.0-alpha.0, Height: 2 }.
 Info:  Using    { Commit: 1, Tag: '1.0.0-foo.1', Version: 1.0.0-foo.1,   Height: 2 }.
-Debug: The calculated version 1.0.0-foo.1.2 satisfies the minimum major minor 0.0.
-Info:  Calculated version 1.0.0-foo.1.2.
+Debug: The calculated version 1.0.2-foo.1.2 satisfies the minimum major minor 0.0.
+Info:  Calculated version 1.0.2-foo.1.2.

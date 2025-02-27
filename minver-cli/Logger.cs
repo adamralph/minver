@@ -42,7 +42,7 @@ internal sealed class Logger(Verbosity verbosity) : ILogger
 
     private static void Error(string message) => Message($"error : {message}");
 
-    private static bool Message(string message)
+    public static bool Message(string message)
     {
         if (message.Contains('\r', StringComparison.OrdinalIgnoreCase) || message.Contains('\n', StringComparison.OrdinalIgnoreCase))
         {

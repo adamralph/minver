@@ -1,7 +1,7 @@
-using System.Reflection;
 using McMaster.Extensions.CommandLineUtils;
 using MinVer;
 using MinVer.Lib;
+using System.Reflection;
 using Version = MinVer.Lib.Version;
 
 var informationalVersion = typeof(Versioner).Assembly.GetCustomAttributes<AssemblyInformationalVersionAttribute>().Single().InformationalVersion;
@@ -22,6 +22,7 @@ var ignoreHeightOption = app.Option<bool>("-i|--ignore-height", "Use the latest 
 var minMajorMinorOption = app.Option("-m|--minimum-major-minor <MINIMUM_MAJOR_MINOR>", MajorMinor.ValidValues, CommandOptionType.SingleValue);
 var tagPrefixOption = app.Option("-t|--tag-prefix <TAG_PREFIX>", "", CommandOptionType.SingleValue);
 var verbosityOption = app.Option("-v|--verbosity <VERBOSITY>", VerbosityMap.ValidValues, CommandOptionType.SingleValue);
+var ignorePreReleaseIdentifiersOption = app.Option<bool>("-o|--ignore-pre-release-identifiers", "Ignore pre-release identifiers", CommandOptionType.NoValue);
 #if MINVER
 var versionOverrideOption = app.Option("-o|--version-override <VERSION>", "", CommandOptionType.SingleValue);
 #endif
@@ -48,6 +49,7 @@ app.OnExecute(() =>
 #if MINVER
         versionOverrideOption.Value(),
 #endif
+        ignorePreReleaseIdentifiersOption.HasValue() ? true : null,
         out var options))
     {
         return 2;
@@ -83,10 +85,32 @@ app.OnExecute(() =>
         defaultPreReleaseIdentifiers ??= [options.DefaultPreReleasePhase, "0",];
     }
 
+    // If we were told to ignore pre-release identifiers, don't add the default pre-release identifier
+    if (options.IgnorePreReleaseIdentifiers != null && options.IgnorePreReleaseIdentifiers.Value)
+    {
+        if (defaultPreReleaseIdentifiers == null)
+        {
+            // We were told to ignore pre-release identifiers - make sure they're cleared
+            defaultPreReleaseIdentifiers = [];
+        }
+        else
+        {
+            // Warn the user that the default pre-release identifiers are being ignored
+            // due to the conflict with the ignore pre-release identifiers option
+            log.Warn(1009, MinVerError.IgnorePreReleaseIdentifiersAndDefaultPreReleaseIdentifiersConflict);
+        }
+    }
+    else
+    {
+        // We were not told to ignore pre-release identifiers, but were not provided with a string to use
+        // Fallback to using the default pre-release identifiers
+        defaultPreReleaseIdentifiers ??= PreReleaseIdentifiers.Default;
+    }
+
     Version version;
     try
     {
-        version = Versioner.GetVersion(workDir, options.TagPrefix ?? "", options.MinMajorMinor ?? MajorMinor.Default, options.BuildMeta ?? "", options.AutoIncrement ?? default, defaultPreReleaseIdentifiers ?? PreReleaseIdentifiers.Default, options.IgnoreHeight ?? false, log);
+        version = Versioner.GetVersion(workDir, options.TagPrefix ?? "", options.MinMajorMinor ?? MajorMinor.Default, options.BuildMeta ?? "", options.AutoIncrement ?? default, defaultPreReleaseIdentifiers, options.IgnoreHeight ?? false, log);
     }
     catch (NoGitException ex)
     {

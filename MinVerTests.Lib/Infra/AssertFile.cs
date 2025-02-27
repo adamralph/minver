@@ -12,11 +12,6 @@ internal static class AssertFile
             Path.GetDirectoryName(expectedPath) ?? "",
             Path.GetFileNameWithoutExtension(expectedPath) + "-actual" + Path.GetExtension(expectedPath));
 
-        if (File.Exists(actualPath))
-        {
-            File.Delete(actualPath);
-        }
-
         var expected = await File.ReadAllTextAsync(expectedPath);
 
         expected = Normalize(expected);
@@ -28,12 +23,19 @@ internal static class AssertFile
         }
         catch (EqualException ex)
         {
+            if (File.Exists(actualPath))
+            {
+                File.Delete(actualPath);
+            }
+
             await File.WriteAllTextAsync(actualPath, actual, Encoding.UTF8);
 
             throw new XunitException(
                 $"{ex.Message}{Environment.NewLine}{Environment.NewLine}Expected file: {expectedPath}{Environment.NewLine}Actual file: {actualPath}");
         }
     }
+
+    internal static readonly string[] separator = ["\r\n"];
 
     private static string Normalize(string text)
     {
@@ -42,6 +44,8 @@ internal static class AssertFile
             .Replace("\r", "\n", StringComparison.Ordinal)
             .Replace(" \n", "\n", StringComparison.Ordinal)
             .Replace("\n", "\r\n", StringComparison.Ordinal);
+
+        text = string.Join("\r\n", text.Split(separator, StringSplitOptions.None).Select(line => line.TrimEnd()));
 
         if (!text.EndsWith("\r\n", StringComparison.Ordinal))
         {

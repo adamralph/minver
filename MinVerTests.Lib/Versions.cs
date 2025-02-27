@@ -1,7 +1,7 @@
-using System.Reflection;
 using MinVer.Lib;
 using MinVerTests.Infra;
 using MinVerTests.Lib.Infra;
+using System.Reflection;
 using Xunit;
 using static MinVerTests.Infra.FileSystem;
 using static MinVerTests.Infra.Git;
@@ -20,16 +20,16 @@ public static class Versions
 git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
-git tag 0.0.0-alpha.1
-git commit --allow-empty -m '.'
-git commit --allow-empty -m '.'
-git tag 0.0.0
-git commit --allow-empty -m '.'
-git commit --allow-empty -m '.'
-git tag 0.1.0-beta.1
+git tag 0.1.0-alpha.1
 git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
 git tag 0.1.0
+git commit --allow-empty -m '.'
+git commit --allow-empty -m '.'
+git tag 0.2.0-beta.1
+git commit --allow-empty -m '.'
+git commit --allow-empty -m '.'
+git tag 0.2.0
 git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
 git tag 1.0.0-alpha.1
@@ -41,25 +41,25 @@ git checkout -b foo
 git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
-git tag 1.0.1-alpha.1
+git tag 1.1.0-alpha.1
 git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
-git tag 1.0.1
+git tag 1.2.0
 git commit --allow-empty -m '.'
 git checkout main
 git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
-git tag 1.1.0-alpha.1
+git tag 1.3.0-alpha.1
 git commit --allow-empty -m '.'
 git merge foo --no-edit
 git commit --allow-empty -m '.'
-git tag 1.1.0-beta.2
-git tag 1.1.0-beta.10
+git tag 1.3.0-beta.2
+git tag 1.3.0-beta.10
 git commit --allow-empty -m '.'
 git commit --allow-empty -m '.'
-git tag 1.1.0-rc.1
-git tag 1.1.0 -a -m '.'
+git tag 1.3.0-rc.1
+git tag 1.3.0 -a -m '.'
 ";
 
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();

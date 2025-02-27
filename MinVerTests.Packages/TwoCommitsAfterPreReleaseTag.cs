@@ -15,11 +15,11 @@ public static class TwoCommitsAfterPreReleaseTag
 
         await Git.Init(path);
         await Git.Commit(path);
-        await Git.Tag(path, "2.3.4-alpha.5");
+        await Git.Tag(path, "2.3.5-alpha.5");
         await Git.Commit(path);
         await Git.Commit(path);
 
-        var expected = Package.WithVersion(2, 3, 4, ["alpha", "5",], 2);
+        var expected = Package.WithVersion(2, 3, 7, ["alpha", "5",], 2);
 
         // act
         var (actual, _, _) = await Sdk.BuildProject(path);

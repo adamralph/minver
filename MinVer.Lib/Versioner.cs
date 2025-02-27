@@ -12,8 +12,8 @@ public static class Versioner
 
         var (version, height, isFromTag) = GetVersion(workDir, tagPrefix, defaultPreReleaseIdentifiersList, log);
 
-        _ = height.HasValue && ignoreHeight && log.IsDebugEnabled && log.Debug("Ignoring height.");
-        version = !height.HasValue || ignoreHeight ? version : version.WithHeight(height.Value, autoIncrement, defaultPreReleaseIdentifiersList);
+        _ = ignoreHeight && log.IsDebugEnabled && log.Debug("Ignoring height.");
+        version = version.WithHeight(ignoreHeight, height ?? 0, autoIncrement, defaultPreReleaseIdentifiersList);
 
         version = version.AddBuildMetadata(buildMeta);
 

@@ -19,7 +19,7 @@ public static class BuildMetadata
         await EnsureEmptyRepository(path);
 
         // act
-        var actualVersion = Versioner.GetVersion(path, "", MajorMinor.Default, buildMetadata, default, PreReleaseIdentifiers.Default, false, NullLogger.Instance);
+        var actualVersion = Versioner.GetVersion(path, "", MajorMinor.Default, buildMetadata, default, PreReleaseIdentifiers.Default, false, false, NullLogger.Instance);
 
         // assert
         Assert.Equal(expectedVersion, actualVersion.ToString());

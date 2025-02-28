@@ -7,11 +7,11 @@ namespace MinVer.Lib;
 public class Version : SemanticVersion
 {
     private readonly List<string> preReleaseIdentifiers;
-    private readonly int height;
+    public int Height { get; private init; }
 
     public Version(IEnumerable<string> defaultPreReleaseIdentifiers) : this(0, 0, 0, [.. defaultPreReleaseIdentifiers], 0, "") { }
 
-    private Version(int major, int minor, int patch, List<string> preReleaseIdentifiers, int height, string? buildMetadata) :
+    internal Version(int major, int minor, int patch, List<string> preReleaseIdentifiers, int height, string? buildMetadata) :
         base(
             major,
             minor,
@@ -22,7 +22,7 @@ public class Version : SemanticVersion
             buildMetadata)
     {
         this.preReleaseIdentifiers = preReleaseIdentifiers;
-        this.height = height;
+        this.Height = height;
     }
 
     public override string ToString(string? format, IFormatProvider? formatProvider) =>
@@ -34,7 +34,7 @@ public class Version : SemanticVersion
 
         return minMajorMinor.Major < this.Major || (minMajorMinor.Major == this.Major && minMajorMinor.Minor <= this.Minor)
             ? this
-            : new Version(minMajorMinor.Major, minMajorMinor.Minor, 0, [.. defaultPreReleaseIdentifiers], this.height, this.Metadata);
+            : new Version(minMajorMinor.Major, minMajorMinor.Minor, 0, [.. defaultPreReleaseIdentifiers], this.Height, this.Metadata);
     }
 
     public Version WithHeight(bool ignoreHeight, int newHeight, VersionPart autoIncrement, IEnumerable<string> defaultPreReleaseIdentifiers)
@@ -61,7 +61,7 @@ public class Version : SemanticVersion
     public Version AddBuildMetadata(string newBuildMetadata)
     {
         var separator = !string.IsNullOrEmpty(this.Metadata) && !string.IsNullOrEmpty(newBuildMetadata) ? "." : "";
-        return new Version(this.Major, this.Minor, this.Patch, this.preReleaseIdentifiers, this.height, $"{this.Metadata}{separator}{newBuildMetadata}");
+        return new Version(this.Major, this.Minor, this.Patch, this.preReleaseIdentifiers, this.Height, $"{this.Metadata}{separator}{newBuildMetadata}");
     }
 
     public static bool TryParse(string text, [NotNullWhen(returnValue: true)] out Version? version, string prefix = "")

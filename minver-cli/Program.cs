@@ -23,6 +23,7 @@ var minMajorMinorOption = app.Option("-m|--minimum-major-minor <MINIMUM_MAJOR_MI
 var tagPrefixOption = app.Option("-t|--tag-prefix <TAG_PREFIX>", "", CommandOptionType.SingleValue);
 var verbosityOption = app.Option("-v|--verbosity <VERBOSITY>", VerbosityMap.ValidValues, CommandOptionType.SingleValue);
 var ignorePreReleaseIdentifiersOption = app.Option<bool>("-o|--ignore-pre-release-identifiers", "Ignore pre-release identifiers", CommandOptionType.NoValue);
+var includeBranchNameOption = app.Option<bool>("-n|--include-branch-name", "Include the current branch name in the pre-release identifiers", CommandOptionType.NoValue);
 #if MINVER
 var versionOverrideOption = app.Option("-o|--version-override <VERSION>", "", CommandOptionType.SingleValue);
 #endif
@@ -50,6 +51,7 @@ app.OnExecute(() =>
         versionOverrideOption.Value(),
 #endif
         ignorePreReleaseIdentifiersOption.HasValue() ? true : null,
+        includeBranchNameOption.HasValue() ? true : null,
         out var options))
     {
         return 2;
@@ -110,7 +112,16 @@ app.OnExecute(() =>
     Version version;
     try
     {
-        version = Versioner.GetVersion(workDir, options.TagPrefix ?? "", options.MinMajorMinor ?? MajorMinor.Default, options.BuildMeta ?? "", options.AutoIncrement ?? default, defaultPreReleaseIdentifiers, options.IgnoreHeight ?? false, log);
+        version = Versioner.GetVersion(
+            workDir, 
+            options.TagPrefix ?? "", 
+            options.MinMajorMinor ?? MajorMinor.Default, 
+            options.BuildMeta ?? "", 
+            options.AutoIncrement ?? default, 
+            defaultPreReleaseIdentifiers, 
+            options.IgnoreHeight ?? false,
+            options.IncludeBranchName ?? false,
+            log);
     }
     catch (NoGitException ex)
     {

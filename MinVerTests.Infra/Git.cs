@@ -42,4 +42,7 @@ public static class Git
 
     public static Task Checkout(string path, string sha) =>
         CommandEx.ReadLoggedAsync("git", $"checkout {sha}", path);
+
+    public static Task BranchAsync(string path, string name) =>
+        CommandEx.ReadLoggedAsync("git", $"checkout -b {name}", path);
 }

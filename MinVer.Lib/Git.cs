@@ -46,6 +46,28 @@ internal static class Git
                 .Select(tokens => (tokens[1][10..].RemoveFromEnd("^{}"), tokens[0]))
             : [];
 
+    public static bool TryGetCurrentBranch(string directory, [NotNullWhen(returnValue: true)] out string? branchName, ILogger log)
+    {
+        branchName = null;
+
+        if (!GitCommand.TryRun("rev-parse --abbrev-ref HEAD", directory, log, out var output))
+        {
+            _ = log.IsDebugEnabled && log.Debug("Failed to get current branch name.");
+            return false;
+        }
+
+        branchName = output.Trim();
+
+        if (string.IsNullOrEmpty(branchName) || branchName == "HEAD")
+        {
+            _ = log.IsDebugEnabled && log.Debug("Current branch name is empty or HEAD - likely detached HEAD state.");
+            return false;
+        }
+
+        _ = log.IsDebugEnabled && log.Debug($"Current branch name is '{branchName}'");
+        return true;
+    }
+
     private static string RemoveFromEnd(this string text, string value) =>
         text.EndsWith(value, StringComparison.OrdinalIgnoreCase) ? text[..^value.Length] : text;
 }

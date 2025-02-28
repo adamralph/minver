@@ -1,7 +1,7 @@
-using System.Reflection;
 using MinVer.Lib;
 using MinVerTests.Infra;
 using MinVerTests.Lib.Infra;
+using System.Reflection;
 using Xunit;
 using static MinVerTests.Infra.Git;
 

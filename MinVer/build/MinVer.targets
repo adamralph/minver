@@ -36,6 +36,7 @@
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerDefaultPreReleasePhase=$(MinVerDefaultPreReleasePhase)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerIgnorePreReleaseIdentifiers=$(MinVerIgnorePreReleaseIdentifiers)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerIgnoreHeight=$(MinVerIgnoreHeight)" />
+    <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerIncludeBranchName=$(MinVerIncludeBranchName)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerMinimumMajorMinor=$(MinVerMinimumMajorMinor)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerTagPrefix=$(MinVerTagPrefix)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerVerbosity=$(MinVerVerbosity)" />
@@ -52,6 +53,7 @@
       <MinVerInputs Include="--default-pre-release-phase &quot;$(MinVerDefaultPreReleasePhase)&quot;" />
       <MinVerInputs Include="--ignore-pre-release-identifiers" Condition="'$(MinVerIgnorePreReleaseIdentifiers)' == 'true'" />
       <MinVerInputs Include="--ignore-height" Condition="'$(MinVerIgnoreHeight)' == 'true'" />
+      <MinVerInputs Include="--include-branch-name" Condition="'$(MinVerIncludeBranchName)' == 'true'" />
       <MinVerInputs Include="--minimum-major-minor &quot;$(MinVerMinimumMajorMinor)&quot;" />
       <MinVerInputs Include="--tag-prefix &quot;$(MinVerTagPrefix)&quot;" />
       <MinVerInputs Include="--verbosity &quot;$(MinVerVerbosity)&quot;" />

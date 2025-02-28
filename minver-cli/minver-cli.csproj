@@ -16,6 +16,7 @@
     <RootNamespace>MinVer</RootNamespace>
     <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
     <ToolCommandName>minver</ToolCommandName>
+    <PackageId>Ebooks.minver-cli</PackageId>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,8 +1,8 @@
+using Microsoft.Extensions.FileSystemGlobbing;
 using System.Diagnostics;
 using System.IO.Compression;
 using System.Reflection;
 using System.Runtime.Loader;
-using Microsoft.Extensions.FileSystemGlobbing;
 
 namespace MinVerTests.Infra;
 
@@ -60,9 +60,9 @@ public static class Sdk
         _ = await DotNet($"new classlib --name {name} --output {path}{(multiTarget ? " --langVersion 8.0" : "")}", path).ConfigureAwait(false);
 
         var source = Solution.GetFullPath($"MinVer/bin/{configuration}/");
-        var minVerPackageVersion = Path.GetFileNameWithoutExtension(Directory.EnumerateFiles(source, "*.nupkg").First()).Split("MinVer.", 2)[1];
+        var minVerPackageVersion = Path.GetFileNameWithoutExtension(Directory.EnumerateFiles(source, "*.nupkg").First()).Split("Ebooks.MinVer.", 2)[1];
 
-        _ = await DotNet($"add package MinVer --source {source} --version {minVerPackageVersion} --package-directory packages", path).ConfigureAwait(false);
+        _ = await DotNet($"add package Ebooks.MinVer --source {source} --version {minVerPackageVersion} --package-directory packages", path).ConfigureAwait(false);
 
         var project = Path.Combine(path, $"{name}.csproj");
         var lines = await File.ReadAllLinesAsync(project).ConfigureAwait(false);

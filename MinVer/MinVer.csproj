@@ -8,7 +8,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <!-- NU5100: The folder being packaged contains an assembly file that is not in lib folder. -->
-    <NoWarn>$(NoWarn);NU5100</NoWarn>
+    <NoWarn>$(NoWarn);NU5100;NU5129</NoWarn>
     <OutputType>Exe</OutputType>
     <PackageIcon>minver.png</PackageIcon>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
@@ -19,6 +19,7 @@
     <RollForward>major</RollForward>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+    <PackageId>Ebooks.MinVer</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -40,11 +41,22 @@
     <None Include="../README.md" Pack="true" PackagePath="/" />
     <None Remove="build\**\*" />
     <None Remove="buildMultiTargeting\**\*" />
-    <Content Include="build\**\*" PackagePath="build" />
-    <Content Include="buildMultiTargeting\**\*" PackagePath="buildMultiTargeting" />
     <None Include="..\MSBuild.Caching\bin\$(Configuration)\net472\MSBuild.Caching.dll" Pack="true" PackagePath="build\bin\net472" Visible="false" />
     <None Include="..\MSBuild.Caching\bin\$(Configuration)\net8.0\MSBuild.Caching.dll" Pack="true" PackagePath="build\bin\net8.0" Visible="false" />
   </ItemGroup>
+
+  <!-- Target to copy and rename the .targets files -->
+  <Target Name="AddTargetsWithCorrectName" BeforeTargets="_GetPackageFiles">
+    <ItemGroup>
+      <!-- Include original files -->
+      <Content Include="build\**\*" PackagePath="build" />
+      <Content Include="buildMultiTargeting\**\*" PackagePath="buildMultiTargeting" />
+
+      <!-- Add the renamed files for NuGet compatibility -->
+      <Content Include="build\MinVer.targets" PackagePath="build\Ebooks.MinVer.targets" />
+      <Content Include="buildMultiTargeting\MinVer.targets" PackagePath="buildMultiTargeting\Ebooks.MinVer.targets" />
+    </ItemGroup>
+  </Target>
 
   <Target Name="AddMinVerOutput" BeforeTargets="_GetPackageFiles">
     <ItemGroup>

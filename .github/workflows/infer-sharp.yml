@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/setup-dotnet@v4.3.1
         with:
-          dotnet-version: '9.0.200'
+          dotnet-version: '9.0.202'
       - uses: actions/checkout@v4.2.2
       - run: dotnet build
       - run: ls -al

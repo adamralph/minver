@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "dependencies": {
+    "net8.0": {
+      "NuGet.Versioning": {
+        "type": "Direct",
+        "requested": "[6.13.1, )",
+        "resolved": "6.13.1",
+        "contentHash": "WE0icmymp5K1GrSgIWfePeu93eLYOrjNTTi5swZkCzq5f2/LL5qlgBOLE8dv+q0roLHsr/MhuT8IPmz2x58lEw=="
+      }
+    },
+    "net9.0": {
+      "NuGet.Versioning": {
+        "type": "Direct",
+        "requested": "[6.13.1, )",
+        "resolved": "6.13.1",
+        "contentHash": "WE0icmymp5K1GrSgIWfePeu93eLYOrjNTTi5swZkCzq5f2/LL5qlgBOLE8dv+q0roLHsr/MhuT8IPmz2x58lEw=="
+      }
+    }
+  }
+}

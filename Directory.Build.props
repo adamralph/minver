@@ -11,6 +11,8 @@
     <!-- workaround for https://github.com/dotnet/roslyn/issues/41640 -->
     <NoWarn>EnableGenerateDocumentationFile</NoWarn>
     <Nullable>enable</Nullable>
+    <RestoreLockedMode Condition="'$(CI)' != ''">true</RestoreLockedMode>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <!-- MinVer doesn't use MinVer for versioning because
 the environment variables for the build and for the package tests
 would interfere with each other. -->

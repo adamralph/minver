@@ -4,8 +4,7 @@
 
 ### Enhancements
 
-- [#1065: Bump NuGet.Versioning from 6.11.0 to 6.12.1](https://github.com/adamralph/minver/pull/1065)
-- [#1085: Bump NuGet.Versioning from 6.12.1 to 6.13.1](https://github.com/adamralph/minver/pull/1085)
+- [#1113: Bump NuGet.Versioning from 6.11.0 to 6.13.1](https://github.com/adamralph/minver/issues/1113)
 
 ## 6.0.0
 
@@ -13,22 +12,18 @@
 
 - [#983: Bump McMaster.Extensions.CommandLineUtils from 4.1.0 to 4.1.1](https://github.com/adamralph/minver/pull/983)
 - [#999: **[BREAKING]** Tagged version wins even if MinVerMinimumMajorMinor is higher](https://github.com/adamralph/minver/issues/999)
-- [#1019: Bump NuGet.Versioning from 6.8.0 to 6.10.1](https://github.com/adamralph/minver/pull/1019)
 - [#1021: MSBuild caching](https://github.com/adamralph/minver/pull/1021)
 - [#1034: Respect DOTNET\_HOST\_PATH if set](https://github.com/adamralph/minver/pull/1034)
-- [#1037: Bump NuGet.Versioning from 6.10.1 to 6.11.0](https://github.com/adamralph/minver/pull/1037)
+- [#1112: Bump NuGet.Versioning from 6.8.0 to 6.11.0](https://github.com/adamralph/minver/issues/1112)
 
 ## 5.0.0
 
 ### Enhancements
 
-- [#861: Bump NuGet.Versioning from 6.4.0 to 6.5.0](https://github.com/adamralph/minver/pull/861)
 - [#866: **[BREAKING]** Do not include MinVerBuildMetadata in PackageVersion](https://github.com/adamralph/minver/issues/866)
-- [#879: Bump NuGet.Versioning from 6.5.0 to 6.6.0](https://github.com/adamralph/minver/pull/879)
-- [#901: Bump NuGet.Versioning from 6.6.0 to 6.7.0](https://github.com/adamralph/minver/pull/901)
 - [#909: Bump McMaster.Extensions.CommandLineUtils from 4.0.2 to 4.1.0](https://github.com/adamralph/minver/pull/909)
 - [#928: target .NET 8](https://github.com/adamralph/minver/pull/928)
-- [#936: Bump NuGet.Versioning from 6.7.0 to 6.8.0](https://github.com/adamralph/minver/pull/936)
+- [#1111: Bump NuGet.Versioning from 6.4.0 to 6.8.0](https://github.com/adamralph/minver/issues/1111)
 
 ### Other
 
@@ -38,11 +33,9 @@
 
 ### Enhancements
 
-- [#794: Bump NuGet.Versioning from 6.2.1 to 6.3.0](https://github.com/adamralph/minver/pull/794)
-- [#818: Bump NuGet.Versioning from 6.3.0 to 6.3.1](https://github.com/adamralph/minver/pull/818)
-- [#836: Bump NuGet.Versioning from 6.3.1 to 6.4.0](https://github.com/adamralph/minver/pull/836)
 - [#839: replace default pre-release phase with default pre-release identifiers](https://github.com/adamralph/minver/pull/839)
 - [#841: Bump McMaster.Extensions.CommandLineUtils from 4.0.1 to 4.0.2](https://github.com/adamralph/minver/pull/841)
+- [#1110: Bump NuGet.Versioning from 6.2.1 to 6.4.0](https://github.com/adamralph/minver/issues/1110)
 
 ## 4.2.0
 

@@ -27,7 +27,7 @@ Also available as a [command-line tool](#can-i-use-minver-to-version-software-wh
 
 ## Prerequisites
 
-- [.NET SDK 6.0 or later](https://www.microsoft.com/net/download)
+- [.NET SDK 8.0 or later](https://dot.net)
 - [Git](https://git-scm.com/)
 
 ## Quick start

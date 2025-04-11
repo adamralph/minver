@@ -4,7 +4,8 @@
 
 ### Enhancements
 
-- [#1113: Bump NuGet.Versioning from 6.11.0 to 6.13.1](https://github.com/adamralph/minver/issues/1113)
+- [#1113: Bump NuGet.Versioning from 6.11.0 to 6.13.2](https://github.com/adamralph/minver/issues/1113)
+- [#1120: Target .NET 9](https://github.com/adamralph/minver/issues/1120)
 
 ## 6.0.0
 
@@ -22,17 +23,14 @@
 
 - [#866: **[BREAKING]** Do not include MinVerBuildMetadata in PackageVersion](https://github.com/adamralph/minver/issues/866)
 - [#909: Bump McMaster.Extensions.CommandLineUtils from 4.0.2 to 4.1.0](https://github.com/adamralph/minver/pull/909)
-- [#928: target .NET 8](https://github.com/adamralph/minver/pull/928)
+- [#928: Target .NET 8](https://github.com/adamralph/minver/pull/928)
 - [#1111: Bump NuGet.Versioning from 6.4.0 to 6.8.0](https://github.com/adamralph/minver/issues/1111)
-
-### Other
-
-- [#844: **[BREAKING]** drop support for .NET Core](https://github.com/adamralph/minver/pull/844)
 
 ## 4.3.0
 
 ### Enhancements
 
+- [#699: Target .NET 7](https://github.com/adamralph/minver/pull/699)
 - [#839: replace default pre-release phase with default pre-release identifiers](https://github.com/adamralph/minver/pull/839)
 - [#841: Bump McMaster.Extensions.CommandLineUtils from 4.0.1 to 4.0.2](https://github.com/adamralph/minver/pull/841)
 - [#1110: Bump NuGet.Versioning from 6.2.1 to 6.4.0](https://github.com/adamralph/minver/issues/1110)
@@ -48,7 +46,7 @@
 
 ### Enhancements
 
-- [#767: .NET 6 binaries](https://github.com/adamralph/minver/issues/767)
+- [#767: Target .NET 6](https://github.com/adamralph/minver/issues/767)
 
 ## 4.0.0
 
@@ -68,6 +66,7 @@
 ### Enhancements
 
 - [#549: add README.md to packages](https://github.com/adamralph/minver/pull/549)
+- [#586: **[BREAKING]** Target .NET Core 3.1 and remove .NET Core 2.1 target](https://github.com/adamralph/minver/pull/586)
 
 ### Fixed bugs
 
@@ -81,7 +80,6 @@
 ### Other
 
 - [#451: **[BREAKING]** Remove deprecated working directory option from minver-cli](https://github.com/adamralph/minver/issues/451)
-- [#586: **[BREAKING]** drop support for .NET Core 2.1](https://github.com/adamralph/minver/pull/586)
 
 ## 2.5.0
 
@@ -134,7 +132,7 @@
 
 ### Enhancements
 
-- [#244: run on machines with only later versions of .NET Core than 2.x](https://github.com/adamralph/minver/issues/244)
+- [#244: Allow running on machines with only later versions of .NET Core than 2.x](https://github.com/adamralph/minver/issues/244)
 - [#269: Support shallow clones](https://github.com/adamralph/minver/issues/269)
 
 ### Fixed bugs

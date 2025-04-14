@@ -5,8 +5,4 @@
     <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="NuGet.Versioning" Version="6.13.2" />
-  </ItemGroup>
-
 </Project>

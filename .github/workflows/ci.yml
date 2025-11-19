@@ -13,41 +13,38 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # old macOS, latest LTS
-          - job:
-              os: macos-13
-            tests:
-              framework: net8.0
-              sdk: "8.0.407"
-              sdk-major-minor: "8.0"
-          # current macOS, latest LTS and latest
+          # macOS
+          ## arm64
+          ### old, latest LTS
           - job:
               os: macos-14
             tests:
               framework: net8.0
               sdk: "8.0.407"
               sdk-major-minor: "8.0"
+          ### current, latest LTS and latest
           - job:
-              os: macos-14
+              os: macos-15
+            tests:
+              framework: net8.0
+              sdk: "8.0.407"
+              sdk-major-minor: "8.0"
+          - job:
+              os: macos-15
             tests:
               framework: net9.0
               sdk: "9.0.202"
               sdk-major-minor: "9.0"
-          # old Linux, latest LTS
-          - job:
-              os: ubuntu-20.04
-            tests:
-              framework: net8.0
-              sdk: "8.0.407"
-              sdk-major-minor: "8.0"
-          # old Linux, latest LTS
+          # Linux
+          ## x64
+          ### old latest LTS
           - job:
               os: ubuntu-22.04
             tests:
               framework: net8.0
               sdk: "8.0.407"
               sdk-major-minor: "8.0"
-          # current Linux, all
+          ### current, all
           - job:
               os: ubuntu-24.04
             tests:
@@ -56,27 +53,64 @@ jobs:
               sdk-major-minor: "8.0"
           - job:
               os: ubuntu-24.04
+            tests:
+              framework: net9.0
+              sdk: "9.0.202"
+              sdk-major-minor: "9.0"
+          ## arm64
+          ### old, latest LTS
+          - job:
+              os: ubuntu-22.04-arm
+            tests:
+              framework: net8.0
+              sdk: "8.0.407"
+              sdk-major-minor: "8.0"
+          ### current, all
+          - job:
+              os: ubuntu-24.04-arm
+            tests:
+              framework: net8.0
+              sdk: "8.0.407"
+              sdk-major-minor: "8.0"
+          - job:
+              os: ubuntu-24.04-arm
               upload: true
             tests:
               framework: net9.0
               sdk: "9.0.202"
               sdk-major-minor: "9.0"
-          # old Windows, latest LTS
-          - job:
-              os: windows-2019
-            tests:
-              framework: net8.0
-              sdk: "8.0.407"
-              sdk-major-minor: "8.0"
-            # current Windows, latest LTS and latest
+          # Windows
+          ## x64
+          ### old, latest LTS
           - job:
               os: windows-2022
             tests:
               framework: net8.0
               sdk: "8.0.407"
               sdk-major-minor: "8.0"
+          ### current, latest LTS and latest
           - job:
-              os: windows-2022
+              os: windows-2025
+            tests:
+              framework: net8.0
+              sdk: "8.0.407"
+              sdk-major-minor: "8.0"
+          - job:
+              os: windows-2025
+            tests:
+              framework: net9.0
+              sdk: "9.0.202"
+              sdk-major-minor: "9.0"
+          ## arm64
+          ### current, latest LTS and latest
+          - job:
+              os: windows-11-arm
+            tests:
+              framework: net8.0
+              sdk: "8.0.407"
+              sdk-major-minor: "8.0"
+          - job:
+              os: windows-11-arm
             tests:
               framework: net9.0
               sdk: "9.0.202"

@@ -8,7 +8,7 @@ env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
 jobs:
   release:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/setup-dotnet@v4.3.1
         with:

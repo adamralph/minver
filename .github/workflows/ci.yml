@@ -3,6 +3,7 @@ on:
   push:
     branches: [main, release-*]
   pull_request:
+  workflow_dispatch:
 permissions: read-all
 env:
   DOTNET_NOLOGO: true

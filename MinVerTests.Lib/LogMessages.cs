@@ -115,9 +115,9 @@ git tag 1.0.0-foo.1
     {
         var shas = (await ReadAsync("git", "log --pretty=format:\"%H\"", path))
             .StandardOutput
-            .ToNonEmptyLines()
-            .Reverse()
-            .ToList();
+            .ToNonEmptyLines();
+
+        shas.Reverse();
 
         foreach (var item in shas.Select((sha, index) => new { Sha = sha, Index = index, }))
         {

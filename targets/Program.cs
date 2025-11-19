@@ -5,14 +5,22 @@ using static SimpleExec.Command;
 var testFx = Environment.GetEnvironmentVariable("MINVER_TESTS_FRAMEWORK") ?? "net8.0";
 var testLoggerArgs = new List<string> { "--logger", "\"console;verbosity=normal\"", };
 
-if (Environment.GetEnvironmentVariable("GITHUB_ACTIONS")?.ToUpperInvariant() == "TRUE")
+var isGha = Environment.GetEnvironmentVariable("GITHUB_ACTIONS")?.ToUpperInvariant() == "TRUE";
+if (isGha)
 {
     testLoggerArgs.AddRange(["--logger", "GitHubActions",]);
 }
 
 Target("format", () => RunAsync("dotnet", "format --verify-no-changes"));
 
-Target("build", () => RunAsync("dotnet", "build --configuration Release --nologo"));
+Target(
+    "gha-build-msbuild-caching",
+    "in GitHub Actions, build MSBuild.Caching project first, to avoid intermittent failures",
+    () => !isGha
+        ? Console.Out.WriteLineAsync("Skipping because not running inside GitHub Actions")
+        : RunAsync("dotnet", "build ./MSBuild.Caching --configuration Release --nologo"));
+
+Target("build", dependsOn: ["gha-build-msbuild-caching"], () => RunAsync("dotnet", "build --configuration Release --nologo"));
 
 Target(
     "test-lib",

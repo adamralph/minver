@@ -28,6 +28,7 @@
     "MinVer",
     "MINVERBUILDMETADATA",
     "MINVERVERSIONOVERRIDE",
+    "msbuild",
     "MyGet",
     "Nerdbank",
     "netstandard",

@@ -10,7 +10,7 @@ public static class Sdk
 {
     private static readonly string dotnetRoot = Environment.GetEnvironmentVariable("DOTNET_ROOT") ?? "";
 
-    public static string Version { get; } = Environment.GetEnvironmentVariable("MINVER_TESTS_SDK") ?? "";
+    public static string Version { get; } = Environment.GetEnvironmentVariable("MINVER_TESTS_SDK") ?? "9.0.100";
 
     public static async Task CreateSolution(string path, string[] projectNames, string configuration = Configuration.Current)
     {
@@ -108,7 +108,7 @@ public static class Sdk
                 $@"{{
 {"  "}""sdk"": {{
 {"    "}""version"": ""{Version.Trim()}"",
-{"    "}""rollForward"": ""disable""
+{"    "}""rollForward"": ""latestMinor""
 {"  "}}}
 }}
 ");

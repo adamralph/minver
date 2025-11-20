@@ -4,8 +4,6 @@
     <IsPackable>false</IsPackable>
     <TargetFrameworks>net472;net8.0</TargetFrameworks>
     <LangVersion>12.0</LangVersion>
-    <!-- avoid a race between the build of the net472 target and its inclusion in the MinVer package -->
-    <BuildInParallel>false</BuildInParallel>
   </PropertyGroup>
 
   <ItemGroup>

@@ -21,20 +21,20 @@ jobs:
               os: macos-14
             tests:
               framework: net8.0
-              sdk: "8.0.407"
+              sdk: "8.0.416"
               sdk-major-minor: "8.0"
           ### current, latest LTS and latest
           - job:
               os: macos-15
             tests:
               framework: net8.0
-              sdk: "8.0.407"
+              sdk: "8.0.416"
               sdk-major-minor: "8.0"
           - job:
               os: macos-15
             tests:
               framework: net9.0
-              sdk: "9.0.202"
+              sdk: "9.0.308"
               sdk-major-minor: "9.0"
           # Linux
           ## x64
@@ -43,20 +43,20 @@ jobs:
               os: ubuntu-22.04
             tests:
               framework: net8.0
-              sdk: "8.0.407"
+              sdk: "8.0.416"
               sdk-major-minor: "8.0"
           ### current, all
           - job:
               os: ubuntu-24.04
             tests:
               framework: net8.0
-              sdk: "8.0.407"
+              sdk: "8.0.416"
               sdk-major-minor: "8.0"
           - job:
               os: ubuntu-24.04
             tests:
               framework: net9.0
-              sdk: "9.0.202"
+              sdk: "9.0.308"
               sdk-major-minor: "9.0"
           ## arm64
           ### old, latest LTS
@@ -64,21 +64,21 @@ jobs:
               os: ubuntu-22.04-arm
             tests:
               framework: net8.0
-              sdk: "8.0.407"
+              sdk: "8.0.416"
               sdk-major-minor: "8.0"
           ### current, all
           - job:
               os: ubuntu-24.04-arm
             tests:
               framework: net8.0
-              sdk: "8.0.407"
+              sdk: "8.0.416"
               sdk-major-minor: "8.0"
           - job:
               os: ubuntu-24.04-arm
               upload: true
             tests:
               framework: net9.0
-              sdk: "9.0.202"
+              sdk: "9.0.308"
               sdk-major-minor: "9.0"
           # Windows
           ## x64
@@ -87,20 +87,20 @@ jobs:
               os: windows-2022
             tests:
               framework: net8.0
-              sdk: "8.0.407"
+              sdk: "8.0.416"
               sdk-major-minor: "8.0"
           ### current, latest LTS and latest
           - job:
               os: windows-2025
             tests:
               framework: net8.0
-              sdk: "8.0.407"
+              sdk: "8.0.416"
               sdk-major-minor: "8.0"
           - job:
               os: windows-2025
             tests:
               framework: net9.0
-              sdk: "9.0.202"
+              sdk: "9.0.308"
               sdk-major-minor: "9.0"
           ## arm64
           ### current, latest LTS and latest
@@ -108,13 +108,13 @@ jobs:
               os: windows-11-arm
             tests:
               framework: net8.0
-              sdk: "8.0.407"
+              sdk: "8.0.416"
               sdk-major-minor: "8.0"
           - job:
               os: windows-11-arm
             tests:
               framework: net9.0
-              sdk: "9.0.202"
+              sdk: "9.0.308"
               sdk-major-minor: "9.0"
     name: ${{ matrix.job.os }}-sdk-${{ matrix.tests.sdk-major-minor }}
     runs-on: ${{ matrix.job.os }}
@@ -123,7 +123,7 @@ jobs:
         with:
           dotnet-version: |
             ${{ matrix.tests.sdk }}
-            9.0.202
+            9.0.308
       - run: dotnet --info
       - run: git --version
       - uses: actions/checkout@v4.2.2

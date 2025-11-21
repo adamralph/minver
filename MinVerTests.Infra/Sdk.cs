@@ -10,7 +10,13 @@ public static class Sdk
 {
     private static readonly string dotnetRoot = Environment.GetEnvironmentVariable("DOTNET_ROOT") ?? "";
 
-    public static string Version { get; } = Environment.GetEnvironmentVariable("MINVER_TESTS_SDK") ?? "9.0.100";
+    private static readonly Lazy<Task<string>> versionInUse = new(async () =>
+    {
+        var (standardOutput, _) = await DotNet("--version", "").ConfigureAwait(false);
+        return standardOutput.Trim();
+    });
+
+    public static string Version { get; } = Environment.GetEnvironmentVariable("MINVER_TESTS_SDK") ?? "";
 
     public static async Task CreateSolution(string path, string[] projectNames, string configuration = Configuration.Current)
     {
@@ -18,7 +24,7 @@ public static class Sdk
 
         FileSystem.EnsureEmptyDirectory(path);
 
-        CreateGlobalJsonIfRequired(path);
+        await CreateGlobalJson(path).ConfigureAwait(false);
 
         _ = await DotNet($"new sln --name test --output {path}", path).ConfigureAwait(false);
 
@@ -46,13 +52,11 @@ public static class Sdk
         }
     }
 
-    public static Task CreateProject(string path, string configuration = Configuration.Current, bool multiTarget = false, bool enableSourceLink = false)
+    public static async Task CreateProject(string path, string configuration = Configuration.Current, bool multiTarget = false, bool enableSourceLink = false)
     {
         FileSystem.EnsureEmptyDirectory(path);
-
-        CreateGlobalJsonIfRequired(path);
-
-        return CreateProject(path, configuration, "test", multiTarget, enableSourceLink);
+        await CreateGlobalJson(path).ConfigureAwait(false);
+        await CreateProject(path, configuration, "test", multiTarget, enableSourceLink).ConfigureAwait(false);
     }
 
     private static async Task CreateProject(string path, string configuration, string name, bool multiTarget = false, bool enableSourceLink = false)
@@ -99,20 +103,19 @@ public static class Sdk
         _ = await DotNet($"restore --source {source} --packages packages", path).ConfigureAwait(false);
     }
 
-    private static void CreateGlobalJsonIfRequired(string path)
+    private static async Task CreateGlobalJson(string path)
     {
-        if (!string.IsNullOrWhiteSpace(Version))
-        {
-            File.WriteAllText(
-                Path.Combine(path, "global.json"),
-                $@"{{
+        var version = !string.IsNullOrWhiteSpace(Version) ? Version : await versionInUse.Value.ConfigureAwait(false);
+
+        await File.WriteAllTextAsync(
+            Path.Combine(path, "global.json"),
+            $@"{{
 {"  "}""sdk"": {{
-{"    "}""version"": ""{Version.Trim()}"",
-{"    "}""rollForward"": ""latestMinor""
+{"    "}""version"": ""{version.Trim()}"",
+{"    "}""rollForward"": ""disable""
 {"  "}}}
 }}
-");
-        }
+").ConfigureAwait(false);
     }
 
     public static async Task<(Package? Package, string StandardOutput, string StandardError)> BuildProject(string path, Func<int, bool>? handleExitCode = null, params (string, string)[] envVars)

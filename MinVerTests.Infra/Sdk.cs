@@ -8,15 +8,11 @@ namespace MinVerTests.Infra;
 
 public static class Sdk
 {
-    private static readonly string dotnetRoot = Environment.GetEnvironmentVariable("DOTNET_ROOT") ?? "";
+    private static readonly string DotnetRoot = Environment.GetEnvironmentVariable("DOTNET_ROOT") ?? "";
+    private static readonly string RequiredVersion = Environment.GetEnvironmentVariable("MINVER_TESTS_SDK") ?? "";
 
-    private static readonly Lazy<Task<string>> versionInUse = new(async () =>
-    {
-        var (standardOutput, _) = await DotNet("--version", "").ConfigureAwait(false);
-        return standardOutput.Trim();
-    });
-
-    public static string Version { get; } = Environment.GetEnvironmentVariable("MINVER_TESTS_SDK") ?? "";
+    private static readonly Lazy<Task<string>> VersionInUse = new(async () =>
+        (await DotNet("--version", "").ConfigureAwait(false)).StandardOutput.Trim());
 
     public static async Task CreateSolution(string path, string[] projectNames, string configuration = Configuration.Current)
     {
@@ -52,14 +48,14 @@ public static class Sdk
         }
     }
 
-    public static async Task CreateProject(string path, string configuration = Configuration.Current, bool multiTarget = false, bool enableSourceLink = false)
+    public static async Task CreateProject(string path, string configuration = Configuration.Current, bool multiTarget = false)
     {
         FileSystem.EnsureEmptyDirectory(path);
         await CreateGlobalJson(path).ConfigureAwait(false);
-        await CreateProject(path, configuration, "test", multiTarget, enableSourceLink).ConfigureAwait(false);
+        await CreateProject(path, configuration, "test", multiTarget).ConfigureAwait(false);
     }
 
-    private static async Task CreateProject(string path, string configuration, string name, bool multiTarget = false, bool enableSourceLink = false)
+    private static async Task CreateProject(string path, string configuration, string name, bool multiTarget = false)
     {
         _ = await DotNet($"new classlib --name {name} --output {path}{(multiTarget ? " --langVersion 8.0" : "")}", path).ConfigureAwait(false);
 
@@ -70,33 +66,12 @@ public static class Sdk
 
         var project = Path.Combine(path, $"{name}.csproj");
         var lines = await File.ReadAllLinesAsync(project).ConfigureAwait(false);
-        var editedLines = new List<string>();
-
-        foreach (var line in lines)
-        {
-            if (line.Contains("<TargetFramework>", StringComparison.OrdinalIgnoreCase))
-            {
-                if (multiTarget)
-                {
-                    editedLines.Add(line
-                        .Replace("TargetFramework", "TargetFrameworks", StringComparison.OrdinalIgnoreCase)
-                        .Replace("</TargetFrameworks>", ";netstandard2.1</TargetFrameworks>", StringComparison.Ordinal));
-                }
-                else
-                {
-                    editedLines.Add(line);
-                }
-
-                if (!enableSourceLink)
-                {
-                    editedLines.Add("<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>");
-                }
-            }
-            else
-            {
-                editedLines.Add(line);
-            }
-        }
+        var editedLines = lines.Select(line =>
+            multiTarget && line.Contains("<TargetFramework>", StringComparison.OrdinalIgnoreCase)
+                ? line
+                    .Replace("TargetFramework", "TargetFrameworks", StringComparison.OrdinalIgnoreCase)
+                    .Replace("</TargetFrameworks>", ";netstandard2.1</TargetFrameworks>", StringComparison.Ordinal)
+                : line);
 
         await File.WriteAllLinesAsync(project, editedLines).ConfigureAwait(false);
 
@@ -105,23 +80,24 @@ public static class Sdk
 
     private static async Task CreateGlobalJson(string path)
     {
-        var version = !string.IsNullOrWhiteSpace(Version) ? Version : await versionInUse.Value.ConfigureAwait(false);
+        var version = !string.IsNullOrWhiteSpace(RequiredVersion) ? RequiredVersion : await VersionInUse.Value.ConfigureAwait(false);
 
-        await File.WriteAllTextAsync(
-            Path.Combine(path, "global.json"),
-            $@"{{
-{"  "}""sdk"": {{
-{"    "}""version"": ""{version.Trim()}"",
-{"    "}""rollForward"": ""disable""
-{"  "}}}
-}}
-").ConfigureAwait(false);
+        var text =
+$$"""
+{
+{{"  "}}"sdk": {
+{{"    "}}"version": "{{version.Trim()}}",
+{{"    "}}"rollForward": "disable"
+{{"  "}}}
+}
+""";
+
+        await File.WriteAllTextAsync(Path.Combine(path, "global.json"), text).ConfigureAwait(false);
     }
 
     public static async Task<(Package? Package, string StandardOutput, string StandardError)> BuildProject(string path, Func<int, bool>? handleExitCode = null, params (string, string)[] envVars)
     {
         var (packages, standardOutput, standardError) = await Build(path, handleExitCode, envVars).ConfigureAwait(false);
-
         return (packages.SingleOrDefault(), standardOutput, standardError);
     }
 
@@ -130,11 +106,12 @@ public static class Sdk
         var environmentVariables = envVars.ToDictionary(envVar => envVar.Item1, envVar => envVar.Item2, StringComparer.OrdinalIgnoreCase);
         _ = environmentVariables.TryAdd("MinVerVerbosity".ToAltCase(), "diagnostic");
         _ = environmentVariables.TryAdd("GeneratePackageOnBuild", "true");
+        _ = environmentVariables.TryAdd("IncludeSourceRevisionInInformationalVersion", "false");
         _ = environmentVariables.TryAdd("NoPackageAnalysis", "true");
 
         // -maxCpuCount:1 is required to prevent massive execution times in GitHub Actions
         var (standardOutput, standardError) = await DotNet(
-            $"build -maxCpuCount:1 --no-restore{(!Version.StartsWith("2.", StringComparison.Ordinal) ? " --nologo" : "")}",
+            "build -maxCpuCount:1 --no-restore --nologo",
             path,
             environmentVariables,
             handleExitCode).ConfigureAwait(false);
@@ -151,23 +128,21 @@ public static class Sdk
     {
         var environmentVariables = envVars.ToDictionary(envVar => envVar.Item1, envVar => envVar.Item2, StringComparer.OrdinalIgnoreCase);
         _ = environmentVariables.TryAdd("MinVerVerbosity".ToAltCase(), "diagnostic");
+        _ = environmentVariables.TryAdd("IncludeSourceRevisionInInformationalVersion", "false");
         _ = environmentVariables.TryAdd("NoPackageAnalysis", "true");
 
         // -maxCpuCount:1 is required to prevent massive execution times in GitHub Actions
-        return DotNet(
-            $"pack --configuration Debug -maxCpuCount:1 --no-restore{(!Version.StartsWith("2.", StringComparison.Ordinal) ? " --nologo" : "")}",
-            path,
-            environmentVariables);
+        return DotNet("pack --configuration Debug -maxCpuCount:1 --no-restore --nologo", path, environmentVariables);
     }
 
     public static Task<(string StandardOutput, string StandardError)> DotNet(string args, string path, IDictionary<string, string>? envVars = null, Func<int, bool>? handleExitCode = null)
     {
         envVars ??= new Dictionary<string, string>();
 
-        if (!string.IsNullOrWhiteSpace(Version) && !string.IsNullOrWhiteSpace(dotnetRoot))
+        if (!string.IsNullOrWhiteSpace(RequiredVersion) && !string.IsNullOrWhiteSpace(DotnetRoot))
         {
-            envVars["MSBuildExtensionsPath"] = Path.Combine(dotnetRoot, "sdk", Version, "") + Path.DirectorySeparatorChar;
-            envVars["MSBuildSDKsPath"] = Path.Combine(dotnetRoot, "sdk", Version, "Sdks");
+            envVars["MSBuildExtensionsPath"] = Path.Combine(DotnetRoot, "sdk", RequiredVersion, "") + Path.DirectorySeparatorChar;
+            envVars["MSBuildSDKsPath"] = Path.Combine(DotnetRoot, "sdk", RequiredVersion, "Sdks");
         }
 
         return CommandEx.ReadLoggedAsync("dotnet", args, path, envVars, handleExitCode);

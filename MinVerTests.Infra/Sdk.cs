@@ -20,7 +20,11 @@ public static class Sdk
 
         FileSystem.EnsureEmptyDirectory(path);
 
+        var minVerPackageSource = GetMinVerPackageSource(configuration);
+        var minVerPackageVersion = GetMinVerPackageVersion(minVerPackageSource);
+
         await CreateGlobalJson(path).ConfigureAwait(false);
+        await CreateNugetConfig(path, minVerPackageSource).ConfigureAwait(false);
 
         _ = await DotNet($"new sln --name test --output {path}", path).ConfigureAwait(false);
 
@@ -31,7 +35,7 @@ public static class Sdk
 
             FileSystem.EnsureEmptyDirectory(projectPath);
 
-            await CreateProject(projectPath, configuration, projectName).ConfigureAwait(false);
+            await CreateProject(projectPath, projectName, minVerPackageVersion).ConfigureAwait(false);
 
             // ensure deterministic build order
             if (!string.IsNullOrEmpty(previousProjectName))
@@ -51,18 +55,26 @@ public static class Sdk
     public static async Task CreateProject(string path, string configuration = Configuration.Current, bool multiTarget = false)
     {
         FileSystem.EnsureEmptyDirectory(path);
+
+        var minVerPackageSource = GetMinVerPackageSource(configuration);
+        var minVerPackageVersion = GetMinVerPackageVersion(minVerPackageSource);
+
         await CreateGlobalJson(path).ConfigureAwait(false);
-        await CreateProject(path, configuration, "test", multiTarget).ConfigureAwait(false);
+        await CreateNugetConfig(path, minVerPackageSource).ConfigureAwait(false);
+        await CreateProject(path, "test", minVerPackageVersion, multiTarget).ConfigureAwait(false);
     }
 
-    private static async Task CreateProject(string path, string configuration, string name, bool multiTarget = false)
+    private static string GetMinVerPackageSource(string configuration) =>
+        Solution.GetFullPath($"MinVer/bin/{configuration}/");
+
+    private static string GetMinVerPackageVersion(string source) =>
+        Path.GetFileNameWithoutExtension(Directory.EnumerateFiles(source, "*.nupkg").First()).Split("MinVer.", 2)[1];
+
+    private static async Task CreateProject(string path, string name, string minVerPackageVersion, bool multiTarget = false)
     {
         _ = await DotNet($"new classlib --name {name} --output {path}{(multiTarget ? " --langVersion 8.0" : "")}", path).ConfigureAwait(false);
 
-        var source = Solution.GetFullPath($"MinVer/bin/{configuration}/");
-        var minVerPackageVersion = Path.GetFileNameWithoutExtension(Directory.EnumerateFiles(source, "*.nupkg").First()).Split("MinVer.", 2)[1];
-
-        _ = await DotNet($"add package MinVer --source {source} --version {minVerPackageVersion} --package-directory packages", path).ConfigureAwait(false);
+        _ = await DotNet($"add package MinVer --version {minVerPackageVersion} --package-directory packages", path).ConfigureAwait(false);
 
         var project = Path.Combine(path, $"{name}.csproj");
         var lines = await File.ReadAllLinesAsync(project).ConfigureAwait(false);
@@ -75,7 +87,7 @@ public static class Sdk
 
         await File.WriteAllLinesAsync(project, editedLines).ConfigureAwait(false);
 
-        _ = await DotNet($"restore --source {source} --packages packages", path).ConfigureAwait(false);
+        _ = await DotNet("restore --packages packages", path).ConfigureAwait(false);
     }
 
     private static async Task CreateGlobalJson(string path)
@@ -93,6 +105,29 @@ $$"""
 """;
 
         await File.WriteAllTextAsync(Path.Combine(path, "global.json"), text).ConfigureAwait(false);
+    }
+
+    private static async Task CreateNugetConfig(string path, string packageSource)
+    {
+        var lines = new List<string>
+        {
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?>",
+            "<configuration>",
+            "  <packageSources>",
+            $"    <add key=\"local\" value=\"{packageSource}\" />",
+            "  </packageSources>"
+        };
+
+        var clearElements = new List<string> {
+            "auditSources",
+            "disabledPackageSources",
+            "packageSourceMapping"
+        };
+
+        lines.AddRange(clearElements.Select(element => $"  <{element}><clear /></{element}>"));
+        lines.Add("</configuration>");
+
+        await File.WriteAllLinesAsync(Path.Combine(path, "NuGet.Config"), lines).ConfigureAwait(false);
     }
 
     public static async Task<(Package? Package, string StandardOutput, string StandardError)> BuildProject(string path, Func<int, bool>? handleExitCode = null, params (string, string)[] envVars)
@@ -159,7 +194,7 @@ $$"""
         var nuspec = await File.ReadAllTextAsync(nuspecFileName).ConfigureAwait(false);
         var nuspecVersion = nuspec.Split("<version>")[1].Split("</version>")[0];
 
-        var assemblyFileName = Directory.EnumerateFiles(extractedDirectoryName, "*.dll", new EnumerationOptions { RecurseSubdirectories = true, }).First();
+        var assemblyFileName = Directory.EnumerateFiles(extractedDirectoryName, "*.dll", new EnumerationOptions { RecurseSubdirectories = true }).First();
 
         var (systemAssemblyVersion, informationalVersion) = GetAssemblyVersions(assemblyFileName);
         var assemblyVersion = new AssemblyVersion(systemAssemblyVersion.Major, systemAssemblyVersion.Minor, systemAssemblyVersion.Build, systemAssemblyVersion.Revision);
@@ -172,7 +207,7 @@ $$"""
 
     private static (Version Version, string InformationalVersion) GetAssemblyVersions(string assemblyFileName)
     {
-        var assemblyLoadContext = new AssemblyLoadContext(default, true);
+        var assemblyLoadContext = new AssemblyLoadContext(null, true);
         var assembly = assemblyLoadContext.LoadFromAssemblyPath(assemblyFileName);
 
         try

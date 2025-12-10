@@ -123,7 +123,7 @@ jobs:
         with:
           dotnet-version: |
             ${{ matrix.tests.sdk }}
-            9.0.308
+            10.0.101
       - run: dotnet --info
       - run: git --version
       - uses: actions/checkout@v4.2.2

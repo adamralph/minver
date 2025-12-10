@@ -23,7 +23,20 @@ Target(
     "test-lib",
     "test the MinVer.Lib library",
     dependsOn: ["build"],
-    () => RunAsync("dotnet", ["test", "./MinVerTests.Lib", "--framework", testFx, "--configuration", "Release", "--no-build", "--nologo", .. testLoggerArgs,]));
+    () =>
+    {
+        foreach (var testLoggerArg in testLoggerArgs)
+        {
+            Console.WriteLine($"{nameof(testLoggerArg)}: {testLoggerArg}");
+            Console.WriteLine($"{nameof(testLoggerArg.Length)}.{nameof(testLoggerArg.Length)}: {testLoggerArg.Length}");
+        }
+
+        return RunAsync("dotnet",
+        [
+            "test", "./MinVerTests.Lib", "--framework", testFx, "--configuration", "Release", "--no-build", "--nologo",
+            .. testLoggerArgs,
+        ]);
+    });
 
 Target(
     "test-packages",

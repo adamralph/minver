@@ -34,3 +34,7 @@ indent_style                                                              = tab
 
 [build]
 end_of_line                                                               = lf
+
+[packages.lock.json]
+end_of_line                                                               = unset
+insert_final_newline                                                      = unset

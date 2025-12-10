@@ -18,6 +18,8 @@ public static class Sdk
         return standardOutput.Trim();
     });
 
+    public static Task<string> GetVersionInUse() => VersionInUse.Value;
+
     public static async Task CreateSolution(string path, string[] projectNames, string configuration = Configuration.Current)
     {
         projectNames = projectNames ?? throw new ArgumentNullException(nameof(projectNames));
@@ -191,7 +193,11 @@ $$"""
     {
         var extractedDirectoryName = Path.Combine(Path.GetDirectoryName(fileName) ?? "", Path.GetFileNameWithoutExtension(fileName));
 
+#if NET10_0_OR_GREATER
+        await ZipFile.ExtractToDirectoryAsync(fileName, extractedDirectoryName).ConfigureAwait(false);
+#else
         ZipFile.ExtractToDirectory(fileName, extractedDirectoryName);
+#endif
 
         var nuspecFileName = Directory.EnumerateFiles(extractedDirectoryName, "*.nuspec").First();
 

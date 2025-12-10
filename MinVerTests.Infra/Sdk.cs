@@ -12,7 +12,11 @@ public static class Sdk
     private static readonly string RequiredVersion = Environment.GetEnvironmentVariable("MINVER_TESTS_SDK") ?? "";
 
     private static readonly Lazy<Task<string>> VersionInUse = new(async () =>
-        (await DotNet("--version", "").ConfigureAwait(false)).StandardOutput.Trim());
+    {
+        var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
+        var (standardOutput, _) = await DotNet("--version", path).ConfigureAwait(false);
+        return standardOutput.Trim();
+    });
 
     public static async Task CreateSolution(string path, string[] projectNames, string configuration = Configuration.Current)
     {

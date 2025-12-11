@@ -21,6 +21,9 @@ jobs:
           DEFAULT_BRANCH: main
           FILTER_REGEX_EXCLUDE: \bcodeql-analysis\.yml$|\bLICENSE$|\bversions\.txt$
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_DOTNET_SLN_FORMAT_ANALYZERS: false
+          VALIDATE_DOTNET_SLN_FORMAT_STYLE: false
+          VALIDATE_DOTNET_SLN_FORMAT_WHITESPACE: false
           VALIDATE_JSON_PRETTIER: false
           VALIDATE_MARKDOWN_PRETTIER: false
           VALIDATE_SHELL_SHFMT: false

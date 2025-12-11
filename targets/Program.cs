@@ -3,7 +3,7 @@ using static Bullseye.Targets;
 using static SimpleExec.Command;
 
 var testFx = Environment.GetEnvironmentVariable("MINVER_TESTS_FRAMEWORK") ?? "net8.0";
-var testLoggerArgs = new List<string> { "--logger", "\"console;verbosity=normal\"", };
+var testLoggerArgs = new List<string> { "--logger", "console;verbosity=normal", };
 
 if (Environment.GetEnvironmentVariable("GITHUB_ACTIONS")?.ToUpperInvariant() == "TRUE")
 {
@@ -75,7 +75,7 @@ Target(
 
         await RunAsync(
             "dotnet",
-            $"exec {MinVerCli.GetPath("Release")} {path}",
+            $"exec {await MinVerCli.GetPath("Release")} {path}",
             configureEnvironment: env =>
             {
                 env.Add("MinVerBuildMetadata", "build.6");

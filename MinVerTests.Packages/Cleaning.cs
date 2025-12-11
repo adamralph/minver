@@ -9,7 +9,12 @@ public static class Cleaning
 {
     [Theory]
     [InlineData(false)]
+    // In the .NET 10 SDK, packages produced from multi-TFM projects are no longer cleaned.
+    // This is left here as a placeholder in case this is a regression which will be fixed later.
+    // See https://github.com/dotnet/sdk/issues/52109
+#if !NET10_0
     [InlineData(true)]
+#endif
     public static async Task PackagesAreCleaned(bool multiTarget)
     {
         // arrange

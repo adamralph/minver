@@ -78,7 +78,7 @@ public static class Sdk
 
     private static async Task CreateProject(string path, string name, string minVerPackageVersion, bool multiTarget = false)
     {
-        _ = await DotNet($"new classlib --name {name} --output {path}{(multiTarget ? " --langVersion 8.0" : "")}", path).ConfigureAwait(false);
+        _ = await DotNet($"new classlib --name {name} --output {path}{(multiTarget ? " --langVersion 12.0" : "")}", path).ConfigureAwait(false);
 
         _ = await DotNet($"add package MinVer --version {minVerPackageVersion} --package-directory packages", path).ConfigureAwait(false);
 

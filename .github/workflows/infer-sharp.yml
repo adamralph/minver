@@ -13,10 +13,12 @@ jobs:
         with:
           dotnet-version: '10.0.101'
       - uses: actions/checkout@v4.2.2
+        with:
+          persist-credentials: false
       - run: dotnet build
       - run: ls -al
       - run: pwd
-      - uses: microsoft/infersharpaction@v1.5
+      - uses: microsoft/infersharpaction@b749060de518f410f92c87d37d2366e5e9d7c5fc # v1.5
         with:
           binary-path: './MinVer'
       - run: cat infer-out/report.txt

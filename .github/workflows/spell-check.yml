@@ -9,4 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.2.2
+        with:
+          persist-credentials: false
       - run: npx cspell@5.2.1 "**/*"

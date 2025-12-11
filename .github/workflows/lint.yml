@@ -16,11 +16,13 @@ jobs:
         with:
           fetch-depth: 0
           filter: tree:0
-      - uses: super-linter/super-linter@v7.3.0
+          persist-credentials: false
+      - uses: super-linter/super-linter@502f4fe48a81a392756e173e39a861f8c8efe056 # v8.3.0
         env:
           DEFAULT_BRANCH: main
           FILTER_REGEX_EXCLUDE: \bcodeql-analysis\.yml$|\bLICENSE$|\bversions\.txt$
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_BIOME_FORMAT: false
           VALIDATE_DOTNET_SLN_FORMAT_ANALYZERS: false
           VALIDATE_DOTNET_SLN_FORMAT_STYLE: false
           VALIDATE_DOTNET_SLN_FORMAT_WHITESPACE: false

@@ -20,6 +20,7 @@
     "bootstrapper",
     "classlib",
     "codeql",
+    "cooldown",
     "devcontainers",
     "diag",
     "globbing",

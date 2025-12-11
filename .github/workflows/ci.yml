@@ -121,6 +121,8 @@ jobs:
       - run: dotnet --info
       - run: git --version
       - uses: actions/checkout@v4.2.2
+        with:
+          persist-credentials: false
       - env:
           CI_NUMBER: ${{ github.run_number }}
           MINVER_VERSION: ${{ vars.MINVER_VERSION }}

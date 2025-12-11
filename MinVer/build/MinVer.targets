@@ -17,6 +17,7 @@
     <MinVerTargetFramework>net8.0</MinVerTargetFramework>
     <!-- https://learn.microsoft.com/en-us/dotnet/core/porting/versioning-sdk-msbuild-vs#supported-net-versions -->
     <MinVerTargetFramework Condition="'$(MSBuildAssemblyVersion)' &gt;= '17.12'">net9.0</MinVerTargetFramework>
+    <MinVerTargetFramework Condition="'$(MSBuildAssemblyVersion)' &gt;= '18.0'">net10.0</MinVerTargetFramework>
     <NoWarn>$(NoWarn);NU5105</NoWarn>
   </PropertyGroup>
 

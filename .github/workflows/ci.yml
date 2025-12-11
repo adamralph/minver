@@ -75,13 +75,13 @@ jobs:
               sdk-major-minor: "8.0"
           - job:
               os: ubuntu-24.04-arm
-              upload: true
             tests:
               framework: net9.0
               sdk: "9.0.308"
               sdk-major-minor: "9.0"
           - job:
               os: ubuntu-24.04-arm
+              upload: true
             tests:
               framework: net10.0
               sdk: "10.0.101"

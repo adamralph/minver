@@ -20,6 +20,11 @@ public static class MinVerCli
     private static async Task<string> GetTargetFramework()
     {
         var sdkVersionInUse = await Sdk.GetVersionInUse().ConfigureAwait(false);
-        return sdkVersionInUse.Split('.', 2)[0] == "8" ? "net8.0" : "net9.0";
+        return sdkVersionInUse.Split('.', 2)[0] switch
+        {
+            "8" => "net8.0",
+            "9" => "net9.0",
+            _ => "net10.0"
+        };
     }
 }

@@ -2,7 +2,7 @@ using MinVerTests.Infra;
 using static Bullseye.Targets;
 using static SimpleExec.Command;
 
-var testFx = Environment.GetEnvironmentVariable("MINVER_TESTS_FRAMEWORK") ?? "net8.0";
+var testFx = Environment.GetEnvironmentVariable("MINVER_TESTS_FRAMEWORK") ?? "net10.0";
 var testLoggerArgs = new List<string> { "--logger", "console;verbosity=normal", };
 
 if (Environment.GetEnvironmentVariable("GITHUB_ACTIONS")?.ToUpperInvariant() == "TRUE")

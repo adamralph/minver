@@ -4,8 +4,8 @@
 
 ### Enhancements
 
-- [#1113: Bump NuGet.Versioning from 6.11.0 to 6.13.2](https://github.com/adamralph/minver/issues/1113)
-- [#1120: Target .NET 10](https://github.com/adamralph/minver/issues/1120)
+- [#1113: Bump NuGet.Versioning from 6.11.0 to 7.0.1](https://github.com/adamralph/minver/issues/1113)
+- [#1120: Target .NET 9 and .NET 10](https://github.com/adamralph/minver/issues/1120)
 
 ## 6.0.0
 

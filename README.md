@@ -386,7 +386,7 @@ By default, [GitHub Actions](https://github.com/features/actions/), [Azure Pipel
 
 To build in GitHub Actions, Azure Pipelines, or Travis CI, configure them to fetch a sufficient number of commits.
 
-For GitHub Actions, set the `fetch-depth` of the [checkout action](https://github.com/actions/checkout) to an appropriate number, or to zero for all commits (you can also set `filter` to `tree:0` to create a [treeless clone](https://github.blog/2020-12-21-get-up-to-speed-with-partial-clone-and-shallow-clone/), for better performance). For example:
+For GitHub Actions, set the `fetch-depth` of the [checkout action](https://github.com/actions/checkout) to an appropriate number, or to zero for all commits (you can also set `filter` to `tree:0` to create a [treeless clone](https://github.blog/2020-12-21-get-up-to-speed-with-partial-clone-and-shallow-clone/), for better performance):
 
 ```yaml
 - uses: actions/checkout@v4
@@ -395,12 +395,13 @@ For GitHub Actions, set the `fetch-depth` of the [checkout action](https://githu
     filter: tree:0
 ```
 
-For Azure Pipelines, include an explicit [checkout step](https://learn.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/steps-checkout) and set the `fetchDepth` to an appropriate number, or to zero for all commits:
+For Azure Pipelines, include an explicit [checkout step](https://learn.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/steps-checkout) and set the `fetchDepth` to an appropriate number, or to zero for all commits (you can also set `fetchFilter` to `tree:0` to create a [treeless clone](https://github.blog/2020-12-21-get-up-to-speed-with-partial-clone-and-shallow-clone/), for better performance):
 
 ```yaml
 steps:
   - checkout: self
     fetchDepth: 0
+    fetchFilter: tree:0
 ```
 
 For Travis CI, set the [`--depth` flag](https://docs.travis-ci.com/user/customizing-the-build#git-clone-depth) to an appropriate number, or to `false` for all commits:

@@ -1,0 +1,10 @@
+<Solution>
+  <Project Path="minver-cli/minver-cli.csproj" />
+  <Project Path="MinVer.Lib/MinVer.Lib.csproj" />
+  <Project Path="MinVer/MinVer.csproj" />
+  <Project Path="MinVerTests.Infra/MinVerTests.Infra.csproj" />
+  <Project Path="MinVerTests.Lib/MinVerTests.Lib.csproj" />
+  <Project Path="MinVerTests.Packages/MinVerTests.Packages.csproj" />
+  <Project Path="MSBuild.Caching/MSBuild.Caching.csproj" />
+  <Project Path="targets/Targets.csproj" />
+</Solution>

@@ -17,24 +17,24 @@ Target(
     "build MSBuild.Caching project first, to avoid a race between the build of the net472 target and its inclusion in the MinVer package",
     () => RunAsync("dotnet", "build ./MSBuild.Caching --configuration Release --nologo"));
 
-Target("build", dependsOn: ["build-msbuild-caching"], () => RunAsync("dotnet", "build --configuration Release --nologo"));
+Target("build", dependsOn: ["build-msbuild-caching",], () => RunAsync("dotnet", "build --configuration Release --nologo"));
 
 Target(
     "test-lib",
     "test the MinVer.Lib library",
-    dependsOn: ["build"],
+    dependsOn: ["build",],
     () => RunAsync("dotnet", ["test", "./MinVerTests.Lib", "--framework", testFx, "--configuration", "Release", "--no-build", "--nologo", .. testLoggerArgs,]));
 
 Target(
     "test-packages",
     "test the MinVer package and the minver-cli console app",
-    dependsOn: ["build"],
+    dependsOn: ["build",],
     () => RunAsync("dotnet", ["test", "./MinVerTests.Packages", "--configuration", "Release", "--no-build", "--nologo", .. testLoggerArgs,]));
 
 Target(
     "eyeball-minver-logs",
     "build a test solution with the MinVer package to eyeball the diagnostic logs",
-    dependsOn: ["build"],
+    dependsOn: ["build",],
     async () =>
     {
         var path = TestDirectory.Get("MinVer.Targets", "eyeball-minver-logs");
@@ -61,7 +61,7 @@ Target(
 Target(
     "eyeball-minver-cli-logs",
     "run the minver-cli console app on a test directory to eyeball the trace logs",
-    dependsOn: ["build"],
+    dependsOn: ["build",],
     async () =>
     {
         var path = TestDirectory.Get("MinVer.Targets", "eyeball-minver-cli-logs");
@@ -84,8 +84,8 @@ Target(
             });
     });
 
-Target("eyeball-logs", dependsOn: ["eyeball-minver-logs", "eyeball-minver-cli-logs"]);
+Target("eyeball-logs", dependsOn: ["eyeball-minver-logs", "eyeball-minver-cli-logs",]);
 
-Target("default", dependsOn: ["format", "test-lib", "test-packages", "eyeball-logs"]);
+Target("default", dependsOn: ["format", "test-lib", "test-packages", "eyeball-logs",]);
 
 await RunTargetsAndExitAsync(args, ex => ex is SimpleExec.ExitCodeException);

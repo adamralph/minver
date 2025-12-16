@@ -9,7 +9,7 @@ public class Version : SemanticVersion
     private readonly List<string> preReleaseIdentifiers;
     private readonly int height;
 
-    public Version(IEnumerable<string> defaultPreReleaseIdentifiers) : this(0, 0, 0, [.. defaultPreReleaseIdentifiers], 0, "") { }
+    public Version(IEnumerable<string> defaultPreReleaseIdentifiers) : this(0, 0, 0, [.. defaultPreReleaseIdentifiers,], 0, "") { }
 
     private Version(int major, int minor, int patch, List<string> preReleaseIdentifiers, int height, string? buildMetadata) :
         base(
@@ -34,16 +34,16 @@ public class Version : SemanticVersion
 
         return minMajorMinor.Major < this.Major || (minMajorMinor.Major == this.Major && minMajorMinor.Minor <= this.Minor)
             ? this
-            : new Version(minMajorMinor.Major, minMajorMinor.Minor, 0, [.. defaultPreReleaseIdentifiers], this.height, this.Metadata);
+            : new Version(minMajorMinor.Major, minMajorMinor.Minor, 0, [.. defaultPreReleaseIdentifiers,], this.height, this.Metadata);
     }
 
     public Version WithHeight(int newHeight, VersionPart autoIncrement, IEnumerable<string> defaultPreReleaseIdentifiers) =>
         this.preReleaseIdentifiers.Count == 0 && newHeight > 0
             ? autoIncrement switch
             {
-                VersionPart.Major => new Version(this.Major + 1, 0, 0, [.. defaultPreReleaseIdentifiers], newHeight, ""),
-                VersionPart.Minor => new Version(this.Major, this.Minor + 1, 0, [.. defaultPreReleaseIdentifiers], newHeight, ""),
-                VersionPart.Patch => new Version(this.Major, this.Minor, this.Patch + 1, [.. defaultPreReleaseIdentifiers], newHeight, ""),
+                VersionPart.Major => new Version(this.Major + 1, 0, 0, [.. defaultPreReleaseIdentifiers,], newHeight, ""),
+                VersionPart.Minor => new Version(this.Major, this.Minor + 1, 0, [.. defaultPreReleaseIdentifiers,], newHeight, ""),
+                VersionPart.Patch => new Version(this.Major, this.Minor, this.Patch + 1, [.. defaultPreReleaseIdentifiers,], newHeight, ""),
                 _ => throw new ArgumentOutOfRangeException(nameof(autoIncrement)),
             }
             : new Version(this.Major, this.Minor, this.Patch, this.preReleaseIdentifiers, newHeight, newHeight == 0 ? this.Metadata : "");
@@ -71,7 +71,7 @@ public class Version : SemanticVersion
             return false;
         }
 
-        version = new Version(semanticVersion.Major, semanticVersion.Minor, semanticVersion.Patch, [.. semanticVersion.ReleaseLabels], 0, semanticVersion.Metadata);
+        version = new Version(semanticVersion.Major, semanticVersion.Minor, semanticVersion.Patch, [.. semanticVersion.ReleaseLabels,], 0, semanticVersion.Metadata);
         return true;
     }
 }

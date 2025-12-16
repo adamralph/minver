@@ -24,7 +24,7 @@ public static class MinVerCli
         {
             "8" => "net8.0",
             "9" => "net9.0",
-            _ => "net10.0"
+            _ => "net10.0",
         };
     }
 }

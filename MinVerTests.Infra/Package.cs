@@ -4,7 +4,7 @@ public record Package(string Version, AssemblyVersion AssemblyVersion, FileVersi
 {
     public static Package WithVersion(int major, int minor, int patch, IEnumerable<string>? preReleaseIdentifiers = null, int height = 0, string buildMetadata = "", string? informationalVersionAdditionalBuildMetadata = "")
     {
-        var preReleaseToken = preReleaseIdentifiers == null ? "" : GetPreReleaseToken([.. preReleaseIdentifiers]);
+        var preReleaseToken = preReleaseIdentifiers == null ? "" : GetPreReleaseToken([.. preReleaseIdentifiers,]);
         var heightToken = height == 0 ? "" : $".{height}";
         var buildMetadataToken = string.IsNullOrEmpty(buildMetadata) ? "" : $"+{buildMetadata}";
 

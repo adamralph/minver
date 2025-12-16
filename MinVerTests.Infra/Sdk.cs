@@ -121,13 +121,13 @@ $$"""
             "<configuration>",
             "  <packageSources>",
             $"    <add key=\"local\" value=\"{packageSource}\" />",
-            "  </packageSources>"
+            "  </packageSources>",
         };
 
         var clearElements = new List<string> {
             "auditSources",
             "disabledPackageSources",
-            "packageSourceMapping"
+            "packageSourceMapping",
         };
 
         lines.AddRange(clearElements.Select(element => $"  <{element}><clear /></{element}>"));
@@ -204,7 +204,7 @@ $$"""
         var nuspec = await File.ReadAllTextAsync(nuspecFileName).ConfigureAwait(false);
         var nuspecVersion = nuspec.Split("<version>")[1].Split("</version>")[0];
 
-        var assemblyFileName = Directory.EnumerateFiles(extractedDirectoryName, "*.dll", new EnumerationOptions { RecurseSubdirectories = true }).First();
+        var assemblyFileName = Directory.EnumerateFiles(extractedDirectoryName, "*.dll", new EnumerationOptions { RecurseSubdirectories = true, }).First();
 
         var (systemAssemblyVersion, informationalVersion) = GetAssemblyVersions(assemblyFileName);
         var assemblyVersion = new AssemblyVersion(systemAssemblyVersion.Major, systemAssemblyVersion.Minor, systemAssemblyVersion.Build, systemAssemblyVersion.Revision);

@@ -28,5 +28,4 @@ jobs:
           VALIDATE_DOTNET_SLN_FORMAT_WHITESPACE: false
           VALIDATE_JSON_PRETTIER: false
           VALIDATE_MARKDOWN_PRETTIER: false
-          VALIDATE_SHELL_SHFMT: false
           VALIDATE_YAML_PRETTIER: false

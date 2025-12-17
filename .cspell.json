@@ -3,7 +3,7 @@
   "language": "en-GB",
   "overrides": [
     {
-      "filename": "{*.cmd,*.cs,*.csproj,*.props,*.yml,build}",
+      "filename": "{*.cmd,*.cs,*.csproj,.editorconfig,*.props,*.yml,build}",
       "language": "en-US"
     },
     {

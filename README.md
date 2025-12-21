@@ -124,6 +124,7 @@ Note that the names of the MSBuild properties and environment variables are case
 
 <!-- spell-checker:disable -->
 - [Why not use GitVersion, Nerdbank.GitVersioning, or some other tool?](#why-not-use-gitversion-nerdbankgitversioning-or-some-other-tool) _(simplicity)_
+- [What is height for?](#what-is-height-for) _(not for versioning)_
 - [Can I bump the major or minor version?](#can-i-bump-the-major-or-minor-version) _(yes)_
 - [Can I use my own pre-release versioning scheme?](#can-i-use-my-own-pre-release-versioning-scheme) _(yes)_
 - [Can I prefix my tag names?](#can-i-prefix-my-tag-names) _(yes)_
@@ -170,6 +171,12 @@ MinVer is a different approach and, again, simpler. Some of the differences are 
 Essentially, Nerdbank.GitVersioning encapsulates the injection of the version into the build process from a config file. That means versions are controlled by commits to that config file. MinVer works purely on tags. That means MinVer doesn't need some of the types of things that come with Nerdbank.GitVersioning such as the config file bootstrapper, and it means the version is controlled independently of the commits. For example, you can tag a commit as a release candidate, build it, and release it. After some time, if the release candidate has no bugs, you can tag the _same commit_ as RTM, build it, and release it.
 
 Also, Nerdbank.GitVersioning uses the Git height for the patch version, which is undesirable. Either _every_ patch commit has to be released, or there will be gaps in the patch versions released.
+
+### What is height for?
+
+Height is not for versioning your software. MinVer's design philosophy is _tag first_—you tag the relevant commit before releasing, whether pre-release or RTM. Auto-generated versions (those with height added) are intended only for ad-hoc internal testing, not for release. The presence of height in a version signals that the version should not be released.
+
+Occasionally, requests are made for using height as part of a version, typically for four-part version numbers. Height is inappropriate for this purpose. Following the tag-first philosophy, versions come from tags on the relevant commits, where height is zero. MinVer is designed for [SemVer 2.x](https://semver.org/spec/v2.0.0.html), which provides a three-part semantic version. A fourth version part can only be metadata (such as an incrementing build number). See [_Can I use the version calculated by MinVer for other purposes?_](#can-i-use-the-version-calculated-by-minver-for-other-purposes) for examples.
 
 ### Can I bump the major or minor version?
 

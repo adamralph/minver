@@ -99,7 +99,8 @@ git tag 1.1.0 -a -m '.'
         await File.WriteAllTextAsync(Path.Combine(path, "log.txt"), log.ToString());
 
         // assert
-        await AssertFile.Contains("../../../versions.txt", await GetGraph(path));
+        var graph = await GetGraph(path);
+        _ = await Verify(graph);
     }
 
     [Fact]

@@ -10,6 +10,7 @@
   <ItemGroup>
     <PackageReference Include="GitHubActionsTestLogger" Version="3.0.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+    <PackageReference Include="Verify.Xunit" Version="31.9.0" />
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5" />
   </ItemGroup>
@@ -17,6 +18,20 @@
   <ItemGroup>
     <ProjectReference Include="..\MinVer.Lib\MinVer.Lib.csproj" />
     <ProjectReference Include="..\MinVerTests.Infra\MinVerTests.Infra.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Label="Clean up after Verify.Xunit">
+    <Using Remove="VerifyTests" />
+    <Using Remove="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="LogMessages.*.verified.txt">
+      <DependentUpon>LogMessages.cs</DependentUpon>
+    </None>
+    <None Update="Versions.*.verified.txt">
+      <DependentUpon>Versions.cs</DependentUpon>
+    </None>
   </ItemGroup>
 
 </Project>

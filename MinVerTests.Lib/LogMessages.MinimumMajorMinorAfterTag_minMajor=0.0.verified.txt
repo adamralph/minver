@@ -1,4 +1,4 @@
-Trace: Running Git: git status --short
+﻿Trace: Running Git: git status --short
 Trace: Git exit code: 0
 Trace: Git stdout:
 ?? command-read-00.md
@@ -16,7 +16,7 @@ Trace: Git stdout:
 3 2
 2 0 1
 1 0
-0
+0 
 Trace: Git stderr:
 
 Trace: Running Git: git show-ref --tags --dereference

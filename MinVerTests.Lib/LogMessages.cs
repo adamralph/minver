@@ -118,14 +118,9 @@ git tag 1.0.0-foo.1
     {
         var shas = (await ReadAsync("git", "log --pretty=format:\"%H\"", path))
             .StandardOutput
-            .ToNonEmptyLines();
-#if NET10_0_OR_GREATER
-        shas = [.. shas.Reverse(),];
-#else
-#pragma warning disable CA1806 // Do not ignore method results
-        shas.Reverse();
-#pragma warning restore CA1806
-#endif
+            .ToNonEmptyLines()
+            .Reverse()
+            .ToList();
 
         foreach (var item in shas.Select((sha, index) => new { Sha = sha, Index = index, }))
         {

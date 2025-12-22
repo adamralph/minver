@@ -18,6 +18,7 @@
     <!-- https://learn.microsoft.com/en-us/dotnet/core/porting/versioning-sdk-msbuild-vs#supported-net-versions -->
     <MinVerTargetFramework Condition="'$(MSBuildAssemblyVersion)' &gt;= '17.12'">net9.0</MinVerTargetFramework>
     <MinVerTargetFramework Condition="'$(MSBuildAssemblyVersion)' &gt;= '18.0'">net10.0</MinVerTargetFramework>
+    <!-- The version property specified contains SemVer 2.0.0 components or SemVer 1.0.0 components that may not be supported on NuGet clients older than v4.3 -->
     <NoWarn>$(NoWarn);NU5105</NoWarn>
   </PropertyGroup>
 

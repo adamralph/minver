@@ -1,5 +1,11 @@
 # Changelog
 
+## 6.2.0
+
+### Enhancements
+
+- [#1188: Upgrade Microsoft.Build.Utilities.Core from 17.0.1 to 17.8.43](https://github.com/adamralph/minver/pull/1188)
+
 ## 6.1.0
 
 ### Enhancements

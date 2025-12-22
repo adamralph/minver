@@ -22,7 +22,7 @@ jobs:
         with:
           binary-path: './MinVer'
       - run: cat infer-out/report.txt
-      - uses: actions/upload-artifact@v5.0.0
+      - uses: actions/upload-artifact@v6.0.0
         with:
           name: InferSharp reports
           path: infer-out/report.*

@@ -11,6 +11,8 @@ namespace MinVerTests.Lib;
 
 public static class Versions
 {
+    private static CancellationToken Ct => TestContext.Current.CancellationToken;
+
     [Fact]
     public static async Task RepoWithHistory()
     {
@@ -69,8 +71,8 @@ git tag 1.1.0 -a -m '.'
         foreach (var command in historicalCommands.ToNonEmptyLines())
         {
             var nameAndArgs = command.Split(" ", 2);
-            _ = await ReadAsync(nameAndArgs[0], nameAndArgs[1], path);
-            await Task.Delay(200);
+            _ = await ReadAsync(nameAndArgs[0], nameAndArgs[1], path, cancellationToken: Ct);
+            await Task.Delay(200, Ct);
         }
 
         var log = new TestLogger();
@@ -96,7 +98,7 @@ git tag 1.1.0 -a -m '.'
 
         await Checkout(path, "main");
 
-        await File.WriteAllTextAsync(Path.Combine(path, "log.txt"), log.ToString());
+        await File.WriteAllTextAsync(Path.Combine(path, "log.txt"), log.ToString(), Ct);
 
         // assert
         var graph = await GetGraph(path);

@@ -6,6 +6,8 @@ namespace MinVerTests.Packages;
 
 public class MultipleProjects
 {
+    private static CancellationToken Ct => TestContext.Current.CancellationToken;
+
     [Fact]
     public async Task MultipleTagPrefixes()
     {
@@ -25,8 +27,8 @@ public class MultipleProjects
 </Project>
 """;
 
-        await File.WriteAllTextAsync(Path.Combine(path, "project1", "Directory.Build.props"), props);
-        await File.WriteAllTextAsync(Path.Combine(path, "project3", "Directory.Build.props"), props);
+        await File.WriteAllTextAsync(Path.Combine(path, "project1", "Directory.Build.props"), props, Ct);
+        await File.WriteAllTextAsync(Path.Combine(path, "project3", "Directory.Build.props"), props, Ct);
 
         await Git.Init(path);
         await Git.Commit(path);

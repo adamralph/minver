@@ -1,19 +1,22 @@
 using Microsoft.Build.Framework;
 using Task = Microsoft.Build.Utilities.Task;
 
-namespace MSBuild.Caching;
-
-public class CacheGet : Task
+namespace MSBuild.Caching
 {
-    [Required]
-    public string? Key { get; set; }
-
-    [Output]
-    public string? Value { get; set; }
-
-    public override bool Execute()
+    public class CacheGet : Task
     {
-        this.Value = (string?)this.BuildEngine4.GetRegisteredTaskObject(this.Key, RegisteredTaskObjectLifetime.Build);
-        return true;
+        [Required]
+        public string Key { get; set; }
+
+        [Output]
+        public string Value { get; set; }
+
+        public override bool Execute()
+        {
+            this.Value =
+                (string)this.BuildEngine4.GetRegisteredTaskObject(this.Key, RegisteredTaskObjectLifetime.Build);
+
+            return true;
+        }
     }
 }

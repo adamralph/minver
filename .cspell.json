@@ -7,7 +7,7 @@
       "language": "en-US"
     },
     {
-      "filename": "{.cspell.json,*.svg}",
+      "filename": "{*.svg,.cspell.json,packages.lock.json}",
       "enabled": false
     }
   ],

@@ -1,14 +1,16 @@
 using System.Globalization;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using MinVerTests.Infra;
-using MinVerTests.Packages.Infra;
 using Xunit;
 
 namespace MinVerTests.Packages;
 
 public static class NoGit
 {
-    [WindowsFact]
+    public static bool OsPlatformIsWindows => RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+
+    [Fact(SkipUnless = nameof(OsPlatformIsWindows), Skip = "OS platform is not Windows")]
     public static async Task GitIsNotInPath()
     {
         // arrange

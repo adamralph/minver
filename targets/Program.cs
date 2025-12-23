@@ -6,12 +6,8 @@ var testFx = Environment.GetEnvironmentVariable("MINVER_TESTS_FRAMEWORK") ?? "ne
 
 Target("format", () => RunAsync("dotnet", "format --verify-no-changes"));
 
-Target(
-    "build-msbuild-caching",
-    "build MSBuild.Caching project first, to avoid a race between the build of the net472 target and its inclusion in the MinVer package",
-    () => RunAsync("dotnet", "build ./MSBuild.Caching --configuration Release --nologo"));
-
-Target("build", dependsOn: ["build-msbuild-caching",], () => RunAsync("dotnet", "build --configuration Release --nologo"));
+// --graph avoids a race between the build of the net472 target and its inclusion in the MinVer package
+Target("build", () => RunAsync("dotnet", "build --configuration Release --nologo --graph"));
 
 Target(
     "test-lib",

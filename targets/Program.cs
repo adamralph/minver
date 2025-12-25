@@ -6,8 +6,9 @@ var testFx = Environment.GetEnvironmentVariable("MINVER_TESTS_FRAMEWORK") ?? "ne
 
 Target("format", () => RunAsync("dotnet", "format --verify-no-changes"));
 
-// --graph avoids a race between the build of the net472 target and its inclusion in the MinVer package
-Target("build", () => RunAsync("dotnet", "build --configuration Release --nologo --graph"));
+Target("build", () => RunAsync("dotnet", "build --configuration Release --nologo"));
+
+Target("pack", dependsOn: ["build",], () => RunAsync("dotnet", "pack --configuration Release --nologo --no-build"));
 
 Target(
     "test-lib",
@@ -18,13 +19,13 @@ Target(
 Target(
     "test-packages",
     "test the MinVer package and the minver-cli console app",
-    dependsOn: ["build",],
+    dependsOn: ["pack",],
     () => RunAsync("dotnet", ["test", "--project", "./MinVerTests.Packages", "--configuration", "Release", "--no-build",]));
 
 Target(
     "eyeball-minver-logs",
     "build a test solution with the MinVer package to eyeball the diagnostic logs",
-    dependsOn: ["build",],
+    dependsOn: ["pack",],
     async () =>
     {
         var path = TestDirectory.Get("MinVer.Targets", "eyeball-minver-logs");

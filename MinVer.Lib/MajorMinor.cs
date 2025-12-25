@@ -18,15 +18,15 @@ public class MajorMinor
             throw new ArgumentOutOfRangeException(nameof(minor), minor, "The minor version is less than zero.");
         }
 
-        this.Major = major;
-        this.Minor = minor;
+        Major = major;
+        Minor = minor;
     }
 
     public int Major { get; }
 
     public int Minor { get; }
 
-    public override string ToString() => $"{this.Major}.{this.Minor}";
+    public override string ToString() => $"{Major}.{Minor}";
 
     public static string ValidValues => "1.0, 1.1, 2.0, etc.";
 

@@ -13,13 +13,13 @@ internal sealed class Logger(Verbosity verbosity) : ILogger
     // warnings are deliberately shown at quiet level
     public bool IsWarnEnabled => verbosity >= Verbosity.Quiet;
 
-    public bool Trace(string message) => this.IsTraceEnabled && Message(message);
+    public bool Trace(string message) => IsTraceEnabled && Message(message);
 
-    public bool Debug(string message) => this.IsDebugEnabled && Message(message);
+    public bool Debug(string message) => IsDebugEnabled && Message(message);
 
-    public bool Info(string message) => this.IsInfoEnabled && Message(message);
+    public bool Info(string message) => IsInfoEnabled && Message(message);
 
-    public bool Warn(int code, string message) => this.IsWarnEnabled && Message($"warning MINVER{code:D4} : {message}");
+    public bool Warn(int code, string message) => IsWarnEnabled && Message($"warning MINVER{code:D4} : {message}");
 
     public static void ErrorWorkDirDoesNotExist(string workDir) =>
         Error(1002, $"Working directory '{workDir}' does not exist.");

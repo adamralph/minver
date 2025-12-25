@@ -13,9 +13,7 @@ namespace MSBuild.Caching
 
         public override bool Execute()
         {
-            this.Value =
-                (string)this.BuildEngine4.GetRegisteredTaskObject(this.Key, RegisteredTaskObjectLifetime.Build);
-
+            Value = (string)BuildEngine4.GetRegisteredTaskObject(Key, RegisteredTaskObjectLifetime.Build);
             return true;
         }
     }

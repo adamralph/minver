@@ -16,15 +16,15 @@ internal sealed class Options
         Verbosity? verbosity,
         Lib.Version? versionOverride)
     {
-        this.AutoIncrement = autoIncrement;
-        this.BuildMeta = buildMeta;
-        this.DefaultPreReleaseIdentifiers = defaultPreReleaseIdentifiers;
-        this.DefaultPreReleasePhase = defaultPreReleasePhase;
-        this.IgnoreHeight = ignoreHeight;
-        this.MinMajorMinor = minMajorMinor;
-        this.TagPrefix = tagPrefix;
-        this.Verbosity = verbosity;
-        this.VersionOverride = versionOverride;
+        AutoIncrement = autoIncrement;
+        BuildMeta = buildMeta;
+        DefaultPreReleaseIdentifiers = defaultPreReleaseIdentifiers;
+        DefaultPreReleasePhase = defaultPreReleasePhase;
+        IgnoreHeight = ignoreHeight;
+        MinMajorMinor = minMajorMinor;
+        TagPrefix = tagPrefix;
+        Verbosity = verbosity;
+        VersionOverride = versionOverride;
     }
 
 #if MINVER_CLI
@@ -185,15 +185,15 @@ internal sealed class Options
 
 #if MINVER_CLI
     public Options Mask(Options other) => new(
-        this.AutoIncrement ?? other.AutoIncrement,
-        this.BuildMeta ?? other.BuildMeta,
-        this.DefaultPreReleaseIdentifiers ?? other.DefaultPreReleaseIdentifiers,
-        this.DefaultPreReleasePhase ?? other.DefaultPreReleasePhase,
-        this.IgnoreHeight ?? other.IgnoreHeight,
-        this.MinMajorMinor ?? other.MinMajorMinor,
-        this.TagPrefix ?? other.TagPrefix,
-        this.Verbosity ?? other.Verbosity,
-        this.VersionOverride ?? other.VersionOverride);
+        AutoIncrement ?? other.AutoIncrement,
+        BuildMeta ?? other.BuildMeta,
+        DefaultPreReleaseIdentifiers ?? other.DefaultPreReleaseIdentifiers,
+        DefaultPreReleasePhase ?? other.DefaultPreReleasePhase,
+        IgnoreHeight ?? other.IgnoreHeight,
+        MinMajorMinor ?? other.MinMajorMinor,
+        TagPrefix ?? other.TagPrefix,
+        Verbosity ?? other.Verbosity,
+        VersionOverride ?? other.VersionOverride);
 #endif
 
     public VersionPart? AutoIncrement { get; }

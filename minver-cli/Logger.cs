@@ -12,13 +12,13 @@ internal sealed class Logger(Verbosity verbosity) : ILogger
 
     public bool IsWarnEnabled => verbosity >= Verbosity.Warn;
 
-    public bool Trace(string message) => this.IsTraceEnabled && Message(message);
+    public bool Trace(string message) => IsTraceEnabled && Message(message);
 
-    public bool Debug(string message) => this.IsDebugEnabled && Message(message);
+    public bool Debug(string message) => IsDebugEnabled && Message(message);
 
-    public bool Info(string message) => this.IsInfoEnabled && Message(message);
+    public bool Info(string message) => IsInfoEnabled && Message(message);
 
-    public bool Warn(int code, string message) => this.IsWarnEnabled && Message($"warning : {message}");
+    public bool Warn(int code, string message) => IsWarnEnabled && Message($"warning : {message}");
 
     public static void ErrorInvalidEnvVar(string name, string value, string validValueString) =>
         Error(validValueString.Length == 0

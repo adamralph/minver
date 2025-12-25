@@ -26,32 +26,32 @@ public class Version : SemanticVersion
     }
 
     public override string ToString(string? format, IFormatProvider? formatProvider) =>
-        $"{this.Major}.{this.Minor}.{this.Patch}{(string.IsNullOrEmpty(this.Release) ? "" : $"-{this.Release}")}{(string.IsNullOrEmpty(this.Metadata) ? "" : $"+{this.Metadata}")}";
+        $"{Major}.{Minor}.{Patch}{(string.IsNullOrEmpty(Release) ? "" : $"-{Release}")}{(string.IsNullOrEmpty(Metadata) ? "" : $"+{Metadata}")}";
 
     public Version Satisfying(MajorMinor minMajorMinor, IEnumerable<string> defaultPreReleaseIdentifiers)
     {
         minMajorMinor = minMajorMinor ?? throw new ArgumentNullException(nameof(minMajorMinor));
 
-        return minMajorMinor.Major < this.Major || (minMajorMinor.Major == this.Major && minMajorMinor.Minor <= this.Minor)
+        return minMajorMinor.Major < Major || (minMajorMinor.Major == Major && minMajorMinor.Minor <= Minor)
             ? this
-            : new Version(minMajorMinor.Major, minMajorMinor.Minor, 0, [.. defaultPreReleaseIdentifiers,], this.height, this.Metadata);
+            : new Version(minMajorMinor.Major, minMajorMinor.Minor, 0, [.. defaultPreReleaseIdentifiers,], height, Metadata);
     }
 
     public Version WithHeight(int newHeight, VersionPart autoIncrement, IEnumerable<string> defaultPreReleaseIdentifiers) =>
-        this.preReleaseIdentifiers.Count == 0 && newHeight > 0
+        preReleaseIdentifiers.Count == 0 && newHeight > 0
             ? autoIncrement switch
             {
-                VersionPart.Major => new Version(this.Major + 1, 0, 0, [.. defaultPreReleaseIdentifiers,], newHeight, ""),
-                VersionPart.Minor => new Version(this.Major, this.Minor + 1, 0, [.. defaultPreReleaseIdentifiers,], newHeight, ""),
-                VersionPart.Patch => new Version(this.Major, this.Minor, this.Patch + 1, [.. defaultPreReleaseIdentifiers,], newHeight, ""),
+                VersionPart.Major => new Version(Major + 1, 0, 0, [.. defaultPreReleaseIdentifiers,], newHeight, ""),
+                VersionPart.Minor => new Version(Major, Minor + 1, 0, [.. defaultPreReleaseIdentifiers,], newHeight, ""),
+                VersionPart.Patch => new Version(Major, Minor, Patch + 1, [.. defaultPreReleaseIdentifiers,], newHeight, ""),
                 _ => throw new ArgumentOutOfRangeException(nameof(autoIncrement)),
             }
-            : new Version(this.Major, this.Minor, this.Patch, this.preReleaseIdentifiers, newHeight, newHeight == 0 ? this.Metadata : "");
+            : new Version(Major, Minor, Patch, preReleaseIdentifiers, newHeight, newHeight == 0 ? Metadata : "");
 
     public Version AddBuildMetadata(string newBuildMetadata)
     {
-        var separator = !string.IsNullOrEmpty(this.Metadata) && !string.IsNullOrEmpty(newBuildMetadata) ? "." : "";
-        return new Version(this.Major, this.Minor, this.Patch, this.preReleaseIdentifiers, this.height, $"{this.Metadata}{separator}{newBuildMetadata}");
+        var separator = !string.IsNullOrEmpty(Metadata) && !string.IsNullOrEmpty(newBuildMetadata) ? "." : "";
+        return new Version(Major, Minor, Patch, preReleaseIdentifiers, height, $"{Metadata}{separator}{newBuildMetadata}");
     }
 
     public static bool TryParse(string text, [NotNullWhen(returnValue: true)] out Version? version, string prefix = "")

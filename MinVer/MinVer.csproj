@@ -5,8 +5,8 @@
     <DefineConstants>$(DefineConstants);MINVER</DefineConstants>
     <Description>Minimalist versioning for .NET SDK-style projects using Git tags.</Description>
     <DevelopmentDependency>true</DevelopmentDependency>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeBuildOutput>false</IncludeBuildOutput>
+    <IsPackable>true</IsPackable>
     <!-- NU5100: The folder being packaged contains an assembly file that is not in lib folder. -->
     <NoWarn>$(NoWarn);NU5100</NoWarn>
     <OutputType>Exe</OutputType>

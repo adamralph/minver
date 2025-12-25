@@ -3,7 +3,7 @@
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);MINVER_CLI</DefineConstants>
     <Description>A minimalist command line tool for versioning any Git repository using tags.</Description>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IsPackable>true</IsPackable>
     <OutputType>Exe</OutputType>
     <PackAsTool>true</PackAsTool>
     <PackageIcon>minver.png</PackageIcon>

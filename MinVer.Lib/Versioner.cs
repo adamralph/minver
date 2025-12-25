@@ -175,9 +175,9 @@ public static class Versioner
 
         public int Index { get; } = index;
 
-        public override string ToString() => this.ToString(0, 0, 0);
+        public override string ToString() => ToString(0, 0, 0);
 
         public string ToString(int tagWidth, int versionWidth, int heightWidth) =>
-            $"{{ {nameof(this.Commit)}: {this.Commit.ShortSha}, {nameof(this.Tag)}: {$"'{this.Tag}',".PadRight(tagWidth + 3)} {nameof(this.Version)}: {$"{this.Version},".PadRight(versionWidth + 1)} {nameof(this.Height)}: {this.Height.ToString(CultureInfo.CurrentCulture).PadLeft(heightWidth)} }}";
+            $"{{ {nameof(Commit)}: {Commit.ShortSha}, {nameof(Tag)}: {$"'{Tag}',".PadRight(tagWidth + 3)} {nameof(Version)}: {$"{Version},".PadRight(versionWidth + 1)} {nameof(Height)}: {Height.ToString(CultureInfo.CurrentCulture).PadLeft(heightWidth)} }}";
     }
 }

@@ -77,6 +77,8 @@ If the current commit does not have a version tag, another number is added to th
 
 This behaviour can be [disabled](#can-i-ignore-the-height-of-the-latest-tag-or-root-commit).
 
+For information, see [_What is height for?_](#what-is-height-for)
+
 ## Version numbers
 
 MinVer sets the following custom properties:
@@ -174,7 +176,7 @@ Also, Nerdbank.GitVersioning uses the Git height for the patch version, which is
 
 ### What is height for?
 
-Height is not for versioning your software. MinVer's design philosophy is _tag first_—you tag the relevant commit before releasing, whether pre-release or RTM. Auto-generated versions (those with height added) are intended only for ad-hoc internal testing, not for release. The presence of height in a version signals that the version should not be released.
+[Height](#height) is not for versioning your software. MinVer's design philosophy is _tag first_—you tag the relevant commit before releasing, whether pre-release or RTM. Auto-generated versions (those with height added) are intended only for ad-hoc internal testing, not for release. The presence of height in a version signals that the version should not be released.
 
 Occasionally, requests are made for using height as part of a version, typically for four-part version numbers. Height is inappropriate for this purpose. Following the tag-first philosophy, versions come from tags on the relevant commits, where height is zero. MinVer is designed for [SemVer 2.x](https://semver.org/spec/v2.0.0.html), which provides a three-part semantic version. A fourth version part can only be metadata (such as an incrementing build number). See [_Can I use the version calculated by MinVer for other purposes?_](#can-i-use-the-version-calculated-by-minver-for-other-purposes) for examples.
 

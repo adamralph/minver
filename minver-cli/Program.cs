@@ -1,34 +1,44 @@
+using System.CommandLine;
 using System.Reflection;
-using McMaster.Extensions.CommandLineUtils;
 using MinVer;
 using MinVer.Lib;
 using Version = MinVer.Lib.Version;
 
-var informationalVersion = typeof(Versioner).Assembly.GetCustomAttributes<AssemblyInformationalVersionAttribute>().Single().InformationalVersion;
+Argument<string> workDirArg = new("workingDirectory") { Description = "Working directory", DefaultValueFactory = _ => ".", };
+workDirArg.AcceptLegalFilePathsOnly();
 
-using var app = new CommandLineApplication();
-app.Name = "minver";
-app.FullName = $"MinVer CLI {informationalVersion}";
-
-app.HelpOption();
-
-var workDirArg = app.Argument("workingDirectory", "Working directory (optional)");
-
-var autoIncrementOption = app.Option("-a|--auto-increment <VERSION_PART>", VersionPartExtensions.ValidValues, CommandOptionType.SingleValue);
-var buildMetaOption = app.Option("-b|--build-metadata <BUILD_METADATA>", "", CommandOptionType.SingleValue);
-var defaultPreReleaseIdentifiersOption = app.Option("-p|--default-pre-release-identifiers <IDENTIFIERS>", "alpha.0 (default), preview.0, etc.", CommandOptionType.SingleValue);
-var defaultPreReleasePhaseOption = app.Option("-d|--default-pre-release-phase <PHASE>", "alpha (default), preview, etc.", CommandOptionType.SingleValue);
-var ignoreHeightOption = app.Option<bool>("-i|--ignore-height", "Use the latest tag (or root commit) as-is, without adding height", CommandOptionType.NoValue);
-var minMajorMinorOption = app.Option("-m|--minimum-major-minor <MINIMUM_MAJOR_MINOR>", MajorMinor.ValidValues, CommandOptionType.SingleValue);
-var tagPrefixOption = app.Option("-t|--tag-prefix <TAG_PREFIX>", "", CommandOptionType.SingleValue);
-var verbosityOption = app.Option("-v|--verbosity <VERBOSITY>", VerbosityMap.ValidValues, CommandOptionType.SingleValue);
+Option<string?> autoIncrementOption = new("--auto-increment", "-a") { Description = $"{VersionPartExtensions.ValidValues}", };
+Option<string?> buildMetaOption = new("--build-metadata", "-b");
+Option<string?> defaultPreReleaseIdentifiersOption = new("--default-pre-release-identifiers", "-p") { Description = "alpha.0 (default), preview.0, etc.", };
+Option<string?> defaultPreReleasePhaseOption = new("--default-pre-release-phase", "-d") { Description = "alpha (default), preview, etc.", };
+Option<bool?> ignoreHeightOption = new("--ignore-height", "-i") { Description = "Use the latest tag (or root commit) as-is, without adding height", };
+Option<string?> minMajorMinorOption = new("--minimum-major-minor", "-m") { Description = MajorMinor.ValidValues, };
+Option<string?> tagPrefixOption = new("--tag-prefix", "-t");
+Option<string?> verbosityOption = new("--verbosity", "-v") { Description = VerbosityMap.ValidValues, };
 #if MINVER
-var versionOverrideOption = app.Option("-o|--version-override <VERSION>", "", CommandOptionType.SingleValue);
+Option<string?> versionOverrideOption = new("--version-override", "-o");
 #endif
 
-app.OnExecute(() =>
+var informationalVersion = typeof(Versioner).Assembly.GetCustomAttributes<AssemblyInformationalVersionAttribute>().Single().InformationalVersion;
+RootCommand cmd = new($"MinVer CLI {informationalVersion}")
 {
-    var workDir = workDirArg.Value ?? ".";
+    workDirArg,
+    autoIncrementOption,
+    buildMetaOption,
+    defaultPreReleaseIdentifiersOption,
+    defaultPreReleasePhaseOption,
+    ignoreHeightOption,
+    minMajorMinorOption,
+    tagPrefixOption,
+    verbosityOption,
+#if MINVER
+    versionOverrideOption,
+#endif
+};
+
+cmd.SetAction(cmdLine =>
+{
+    var workDir = cmdLine.GetValue(workDirArg)!;
 
     if (!Directory.Exists(workDir))
     {
@@ -37,16 +47,16 @@ app.OnExecute(() =>
     }
 
     if (!Options.TryParse(
-        autoIncrementOption.Value(),
-        buildMetaOption.Value(),
-        defaultPreReleaseIdentifiersOption.Value(),
-        defaultPreReleasePhaseOption.Value(),
-        ignoreHeightOption.HasValue() ? true : null,
-        minMajorMinorOption.Value(),
-        tagPrefixOption.Value(),
-        verbosityOption.Value(),
+            cmdLine.GetValue(autoIncrementOption),
+            cmdLine.GetValue(buildMetaOption),
+            cmdLine.GetValue(defaultPreReleaseIdentifiersOption),
+            cmdLine.GetValue(defaultPreReleasePhaseOption),
+            cmdLine.GetValue(ignoreHeightOption),
+            cmdLine.GetValue(minMajorMinorOption),
+            cmdLine.GetValue(tagPrefixOption),
+            cmdLine.GetValue(verbosityOption),
 #if MINVER
-        versionOverrideOption.Value(),
+            cmdLine.GetValue(versionOverrideOption),
 #endif
         out var options))
     {
@@ -99,4 +109,4 @@ app.OnExecute(() =>
     return 0;
 });
 
-return app.Execute(args);
+return cmd.Parse(args).Invoke();

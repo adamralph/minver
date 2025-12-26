@@ -1,6 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <!-- set AssemblyName as workaround for https://github.com/dotnet/command-line-api/issues/403 -->
+    <AssemblyName>minver</AssemblyName>
     <DefineConstants>$(DefineConstants);MINVER_CLI</DefineConstants>
     <Description>A minimalist command line tool for versioning any Git repository using tags.</Description>
     <IsPackable>true</IsPackable>
@@ -19,7 +21,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="4.1.1" />
+    <PackageReference Include="System.CommandLine" Version="2.0.1" />
   </ItemGroup>
 
   <ItemGroup>

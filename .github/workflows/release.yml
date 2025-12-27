@@ -2,6 +2,7 @@ name: release
 on:
   push:
     tags: ["*.*.*"]
+  workflow_dispatch:
 permissions:
   id-token: write
 env:
@@ -19,7 +20,7 @@ jobs:
           persist-credentials: false
       - env:
           MINVER_VERSION: ${{ vars.MINVER_VERSION }}
-        run: ./build build
+        run: ./build pack
       - uses: NuGet/login@d22cc5f58ff5b88bf9bd452535b4335137e24544 # v1
         id: nuget-login
         with:

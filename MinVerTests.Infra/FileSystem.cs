@@ -3,13 +3,11 @@ namespace MinVerTests.Infra;
 // The spin waits are required. System.IO and the file system race. ¯\_(ツ)_/¯
 public static class FileSystem
 {
-#pragma warning disable CA1802 // Use literals where appropriate
-    private static readonly int millisecondsTimeout = 50;
-#pragma warning restore CA1802 // Use literals where appropriate
+    private const int MillisecondsTimeout = 50;
 
     public static void EnsureEmptyDirectory(string path)
     {
-        if (SpinWait.SpinUntil(() => Directory.Exists(path), millisecondsTimeout))
+        if (SpinWait.SpinUntil(() => Directory.Exists(path), MillisecondsTimeout))
         {
             DeleteDirectory(path);
         }
@@ -39,7 +37,7 @@ public static class FileSystem
 
         Directory.Delete(path, true);
 
-        if (!SpinWait.SpinUntil(() => !Directory.Exists(path), millisecondsTimeout))
+        if (!SpinWait.SpinUntil(() => !Directory.Exists(path), MillisecondsTimeout))
         {
             throw new IOException($"Failed to delete directory '{path}'.");
         }
@@ -49,7 +47,7 @@ public static class FileSystem
     {
         _ = Directory.CreateDirectory(path);
 
-        if (!SpinWait.SpinUntil(() => Directory.Exists(path), millisecondsTimeout))
+        if (!SpinWait.SpinUntil(() => Directory.Exists(path), MillisecondsTimeout))
         {
             throw new IOException($"Failed to create directory '{path}'.");
         }

@@ -8,7 +8,7 @@
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <ImplicitUsings>enable</ImplicitUsings>
     <!-- workaround for https://github.com/dotnet/roslyn/issues/41640 -->
-    <NoWarn>EnableGenerateDocumentationFile</NoWarn>
+    <NoWarn>$(NoWarn);EnableGenerateDocumentationFile</NoWarn>
     <!-- Do not directly await a Task -->
     <NoWarn>$(NoWarn);CA2007</NoWarn>
     <Nullable>enable</Nullable>

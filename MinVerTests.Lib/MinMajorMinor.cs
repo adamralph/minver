@@ -17,7 +17,7 @@ public static class MinMajorMinor
         await EnsureEmptyRepository(path);
 
         // act
-        var actualVersion = Versioner.GetVersion(path, "", new MajorMinor(1, 2), "", default, PreReleaseIdentifiers.Default, false, NullLogger.Instance);
+        var actualVersion = await Versioner.GetVersion(path, "", new MajorMinor(1, 2), "", default, PreReleaseIdentifiers.Default, false, NullLogger.Instance);
 
         // assert
         Assert.Equal("1.2.0-alpha.0", actualVersion.ToString());
@@ -36,7 +36,7 @@ public static class MinMajorMinor
         var logger = new TestLogger();
 
         // act
-        var actualVersion = Versioner.GetVersion(path, "", new MajorMinor(major, minor), "", default, PreReleaseIdentifiers.Default, false, logger);
+        var actualVersion = await Versioner.GetVersion(path, "", new MajorMinor(major, minor), "", default, PreReleaseIdentifiers.Default, false, logger);
 
         // assert
         Assert.Equal(expectedVersion, actualVersion.ToString());
@@ -52,7 +52,7 @@ public static class MinMajorMinor
         await EnsureEmptyRepositoryAndCommit(path);
 
         // act
-        var actualVersion = Versioner.GetVersion(path, "", new MajorMinor(1, 0), "", default, PreReleaseIdentifiers.Default, false, NullLogger.Instance);
+        var actualVersion = await Versioner.GetVersion(path, "", new MajorMinor(1, 0), "", default, PreReleaseIdentifiers.Default, false, NullLogger.Instance);
 
         // assert
         Assert.Equal("1.0.0-alpha.0", actualVersion.ToString());

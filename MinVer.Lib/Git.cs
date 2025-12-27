@@ -1,27 +1,23 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace MinVer.Lib;
 
 internal static class Git
 {
     private static readonly char[] NewLineChars = ['\r', '\n',];
 
-    public static bool IsWorkingDirectory(string directory, ILogger log) => GitCommand.TryRun("status --short", directory, log, out _);
+    public static async Task<bool> IsWorkingDirectory(string directory, ILogger log) => await GitCommand.TryRun("status --short", directory, log) is not null;
 
-    public static bool TryGetHead(string directory, [NotNullWhen(returnValue: true)] out Commit? head, ILogger log)
+    public static async Task<Commit?> TryGetHead(string directory, ILogger log)
     {
-        head = null;
-
-        if (!GitCommand.TryRun("log --pretty=format:\"%H %P\"", directory, log, out var output))
+        if (await GitCommand.TryRun("log --pretty=format:\"%H %P\"", directory, log) is not { } output)
         {
-            return false;
+            return null;
         }
 
         var lines = output.Split(NewLineChars, StringSplitOptions.RemoveEmptyEntries);
 
         if (lines.Length == 0)
         {
-            return false;
+            return null;
         }
 
         var commits = new Dictionary<string, Commit>();
@@ -33,13 +29,11 @@ internal static class Git
                 .Parents.AddRange(shas.Skip(1).Select(parentSha => commits.GetOrAdd(parentSha, () => new Commit(parentSha))));
         }
 
-        head = commits.Values.First();
-
-        return true;
+        return commits.Values.First();
     }
 
-    public static IEnumerable<(string Name, string Sha)> GetTags(string directory, ILogger log) =>
-        GitCommand.TryRun("show-ref --tags --dereference", directory, log, out var output)
+    public static async Task<IEnumerable<(string Name, string Sha)>> GetTags(string directory, ILogger log) =>
+        await GitCommand.TryRun("show-ref --tags --dereference", directory, log) is { } output
             ? output
                 .Split(NewLineChars, StringSplitOptions.RemoveEmptyEntries)
                 .Select(line => line.Split(" ", 2))

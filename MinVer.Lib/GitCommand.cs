@@ -5,7 +5,7 @@ namespace MinVer.Lib;
 
 internal static class GitCommand
 {
-    public static bool TryRun(string args, string workingDirectory, ILogger log, out string output)
+    public static async Task<string?> TryRun(string args, string workingDirectory, ILogger log)
     {
         using var process = new Process();
 
@@ -19,8 +19,8 @@ internal static class GitCommand
             RedirectStandardOutput = true,
         };
 
-        var tcs = new TaskCompletionSource<object>();
-        process.Exited += (_, _) => tcs.SetResult(0);
+        var tcs = new TaskCompletionSource();
+        process.Exited += (_, _) => tcs.SetResult();
         process.EnableRaisingEvents = true;
 
         _ = log.IsTraceEnabled && log.Trace($"Running Git: {process.StartInfo.FileName} {process.StartInfo.Arguments}");
@@ -38,16 +38,15 @@ internal static class GitCommand
         var readOutput = process.StandardOutput.ReadToEndAsync();
         var readError = process.StandardError.ReadToEndAsync();
 
-        Task.WaitAll(runProcess, readOutput, readError);
-
+        await runProcess;
         var exitCode = process.ExitCode;
-        output = readOutput.Result;
-        var error = readError.Result;
+        var output = await readOutput;
+        var error = await readError;
 
         _ = log.IsTraceEnabled && log.Trace($"Git exit code: {exitCode}");
         _ = log.IsTraceEnabled && log.Trace($"Git stdout:{Environment.NewLine}{output}");
         _ = log.IsTraceEnabled && log.Trace($"Git stderr:{Environment.NewLine}{error}");
 
-        return exitCode == 0;
+        return exitCode == 0 ? output : null;
     }
 }

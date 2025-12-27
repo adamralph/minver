@@ -9,6 +9,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <!-- workaround for https://github.com/dotnet/roslyn/issues/41640 -->
     <NoWarn>EnableGenerateDocumentationFile</NoWarn>
+    <!-- Do not directly await a Task -->
+    <NoWarn>$(NoWarn);CA2007</NoWarn>
     <Nullable>enable</Nullable>
     <!-- MinVer doesn't use MinVer for versioning because
 the environment variables for the build and for the package tests

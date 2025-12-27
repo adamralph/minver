@@ -21,7 +21,7 @@ public static class TagPrefixes
         await Tag(path, tag);
 
         // act
-        var actualVersion = Versioner.GetVersion(path, prefix, MajorMinor.Default, "", default, PreReleaseIdentifiers.Default, false, NullLogger.Instance);
+        var actualVersion = await Versioner.GetVersion(path, prefix, MajorMinor.Default, "", default, PreReleaseIdentifiers.Default, false, NullLogger.Instance);
 
         // assert
         Assert.Equal(expectedVersion, actualVersion.ToString());

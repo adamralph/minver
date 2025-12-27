@@ -36,7 +36,7 @@ RootCommand cmd = new($"MinVer CLI {informationalVersion}")
 #endif
 };
 
-cmd.SetAction(cmdLine =>
+cmd.SetAction(async cmdLine =>
 {
     var workDir = cmdLine.GetValue(workDirArg)!;
 
@@ -80,7 +80,7 @@ cmd.SetAction(cmdLine =>
     {
         _ = log.IsInfoEnabled && log.Info($"Using version override {options.VersionOverride}.");
 
-        Console.Out.WriteLine(options.VersionOverride);
+        await Console.Out.WriteLineAsync(options.VersionOverride.ToString());
 
         return 0;
     }
@@ -96,7 +96,7 @@ cmd.SetAction(cmdLine =>
     Version version;
     try
     {
-        version = Versioner.GetVersion(workDir, options.TagPrefix ?? "", options.MinMajorMinor ?? MajorMinor.Default, options.BuildMeta ?? "", options.AutoIncrement ?? default, defaultPreReleaseIdentifiers ?? PreReleaseIdentifiers.Default, options.IgnoreHeight ?? false, log);
+        version = await Versioner.GetVersion(workDir, options.TagPrefix ?? "", options.MinMajorMinor ?? MajorMinor.Default, options.BuildMeta ?? "", options.AutoIncrement ?? default, defaultPreReleaseIdentifiers ?? PreReleaseIdentifiers.Default, options.IgnoreHeight ?? false, log);
     }
     catch (NoGitException ex)
     {
@@ -104,9 +104,9 @@ cmd.SetAction(cmdLine =>
         return 2;
     }
 
-    Console.Out.WriteLine(version);
+    await Console.Out.WriteLineAsync(version.ToString());
 
     return 0;
 });
 
-return cmd.Parse(args).Invoke();
+return await cmd.Parse(args).InvokeAsync();

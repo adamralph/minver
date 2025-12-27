@@ -4,7 +4,7 @@ namespace MinVer;
 
 internal static class VerbosityMap
 {
-    private static readonly Dictionary<string, Verbosity?> map = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly Dictionary<string, Verbosity?> Map = new(StringComparer.OrdinalIgnoreCase);
 
     static VerbosityMap()
     {
@@ -16,8 +16,8 @@ internal static class VerbosityMap
 
         static void Add(Verbosity verbosity, int shortLength)
         {
-            map.Add(verbosity.ToString(), verbosity);
-            map.Add(verbosity.ToString()[..shortLength], verbosity);
+            Map.Add(verbosity.ToString(), verbosity);
+            Map.Add(verbosity.ToString()[..shortLength], verbosity);
         }
     }
 
@@ -25,5 +25,5 @@ internal static class VerbosityMap
     public static string ValidValues => "q[uiet], m[inimal] (default), n[ormal], d[etailed], or diag[nostic] (case insensitive)";
 
     // spell-checker:enable
-    public static bool TryMap(string value, [NotNullWhen(returnValue: true)] out Verbosity? verbosity) => map.TryGetValue(value, out verbosity);
+    public static bool TryMap(string value, [NotNullWhen(returnValue: true)] out Verbosity? verbosity) => Map.TryGetValue(value, out verbosity);
 }

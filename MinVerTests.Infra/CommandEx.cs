@@ -5,7 +5,7 @@ namespace MinVerTests.Infra;
 
 internal static class CommandEx
 {
-    private static readonly ConcurrentDictionary<string, int> indices = new();
+    private static readonly ConcurrentDictionary<string, int> Indices = new();
 
     public static async Task<(string StandardOutput, string StandardError)> ReadLoggedAsync(string name, string args = "", string workingDirectory = "", IEnumerable<KeyValuePair<string, string>>? envVars = null, Func<int, bool>? handleExitCode = null)
     {
@@ -26,10 +26,10 @@ internal static class CommandEx
 
         int index;
 
-        lock (indices)
+        lock (Indices)
         {
-            index = indices.GetOrAdd(workingDirectory, 0);
-            indices[workingDirectory] = index + 1;
+            index = Indices.GetOrAdd(workingDirectory, 0);
+            Indices[workingDirectory] = index + 1;
         }
 
         var markdown =

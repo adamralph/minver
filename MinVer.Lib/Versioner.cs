@@ -43,7 +43,7 @@ public static class Versioner
 
             _ = log.IsWarnEnabled && log.Warn(1001, $"'{workDir}' is not a valid Git working directory. Using default version {version}.");
 
-            return (version, default, default);
+            return (version, null, false);
         }
 
         if (!Git.TryGetHead(workDir, out var head, log))
@@ -52,7 +52,7 @@ public static class Versioner
 
             _ = log.IsInfoEnabled && log.Info($"No commits found. Using default version {version}.");
 
-            return (version, default, default);
+            return (version, null, false);
         }
 
         var tags = Git.GetTags(workDir, log);

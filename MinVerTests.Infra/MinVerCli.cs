@@ -14,7 +14,7 @@ public static class MinVerCli
     public static async Task<string> GetPath(string configuration)
     {
         var targetFramework = await GetTargetFramework().ConfigureAwait(false);
-        return Solution.GetFullPath($"minver-cli/bin/{configuration}/{targetFramework}/minver-cli.dll");
+        return Solution.GetFullPath($"minver-cli/bin/{configuration}/{targetFramework}/minver.dll");
     }
 
     private static async Task<string> GetTargetFramework()

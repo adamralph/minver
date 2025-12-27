@@ -14,7 +14,7 @@ internal sealed class TestLogger : ILogger
 
     public bool IsWarnEnabled => true;
 
-    public IEnumerable<LogMessage> Messages => _messages;
+    public IReadOnlyCollection<LogMessage> Messages => _messages;
 
     public bool Trace(string message)
     {

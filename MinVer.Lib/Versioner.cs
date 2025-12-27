@@ -4,16 +4,14 @@ namespace MinVer.Lib;
 
 public static class Versioner
 {
-    public static async Task<Version> GetVersion(string workDir, string tagPrefix, MajorMinor minMajorMinor, string buildMeta, VersionPart autoIncrement, IEnumerable<string> defaultPreReleaseIdentifiers, bool ignoreHeight, ILogger log)
+    public static async Task<Version> GetVersion(string workDir, string tagPrefix, MajorMinor minMajorMinor, string buildMeta, VersionPart autoIncrement, IReadOnlyCollection<string> defaultPreReleaseIdentifiers, bool ignoreHeight, ILogger log)
     {
         log = log ?? throw new ArgumentNullException(nameof(log));
 
-        var defaultPreReleaseIdentifiersList = defaultPreReleaseIdentifiers.ToList();
-
-        var (version, height, isFromTag) = await GetVersion(workDir, tagPrefix, defaultPreReleaseIdentifiersList, log);
+        var (version, height, isFromTag) = await GetVersion(workDir, tagPrefix, defaultPreReleaseIdentifiers, log);
 
         _ = height.HasValue && ignoreHeight && log.IsDebugEnabled && log.Debug("Ignoring height.");
-        version = !height.HasValue || ignoreHeight ? version : version.WithHeight(height.Value, autoIncrement, defaultPreReleaseIdentifiersList);
+        version = !height.HasValue || ignoreHeight ? version : version.WithHeight(height.Value, autoIncrement, defaultPreReleaseIdentifiers);
 
         version = version.AddBuildMetadata(buildMeta);
 
@@ -21,8 +19,8 @@ public static class Versioner
 
         var calculatedVersion =
             ignoreMinMajorMinor
-            ? version.Satisfying(MajorMinor.Default, defaultPreReleaseIdentifiersList)
-            : version.Satisfying(minMajorMinor, defaultPreReleaseIdentifiersList);
+            ? version.Satisfying(MajorMinor.Default, defaultPreReleaseIdentifiers)
+            : version.Satisfying(minMajorMinor, defaultPreReleaseIdentifiers);
 
         _ = ignoreMinMajorMinor
             ? minMajorMinor != MajorMinor.Default && log.IsDebugEnabled && log.Debug($"Ignoring minimum major minor {minMajorMinor} because the commit is tagged.")
@@ -35,7 +33,7 @@ public static class Versioner
         return calculatedVersion;
     }
 
-    private static async Task<(Version Version, int? Height, bool IsFromTag)> GetVersion(string workDir, string tagPrefix, List<string> defaultPreReleaseIdentifiers, ILogger log)
+    private static async Task<(Version Version, int? Height, bool IsFromTag)> GetVersion(string workDir, string tagPrefix, IReadOnlyCollection<string> defaultPreReleaseIdentifiers, ILogger log)
     {
         if (!await Git.IsWorkingDirectory(workDir, log))
         {

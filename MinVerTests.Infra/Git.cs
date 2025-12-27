@@ -37,7 +37,7 @@ public static class Git
     public static Task AnnotatedTag(string path, string tag, string message) =>
         CommandEx.ReadLoggedAsync("git", $"tag {tag} -a -m '{message}'", path);
 
-    public static async Task<IEnumerable<string>> GetCommitShas(string path) =>
+    public static async Task<IReadOnlyCollection<string>> GetCommitShas(string path) =>
         (await CommandEx.ReadLoggedAsync("git", "log --pretty=format:\"%H\"", path).ConfigureAwait(false)).StandardOutput.Split('\r', '\n');
 
     public static Task Checkout(string path, string sha) =>

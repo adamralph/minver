@@ -8,7 +8,7 @@ internal sealed class Options
     private Options(
         VersionPart? autoIncrement,
         string? buildMeta,
-        IEnumerable<string>? defaultPreReleaseIdentifiers,
+        IReadOnlyCollection<string>? defaultPreReleaseIdentifiers,
         string? defaultPreReleasePhase,
         bool? ignoreHeight,
         MajorMinor? minMajorMinor,
@@ -33,7 +33,7 @@ internal sealed class Options
         options = null;
 
         VersionPart? autoIncrement = null;
-        IEnumerable<string>? defaultPreReleaseIdentifiers = null;
+        IReadOnlyCollection<string>? defaultPreReleaseIdentifiers = null;
         bool? ignoreHeight = null;
         MajorMinor? minMajorMinor = null;
         Verbosity? verbosity = null;
@@ -135,7 +135,7 @@ internal sealed class Options
         options = null;
 
         VersionPart? autoIncrement = null;
-        IEnumerable<string>? defaultPreReleaseIdentifiers = null;
+        IReadOnlyCollection<string>? defaultPreReleaseIdentifiers = null;
         MajorMinor? minMajorMinor = null;
         Verbosity? verbosity = null;
         Lib.Version? versionOverride = null;
@@ -200,7 +200,7 @@ internal sealed class Options
 
     public string? BuildMeta { get; }
 
-    public IEnumerable<string>? DefaultPreReleaseIdentifiers { get; }
+    public IReadOnlyCollection<string>? DefaultPreReleaseIdentifiers { get; }
 
     public string? DefaultPreReleasePhase { get; }
 

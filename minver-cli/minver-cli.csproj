@@ -1,8 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!-- set AssemblyName as workaround for https://github.com/dotnet/command-line-api/issues/403 -->
-    <AssemblyName>minver</AssemblyName>
     <DefineConstants>$(DefineConstants);MINVER_CLI</DefineConstants>
     <Description>A minimalist command line tool for versioning any Git repository using tags.</Description>
     <IsPackable>true</IsPackable>
@@ -18,6 +16,12 @@
     <RootNamespace>MinVer</RootNamespace>
     <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
     <ToolCommandName>minver</ToolCommandName>
+  </PropertyGroup>
+
+  <!-- workaround for https://github.com/dotnet/command-line-api/issues/403 -->
+  <PropertyGroup>
+    <AssemblyName>minver</AssemblyName>
+    <PackageId>minver-cli</PackageId>
   </PropertyGroup>
 
   <ItemGroup>

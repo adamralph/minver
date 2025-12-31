@@ -7,8 +7,7 @@
     <DevelopmentDependency>true</DevelopmentDependency>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <IsPackable>true</IsPackable>
-    <!-- NU5100: The folder being packaged contains an assembly file that is not in lib folder. -->
-    <NoWarn>$(NoWarn);NU5100</NoWarn>
+    <NoWarn>$(NoWarn);NU5100</NoWarn>    <!-- The folder being packaged contains an assembly file that is not in lib folder. -->
     <OutputType>Exe</OutputType>
     <PackageIcon>minver.png</PackageIcon>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>

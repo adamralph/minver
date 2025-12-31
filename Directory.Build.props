@@ -29,4 +29,8 @@
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)/Global.cs" Link="Global.cs" />
+  </ItemGroup>
+
 </Project>

@@ -13,4 +13,8 @@
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.8.43" PrivateAssets="All" ExcludeAssets="runtime" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="../Global.cs" />
+  </ItemGroup>
+
 </Project>

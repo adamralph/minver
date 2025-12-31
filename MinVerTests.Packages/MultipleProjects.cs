@@ -6,7 +6,7 @@ namespace MinVerTests.Packages;
 
 public class MultipleProjects
 {
-    private static CancellationToken Ct => TestContext.Current.CancellationToken;
+    private static Ct Ct => TestContext.Current.CancellationToken;
 
     [Fact]
     public async Task MultipleTagPrefixes()

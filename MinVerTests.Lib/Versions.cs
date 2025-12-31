@@ -11,7 +11,7 @@ namespace MinVerTests.Lib;
 
 public static class Versions
 {
-    private static CancellationToken Ct => TestContext.Current.CancellationToken;
+    private static Ct Ct => TestContext.Current.CancellationToken;
 
     [Fact]
     public static async Task RepoWithHistory()

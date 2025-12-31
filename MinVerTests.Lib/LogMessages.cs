@@ -11,7 +11,7 @@ namespace MinVerTests.Lib;
 
 public static class LogMessages
 {
-    private static CancellationToken Ct => TestContext.Current.CancellationToken;
+    private static Ct Ct => TestContext.Current.CancellationToken;
 
     [Theory]
     [InlineData(0, 0)]

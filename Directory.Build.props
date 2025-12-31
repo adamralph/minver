@@ -3,18 +3,19 @@
   <PropertyGroup>
     <AnalysisMode>All</AnalysisMode>
     <DebugType>embedded</DebugType>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <ImplicitUsings>enable</ImplicitUsings>
-    <!-- workaround for https://github.com/dotnet/roslyn/issues/41640 -->
-    <NoWarn>$(NoWarn);EnableGenerateDocumentationFile</NoWarn>
-    <!-- Do not directly await a Task -->
-    <NoWarn>$(NoWarn);CA2007</NoWarn>
+    <NoWarn>$(NoWarn);CA2007</NoWarn>    <!-- Do not directly await a Task -->
+    <NoWarn>$(NoWarn);EnableGenerateDocumentationFile</NoWarn>    <!-- workaround for https://github.com/dotnet/roslyn/issues/41640 -->
     <Nullable>enable</Nullable>
-    <!-- MinVer doesn't use MinVer for versioning because
-the environment variables for the build and for the package tests
-would interfere with each other. -->
+  </PropertyGroup>
+
+  <!-- MinVer doesn't use MinVer for versioning because
+    the environment variables for the build and for the package tests
+    would interfere with each other. -->
+  <PropertyGroup>
     <Version>0.0.0</Version>
     <Version Condition="'$(MINVER_VERSION)' != ''">$(MINVER_VERSION)</Version>
     <Version Condition="'$(CI_NUMBER)' != ''">$(Version)-ci.$(CI_NUMBER)</Version>

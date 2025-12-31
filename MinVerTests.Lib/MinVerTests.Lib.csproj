@@ -1,8 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!-- https://github.com/dotnet/roslyn-analyzers/issues/7192 -->
-    <NoWarn>$(NoWarn);CA1515</NoWarn>
+    <NoWarn>$(NoWarn);CA1515</NoWarn>    <!-- Consider making public types internal - https://github.com/dotnet/roslyn-analyzers/issues/7192 -->
     <OutputType>Exe</OutputType>
     <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
     <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>

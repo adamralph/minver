@@ -6,6 +6,7 @@
 
 - [#325: **[BREAKING]** Switch to System.CommandLine](https://github.com/adamralph/minver/issues/325)
 - [#1188: Upgrade Microsoft.Build.Utilities.Core from 17.0.1 to 17.8.43](https://github.com/adamralph/minver/pull/1188)
+- [#1209: Run Git async](https://github.com/adamralph/minver/pull/1209)
 
 ## 6.1.0
 

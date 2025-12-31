@@ -21,6 +21,10 @@
     <Version Condition="'$(CI_NUMBER)' != ''">$(Version)-ci.$(CI_NUMBER)</Version>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(CI)' != ''">
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>

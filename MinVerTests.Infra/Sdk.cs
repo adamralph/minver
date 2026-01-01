@@ -147,7 +147,7 @@ $"""
 
         // -maxCpuCount:1 is required to prevent massive execution times in GitHub Actions
         var (standardOutput, standardError) = await DotNet(
-            "build -maxCpuCount:1 --no-restore --nologo",
+            "build -maxCpuCount:1 --no-restore",
             path,
             environmentVariables,
             handleExitCode).ConfigureAwait(false);
@@ -168,7 +168,7 @@ $"""
         _ = environmentVariables.TryAdd("NoPackageAnalysis", "true");
 
         // -maxCpuCount:1 is required to prevent massive execution times in GitHub Actions
-        return DotNet("pack --configuration Debug -maxCpuCount:1 --no-restore --nologo", path, environmentVariables);
+        return DotNet("pack --configuration Debug -maxCpuCount:1 --no-restore", path, environmentVariables);
     }
 
     public static Task<(string StandardOutput, string StandardError)> DotNet(string args, string path, IDictionary<string, string>? envVars = null, Func<int, bool>? handleExitCode = null)

@@ -103,10 +103,10 @@ public static class Sdk
         var text =
 $$"""
 {
-{{"  "}}"sdk": {
-{{"    "}}"version": "{{version.Trim()}}",
-{{"    "}}"rollForward": "disable"
-{{"  "}}}
+    "sdk": {
+        "version": "{{version.Trim()}}",
+        "rollForward": "disable"
+    }
 }
 """;
 
@@ -115,25 +115,20 @@ $$"""
 
     private static async Task CreateNugetConfig(string path, string packageSource)
     {
-        var lines = new List<string>
-        {
-            "<?xml version=\"1.0\" encoding=\"utf-8\"?>",
-            "<configuration>",
-            "  <packageSources>",
-            $"    <add key=\"local\" value=\"{packageSource}\" />",
-            "  </packageSources>",
-        };
+        var text =
+$"""
+<configuration>
+    <auditSources><clear /></auditSources>
+    <disabledPackageSources><clear /></disabledPackageSources>
+    <packageSourceMapping><clear /></packageSourceMapping>
+    <packageSources>
+        <clear />
+        <add key="local" value="{packageSource}" />
+    </packageSources>
+</configuration>
+""";
 
-        var clearElements = new List<string> {
-            "auditSources",
-            "disabledPackageSources",
-            "packageSourceMapping",
-        };
-
-        lines.AddRange(clearElements.Select(element => $"  <{element}><clear /></{element}>"));
-        lines.Add("</configuration>");
-
-        await File.WriteAllLinesAsync(Path.Combine(path, "NuGet.Config"), lines).ConfigureAwait(false);
+        await File.WriteAllTextAsync(Path.Combine(path, "NuGet.Config"), text).ConfigureAwait(false);
     }
 
     public static async Task<(Package? Package, string StandardOutput, string StandardError)> BuildProject(string path, Func<int, bool>? handleExitCode = null, params (string, string)[] envVars)

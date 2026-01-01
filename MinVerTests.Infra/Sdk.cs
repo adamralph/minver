@@ -20,13 +20,13 @@ public static class Sdk
 
     public static Task<string> GetVersionInUse() => VersionInUse.Value;
 
-    public static async Task CreateSolution(string path, string[] projectNames, string configuration = Configuration.Current)
+    public static async Task CreateSolution(string path, string[] projectNames)
     {
         projectNames = projectNames ?? throw new ArgumentNullException(nameof(projectNames));
 
         FileSystem.EnsureEmptyDirectory(path);
 
-        var minVerPackageSource = GetMinVerPackageSource(configuration);
+        var minVerPackageSource = GetMinVerPackageSource();
         var minVerPackageVersion = GetMinVerPackageVersion(minVerPackageSource);
 
         await CreateGlobalJson(path).ConfigureAwait(false);
@@ -58,11 +58,11 @@ public static class Sdk
         }
     }
 
-    public static async Task CreateProject(string path, string configuration = Configuration.Current, bool multiTarget = false)
+    public static async Task CreateProject(string path, bool multiTarget = false)
     {
         FileSystem.EnsureEmptyDirectory(path);
 
-        var minVerPackageSource = GetMinVerPackageSource(configuration);
+        var minVerPackageSource = GetMinVerPackageSource();
         var minVerPackageVersion = GetMinVerPackageVersion(minVerPackageSource);
 
         await CreateGlobalJson(path).ConfigureAwait(false);
@@ -70,11 +70,11 @@ public static class Sdk
         await CreateProject(path, "test", minVerPackageVersion, multiTarget).ConfigureAwait(false);
     }
 
-    private static string GetMinVerPackageSource(string configuration) =>
-        Solution.GetFullPath($"MinVer/bin/{configuration}/");
+    private static string GetMinVerPackageSource() =>
+        Solution.GetFullPath("artifacts");
 
     private static string GetMinVerPackageVersion(string source) =>
-        Path.GetFileNameWithoutExtension(Directory.EnumerateFiles(source, "*.nupkg").First()).Split("MinVer.", 2)[1];
+        Path.GetFileNameWithoutExtension(Directory.EnumerateFiles(source, "MinVer.*.nupkg").First()).Split("MinVer.", 2)[1];
 
     private static async Task CreateProject(string path, string name, string minVerPackageVersion, bool multiTarget = false)
     {

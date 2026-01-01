@@ -29,4 +29,4 @@ jobs:
       - name: push
         env:
           API_KEY: ${{steps.nuget-login.outputs.NUGET_API_KEY}}
-        run: dotnet nuget push ./**/Release/*.nupkg --api-key "$API_KEY" --source https://api.nuget.org/v3/index.json
+        run: dotnet nuget push ./artifacts/*.nupkg --api-key "$API_KEY" --source https://api.nuget.org/v3/index.json

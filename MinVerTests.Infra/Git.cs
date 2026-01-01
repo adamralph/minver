@@ -9,7 +9,7 @@ public static class Git
     }
 
     public static Task Commit(string path) =>
-        CommandEx.ReadLoggedAsync("git", "commit -m '.' --allow-empty", path);
+        CommandEx.ReadLoggedAsync("git", "commit --message='.' --allow-empty", path);
 
     public static Task EnsureEmptyRepository(string path)
     {
@@ -35,11 +35,14 @@ public static class Git
         CommandEx.ReadLoggedAsync("git", $"tag {tag} {sha}", path);
 
     public static Task AnnotatedTag(string path, string tag, string message) =>
-        CommandEx.ReadLoggedAsync("git", $"tag {tag} -a -m '{message}'", path);
+        CommandEx.ReadLoggedAsync("git", $"tag {tag} --annotate --message='{message}'", path);
 
     public static async Task<IReadOnlyCollection<string>> GetCommitShas(string path) =>
         (await CommandEx.ReadLoggedAsync("git", "log --pretty=format:\"%H\"", path).ConfigureAwait(false)).StandardOutput.Split('\r', '\n');
 
-    public static Task Checkout(string path, string sha) =>
-        CommandEx.ReadLoggedAsync("git", $"checkout {sha}", path);
+    public static Task SwitchToBranch(string path, string branch) =>
+        CommandEx.ReadLoggedAsync("git", $"switch {branch}", path);
+
+    public static Task SwitchToCommit(string path, string sha) =>
+        CommandEx.ReadLoggedAsync("git", $"switch {sha} --detach", path);
 }

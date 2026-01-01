@@ -81,7 +81,7 @@ git tag 1.1.0 -a -m '.'
         var versionCounts = new Dictionary<string, int>();
         foreach (var sha in await GetCommitShas(path))
         {
-            await Checkout(path, sha);
+            await SwitchToCommit(path, sha);
 
             var version = await Versioner.GetVersion(path, "", MajorMinor.Default, "", default, PreReleaseIdentifiers.Default, false, log);
             var versionString = version.ToString();
@@ -96,7 +96,7 @@ git tag 1.1.0 -a -m '.'
             await Tag(path, tagName, sha);
         }
 
-        await Checkout(path, "main");
+        await SwitchToBranch(path, "main");
 
         await File.WriteAllTextAsync(Path.Combine(path, "log.txt"), log.ToString(), Ct);
 

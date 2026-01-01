@@ -1,14 +1,9 @@
-name: ci-inner
+name: ci-test-packages
 on:
-  workflow_call:
-    inputs:
-      target:
-        type: string
-        required: true
-      upload-packages:
-        type: boolean
-        required: false
-        default: false
+  push:
+    branches: [main, release-*]
+  pull_request:
+  workflow_dispatch:
 permissions: read-all
 env:
   DOTNET_NOLOGO: true
@@ -52,15 +47,5 @@ jobs:
         with:
           persist-credentials: false
       - env:
-          BUILD_METADATA: build.${{ github.run_id }}.${{ github.run_attempt}}
-          CI_NUMBER: ${{ github.run_number }}
-          MINVER_VERSION: ${{ vars.MINVER_VERSION }}
           MINVER_SDK: ${{ matrix.sdk }}
-          TARGET: ${{ inputs.target }}
-        run: ./build "$TARGET" --verbose
-        shell: bash
-      - if: ${{ inputs.upload-packages && matrix.upload-packages }}
-        uses: actions/upload-artifact@v6.0.0
-        with:
-          name: NuGet packages
-          path: ./artifacts/*.nupkg
+        run: ./build test-packages

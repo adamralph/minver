@@ -5,6 +5,7 @@
     <IsPackable>false</IsPackable>
     <NoWarn>$(NoWarn);IDE0161</NoWarn>    <!-- Convert to file-scoped namespace -->
     <Nullable>disable</Nullable>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <TargetFrameworks>net472;net8.0</TargetFrameworks>
   </PropertyGroup>
 

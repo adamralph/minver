@@ -9,7 +9,7 @@ namespace MinVerTests.Infra;
 public static class Sdk
 {
     private static readonly string DotnetRoot = Environment.GetEnvironmentVariable("DOTNET_ROOT") ?? "";
-    private static readonly string RequiredVersion = Environment.GetEnvironmentVariable("MINVER_TESTS_SDK") ?? "";
+    private static readonly string RequiredVersion = Environment.GetEnvironmentVariable("MINVER_SDK") ?? "";
 
     private static readonly Lazy<Task<string>> VersionInUse = new(async () =>
     {

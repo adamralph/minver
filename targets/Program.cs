@@ -4,9 +4,9 @@ using static SimpleExec.Command;
 
 Target("format", () => RunAsync("dotnet", "format --verify-no-changes"));
 
-Target("build", () => RunAsync("dotnet", "build --configuration Release --nologo"));
+Target("build", () => RunAsync("dotnet", "build --configuration Release"));
 
-Target("pack", dependsOn: ["build",], () => RunAsync("dotnet", "pack --configuration Release --output artifacts --nologo --no-build"));
+Target("pack", dependsOn: ["build",], () => RunAsync("dotnet", "pack --configuration Release --output artifacts --no-build"));
 
 Target(
     "test-lib",
@@ -37,7 +37,7 @@ Target(
 
         await RunAsync(
             "dotnet",
-            "build --no-restore --nologo -maxCpuCount:1",
+            "build --no-restore -maxCpuCount:1",
             path,
             configureEnvironment: env =>
             {

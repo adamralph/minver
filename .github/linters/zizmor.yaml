@@ -1,0 +1,4 @@
+rules:
+  excessive-permissions:
+    ignore:
+      - ci.yml:7

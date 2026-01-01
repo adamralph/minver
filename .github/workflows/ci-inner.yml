@@ -20,31 +20,13 @@ jobs:
       matrix:
         include:
           # macOS
-          ## arm64
-          ### old, latest LTS
-          - job:
-              os: macos-14
-            tests:
-              framework: net10.0
-              sdk: "10.0.101"
-              sdk-major-minor: "10.0"
-          ### current, latest LTS and latest
           - job:
               os: macos-15
             tests:
               framework: net10.0
               sdk: "10.0.101"
               sdk-major-minor: "10.0"
-          # Linux
-          ## x64
-          ### old latest LTS
-          - job:
-              os: ubuntu-22.04
-            tests:
-              framework: net10.0
-              sdk: "10.0.101"
-              sdk-major-minor: "10.0"
-          ### current, all
+          # Linux x64
           - job:
               os: ubuntu-24.04
             tests:
@@ -63,15 +45,7 @@ jobs:
               framework: net10.0
               sdk: "10.0.101"
               sdk-major-minor: "10.0"
-          ## arm64
-          ### old, latest LTS
-          - job:
-              os: ubuntu-22.04-arm
-            tests:
-              framework: net10.0
-              sdk: "10.0.101"
-              sdk-major-minor: "10.0"
-          ### current, all
+          # Linux arm64
           - job:
               os: ubuntu-24.04-arm
             tests:
@@ -91,24 +65,14 @@ jobs:
               framework: net10.0
               sdk: "10.0.101"
               sdk-major-minor: "10.0"
-          # Windows
-          ## x64
-          ### old, latest LTS
-          - job:
-              os: windows-2022
-            tests:
-              framework: net10.0
-              sdk: "10.0.101"
-              sdk-major-minor: "10.0"
-          ### current, latest LTS and latest
+          # Windows x64
           - job:
               os: windows-2025
             tests:
               framework: net10.0
               sdk: "10.0.101"
               sdk-major-minor: "10.0"
-          ## arm64
-          ### current, latest LTS and latest
+          # Windows arm64
           - job:
               os: windows-11-arm
             tests:

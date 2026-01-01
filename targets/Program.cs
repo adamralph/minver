@@ -2,10 +2,6 @@ using MinVerTests.Infra;
 using static Bullseye.Targets;
 using static SimpleExec.Command;
 
-var sdk = Environment.GetEnvironmentVariable("MINVER_SDK") ?? "10.0.100";
-var sdkVersion = Version.Parse(sdk.Split('-')[0]);
-var framework = $"net{sdkVersion.Major}.{sdkVersion.Minor}";
-
 Target("format", () => RunAsync("dotnet", "format --verify-no-changes"));
 
 Target("build", () => RunAsync("dotnet", "build --configuration Release --nologo"));
@@ -16,7 +12,7 @@ Target(
     "test-lib",
     "test the MinVer.Lib library",
     dependsOn: ["build",],
-    () => RunAsync("dotnet", $"test --project ./MinVerTests.Lib --framework {framework} --configuration Release --no-build"));
+    () => RunAsync("dotnet", $"test --project ./MinVerTests.Lib --configuration Release --no-build"));
 
 Target(
     "test-packages",

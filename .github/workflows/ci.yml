@@ -5,21 +5,23 @@ on:
   pull_request:
   workflow_dispatch:
 permissions: read-all
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
 jobs:
-  eyeball-logs:
-    uses: ./.github/workflows/ci-inner.yml
-    with:
-      target: eyeball-logs
-  format:
-    uses: ./.github/workflows/ci-inner.yml
-    with:
-      target: format
-  test-lib:
-    uses: ./.github/workflows/ci-inner.yml
-    with:
-      target: test-lib
-  test-packages:
-    uses: ./.github/workflows/ci-inner.yml
-    with:
-      target: test-packages
-      upload-packages: true
+  ci:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/setup-dotnet@v5.0.1
+        with:
+          dotnet-version: 10.0.101
+      - uses: actions/checkout@v6.0.1
+        with:
+          fetch-depth: 0
+          filter: tree:0
+          persist-credentials: false
+      - run: ./build format test-lib pack eyeball-logs
+      - uses: actions/upload-artifact@v6.0.0
+        with:
+          name: NuGet packages
+          path: ./artifacts/*.nupkg

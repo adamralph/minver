@@ -7,7 +7,6 @@ on:
 permissions: read-all
 env:
   DOTNET_NOLOGO: true
-  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
 jobs:
   ci:
     strategy:

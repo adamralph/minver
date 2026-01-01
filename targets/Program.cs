@@ -10,7 +10,7 @@ Target("format", () => RunAsync("dotnet", "format --verify-no-changes"));
 
 Target("build", () => RunAsync("dotnet", "build --configuration Release --nologo"));
 
-Target("pack", dependsOn: ["build",], () => RunAsync("dotnet", "pack --configuration Release --nologo --no-build"));
+Target("pack", dependsOn: ["build",], () => RunAsync("dotnet", "pack --configuration Release --output artifacts --nologo --no-build"));
 
 Target(
     "test-lib",
@@ -32,7 +32,7 @@ Target(
     {
         var path = TestDirectory.Get("MinVer.Targets", "eyeball-minver-logs");
 
-        await Sdk.CreateSolution(path, ["project0", "project1",], "Release");
+        await Sdk.CreateSolution(path, ["project0", "project1",]);
 
         await Git.Init(path);
         await Git.Commit(path);

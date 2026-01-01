@@ -19,73 +19,32 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # macOS
-          - job:
-              os: macos-15
-            tests:
-              framework: net10.0
-              sdk: "10.0.101"
-              sdk-major-minor: "10.0"
-          # Linux x64
-          - job:
-              os: ubuntu-24.04
-            tests:
-              framework: net8.0
-              sdk: "8.0.416"
-              sdk-major-minor: "8.0"
-          - job:
-              os: ubuntu-24.04
-            tests:
-              framework: net9.0
-              sdk: "9.0.308"
-              sdk-major-minor: "9.0"
-          - job:
-              os: ubuntu-24.04
-            tests:
-              framework: net10.0
-              sdk: "10.0.101"
-              sdk-major-minor: "10.0"
-          # Linux arm64
-          - job:
-              os: ubuntu-24.04-arm
-            tests:
-              framework: net8.0
-              sdk: "8.0.416"
-              sdk-major-minor: "8.0"
-          - job:
-              os: ubuntu-24.04-arm
-            tests:
-              framework: net9.0
-              sdk: "9.0.308"
-              sdk-major-minor: "9.0"
-          - job:
-              os: ubuntu-24.04-arm
-              upload-packages: true
-            tests:
-              framework: net10.0
-              sdk: "10.0.101"
-              sdk-major-minor: "10.0"
-          # Windows x64
-          - job:
-              os: windows-2025
-            tests:
-              framework: net10.0
-              sdk: "10.0.101"
-              sdk-major-minor: "10.0"
-          # Windows arm64
-          - job:
-              os: windows-11-arm
-            tests:
-              framework: net10.0
-              sdk: "10.0.101"
-              sdk-major-minor: "10.0"
-    name: ${{ matrix.job.os }}-sdk-${{ matrix.tests.sdk-major-minor }}
-    runs-on: ${{ matrix.job.os }}
+          - os: macos-15
+            sdk: "10.0.101"
+          - os: ubuntu-24.04
+            sdk: "8.0.416"
+          - os: ubuntu-24.04
+            sdk: "9.0.308"
+          - os: ubuntu-24.04
+            sdk: "10.0.101"
+          - os: ubuntu-24.04-arm
+            sdk: "8.0.416"
+          - os: ubuntu-24.04-arm
+            sdk: "9.0.308"
+          - os: ubuntu-24.04-arm
+            sdk: "10.0.101"
+            upload-packages: true
+          - os: windows-2025
+            sdk: "10.0.101"
+          - os: windows-11-arm
+            sdk: "10.0.101"
+    name: ${{ matrix.os }}-sdk-${{ matrix.sdk }}
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/setup-dotnet@v5.0.1
         with:
           dotnet-version: |
-            ${{ matrix.tests.sdk }}
+            ${{ matrix.sdk }}
             10.0.101
       - run: dotnet --info
       - run: git --version
@@ -95,12 +54,11 @@ jobs:
       - env:
           CI_NUMBER: ${{ github.run_number }}
           MINVER_VERSION: ${{ vars.MINVER_VERSION }}
-          MINVER_TESTS_SDK: ${{ matrix.tests.sdk }}
-          MINVER_TESTS_FRAMEWORK: ${{ matrix.tests.framework }}
+          MINVER_SDK: ${{ matrix.sdk }}
           TARGET: ${{ inputs.target }}
         run: ./build "$TARGET" --verbose
         shell: bash
-      - if: ${{ inputs.upload-packages && matrix.job.upload-packages }}
+      - if: ${{ inputs.upload-packages && matrix.upload-packages }}
         uses: actions/upload-artifact@v6.0.0
         with:
           name: NuGet packages

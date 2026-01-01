@@ -1,4 +1,4 @@
-﻿Trace: Running Git: git status --short
+﻿Trace: Running Git: git status --porcelain
 Trace: Git exit code: 0
 Trace: Git stdout:
 ?? command-read-00.md

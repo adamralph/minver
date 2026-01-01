@@ -4,7 +4,8 @@ internal static class Git
 {
     private static readonly char[] NewLineChars = ['\r', '\n',];
 
-    public static async Task<bool> IsWorkingDirectory(string directory, ILogger log) => await GitCommand.TryRun("status --short", directory, log) is not null;
+    public static async Task<bool> IsWorkingDirectory(string directory, ILogger log) =>
+        await GitCommand.TryRun("status --porcelain", directory, log) is not null;
 
     public static async Task<Commit?> TryGetHead(string directory, ILogger log)
     {

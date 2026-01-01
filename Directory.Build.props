@@ -19,6 +19,7 @@
     <Version>0.0.0</Version>
     <Version Condition="'$(MINVER_VERSION)' != ''">$(MINVER_VERSION)</Version>
     <Version Condition="'$(CI_NUMBER)' != ''">$(Version)-ci.$(CI_NUMBER)</Version>
+    <InformationalVersion Condition="'$(BUILD_METADATA)' != ''">$(Version)+$(BUILD_METADATA)</InformationalVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">

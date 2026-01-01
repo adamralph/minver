@@ -52,6 +52,7 @@ jobs:
         with:
           persist-credentials: false
       - env:
+          BUILD_METADATA: build.${{ github.run_id }}.${{ github.run_attempt}}
           CI_NUMBER: ${{ github.run_number }}
           MINVER_VERSION: ${{ vars.MINVER_VERSION }}
           MINVER_SDK: ${{ matrix.sdk }}

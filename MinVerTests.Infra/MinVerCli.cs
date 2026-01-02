@@ -2,7 +2,7 @@ namespace MinVerTests.Infra;
 
 public static class MinVerCli
 {
-    public static async Task<(string StandardOutput, string StandardError)> ReadAsync(string workingDirectory, string configuration = Configuration.Current, string args = "", Func<int, bool>? handleExitCode = null, params (string, string)[] envVars)
+    public static async Task<(string StandardOutput, string StandardError)> ReadAsync(string workingDirectory, string configuration = Solution.Configuration, string args = "", Func<int, bool>? handleExitCode = null, params (string, string)[] envVars)
     {
         var environmentVariables = envVars.ToDictionary(envVar => envVar.Item1, envVar => envVar.Item2, StringComparer.OrdinalIgnoreCase);
         _ = environmentVariables.TryAdd("MinVerVerbosity".ToAltCase(), "trace");

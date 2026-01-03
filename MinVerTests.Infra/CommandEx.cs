@@ -7,7 +7,13 @@ internal static class CommandEx
 {
     private static readonly ConcurrentDictionary<string, int> Indices = new();
 
-    public static async Task<(string StandardOutput, string StandardError)> ReadLoggedAsync(string name, string args = "", string workingDirectory = "", IEnumerable<KeyValuePair<string, string>>? envVars = null, Func<int, bool>? handleExitCode = null)
+    public static async Task<(string StandardOutput, string StandardError)> ReadLoggedAsync(
+        string name,
+        Ct ct,
+        string args = "",
+        string workingDirectory = "",
+        IEnumerable<KeyValuePair<string, string>>? envVars = null,
+        Func<int, bool>? handleExitCode = null)
     {
         envVars = [.. envVars ?? [],];
 
@@ -22,7 +28,8 @@ internal static class CommandEx
                     env[key] = value;
                 }
             },
-            handleExitCode: handleExitCode).ConfigureAwait(false);
+            handleExitCode: handleExitCode,
+            ct: ct).ConfigureAwait(false);
 
         int index;
 
@@ -73,7 +80,7 @@ internal static class CommandEx
 
         var markdownFileName = Path.Combine(workingDirectory, $"command-read-{index:D2}.md");
 
-        await File.WriteAllTextAsync(markdownFileName, markdown).ConfigureAwait(false);
+        await File.WriteAllTextAsync(markdownFileName, markdown, ct).ConfigureAwait(false);
 
         return result;
     }

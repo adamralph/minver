@@ -9,6 +9,8 @@ namespace MinVerTests.Lib;
 
 public static class AutoIncrement
 {
+    private static Ct Ct => TestContext.Current.CancellationToken;
+
     [Theory]
     [InlineData("1.2.3", VersionPart.Major, "2.0.0-alpha.0.1")]
     [InlineData("1.2.3", VersionPart.Minor, "1.3.0-alpha.0.1")]
@@ -17,9 +19,9 @@ public static class AutoIncrement
     {
         // arrange
         var path = MethodBase.GetCurrentMethod().GetTestDirectory((tag, autoIncrement));
-        await EnsureEmptyRepositoryAndCommit(path);
-        await Tag(path, tag);
-        await Commit(path);
+        await EnsureEmptyRepositoryAndCommit(path, Ct);
+        await Tag(path, tag, Ct);
+        await Commit(path, Ct);
 
         // act
         var actualVersion = await Versioner.GetVersion(path, "", MajorMinor.Default, "", autoIncrement, PreReleaseIdentifiers.Default, false, NullLogger.Instance);

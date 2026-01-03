@@ -14,13 +14,13 @@ public static class Sdk
     private static readonly Lazy<Task<string>> VersionInUse = new(async () =>
     {
         var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
-        var (standardOutput, _) = await DotNet("--version", path).ConfigureAwait(false);
+        var (standardOutput, _) = await DotNet("--version", Ct.None, path).ConfigureAwait(false);
         return standardOutput.Trim();
     });
 
     public static Task<string> GetVersionInUse() => VersionInUse.Value;
 
-    public static async Task CreateSolution(string path, string[] projectNames)
+    public static async Task CreateSolution(string path, string[] projectNames, Ct ct)
     {
         projectNames = projectNames ?? throw new ArgumentNullException(nameof(projectNames));
 
@@ -32,7 +32,7 @@ public static class Sdk
         await CreateGlobalJson(path).ConfigureAwait(false);
         await CreateNugetConfig(path, minVerPackageSource).ConfigureAwait(false);
 
-        _ = await DotNet($"new sln --name test --output {path}", path).ConfigureAwait(false);
+        _ = await DotNet($"new sln --name test --output {path}", ct, path).ConfigureAwait(false);
 
         var previousProjectName = "";
         foreach (var projectName in projectNames)
@@ -41,7 +41,7 @@ public static class Sdk
 
             FileSystem.EnsureEmptyDirectory(projectPath);
 
-            await CreateProject(projectPath, projectName, minVerPackageVersion).ConfigureAwait(false);
+            await CreateProject(projectPath, projectName, minVerPackageVersion, ct).ConfigureAwait(false);
 
             // ensure deterministic build order
             if (!string.IsNullOrEmpty(previousProjectName))
@@ -49,16 +49,16 @@ public static class Sdk
                 var projectFileName = Path.Combine(path, projectName, $"{projectName}.csproj");
                 var previousProjectFileName = Path.Combine(path, previousProjectName, $"{previousProjectName}.csproj");
 
-                _ = await DotNet($"add {projectFileName} reference {previousProjectFileName}", path).ConfigureAwait(false);
+                _ = await DotNet($"add {projectFileName} reference {previousProjectFileName}", ct, path).ConfigureAwait(false);
             }
 
-            _ = await DotNet($"sln add {projectName}", path).ConfigureAwait(false);
+            _ = await DotNet($"sln add {projectName}", ct, path).ConfigureAwait(false);
 
             previousProjectName = projectName;
         }
     }
 
-    public static async Task CreateProject(string path, bool multiTarget = false)
+    public static async Task CreateProject(string path, Ct ct, bool multiTarget = false)
     {
         FileSystem.EnsureEmptyDirectory(path);
 
@@ -67,7 +67,7 @@ public static class Sdk
 
         await CreateGlobalJson(path).ConfigureAwait(false);
         await CreateNugetConfig(path, minVerPackageSource).ConfigureAwait(false);
-        await CreateProject(path, "test", minVerPackageVersion, multiTarget).ConfigureAwait(false);
+        await CreateProject(path, "test", minVerPackageVersion, ct, multiTarget).ConfigureAwait(false);
     }
 
     private static string GetMinVerPackageSource() =>
@@ -76,11 +76,11 @@ public static class Sdk
     private static string GetMinVerPackageVersion(string source) =>
         Path.GetFileNameWithoutExtension(Directory.EnumerateFiles(source, "MinVer.*.nupkg").First()).Split("MinVer.", 2)[1];
 
-    private static async Task CreateProject(string path, string name, string minVerPackageVersion, bool multiTarget = false)
+    private static async Task CreateProject(string path, string name, string minVerPackageVersion, Ct ct, bool multiTarget = false)
     {
-        _ = await DotNet($"new classlib --name {name} --output {path}{(multiTarget ? " --langVersion 12.0" : "")}", path).ConfigureAwait(false);
+        _ = await DotNet($"new classlib --name {name} --output {path}{(multiTarget ? " --langVersion 12.0" : "")}", ct, path).ConfigureAwait(false);
 
-        _ = await DotNet($"add package MinVer --version {minVerPackageVersion} --package-directory packages", path).ConfigureAwait(false);
+        _ = await DotNet($"add package MinVer --version {minVerPackageVersion} --package-directory packages", ct, path).ConfigureAwait(false);
 
         var project = Path.Combine(path, $"{name}.csproj");
         var lines = await File.ReadAllLinesAsync(project).ConfigureAwait(false);
@@ -93,7 +93,7 @@ public static class Sdk
 
         await File.WriteAllLinesAsync(project, editedLines).ConfigureAwait(false);
 
-        _ = await DotNet("restore --packages packages", path).ConfigureAwait(false);
+        _ = await DotNet("restore --packages packages", ct, path).ConfigureAwait(false);
     }
 
     private static async Task CreateGlobalJson(string path)
@@ -131,13 +131,21 @@ $"""
         await File.WriteAllTextAsync(Path.Combine(path, "NuGet.Config"), text).ConfigureAwait(false);
     }
 
-    public static async Task<(Package? Package, string StandardOutput, string StandardError)> BuildProject(string path, Func<int, bool>? handleExitCode = null, params (string, string)[] envVars)
+    public static async Task<(Package? Package, string StandardOutput, string StandardError)> BuildProject(
+        string path,
+        Ct ct,
+        Func<int, bool>? handleExitCode = null,
+        params (string, string)[] envVars)
     {
-        var (packages, standardOutput, standardError) = await Build(path, handleExitCode, envVars).ConfigureAwait(false);
+        var (packages, standardOutput, standardError) = await Build(path, ct, handleExitCode, envVars).ConfigureAwait(false);
         return (packages.SingleOrDefault(), standardOutput, standardError);
     }
 
-    public static async Task<(List<Package>, string StandardOutput, string StandardError)> Build(string path, Func<int, bool>? handleExitCode = null, params (string, string)[] envVars)
+    public static async Task<(List<Package>, string StandardOutput, string StandardError)> Build(
+        string path,
+        Ct ct,
+        Func<int, bool>? handleExitCode = null,
+        params (string, string)[] envVars)
     {
         var environmentVariables = envVars.ToDictionary(envVar => envVar.Item1, envVar => envVar.Item2, StringComparer.OrdinalIgnoreCase);
         _ = environmentVariables.TryAdd("MinVerVerbosity".ToAltCase(), "diagnostic");
@@ -148,6 +156,7 @@ $"""
         // -maxCpuCount:1 is required to prevent massive execution times in GitHub Actions
         var (standardOutput, standardError) = await DotNet(
             "build -maxCpuCount:1 --no-restore",
+            ct,
             path,
             environmentVariables,
             handleExitCode).ConfigureAwait(false);
@@ -160,7 +169,7 @@ $"""
         return (packages.ToList(), standardOutput, standardError);
     }
 
-    public static Task<(string StandardOutput, string StandardError)> Pack(string path, params (string, string)[] envVars)
+    public static Task<(string StandardOutput, string StandardError)> Pack(string path, Ct ct, params (string, string)[] envVars)
     {
         var environmentVariables = envVars.ToDictionary(envVar => envVar.Item1, envVar => envVar.Item2, StringComparer.OrdinalIgnoreCase);
         _ = environmentVariables.TryAdd("MinVerVerbosity".ToAltCase(), "diagnostic");
@@ -168,10 +177,10 @@ $"""
         _ = environmentVariables.TryAdd("NoPackageAnalysis", "true");
 
         // -maxCpuCount:1 is required to prevent massive execution times in GitHub Actions
-        return DotNet("pack --configuration Debug -maxCpuCount:1 --no-restore", path, environmentVariables);
+        return DotNet("pack --configuration Debug -maxCpuCount:1 --no-restore", ct, path, environmentVariables);
     }
 
-    public static Task<(string StandardOutput, string StandardError)> DotNet(string args, string path, IDictionary<string, string>? envVars = null, Func<int, bool>? handleExitCode = null)
+    public static Task<(string StandardOutput, string StandardError)> DotNet(string args, Ct ct, string path, IDictionary<string, string>? envVars = null, Func<int, bool>? handleExitCode = null)
     {
         envVars ??= new Dictionary<string, string>();
 
@@ -181,7 +190,7 @@ $"""
             envVars["MSBuildSDKsPath"] = Path.Combine(DotnetRoot, "sdk", RequiredVersion, "Sdks");
         }
 
-        return CommandEx.ReadLoggedAsync("dotnet", args, path, envVars, handleExitCode);
+        return CommandEx.ReadLoggedAsync("dotnet", ct, args, path, envVars, handleExitCode);
     }
 
     private static async Task<Package> GetPackage(string fileName)

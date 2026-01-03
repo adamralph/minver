@@ -53,7 +53,7 @@ git merge bar baz --no-edit --no-ff --strategy=octopus
                 // This probably occurs during the octopus merge.
                 // So let's add a file before each commit to ensure that doesn't happen.
                 await File.WriteAllTextAsync(Path.Combine(path, item.Index), item.Index, Ct);
-                _ = await ReadAsync("git", $"add {item.Index}", path, cancellationToken: Ct);
+                _ = await ReadAsync("git", $"add {item.Index}", path, ct: Ct);
 
                 // if not enough delay is given between commits,
                 // the order of parallel commits on different branches seems to be non-deterministic
@@ -61,7 +61,7 @@ git merge bar baz --no-edit --no-ff --strategy=octopus
             }
 
             var nameAndArgs = item.Command.Split(" ", 2);
-            _ = await ReadAsync(nameAndArgs[0], nameAndArgs[1], path, cancellationToken: Ct);
+            _ = await ReadAsync(nameAndArgs[0], nameAndArgs[1], path, ct: Ct);
         }
 
         var log = new TestLogger();
@@ -101,7 +101,7 @@ git tag 1.0.0-foo.1
             .Select((command, index) => new { Command = command, Index = $"{index}", }))
         {
             var nameAndArgs = item.Command.Split(" ", 2);
-            _ = await ReadAsync(nameAndArgs[0], nameAndArgs[1], path, cancellationToken: Ct);
+            _ = await ReadAsync(nameAndArgs[0], nameAndArgs[1], path, ct: Ct);
         }
 
         var log = new TestLogger();

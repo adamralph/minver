@@ -71,7 +71,7 @@ git tag 1.1.0 -a -m '.'
         foreach (var command in historicalCommands.ToNonEmptyLines())
         {
             var nameAndArgs = command.Split(" ", 2);
-            _ = await ReadAsync(nameAndArgs[0], nameAndArgs[1], path, cancellationToken: Ct);
+            _ = await ReadAsync(nameAndArgs[0], nameAndArgs[1], path, ct: Ct);
             await Task.Delay(200, Ct);
         }
 

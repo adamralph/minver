@@ -66,7 +66,7 @@ git tag 1.1.0 -a -m '.'
 
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
 
-        await EnsureEmptyRepositoryAndCommit(path);
+        await EnsureEmptyRepositoryAndCommit(path, Ct);
 
         foreach (var command in historicalCommands.ToNonEmptyLines())
         {
@@ -79,9 +79,9 @@ git tag 1.1.0 -a -m '.'
 
         // act
         var versionCounts = new Dictionary<string, int>();
-        foreach (var sha in await GetCommitShas(path))
+        foreach (var sha in await GetCommitShas(path, Ct))
         {
-            await SwitchToCommit(path, sha);
+            await SwitchToCommit(path, sha, Ct);
 
             var version = await Versioner.GetVersion(path, "", MajorMinor.Default, "", default, PreReleaseIdentifiers.Default, false, log);
             var versionString = version.ToString();
@@ -93,15 +93,15 @@ git tag 1.1.0 -a -m '.'
 
             tagName = versionCount > 1 ? $"v({versionCount})/{versionString}" : tagName;
 
-            await Tag(path, tagName, sha);
+            await Tag(path, tagName, sha, Ct);
         }
 
-        await SwitchToBranch(path, "main");
+        await SwitchToBranch(path, "main", Ct);
 
         await File.WriteAllTextAsync(Path.Combine(path, "log.txt"), log.ToString(), Ct);
 
         // assert
-        var graph = await GetGraph(path);
+        var graph = await GetGraph(path, Ct);
         _ = await Verify(graph);
     }
 
@@ -110,7 +110,7 @@ git tag 1.1.0 -a -m '.'
     {
         // arrange
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
-        await EnsureEmptyRepository(path);
+        await EnsureEmptyRepository(path, Ct);
 
         // act
         var version = await Versioner.GetVersion(path, "", MajorMinor.Default, "", default, PreReleaseIdentifiers.Default, false, NullLogger.Instance);

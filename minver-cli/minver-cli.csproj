@@ -1,5 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <Sdk Name="DotNet.ReproducibleBuilds.Isolated" Version="1.2.39" />
+
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);MINVER_CLI</DefineConstants>
     <Description>A minimalist command line tool for versioning any Git repository using tags.</Description>

@@ -1,5 +1,11 @@
 # Changelog
 
+## 7.1.0
+
+### Enhancements
+
+- [#1238: Include SBOM in packages](https://github.com/adamralph/minver/pull/1238)
+
 ## 7.0.0
 
 ### Enhancements

@@ -5,13 +5,12 @@
     <IsPackable>false</IsPackable>
     <NoWarn>$(NoWarn);IDE0161</NoWarn>    <!-- Convert to file-scoped namespace -->
     <Nullable>disable</Nullable>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <TargetFrameworks>net472;net8.0</TargetFrameworks>
   </PropertyGroup>
 
-  <!-- determine which version to reference using https://aka.ms/dotnet/matrixofpaine -->
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.8.43" PrivateAssets="All" ExcludeAssets="runtime" />
+    <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.39" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.8.43" PrivateAssets="All" ExcludeAssets="runtime" />    <!-- determine which version to reference using https://aka.ms/dotnet/matrixofpaine -->
   </ItemGroup>
 
   <ItemGroup>

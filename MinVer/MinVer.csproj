@@ -14,7 +14,6 @@
     <PackageProjectUrl>https://github.com/adamralph/minver</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>https://github.com/adamralph/minver/blob/main/CHANGELOG.md</PackageReleaseNotes>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <RollForward>major</RollForward>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
@@ -30,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.39" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Sbom.Targets" Version="4.1.4" PrivateAssets="All" />
     <PackageReference Include="System.CommandLine" Version="2.0.1" PrivateAssets="All" Publish="true" />
   </ItemGroup>

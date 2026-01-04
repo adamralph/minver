@@ -1,5 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <Sdk Name="DotNet.ReproducibleBuilds.Isolated" Version="1.2.39" />
+
   <PropertyGroup>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <DefineConstants>$(DefineConstants);MINVER</DefineConstants>

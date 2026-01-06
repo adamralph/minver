@@ -1,10 +1,14 @@
 # Changelog
 
-## 7.1.0
+## 8.0.0
 
 ### Enhancements
 
 - [#1238: Include SBOM in packages](https://github.com/adamralph/minver/pull/1238)
+
+### Other
+
+- [#1245: **[BREAKING]** Fail when default pre-release phase is provided](https://github.com/adamralph/minver/pull/1245)
 
 ## 7.0.0
 

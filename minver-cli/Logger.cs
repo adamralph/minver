@@ -40,6 +40,12 @@ internal sealed class Logger(Verbosity verbosity) : ILogger
     public static void ErrorNoGit(string message) =>
         Error(message);
 
+    public static void ErrorDefaultPreReleasePhaseCliOption() =>
+        Error("MinVerDefaultPreReleasePhase is no longer available. Use MinVerDefaultPreReleaseIdentifiers instead, with an additional \"0\" identifier. For example, if you are setting MinVerDefaultPreReleasePhase to \"preview\", set MinVerDefaultPreReleaseIdentifiers to \"preview.0\" instead.");
+
+    public static void ErrorDefaultPreReleasePhaseEnvVar() =>
+        Error("MinVerDefaultPreReleasePhase is no longer available. Use MinVerDefaultPreReleaseIdentifiers instead, with an additional \"0\" identifier. For example, if you are setting MinVerDefaultPreReleasePhase to \"preview\", set MinVerDefaultPreReleaseIdentifiers to \"preview.0\" instead. In a future version of minver-cli, this error message will be removed and the MinVerDefaultPreReleasePhase environment variable will be ignored.");
+
     private static void Error(string message) => Message($"error : {message}");
 
     private static bool Message(string message)

@@ -41,6 +41,9 @@ internal sealed class Logger(Verbosity verbosity) : ILogger
     public static void ErrorNoGit(string message) =>
         Error(1007, message);
 
+    public static void ErrorDefaultPreReleasePhase() =>
+        Error(1008, "MinVerDefaultPreReleasePhase is no longer available. Use MinVerDefaultPreReleaseIdentifiers instead, with an additional \"0\" identifier. For example, if you are setting MinVerDefaultPreReleasePhase to \"preview\", set MinVerDefaultPreReleaseIdentifiers to \"preview.0\" instead. In a future version of MinVer, this error message will be removed and MinVerDefaultPreReleasePhase will be ignored.");
+
     private static void Error(int code, string message) => Message($"error MINVER{code:D4} : {message}");
 
     private static bool Message(string message)

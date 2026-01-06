@@ -1,5 +1,6 @@
 using System.Reflection;
 using MinVerTests.Infra;
+using SimpleExec;
 using Xunit;
 
 namespace MinVerTests.Packages;
@@ -45,46 +46,12 @@ public static class CustomDefaultPreReleaseIdentifiers
 
         var envVars = ("MinVerDefaultPreReleasePhase".ToAltCase(), "preview");
 
-        var expected = Package.WithVersion(2, 3, 5, ["preview", "0",], 1);
-
         // act
-        var (actual, sdkStandardOutput, _) = await Sdk.BuildProject(path, envVars: envVars);
-        var (cliStandardOutput, cliStandardError) = await MinVerCli.ReadAsync(path, envVars: envVars);
+        var sdkException = await Record.ExceptionAsync(() => Sdk.BuildProject(path, envVars: envVars));
+        var cliException = await Record.ExceptionAsync(() => MinVerCli.ReadAsync(path, envVars: envVars));
 
         // assert
-        Assert.Equal(expected, actual);
-        Assert.Contains("MINVER1008", sdkStandardOutput, StringComparison.Ordinal);
-
-        Assert.Equal(expected.Version, cliStandardOutput.Trim());
-        Assert.Contains("MinVerDefaultPreReleasePhase is deprecated", cliStandardError, StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public static async Task HasCustomDefaultPreReleaseIdentifiersAndCustomDefaultPreReleasePhase()
-    {
-        // arrange
-        var path = MethodBase.GetCurrentMethod().GetTestDirectory();
-        await Sdk.CreateProject(path);
-
-        await Git.Init(path);
-        await Git.Commit(path);
-        await Git.Tag(path, "2.3.4");
-        await Git.Commit(path);
-
-        var envVars = new[]
-        {
-            ("MinVerDefaultPreReleaseIdentifiers".ToAltCase(), "preview.0"),
-            ("MinVerDefaultPreReleasePhase", "foo"),
-        };
-
-        var expected = Package.WithVersion(2, 3, 5, ["preview", "0",], 1);
-
-        // act
-        var (actual, _, _) = await Sdk.BuildProject(path, envVars: envVars);
-        var (cliStandardOutput, _) = await MinVerCli.ReadAsync(path, envVars: envVars);
-
-        // assert
-        Assert.Equal(expected, actual);
-        Assert.Equal(expected.Version, cliStandardOutput.Trim());
+        Assert.Contains("MINVER1008: MinVerDefaultPreReleasePhase is no longer available", Assert.IsType<ExitCodeReadException>(sdkException).StandardOutput, StringComparison.Ordinal);
+        Assert.Contains("MinVerDefaultPreReleasePhase is no longer available", Assert.IsType<ExitCodeReadException>(cliException).StandardError, StringComparison.Ordinal);
     }
 }

@@ -38,6 +38,20 @@ RootCommand cmd = new($"MinVer CLI {informationalVersion}")
 
 cmd.SetAction(async cmdLine =>
 {
+#if MINVER
+    if (!string.IsNullOrEmpty(cmdLine.GetValue(defaultPreReleasePhaseOption)))
+    {
+        Logger.ErrorDefaultPreReleasePhase();
+        return 2;
+    }
+#else
+    if (cmdLine.GetValue(defaultPreReleasePhaseOption) is not null)
+    {
+        Logger.ErrorDefaultPreReleasePhaseCliOption();
+        return 2;
+    }
+#endif
+
     var workDir = cmdLine.GetValue(workDirArg)!;
 
     if (!Directory.Exists(workDir))
@@ -50,7 +64,6 @@ cmd.SetAction(async cmdLine =>
             cmdLine.GetValue(autoIncrementOption),
             cmdLine.GetValue(buildMetaOption),
             cmdLine.GetValue(defaultPreReleaseIdentifiersOption),
-            cmdLine.GetValue(defaultPreReleasePhaseOption),
             cmdLine.GetValue(ignoreHeightOption),
             cmdLine.GetValue(minMajorMinorOption),
             cmdLine.GetValue(tagPrefixOption),
@@ -86,12 +99,6 @@ cmd.SetAction(async cmdLine =>
     }
 
     var defaultPreReleaseIdentifiers = options.DefaultPreReleaseIdentifiers;
-    if (!string.IsNullOrEmpty(options.DefaultPreReleasePhase))
-    {
-        log.Warn(1008, "MinVerDefaultPreReleasePhase is deprecated and will be removed in the next major version. Use MinVerDefaultPreReleaseIdentifiers instead, with an additional \"0\" identifier. For example, if you are setting MinVerDefaultPreReleasePhase to \"preview\", set MinVerDefaultPreReleaseIdentifiers to \"preview.0\" instead.");
-
-        defaultPreReleaseIdentifiers ??= [options.DefaultPreReleasePhase, "0",];
-    }
 
     Version version;
     try

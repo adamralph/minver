@@ -9,7 +9,6 @@ internal sealed class Options
         VersionPart? autoIncrement,
         string? buildMeta,
         IReadOnlyCollection<string>? defaultPreReleaseIdentifiers,
-        string? defaultPreReleasePhase,
         bool? ignoreHeight,
         MajorMinor? minMajorMinor,
         string? tagPrefix,
@@ -19,7 +18,6 @@ internal sealed class Options
         AutoIncrement = autoIncrement;
         BuildMeta = buildMeta;
         DefaultPreReleaseIdentifiers = defaultPreReleaseIdentifiers;
-        DefaultPreReleasePhase = defaultPreReleasePhase;
         IgnoreHeight = ignoreHeight;
         MinMajorMinor = minMajorMinor;
         TagPrefix = tagPrefix;
@@ -61,7 +59,11 @@ internal sealed class Options
             defaultPreReleaseIdentifiers = defaultPreReleaseIdentifiersEnvVar.Split('.');
         }
 
-        var defaultPreReleasePhase = GetEnvVar("MinVerDefaultPreReleasePhase");
+        if (GetEnvVar("MinVerDefaultPreReleasePhase") is not null)
+        {
+            Logger.ErrorDefaultPreReleasePhaseEnvVar();
+            return false;
+        }
 
         var ignoreHeightEnvVar = GetEnvVar("MinVerIgnoreHeight");
         if (!string.IsNullOrEmpty(ignoreHeightEnvVar))
@@ -100,7 +102,7 @@ internal sealed class Options
             return false;
         }
 
-        options = new Options(autoIncrement, buildMeta, defaultPreReleaseIdentifiers, defaultPreReleasePhase, ignoreHeight, minMajorMinor, tagPrefix, verbosity, versionOverride);
+        options = new Options(autoIncrement, buildMeta, defaultPreReleaseIdentifiers, ignoreHeight, minMajorMinor, tagPrefix, verbosity, versionOverride);
 
         return true;
     }
@@ -122,7 +124,6 @@ internal sealed class Options
         string? autoIncrementOption,
         string? buildMetaOption,
         string? defaultPreReleaseIdentifiersOption,
-        string? defaultPreReleasePhaseOption,
         bool? ignoreHeight,
         string? minMajorMinorOption,
         string? tagPrefixOption,
@@ -178,7 +179,7 @@ internal sealed class Options
         }
 #endif
 
-        options = new Options(autoIncrement, buildMetaOption, defaultPreReleaseIdentifiers, defaultPreReleasePhaseOption, ignoreHeight, minMajorMinor, tagPrefixOption, verbosity, versionOverride);
+        options = new Options(autoIncrement, buildMetaOption, defaultPreReleaseIdentifiers, ignoreHeight, minMajorMinor, tagPrefixOption, verbosity, versionOverride);
 
         return true;
     }
@@ -188,7 +189,6 @@ internal sealed class Options
         AutoIncrement ?? other.AutoIncrement,
         BuildMeta ?? other.BuildMeta,
         DefaultPreReleaseIdentifiers ?? other.DefaultPreReleaseIdentifiers,
-        DefaultPreReleasePhase ?? other.DefaultPreReleasePhase,
         IgnoreHeight ?? other.IgnoreHeight,
         MinMajorMinor ?? other.MinMajorMinor,
         TagPrefix ?? other.TagPrefix,
@@ -201,8 +201,6 @@ internal sealed class Options
     public string? BuildMeta { get; }
 
     public IReadOnlyCollection<string>? DefaultPreReleaseIdentifiers { get; }
-
-    public string? DefaultPreReleasePhase { get; }
 
     public bool? IgnoreHeight { get; }
 

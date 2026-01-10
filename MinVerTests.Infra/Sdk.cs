@@ -3,6 +3,7 @@ using System.IO.Compression;
 using System.Reflection;
 using System.Runtime.Loader;
 using Microsoft.Extensions.FileSystemGlobbing;
+using Microsoft.VisualStudio.Threading;
 
 namespace MinVerTests.Infra;
 
@@ -11,14 +12,15 @@ public static class Sdk
     private static readonly string DotnetRoot = Environment.GetEnvironmentVariable("DOTNET_ROOT") ?? "";
     private static readonly string RequiredVersion = Environment.GetEnvironmentVariable("MINVER_SDK") ?? "";
 
-    private static readonly Lazy<Task<string>> VersionInUse = new(async () =>
-    {
-        var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
-        var (standardOutput, _) = await DotNet("--version", path).ConfigureAwait(false);
-        return standardOutput.Trim();
-    });
+    private static readonly AsyncLazy<string> VersionInUse = new(async () =>
+        {
+            var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
+            var (standardOutput, _) = await DotNet("--version", path).ConfigureAwait(false);
+            return standardOutput.Trim();
+        },
+        null);
 
-    public static Task<string> GetVersionInUse() => VersionInUse.Value;
+    public static Task<string> GetVersionInUse() => VersionInUse.GetValueAsync();
 
     public static async Task CreateSolution(string path, string[] projectNames)
     {
@@ -98,7 +100,7 @@ public static class Sdk
 
     private static async Task CreateGlobalJson(string path)
     {
-        var version = !string.IsNullOrWhiteSpace(RequiredVersion) ? RequiredVersion : await VersionInUse.Value.ConfigureAwait(false);
+        var version = !string.IsNullOrWhiteSpace(RequiredVersion) ? RequiredVersion : await VersionInUse.GetValueAsync().ConfigureAwait(false);
 
         var text =
 $$"""

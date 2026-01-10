@@ -44,6 +44,7 @@
     "shas",
     "SHFMT",
     "Versioner",
+    "VSTHRD",
     "xunit"
   ]
 }

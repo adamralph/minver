@@ -3,6 +3,7 @@
   <PropertyGroup>
     <NoWarn>$(NoWarn);CA1515</NoWarn>    <!-- Consider making public types internal - https://github.com/dotnet/roslyn-analyzers/issues/7192 -->
     <OutputType>Exe</OutputType>
+    <RollForward>major</RollForward>
     <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
     <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
   </PropertyGroup>

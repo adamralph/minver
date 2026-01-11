@@ -29,4 +29,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)/Global.cs" Link="Global.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.14.15" PrivateAssets="All" />
+  </ItemGroup>
+
 </Project>

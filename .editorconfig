@@ -28,6 +28,12 @@ dotnet_style_qualification_for_property                                   = fals
 file_header_template                                                      = unset
 indent_size                                                               = 4
 
+# VSTHRD111: Add .ConfigureAwait(bool) to your await expression
+dotnet_diagnostic.VSTHRD111.severity = none
+
+# VSTHRD200: Use "Async" suffix in names of methods that return an awaitable type
+dotnet_diagnostic.VSTHRD200.severity = none
+
 [build]
 end_of_line                                                               = lf
 

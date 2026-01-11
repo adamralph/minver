@@ -124,6 +124,7 @@ $"""
     <packageSources>
         <clear />
         <add key="local" value="{packageSource}" />
+        <add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" />
     </packageSources>
 </configuration>
 """;

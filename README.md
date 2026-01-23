@@ -12,11 +12,11 @@ _[![InferSharp](https://github.com/adamralph/minver/actions/workflows/infer-shar
 _[![Lint](https://github.com/adamralph/minver/actions/workflows/lint.yml/badge.svg?branch=main)](https://github.com/adamralph/minver/actions/workflows/lint.yml?query=branch%3Amain)_
 _[![Spell check](https://github.com/adamralph/minver/actions/workflows/spell-check.yml/badge.svg?branch=main)](https://github.com/adamralph/minver/actions/workflows/spell-check.yml?query=branch%3Amain)_
 
-A minimalist [.NET package](https://www.nuget.org/packages/MinVer) for versioning .NET SDK-style projects using Git tags.
+MinVer is a minimalist [.NET build package](https://www.nuget.org/packages/MinVer) for versioning .NET SDK-style projects using Git tags.
 
 Platform support: all platforms supported by .NET SDK-style projects.
 
-Also available as a [command-line tool](#can-i-use-minver-to-version-software-which-is-not-built-using-a-net-sdk-style-project) for use in any Git repository.
+minver-cli is a minimalist [.NET tool](#can-i-use-minver-to-version-software-which-is-not-built-using-a-net-sdk-style-project) for versioning any kind of software or content using Git tags.
 
 - [Prerequisites](#prerequisites)
 - [Quick start](#quick-start)

@@ -36,7 +36,7 @@
   <ItemGroup>
     <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.39" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Sbom.Targets" Version="4.1.5" PrivateAssets="All" />
-    <PackageReference Include="System.CommandLine" Version="2.0.1" PrivateAssets="All" Publish="true" />
+    <PackageReference Include="System.CommandLine" Version="2.0.2" PrivateAssets="All" Publish="true" />
   </ItemGroup>
 
   <ItemGroup>

@@ -5,9 +5,12 @@
   <PropertyGroup>
     <ImplicitUsings>disable</ImplicitUsings>
     <IsPackable>false</IsPackable>
-    <NoWarn>$(NoWarn);IDE0161</NoWarn>    <!-- Convert to file-scoped namespace -->
     <Nullable>disable</Nullable>
     <TargetFrameworks>net472;net8.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);IDE0161</NoWarn>    <!-- Convert to file-scoped namespace -->
   </PropertyGroup>
 
   <ItemGroup>

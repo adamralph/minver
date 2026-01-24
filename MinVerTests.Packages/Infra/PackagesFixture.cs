@@ -9,19 +9,6 @@ namespace MinVerTests.Packages.Infra;
 
 public sealed class PackagesFixture
 {
-    public PackagesFixture()
-    {
-        var solutionFolder = Solution.GetFullPath(".");
-        var artifactsFolder = Solution.GetFullPath("artifacts");
-
-        if (Directory.Exists(artifactsFolder) && Directory.EnumerateFiles(artifactsFolder, "*.nupkg").Count() == 2)
-        {
-            return;
-        }
-
-        Run(
-            "dotnet",
-            $"pack --configuration {Solution.Configuration} --output artifacts",
-            solutionFolder);
-    }
+    public PackagesFixture() =>
+        Run("dotnet", $"pack --configuration {Solution.Configuration} --output artifacts", Solution.GetFullPath("."));
 }

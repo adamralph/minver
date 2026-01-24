@@ -42,7 +42,7 @@ jobs:
             10.0.102
       - run: dotnet --info
       - run: git --version
-      - uses: actions/checkout@v6.0.1
+      - uses: actions/checkout@v6.0.2
         with:
           persist-credentials: false
       - env:

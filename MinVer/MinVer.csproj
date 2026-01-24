@@ -5,7 +5,7 @@
   <PropertyGroup>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <DefineConstants>$(DefineConstants);MINVER</DefineConstants>
-    <Description>Minimalist versioning for .NET SDK-style projects using Git tags.</Description>
+    <Description>A minimalist .NET build package for versioning .NET SDK-style projects using Git tags.</Description>
     <DevelopmentDependency>true</DevelopmentDependency>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <IsPackable>true</IsPackable>

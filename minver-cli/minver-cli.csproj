@@ -4,7 +4,7 @@
 
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);MINVER_CLI</DefineConstants>
-    <Description>A minimalist .NET tool for versioning any kind of software or content using Git tags.</Description>
+    <Description>A minimalist .NET tool, developed by humans, for versioning any kind of software or content using Git tags.</Description>
     <IsPackable>true</IsPackable>
     <OutputType>Exe</OutputType>
     <PackAsTool>true</PackAsTool>

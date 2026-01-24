@@ -19,7 +19,6 @@
     "autobuild",
     "bootstrapper",
     "classlib",
-    "codeql",
     "cooldown",
     "devcontainers",
     "diag",

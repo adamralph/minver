@@ -1,5 +1,4 @@
 [*.cs]
-csharp_style_namespace_declarations = file_scoped:warning
 
 # CA1716: Identifiers should not match keywords
 dotnet_code_quality.CA1716.analyzed_symbol_kinds = NamedType,Method,Property,Event,Parameter  # suppressing Namespace due to "Lib"

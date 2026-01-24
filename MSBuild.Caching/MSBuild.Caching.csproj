@@ -13,6 +13,7 @@
   <ItemGroup>
     <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.39" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.8.43" PrivateAssets="All" ExcludeAssets="runtime" />    <!-- determine which version to reference using https://aka.ms/dotnet/matrixofpaine -->
+    <PackageReference Include="Microsoft.IO.Redist" Version="6.0.1" PrivateAssets="All" ExcludeAssets="runtime" />    <!-- https://github.com/advisories/GHSA-hq7w-xv5x-g34j -->
   </ItemGroup>
 
   <ItemGroup>

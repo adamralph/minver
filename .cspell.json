@@ -39,6 +39,7 @@
     "Parallelization",
     "pipefail",
     "quot",
+    "Redist",
     "refs",
     "shas",
     "SHFMT",

@@ -7,7 +7,6 @@ _[![minver-cli NuGet version](https://img.shields.io/nuget/v/minver-cli.svg?styl
 
 _[![CI](https://github.com/adamralph/minver/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/adamralph/minver/actions/workflows/ci.yml?query=branch%3Amain)_
 _[![CI package tests](https://github.com/adamralph/minver/actions/workflows/ci-test-packages.yml/badge.svg?branch=main)](https://github.com/adamralph/minver/actions/workflows/ci-test-packages.yml?query=branch%3Amain)_
-_[![CodeQL analysis](https://github.com/adamralph/minver/actions/workflows/codeql-analysis.yml/badge.svg?branch=main)](https://github.com/adamralph/minver/actions/workflows/codeql-analysis.yml?query=branch%3Amain)_
 _[![InferSharp](https://github.com/adamralph/minver/actions/workflows/infer-sharp.yml/badge.svg?branch=main)](https://github.com/adamralph/minver/actions/workflows/infer-sharp.yml?query=branch%3Amain)_
 _[![Lint](https://github.com/adamralph/minver/actions/workflows/lint.yml/badge.svg?branch=main)](https://github.com/adamralph/minver/actions/workflows/lint.yml?query=branch%3Amain)_
 _[![Spell check](https://github.com/adamralph/minver/actions/workflows/spell-check.yml/badge.svg?branch=main)](https://github.com/adamralph/minver/actions/workflows/spell-check.yml?query=branch%3Amain)_

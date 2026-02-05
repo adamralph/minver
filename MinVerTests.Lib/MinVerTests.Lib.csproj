@@ -15,7 +15,7 @@
   <ItemGroup>
     <PackageReference Include="GitHubActionsTestLogger" Version="3.0.1" />
     <PackageReference Include="Microsoft.Testing.Platform" Version="2.0.2" />
-    <PackageReference Include="Verify.XunitV3" Version="31.9.4" />
+    <PackageReference Include="Verify.XunitV3" Version="31.10.0" />
     <PackageReference Include="xunit.v3.mtp-v2" Version="3.2.2" />
   </ItemGroup>
 

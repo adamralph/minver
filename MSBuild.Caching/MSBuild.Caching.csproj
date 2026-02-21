@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <Sdk Name="DotNet.ReproducibleBuilds.Isolated" Version="1.2.39" />
+  <Sdk Name="DotNet.ReproducibleBuilds.Isolated" Version="2.0.2" />
 
   <PropertyGroup>
     <ImplicitUsings>disable</ImplicitUsings>

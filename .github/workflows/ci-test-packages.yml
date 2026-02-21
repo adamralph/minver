@@ -35,14 +35,14 @@ jobs:
     name: ${{ matrix.os }}-sdk-${{ matrix.sdk }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/setup-dotnet@v5.1.0
+      - uses: actions/setup-dotnet@baa11fbfe1d6520db94683bd5c7a3818018e4309 # v5.1.0
         with:
           dotnet-version: |
             ${{ matrix.sdk }}
             10.0.102
       - run: dotnet --info
       - run: git --version
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
       - env:

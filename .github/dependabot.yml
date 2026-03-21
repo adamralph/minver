@@ -16,6 +16,8 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    ignore:
+      - dependency-name: "System.CommandLine" # https://github.com/dotnet/command-line-api/issues/2763
     cooldown:
       default-days: 7
     groups:

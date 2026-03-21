@@ -13,7 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: macos-15
+          - os: macos-26
             sdk: "10.0.201"
           - os: ubuntu-24.04
             sdk: "8.0.419"

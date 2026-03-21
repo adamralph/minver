@@ -12,13 +12,14 @@ public static class Sdk
     private static readonly string DotnetRoot = Environment.GetEnvironmentVariable("DOTNET_ROOT") ?? "";
     private static readonly string RequiredVersion = Environment.GetEnvironmentVariable("MINVER_SDK") ?? "";
 
+#pragma warning disable VSTHRD012 // Provide JoinableTaskFactory where allowed
     private static readonly AsyncLazy<string> VersionInUse = new(async () =>
         {
             var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
             var (standardOutput, _) = await DotNet("--version", path).ConfigureAwait(false);
             return standardOutput.Trim();
-        },
-        null);
+        });
+#pragma warning restore VSTHRD012
 
     public static Task<string> GetVersionInUse() => VersionInUse.GetValueAsync();
 

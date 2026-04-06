@@ -26,6 +26,6 @@ jobs:
         with:
           name: InferSharp reports
           path: infer-out/report.*
-      - uses: github/codeql-action/upload-sarif@e5f05b81d5b6ff8cfa111c80c22c5fd02a384118 # v3.23.0
+      - uses: github/codeql-action/upload-sarif@c10b8064de6f491fea524254123dbe5e09572f13 # v4.35.1
         with:
           sarif_file: infer-out/report.sarif

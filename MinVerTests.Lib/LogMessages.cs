@@ -2,7 +2,6 @@ using System.Reflection;
 using MinVer.Lib;
 using MinVerTests.Infra;
 using MinVerTests.Lib.Infra;
-using VerifyTests;
 using Xunit;
 using static MinVerTests.Infra.Git;
 using static SimpleExec.Command;
@@ -71,9 +70,7 @@ git merge bar baz --no-edit --no-ff --strategy=octopus
 
         // assert
         var logMessages = await ReplaceShas(log.ToString(), path);
-        var settings = new VerifySettings();
-        settings.UseParameters(minMajorMinor);
-        _ = await Verify(logMessages, settings);
+        await logMessages.Verify($"_minMajorMinor={minMajorMinor}");
     }
 
     [Theory]
@@ -111,9 +108,7 @@ git tag 1.0.0-foo.1
 
         // assert
         var logMessages = await ReplaceShas(log.ToString(), path);
-        var settings = new VerifySettings();
-        settings.UseParameters(minMajorMinor);
-        _ = await Verify(logMessages, settings);
+        await logMessages.Verify($"_{nameof(minMajorMinor)}={minMajorMinor}");
     }
 
     private static async Task<string> ReplaceShas(string logMessages, string path)

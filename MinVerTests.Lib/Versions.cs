@@ -102,7 +102,7 @@ git tag 1.1.0 -a -m '.'
 
         // assert
         var graph = await GetGraph(path);
-        _ = await Verify(graph);
+        await graph.Verify();
     }
 
     [Fact]

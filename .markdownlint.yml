@@ -6,4 +6,4 @@ MD026:
 MD033:
   allowed_elements:
     - img
-    - sub
+    - sup

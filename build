@@ -1,3 +1,2 @@
-#!/usr/bin/env bash
-set -euo pipefail
-dotnet run --project targets --no-launch-profile -- "$@"
+#!/bin/sh
+exec dotnet run --project targets --no-launch-profile -- "$@"

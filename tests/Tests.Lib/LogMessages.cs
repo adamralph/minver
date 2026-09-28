@@ -1,0 +1,134 @@
+using System.Reflection;
+using MinVer.Lib;
+using Testing;
+using Tests.Lib.Infra;
+using Xunit;
+using static SimpleExec.Command;
+using static Testing.Git;
+
+namespace Tests.Lib;
+
+public static class LogMessages
+{
+    private static Ct Ct => TestContext.Current.CancellationToken;
+
+    [Theory]
+    [InlineData(0, 0)]
+    [InlineData(2, 0)]
+    public static async Task MinimumMajorMinorAfterTag(int minMajor, int minMinor)
+    {
+        // arrange
+        var minMajorMinor = new MajorMinor(minMajor, minMinor);
+
+        var historicalCommands =
+            @"
+git commit --allow-empty -m '.'
+git tag not-a-version
+git checkout -b foo
+git commit --allow-empty -m '.'
+git tag 1.0.0-foo.1
+git checkout main
+git merge foo --no-edit --no-ff
+git checkout -b bar
+git commit --allow-empty -m '.'
+git checkout main
+git checkout -b baz
+git commit --allow-empty -m '.'
+git checkout main
+git merge bar baz --no-edit --no-ff --strategy=octopus
+";
+
+        var path = MethodBase.GetCurrentMethod().GetTestDirectory(minMajorMinor);
+
+        await EnsureEmptyRepository(path);
+
+        foreach (var item in historicalCommands
+            .ToNonEmptyLines()
+            .Select((command, index) => new { Command = command, Index = $"{index}", }))
+        {
+            if (item.Command.StartsWith("git commit", StringComparison.Ordinal))
+            {
+                // Sometimes git seems to treat bar and baz as a single branch if the commits are empty.
+                // This probably occurs during the octopus merge.
+                // So let's add a file before each commit to ensure that doesn't happen.
+                await File.WriteAllTextAsync(Path.Combine(path, item.Index), item.Index, Ct);
+                _ = await ReadAsync("git", $"add {item.Index}", path, ct: Ct);
+
+                // if not enough delay is given between commits,
+                // the order of parallel commits on different branches seems to be non-deterministic
+                await Task.Delay(1100, Ct);
+            }
+
+            var nameAndArgs = item.Command.Split(" ", 2);
+            _ = await ReadAsync(nameAndArgs[0], nameAndArgs[1], path, ct: Ct);
+        }
+
+        var log = new TestLogger();
+
+        // act
+        _ = await Versioner.GetVersion(path, "", minMajorMinor, "", default, PreReleaseIdentifiers.Default, false, log);
+
+        // assert
+        var logMessages = await ReplaceShas(log.ToString(), path);
+        await logMessages.Verify($"_minMajorMinor={minMajorMinor}");
+    }
+
+    [Theory]
+    [InlineData(3, 0)]
+    public static async Task MinimumMajorMinorOnTag(int minMajor, int minMinor)
+    {
+        // arrange
+        var minMajorMinor = new MajorMinor(minMajor, minMinor);
+
+        var historicalCommands =
+            @"
+git commit --allow-empty -m '.'
+git tag not-a-version
+git checkout -b foo
+git commit --allow-empty -m '.'
+git tag 1.0.0-foo.1
+";
+
+        var path = MethodBase.GetCurrentMethod().GetTestDirectory(minMajorMinor);
+
+        await EnsureEmptyRepository(path);
+
+        foreach (var item in historicalCommands
+            .ToNonEmptyLines()
+            .Select((command, index) => new { Command = command, Index = $"{index}", }))
+        {
+            var nameAndArgs = item.Command.Split(" ", 2);
+            _ = await ReadAsync(nameAndArgs[0], nameAndArgs[1], path, ct: Ct);
+        }
+
+        var log = new TestLogger();
+
+        // act
+        _ = await Versioner.GetVersion(path, "", minMajorMinor, "", default, PreReleaseIdentifiers.Default, false, log);
+
+        // assert
+        var logMessages = await ReplaceShas(log.ToString(), path);
+        await logMessages.Verify($"_{nameof(minMajorMinor)}={minMajorMinor}");
+    }
+
+    private static async Task<string> ReplaceShas(string logMessages, string path)
+    {
+        var shas = (await ReadAsync("git", "log --pretty=format:\"%H\"", path))
+            .StandardOutput
+            .ToNonEmptyLines()
+            .Reverse()
+            .ToList();
+
+        foreach (var item in shas.Select((sha, index) => new { Sha = sha, Index = index, }))
+        {
+            logMessages = logMessages.Replace(item.Sha, $"{item.Index}", StringComparison.Ordinal);
+        }
+
+        foreach (var item in shas.Select((sha, index) => new { ShortSha = sha[..7], Index = index, }))
+        {
+            logMessages = logMessages.Replace(item.ShortSha, $"{item.Index}", StringComparison.Ordinal);
+        }
+
+        return logMessages;
+    }
+}

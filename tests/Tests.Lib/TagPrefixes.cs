@@ -1,0 +1,29 @@
+using System.Reflection;
+using MinVer.Lib;
+using Testing;
+using Tests.Lib.Infra;
+using Xunit;
+using static Testing.Git;
+
+namespace Tests.Lib;
+
+public static class TagPrefixes
+{
+    [Theory]
+    [InlineData("2.3.4", "", "2.3.4")]
+    [InlineData("v3.4.5", "v", "3.4.5")]
+    [InlineData("version5.6.7", "version", "5.6.7")]
+    public static async Task TagPrefix(string tag, string prefix, string expectedVersion)
+    {
+        // act
+        var path = MethodBase.GetCurrentMethod().GetTestDirectory((tag, prefix));
+        await EnsureEmptyRepositoryAndCommit(path);
+        await Tag(path, tag);
+
+        // act
+        var actualVersion = await Versioner.GetVersion(path, prefix, MajorMinor.Default, "", default, PreReleaseIdentifiers.Default, false, NullLogger.Instance);
+
+        // assert
+        Assert.Equal(expectedVersion, actualVersion.ToString());
+    }
+}

@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MinVerTests.Infra\MinVerTests.Infra.csproj" />
+    <ProjectReference Include="../testing/Testing/Testing.csproj" />
   </ItemGroup>
 
 </Project>

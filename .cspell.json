@@ -43,6 +43,7 @@
     "refs",
     "shas",
     "SHFMT",
+    "slnx",
     "Versioner",
     "VSTHRD",
     "xunit"

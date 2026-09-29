@@ -1,0 +1,44 @@
+using MinVer.Lib;
+
+namespace Tests.Lib.Infra;
+
+internal sealed class TestLogger : ILogger
+{
+    private readonly List<LogMessage> _messages = [];
+
+    public bool IsTraceEnabled => true;
+
+    public bool IsDebugEnabled => true;
+
+    public bool IsInfoEnabled => true;
+
+    public bool IsWarnEnabled => true;
+
+    public IReadOnlyCollection<LogMessage> Messages => _messages;
+
+    public bool Trace(string message)
+    {
+        _messages.Add(new LogMessage(LogLevel.Trace, message, 0));
+        return true;
+    }
+
+    public bool Debug(string message)
+    {
+        _messages.Add(new LogMessage(LogLevel.Debug, message, 0));
+        return true;
+    }
+
+    public bool Info(string message)
+    {
+        _messages.Add(new LogMessage(LogLevel.Info, message, 0));
+        return true;
+    }
+
+    public bool Warn(int code, string message)
+    {
+        _messages.Add(new LogMessage(LogLevel.Warn, message, 0));
+        return true;
+    }
+
+    public override string ToString() => string.Join(Environment.NewLine, Messages.Select(message => message.ToString()));
+}

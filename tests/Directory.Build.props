@@ -8,6 +8,11 @@
     <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);CA1062</NoWarn><!-- Validate arguments of public methods -->
+    <NoWarn>$(NoWarn);CA1515</NoWarn><!-- Consider making public types internal -->
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="GitHubActionsTestLogger" Version="3.0.5" />
     <PackageReference Include="xunit.v3.mtp-v2" Version="4.0.1" />

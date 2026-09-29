@@ -17,9 +17,7 @@ public static class DefaultPreReleaseIdentifiers
         // arrange
         var path = MethodBase.GetCurrentMethod().GetTestDirectory(identifiers);
         await EnsureEmptyRepositoryAndCommit(path);
-#pragma warning disable CA1062 // Validate arguments of public methods
         var identifierList = identifiers.Split('.');
-#pragma warning restore CA1062 // Validate arguments of public methods
 
         // act
         var actualVersion = await Versioner.GetVersion(path, "", MajorMinor.Default, "", default, identifierList, false, NullLogger.Instance);

@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.CommandLine" Version="2.0.5" PrivateAssets="All" Publish="true" />
+    <PackageReference Include="System.CommandLine" PrivateAssets="All" Publish="true" />
   </ItemGroup>
 
   <ItemGroup>

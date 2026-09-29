@@ -1,21 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <RollForward>major</RollForward>
-    <TargetFramework>net10.0</TargetFramework>
-    <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+    <TargetFrameworks>net10.0</TargetFrameworks>
   </PropertyGroup>
-
-  <PropertyGroup>
-    <NoWarn>$(NoWarn);CA1515</NoWarn>    <!-- Consider making public types internal - https://github.com/dotnet/roslyn-analyzers/issues/7192 -->
-    <NoWarn>$(NoWarn);CA2007</NoWarn>    <!-- Do not directly await a Task -->
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="GitHubActionsTestLogger" Version="3.0.5" />
-    <PackageReference Include="xunit.v3.mtp-v2" Version="4.0.1" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="../../src/MinVer/MinVer.csproj" />

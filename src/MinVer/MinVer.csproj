@@ -1,7 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <Sdk Name="DotNet.ReproducibleBuilds.Isolated" Version="2.0.5" />
-
   <PropertyGroup>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <DefineConstants>$(DefineConstants);MINVER</DefineConstants>
@@ -10,22 +8,12 @@
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <IsPackable>true</IsPackable>
     <OutputType>Exe</OutputType>
-    <PackageIcon>icon.png</PackageIcon>
-    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/adamralph/minver</PackageProjectUrl>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageReleaseNotes>https://github.com/adamralph/minver/blob/main/CHANGELOG.md</PackageReleaseNotes>
     <RollForward>major</RollForward>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
-    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup>
     <NoWarn>$(NoWarn);NU5100</NoWarn>    <!-- The folder being packaged contains an assembly file that is not in lib folder. -->
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)'=='Release'">
-    <GenerateSBOM>true</GenerateSBOM>
   </PropertyGroup>
 
   <ItemGroup>
@@ -34,8 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DotNet.ReproducibleBuilds" Version="2.0.5" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.Sbom.Targets" Version="4.1.5" PrivateAssets="All" />
     <PackageReference Include="System.CommandLine" Version="2.0.5" PrivateAssets="All" Publish="true" />
   </ItemGroup>
 
@@ -45,8 +31,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="../../assets/icon.png" Pack="true" PackagePath="/" />
-    <None Include="../../README.md" Pack="true" PackagePath="/" />
     <None Remove="build\**\*" />
     <None Remove="buildMultiTargeting\**\*" />
     <Content Include="build\**\*" PackagePath="build" />

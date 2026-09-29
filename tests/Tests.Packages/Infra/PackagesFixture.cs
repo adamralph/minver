@@ -7,7 +7,9 @@ using static SimpleExec.Command;
 
 namespace Tests.Packages.Infra;
 
+#pragma warning disable CA1515 // Consider making public types internal
 public sealed class PackagesFixture
+#pragma warning restore CA1515
 {
     public PackagesFixture() =>
         Run("dotnet", $"pack --configuration {Solution.Configuration} --output artifacts", Solution.GetFullPath("."));

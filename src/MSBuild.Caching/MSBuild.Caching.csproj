@@ -13,8 +13,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.8.43" PrivateAssets="All" ExcludeAssets="runtime" />    <!-- determine which version to reference using https://aka.ms/dotnet/matrixofpaine -->
-    <PackageReference Include="Microsoft.IO.Redist" Version="6.0.1" PrivateAssets="All" ExcludeAssets="runtime" Condition="'$(TargetFramework)' == 'net472'" />    <!-- https://github.com/advisories/GHSA-hq7w-xv5x-g34j -->
+    <PackageReference Include="Microsoft.Build.Utilities.Core" PrivateAssets="All" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.IO.Redist" PrivateAssets="All" ExcludeAssets="runtime" Condition="'$(TargetFramework)' == 'net472'" />    <!-- https://github.com/advisories/GHSA-hq7w-xv5x-g34j -->
   </ItemGroup>
 
   <ItemGroup>

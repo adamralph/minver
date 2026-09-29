@@ -4,7 +4,8 @@ on:
     branches: [main, release-*]
   pull_request:
   workflow_dispatch:
-permissions: read-all
+permissions:
+  contents: read
 env:
   DOTNET_NOLOGO: true
 jobs:
@@ -28,6 +29,28 @@ jobs:
           - os: ubuntu-24.04-arm
             sdk: "10.0.400"
             upload-packages: true
+    name: ${{ matrix.os }}-sdk-${{ matrix.sdk }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: |
+            ${{ matrix.sdk }}
+            10.0.400
+      - run: dotnet --info
+      - run: git --version
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - env:
+          MINVER_SDK: ${{ matrix.sdk }}
+        run: ./build test-packages
+  ci-windows:
+    if: github.event_name == 'workflow_dispatch'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
           - os: windows-2025
             sdk: "10.0.400"
           - os: windows-11-arm

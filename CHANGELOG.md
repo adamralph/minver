@@ -5,6 +5,7 @@
 ### Enhancements
 
 - [#1238: Include SBOM in packages](https://github.com/adamralph/minver/pull/1238)
+- [#1283: Bump NuGet.Versioning from 7.0.1 to 7.3.0](https://github.com/adamralph/minver/pull/1283)
 
 ### Other
 

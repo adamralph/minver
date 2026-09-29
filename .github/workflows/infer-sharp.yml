@@ -20,7 +20,7 @@ jobs:
       - run: pwd
       - uses: microsoft/infersharpaction@b749060de518f410f92c87d37d2366e5e9d7c5fc # v1.5
         with:
-          binary-path: './src/MinVer'
+          binary-path: './src'
       - run: cat infer-out/report.txt
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:

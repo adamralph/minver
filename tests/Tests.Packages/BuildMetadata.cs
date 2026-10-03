@@ -1,4 +1,5 @@
 using System.Reflection;
+using Fixtures;
 using Testing;
 using Xunit;
 
@@ -11,12 +12,12 @@ public static class BuildMetadata
     {
         // arrange
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
-        await Sdk.CreateProject(path);
+        await DotNetCli.CreateProject(path);
         var envVars = ("MinVerBuildMetadata", "build.123");
         var expected = Package.WithVersion(0, 0, 0, ["alpha", "0",], 0, "build.123");
 
         // act
-        var (actual, _, _) = await Sdk.BuildProject(path, envVars: envVars);
+        var (actual, _, _) = await DotNetCli.BuildProject(path, envVars: envVars);
         var (cliStandardOutput, _) = await MinVerCli.ReadAsync(path, envVars: envVars);
 
         // assert

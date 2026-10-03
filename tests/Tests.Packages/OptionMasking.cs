@@ -1,4 +1,5 @@
 using System.Reflection;
+using Fixtures;
 using Testing;
 using Xunit;
 

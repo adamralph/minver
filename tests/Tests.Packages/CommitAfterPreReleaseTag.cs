@@ -1,4 +1,5 @@
 using System.Reflection;
+using Fixtures;
 using Testing;
 using Xunit;
 
@@ -11,7 +12,7 @@ public static class CommitAfterPreReleaseTag
     {
         // arrange
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
-        await Sdk.CreateProject(path);
+        await DotNetCli.CreateProject(path);
 
         await Git.Init(path);
         await Git.Commit(path);
@@ -21,7 +22,7 @@ public static class CommitAfterPreReleaseTag
         var expected = Package.WithVersion(2, 3, 4, ["alpha", "5",], 1);
 
         // act
-        var (actual, _, _) = await Sdk.BuildProject(path);
+        var (actual, _, _) = await DotNetCli.BuildProject(path);
         var (cliStandardOutput, _) = await MinVerCli.ReadAsync(path);
 
         // assert

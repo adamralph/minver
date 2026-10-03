@@ -1,4 +1,5 @@
 using System.Reflection;
+using Fixtures;
 using Testing;
 using Xunit;
 
@@ -11,7 +12,7 @@ public static class FirstCommit
     {
         // arrange
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
-        await Sdk.CreateProject(path);
+        await DotNetCli.CreateProject(path);
 
         await Git.Init(path);
         await Git.Commit(path);
@@ -19,7 +20,7 @@ public static class FirstCommit
         var expected = Package.WithVersion(0, 0, 0, ["alpha", "0",]);
 
         // act
-        var (actual, _, _) = await Sdk.BuildProject(path);
+        var (actual, _, _) = await DotNetCli.BuildProject(path);
         var (cliStandardOutput, _) = await MinVerCli.ReadAsync(path);
 
         // assert

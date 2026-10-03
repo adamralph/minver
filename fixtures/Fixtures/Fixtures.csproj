@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <PackageReference Include="SimpleExec" />
     <PackageReference Include="xunit.v3.assert" />
   </ItemGroup>
 

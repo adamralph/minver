@@ -1,4 +1,5 @@
 using System.Reflection;
+using Fixtures;
 using Testing;
 using Xunit;
 
@@ -11,11 +12,11 @@ public static class NoRepo
     {
         // arrange
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
-        await Sdk.CreateProject(path);
+        await DotNetCli.CreateProject(path);
         var expected = Package.WithVersion(0, 0, 0, ["alpha", "0",]);
 
         // act
-        var (actual, sdkStandardOutput, _) = await Sdk.BuildProject(path);
+        var (actual, sdkStandardOutput, _) = await DotNetCli.BuildProject(path);
         var (cliStandardOutput, cliStandardError) = await MinVerCli.ReadAsync(path);
 
         // assert

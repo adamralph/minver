@@ -6,4 +6,8 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);CA1062</NoWarn><!-- Validate arguments of public methods -->
+  </PropertyGroup>
+
 </Project>

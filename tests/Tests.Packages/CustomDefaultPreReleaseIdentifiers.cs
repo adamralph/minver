@@ -1,4 +1,5 @@
 using System.Reflection;
+using Fixtures;
 using SimpleExec;
 using Testing;
 using Xunit;
@@ -12,7 +13,7 @@ public static class CustomDefaultPreReleaseIdentifiers
     {
         // arrange
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
-        await Sdk.CreateProject(path);
+        await DotNetCli.CreateProject(path);
 
         await Git.Init(path);
         await Git.Commit(path);
@@ -24,7 +25,7 @@ public static class CustomDefaultPreReleaseIdentifiers
         var expected = Package.WithVersion(2, 3, 5, ["preview", "0",], 1);
 
         // act
-        var (actual, _, _) = await Sdk.BuildProject(path, envVars: envVars);
+        var (actual, _, _) = await DotNetCli.BuildProject(path, envVars: envVars);
         var (cliStandardOutput, _) = await MinVerCli.ReadAsync(path, envVars: envVars);
 
         // assert
@@ -37,7 +38,7 @@ public static class CustomDefaultPreReleaseIdentifiers
     {
         // arrange
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
-        await Sdk.CreateProject(path);
+        await DotNetCli.CreateProject(path);
 
         await Git.Init(path);
         await Git.Commit(path);
@@ -47,7 +48,7 @@ public static class CustomDefaultPreReleaseIdentifiers
         var envVars = ("MinVerDefaultPreReleasePhase".ToAltCase(), "preview");
 
         // act
-        var sdkException = await Record.ExceptionAsync(() => Sdk.BuildProject(path, envVars: envVars));
+        var sdkException = await Record.ExceptionAsync(() => DotNetCli.BuildProject(path, envVars: envVars));
         var cliException = await Record.ExceptionAsync(() => MinVerCli.ReadAsync(path, envVars: envVars));
 
         // assert

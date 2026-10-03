@@ -1,4 +1,5 @@
 using System.Reflection;
+using Fixtures;
 using Testing;
 using Xunit;
 
@@ -11,7 +12,7 @@ public static class SourceLink
     {
         // arrange
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
-        await Sdk.CreateProject(path);
+        await DotNetCli.CreateProject(path);
 
         await Git.Init(path);
         await Git.Commit(path);
@@ -26,7 +27,7 @@ public static class SourceLink
         var expected = Package.WithVersion(0, 0, 0, ["alpha", "0",], 0, "build.123", $".{sha}");
 
         // act
-        var (actual, _, _) = await Sdk.BuildProject(path, envVars: envVars);
+        var (actual, _, _) = await DotNetCli.BuildProject(path, envVars: envVars);
         var (cliStandardOutput, _) = await MinVerCli.ReadAsync(path, envVars: envVars);
 
         // assert

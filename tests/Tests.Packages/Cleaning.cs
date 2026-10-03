@@ -1,4 +1,5 @@
 using System.Reflection;
+using Fixtures;
 using Microsoft.Extensions.FileSystemGlobbing;
 using Testing;
 using Xunit;
@@ -19,20 +20,19 @@ public static class Cleaning
     {
         // arrange
         var path = MethodBase.GetCurrentMethod().GetTestDirectory(multiTarget);
-        await Sdk.CreateProject(path, multiTarget: multiTarget);
+        await DotNetCli.CreateProject(path, multiTarget: multiTarget);
 
         await Git.Init(path);
         await Git.Commit(path);
         await Git.Tag(path, "2.3.4");
 
-        _ = await Sdk.BuildProject(path);
+        _ = await DotNetCli.BuildProject(path);
 
         var packages = new Matcher().AddInclude("**/bin/Debug/*.nupkg");
         Assert.NotEmpty(packages.GetResultsInFullPath(path));
 
         // act
-        // -maxCpuCount:1 is required to prevent massive execution times in GitHub Actions
-        _ = await Sdk.DotNet("clean -maxCpuCount:1", path, new Dictionary<string, string> { { "GeneratePackageOnBuild", "true" }, });
+        _ = await DotNetCli.Clean(path, ("GeneratePackageOnBuild", "true"));
 
         // assert
         Assert.Empty(packages.GetResultsInFullPath(path));
@@ -43,17 +43,11 @@ public static class Cleaning
     {
         // arrange
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
-        await Sdk.CreateProject(path);
+        await DotNetCli.CreateProject(path);
 
         // act
-        var (standardOutput, _) = await Sdk.DotNet(
-            "clean",
-            path,
-            new Dictionary<string, string>
-            {
-                { "GeneratePackageOnBuild", "false" },
-                { "MinVerVerbosity", "diagnostic" },
-            });
+        var (standardOutput, _) = await DotNetCli.Clean(
+            path, ("GeneratePackageOnBuild", "false"), ("MinVerVerbosity", "diagnostic"));
 
         // assert
         Assert.DoesNotContain("minver:", standardOutput, StringComparison.OrdinalIgnoreCase);

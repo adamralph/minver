@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Fixtures;
 using Testing;
 using Xunit;
 
@@ -15,7 +16,7 @@ public static class NoGit
     {
         // arrange
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
-        await Sdk.CreateProject(path);
+        await DotNetCli.CreateProject(path);
         await Git.Init(path);
         await Git.Commit(path);
 
@@ -26,7 +27,7 @@ public static class NoGit
         var cliExitCode = 0;
 
         // act
-        var (_, sdkStandardOutput, _) = await Sdk.BuildProject(
+        var (_, sdkStandardOutput, _) = await DotNetCli.BuildProject(
             path,
             exitCode =>
             {

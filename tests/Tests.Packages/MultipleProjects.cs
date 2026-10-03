@@ -1,4 +1,5 @@
 using System.Reflection;
+using Fixtures;
 using Testing;
 using Xunit;
 
@@ -14,7 +15,7 @@ public class MultipleProjects
         // arrange
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
 
-        await Sdk.CreateSolution(path, ["project0", "project1", "project2", "project3",]);
+        await DotNetCli.CreateSolution(path, ["project0", "project1", "project2", "project3",]);
 
         var props =
             $"""
@@ -41,7 +42,7 @@ public class MultipleProjects
         var expected3 = Package.WithVersion(5, 6, 7);
 
         // act
-        var (actual, standardOutput, _) = await Sdk.Build(path);
+        var (actual, standardOutput, _) = await DotNetCli.Build(path);
 
         // assert
         Assert.NotNull(standardOutput);

@@ -2,12 +2,13 @@ using System.Diagnostics;
 using System.IO.Compression;
 using System.Reflection;
 using System.Runtime.Loader;
+using Fixtures;
 using Microsoft.Extensions.FileSystemGlobbing;
 using Microsoft.VisualStudio.Threading;
 
 namespace Testing;
 
-public static class Sdk
+public static class DotNetCli
 {
     private static readonly string DotnetRoot = Environment.GetEnvironmentVariable("DOTNET_ROOT") ?? "";
     private static readonly string RequiredVersion = Environment.GetEnvironmentVariable("MINVER_SDK") ?? "";
@@ -16,7 +17,7 @@ public static class Sdk
     private static readonly AsyncLazy<string> VersionInUse = new(async () =>
         {
             var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
-            var (standardOutput, _) = await DotNet("--version", path).ConfigureAwait(false);
+            var (standardOutput, _) = await Read("--version", path).ConfigureAwait(false);
             return standardOutput.Trim();
         });
 #pragma warning restore VSTHRD012
@@ -35,7 +36,7 @@ public static class Sdk
         await CreateGlobalJson(path).ConfigureAwait(false);
         await CreateNugetConfig(path, minVerPackageSource).ConfigureAwait(false);
 
-        _ = await DotNet($"new sln --name test --output {path}", path).ConfigureAwait(false);
+        _ = await Read($"new sln --name test --output {path}", path).ConfigureAwait(false);
 
         var previousProjectName = "";
         foreach (var projectName in projectNames)
@@ -52,10 +53,10 @@ public static class Sdk
                 var projectFileName = Path.Combine(path, projectName, $"{projectName}.csproj");
                 var previousProjectFileName = Path.Combine(path, previousProjectName, $"{previousProjectName}.csproj");
 
-                _ = await DotNet($"add {projectFileName} reference {previousProjectFileName}", path).ConfigureAwait(false);
+                _ = await Read($"add {projectFileName} reference {previousProjectFileName}", path).ConfigureAwait(false);
             }
 
-            _ = await DotNet($"sln add {projectName}", path).ConfigureAwait(false);
+            _ = await Read($"sln add {projectName}", path).ConfigureAwait(false);
 
             previousProjectName = projectName;
         }
@@ -81,9 +82,9 @@ public static class Sdk
 
     private static async Task CreateProject(string path, string name, string minVerPackageVersion, bool multiTarget = false)
     {
-        _ = await DotNet($"new classlib --name {name} --output {path}{(multiTarget ? " --langVersion 12.0" : "")}", path).ConfigureAwait(false);
+        _ = await Read($"new classlib --name {name} --output {path}{(multiTarget ? " --langVersion 12.0" : "")}", path).ConfigureAwait(false);
 
-        _ = await DotNet($"add package MinVer --version {minVerPackageVersion} --package-directory packages", path).ConfigureAwait(false);
+        _ = await Read($"add package MinVer --version {minVerPackageVersion} --package-directory packages", path).ConfigureAwait(false);
 
         var project = Path.Combine(path, $"{name}.csproj");
         var lines = await File.ReadAllLinesAsync(project).ConfigureAwait(false);
@@ -96,7 +97,7 @@ public static class Sdk
 
         await File.WriteAllLinesAsync(project, editedLines).ConfigureAwait(false);
 
-        _ = await DotNet("restore --packages packages", path).ConfigureAwait(false);
+        _ = await Read("restore --packages packages", path).ConfigureAwait(false);
     }
 
     private static async Task CreateGlobalJson(string path)
@@ -150,7 +151,7 @@ $"""
         _ = environmentVariables.TryAdd("NoPackageAnalysis", "true");
 
         // -maxCpuCount:1 is required to prevent massive execution times in GitHub Actions
-        var (standardOutput, standardError) = await DotNet(
+        var (standardOutput, standardError) = await Read(
             "build -maxCpuCount:1 --no-restore",
             path,
             environmentVariables,
@@ -172,12 +173,16 @@ $"""
         _ = environmentVariables.TryAdd("NoPackageAnalysis", "true");
 
         // -maxCpuCount:1 is required to prevent massive execution times in GitHub Actions
-        return DotNet("pack --configuration Debug -maxCpuCount:1 --no-restore", path, environmentVariables);
+        return Read("pack --configuration Debug -maxCpuCount:1 --no-restore", path, environmentVariables);
     }
 
-    public static Task<(string StandardOutput, string StandardError)> DotNet(string args, string path, IDictionary<string, string>? envVars = null, Func<int, bool>? handleExitCode = null)
+    public static Task<(string StandardOutput, string StandardError)> Clean(string path, params (string, string)[] envVars) =>
+        // -maxCpuCount:1 is required to prevent massive execution times in GitHub Actions
+        Read($"clean -maxCpuCount:1", path, envVars.ToDictionary(envVar => envVar.Item1, envVar => envVar.Item2, StringComparer.OrdinalIgnoreCase));
+
+    private static Task<(string StandardOutput, string StandardError)> Read(string args, string path, Dictionary<string, string>? envVars = null, Func<int, bool>? handleExitCode = null)
     {
-        envVars ??= new Dictionary<string, string>();
+        envVars ??= [];
 
         if (!string.IsNullOrWhiteSpace(RequiredVersion) && !string.IsNullOrWhiteSpace(DotnetRoot))
         {
@@ -185,7 +190,7 @@ $"""
             envVars["MSBuildSDKsPath"] = Path.Combine(DotnetRoot, "sdk", RequiredVersion, "Sdks");
         }
 
-        return CommandEx.ReadLoggedAsync("dotnet", args, path, envVars, handleExitCode);
+        return LoggingCommand.ReadAsync("dotnet", args, path, envVars, handleExitCode);
     }
 
     private static async Task<Package> GetPackage(string fileName)

@@ -1,4 +1,5 @@
 using System.Reflection;
+using Fixtures;
 using Testing;
 using Xunit;
 
@@ -11,11 +12,11 @@ public static class OutputVariables
     {
         // arrange
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
-        await Sdk.CreateProject(path);
+        await DotNetCli.CreateProject(path);
         var envVars = ("MinVerVersionOverride".ToAltCase(), "2.3.4-alpha-x.5+build.6");
 
         // act
-        var (_, standardOutput, _) = await Sdk.BuildProject(path, envVars: envVars);
+        var (_, standardOutput, _) = await DotNetCli.BuildProject(path, envVars: envVars);
 
         // assert
         Assert.Contains("MinVer: [output] MinVerVersion=2.3.4-alpha-x.5+build.6", standardOutput, StringComparison.Ordinal);

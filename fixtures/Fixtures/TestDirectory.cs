@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace Testing;
+namespace Fixtures;
 
 public static class TestDirectory
 {
@@ -10,7 +10,7 @@ public static class TestDirectory
         Path.Combine(
             Path.GetTempPath(),
             testSuiteName,
-            TestContext.RunId.ToString(CultureInfo.InvariantCulture),
+            TestRun.Id.ToString(CultureInfo.InvariantCulture),
             $"{testName}{(tag == null ? "" : tag.GetType().Name.StartsWith("ValueTuple", StringComparison.Ordinal) ? tag : $"({tag})")}");
 
     public static string GetTestDirectory(this MethodBase? testMethod, object? tag = null, [CallerMemberName] string testMethodName = "")

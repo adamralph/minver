@@ -5,8 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="../../fixtures/Fixtures/Fixtures.csproj" />
     <ProjectReference Include="../../src/MinVer/MinVer.csproj" />
     <ProjectReference Include="../../testing/Testing/Testing.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="LogMessages.*.verified.txt">
+      <DependentUpon>LogMessages.cs</DependentUpon>
+    </None>
   </ItemGroup>
 
 </Project>

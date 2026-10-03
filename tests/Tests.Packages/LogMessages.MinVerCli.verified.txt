@@ -1,0 +1,40 @@
+MinVer: MinVer 0.0.0+{sha}.
+MinVer: Running Git: git status --porcelain
+MinVer: Git exit code: 0
+MinVer: Git stdout:
+MinVer: ?? Class1.cs
+MinVer: ?? NuGet.Config
+MinVer: ?? command-read-00.md
+MinVer: ?? command-read-01.md
+MinVer: ?? command-read-02.md
+MinVer: ?? command-read-03.md
+MinVer: ?? command-read-04.md
+MinVer: ?? command-read-05.md
+MinVer: ?? command-read-06.md
+MinVer: ?? command-read-07.md
+MinVer: ?? command-read-08.md
+MinVer: ?? global.json
+MinVer: ?? obj/
+MinVer: ?? packages/
+MinVer: ?? test.csproj
+MinVer: 
+MinVer: Git stderr:
+MinVer: 
+MinVer: Running Git: git log --pretty=format:"%H %P"
+MinVer: Git exit code: 0
+MinVer: Git stdout:
+MinVer: {sha} 
+MinVer: Git stderr:
+MinVer: 
+MinVer: Running Git: git show-ref --tags --dereference
+MinVer: Git exit code: 0
+MinVer: Git stdout:
+MinVer: {sha} refs/tags/2.3.4-alpha-x.5+build.6
+MinVer: 
+MinVer: Git stderr:
+MinVer: 
+MinVer: Checking commit {sha} (height 0)...
+MinVer: Found version tag { Commit: {sha}, Tag: '2.3.4-alpha-x.5+build.6', Version: 2.3.4-alpha-x.5+build.6, Height: 0 }.
+MinVer: 1 commits checked.
+MinVer: Using { Commit: {sha}, Tag: '2.3.4-alpha-x.5+build.6', Version: 2.3.4-alpha-x.5+build.6, Height: 0 }.
+MinVer: Calculated version 2.3.4-alpha-x.5+build.6.

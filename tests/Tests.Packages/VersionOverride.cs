@@ -1,4 +1,5 @@
 using System.Reflection;
+using Fixtures;
 using Testing;
 using Xunit;
 
@@ -11,7 +12,7 @@ public static class VersionOverride
     {
         // arrange
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
-        await Sdk.CreateProject(path);
+        await DotNetCli.CreateProject(path);
 
         await Git.Init(path);
         await Git.Commit(path);
@@ -22,7 +23,7 @@ public static class VersionOverride
         var expected = Package.WithVersion(3, 4, 5, ["alpha", "6",], 0, "build.7");
 
         // act
-        var (actual, _, _) = await Sdk.BuildProject(path, envVars: envVars);
+        var (actual, _, _) = await DotNetCli.BuildProject(path, envVars: envVars);
         var (cliStandardOutput, _) = await MinVerCli.ReadAsync(path, envVars: envVars);
 
         // assert

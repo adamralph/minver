@@ -1,4 +1,5 @@
 using System.Reflection;
+using Fixtures;
 using Testing;
 using Xunit;
 
@@ -11,12 +12,12 @@ public static class Skip
     {
         // arrange
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
-        await Sdk.CreateProject(path);
+        await DotNetCli.CreateProject(path);
         var envVars = ("MinVerSkip".ToAltCase(), "true");
         var expected = Package.WithVersion(1, 0, 0);
 
         // act
-        var (actual, _, _) = await Sdk.BuildProject(path, envVars: envVars);
+        var (actual, _, _) = await DotNetCli.BuildProject(path, envVars: envVars);
 
         // assert
         Assert.Equal(expected, actual);

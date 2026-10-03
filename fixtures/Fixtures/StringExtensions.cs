@@ -1,4 +1,4 @@
-namespace Testing;
+namespace Fixtures;
 
 public static class StringExtensions
 {

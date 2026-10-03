@@ -1,11 +1,10 @@
 using System.Reflection;
 using Fixtures;
 using MinVer.Lib;
-using Testing;
 using Tests.Lib.Infra;
 using Xunit;
+using static Fixtures.Git;
 using static SimpleExec.Command;
-using static Testing.Git;
 
 namespace Tests.Lib;
 

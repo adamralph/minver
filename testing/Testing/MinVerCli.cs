@@ -1,3 +1,5 @@
+using Fixtures;
+
 namespace Testing;
 
 public static class MinVerCli
@@ -8,7 +10,7 @@ public static class MinVerCli
         _ = environmentVariables.TryAdd("MinVerVerbosity".ToAltCase(), "trace");
 
         var path = await GetPath(configuration).ConfigureAwait(false);
-        return await CommandEx.ReadLoggedAsync("dotnet", $"exec {path} {args}", workingDirectory, environmentVariables, handleExitCode).ConfigureAwait(false);
+        return await LoggingCommand.ReadAsync("dotnet", $"exec {path} {args}", workingDirectory, environmentVariables, handleExitCode).ConfigureAwait(false);
     }
 
     public static async Task<string> GetPath(string configuration)
@@ -19,7 +21,7 @@ public static class MinVerCli
 
     private static async Task<string> GetTargetFramework()
     {
-        var sdkVersionInUse = await Sdk.GetVersionInUse().ConfigureAwait(false);
+        var sdkVersionInUse = await DotNetCli.GetVersionInUse().ConfigureAwait(false);
         return sdkVersionInUse.Split('.', 2)[0] switch
         {
             "8" => "net8.0",

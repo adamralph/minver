@@ -1,9 +1,9 @@
 using System.Reflection;
+using Fixtures;
 using MinVer.Lib;
-using Testing;
 using Tests.Lib.Infra;
 using Xunit;
-using static Testing.Git;
+using static Fixtures.Git;
 
 namespace Tests.Lib;
 

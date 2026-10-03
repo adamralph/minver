@@ -1,13 +1,13 @@
 using System.Collections.Concurrent;
 using SimpleExec;
 
-namespace Testing;
+namespace Fixtures;
 
-internal static class CommandEx
+public static class LoggingCommand
 {
     private static readonly ConcurrentDictionary<string, int> Indices = new();
 
-    public static async Task<(string StandardOutput, string StandardError)> ReadLoggedAsync(string name, string args = "", string workingDirectory = "", IEnumerable<KeyValuePair<string, string>>? envVars = null, Func<int, bool>? handleExitCode = null)
+    public static async Task<(string StandardOutput, string StandardError)> ReadAsync(string name, string args = "", string workingDirectory = "", IEnumerable<KeyValuePair<string, string>>? envVars = null, Func<int, bool>? handleExitCode = null)
     {
         envVars = [.. envVars ?? [],];
 

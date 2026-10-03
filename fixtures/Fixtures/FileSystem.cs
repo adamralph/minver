@@ -1,4 +1,4 @@
-namespace Testing;
+namespace Fixtures;
 
 // The spin waits are required. System.IO and the file system race. ¯\_(ツ)_/¯
 public static class FileSystem

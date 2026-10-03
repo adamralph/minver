@@ -4,7 +4,6 @@
 
   <PropertyGroup>
     <IsPackable>false</IsPackable>
-    <RollForward>major</RollForward>
   </PropertyGroup>
 
   <PropertyGroup>

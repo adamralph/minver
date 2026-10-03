@@ -22,8 +22,6 @@ public static class Extensions
         [CallerMemberName] string callerMemberName = "",
         [CallerFilePath] string callerFilePath = "")
     {
-        ArgumentNullException.ThrowIfNull(received);
-
         var inferredClassName = Path.GetFileNameWithoutExtension(callerFilePath);
 
         var receivedPath = Path.Combine(

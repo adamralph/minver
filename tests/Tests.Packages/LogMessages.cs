@@ -14,7 +14,7 @@ public static class LogMessages
     {
         // arrange
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
-        await Sdk.CreateProject(path);
+        await DotNetCli.CreateProject(path);
         await Git.Init(path);
         await Git.Commit(path);
         await Git.Tag(path, "v2.3.4-alpha-x.5");
@@ -29,7 +29,7 @@ public static class LogMessages
         };
 
         // act
-        var (_, standardOutput, _) = await Sdk.BuildProject(path, envVars: envVars);
+        var (_, standardOutput, _) = await DotNetCli.BuildProject(path, envVars: envVars);
 
         // assert
         var lines = new StringBuilder();
@@ -53,7 +53,7 @@ public static class LogMessages
     {
         // arrange
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
-        await Sdk.CreateProject(path);
+        await DotNetCli.CreateProject(path);
         await Git.Init(path);
         await Git.Commit(path);
         await Git.Tag(path, "2.3.4-alpha-x.5+build.6");

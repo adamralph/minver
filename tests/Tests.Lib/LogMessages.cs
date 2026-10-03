@@ -1,4 +1,5 @@
 using System.Reflection;
+using Fixtures;
 using MinVer.Lib;
 using Testing;
 using Tests.Lib.Infra;

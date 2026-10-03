@@ -11,8 +11,4 @@
     <PackageReference Include="SimpleExec" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="../testing/Testing/Testing.csproj" />
-  </ItemGroup>
-
 </Project>

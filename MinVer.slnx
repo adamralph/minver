@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/fixtures/">
+    <Project Path="fixtures/Fixtures/Fixtures.csproj" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/minver-cli/minver-cli.csproj" />
     <Project Path="src/MinVer.Lib/MinVer.Lib.csproj" />

@@ -1,0 +1,63 @@
+MinVer: [input] MSBuildProjectDirectory={path}
+  MinVer: [input] MinVerAutoIncrement=minor
+  MinVer: [input] MinVerBuildMetadata=build.6
+  MinVer: [input] MinVerDefaultPreReleaseIdentifiers=preview.0
+  MinVer: [input] MinVerDefaultPreReleasePhase=
+  MinVer: [input] MinVerIgnoreHeight=true
+  MinVer: [input] MinVerMinimumMajorMinor=1.0
+  MinVer: [input] MinVerTagPrefix=v
+  MinVer: [input] MinVerVerbosity=diagnostic
+  MinVer: [input] MinVerVersionOverride=
+  MinVer: MinVer 0.0.0+{sha}.
+  MinVer: Running Git: git status --porcelain
+  MinVer: Git exit code: 0
+  MinVer: Git stdout:
+  MinVer: ?? Class1.cs
+  MinVer: ?? NuGet.Config
+  MinVer: ?? command-read-00.md
+  MinVer: ?? command-read-01.md
+  MinVer: ?? command-read-02.md
+  MinVer: ?? command-read-03.md
+  MinVer: ?? command-read-04.md
+  MinVer: ?? command-read-05.md
+  MinVer: ?? command-read-06.md
+  MinVer: ?? command-read-07.md
+  MinVer: ?? command-read-08.md
+  MinVer: ?? global.json
+  MinVer: ?? obj/
+  MinVer: ?? packages/
+  MinVer: ?? test.csproj
+  MinVer: 
+  MinVer: Git stderr:
+  MinVer: 
+  MinVer: Running Git: git log --pretty=format:"%H %P"
+  MinVer: Git exit code: 0
+  MinVer: Git stdout:
+  MinVer: {sha} 
+  MinVer: Git stderr:
+  MinVer: 
+  MinVer: Running Git: git show-ref --tags --dereference
+  MinVer: Git exit code: 0
+  MinVer: Git stdout:
+  MinVer: {sha} refs/tags/v2.3.4-alpha-x.5
+  MinVer: 
+  MinVer: Git stderr:
+  MinVer: 
+  MinVer: Checking commit {sha} (height 0)...
+  MinVer: Found version tag { Commit: {sha}, Tag: 'v2.3.4-alpha-x.5', Version: 2.3.4-alpha-x.5, Height: 0 }.
+  MinVer: 1 commits checked.
+  MinVer: Using { Commit: {sha}, Tag: 'v2.3.4-alpha-x.5', Version: 2.3.4-alpha-x.5, Height: 0 }.
+  MinVer: Ignoring height.
+  MinVer: Ignoring minimum major minor 1.0 because the commit is tagged.
+  MinVer: Calculated version 2.3.4-alpha-x.5+build.6.
+  MinVer: [output] MinVerVersion=2.3.4-alpha-x.5+build.6
+  MinVer: [output] MinVerMajor=2
+  MinVer: [output] MinVerMinor=3
+  MinVer: [output] MinVerPatch=4
+  MinVer: [output] MinVerPreRelease=alpha-x.5
+  MinVer: [output] MinVerBuildMetadata=build.6
+  MinVer: [output] AssemblyVersion=2.0.0.0
+  MinVer: [output] FileVersion=2.3.4.0
+  MinVer: [output] InformationalVersion=2.3.4-alpha-x.5+build.6
+  MinVer: [output] PackageVersion=2.3.4-alpha-x.5
+  MinVer: [output] Version=2.3.4-alpha-x.5

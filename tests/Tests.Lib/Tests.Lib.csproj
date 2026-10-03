@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <ProjectReference Include="../../fixtures/Fixtures/Fixtures.csproj" />
     <ProjectReference Include="../../src/MinVer.Lib/MinVer.Lib.csproj" />
     <ProjectReference Include="../../testing/Testing/Testing.csproj" />
   </ItemGroup>

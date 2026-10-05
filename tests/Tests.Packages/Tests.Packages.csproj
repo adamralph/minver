@@ -6,8 +6,13 @@
 
   <ItemGroup>
     <ProjectReference Include="../../fixtures/Fixtures/Fixtures.csproj" />
+    <ProjectReference Include="../../fixtures/Fixtures.Xunit/Fixtures.Xunit.csproj" />
     <ProjectReference Include="../../src/MinVer/MinVer.csproj" />
-    <ProjectReference Include="../../testing/Testing/Testing.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" />
+    <PackageReference Include="Microsoft.VisualStudio.Threading" />
   </ItemGroup>
 
   <ItemGroup>

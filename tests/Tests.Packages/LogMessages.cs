@@ -1,7 +1,8 @@
 using System.Reflection;
 using System.Text;
 using Fixtures;
-using Testing;
+using Fixtures.Xunit;
+using Tests.Packages.Fixtures;
 using Xunit;
 using static SimpleExec.Command;
 
@@ -59,7 +60,7 @@ public static class LogMessages
         await Git.Tag(path, "2.3.4-alpha-x.5+build.6");
 
         // act
-        var (_, standardError) = await Testing.MinVerCli.ReadAsync(path);
+        var (_, standardError) = await Fixtures.MinVerCli.ReadAsync(path);
 
         // assert
         standardError = await ReplaceShas(standardError, Solution.GetFullPath("."));

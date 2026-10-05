@@ -1,7 +1,7 @@
 using System.Reflection;
 using Fixtures;
 using SimpleExec;
-using Testing;
+using Tests.Packages.Fixtures;
 using Xunit;
 
 namespace Tests.Packages;

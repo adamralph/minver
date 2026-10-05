@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../../fixtures/Fixtures/Fixtures.csproj" />
+    <ProjectReference Include="../../fixtures/Fixtures.Xunit/Fixtures.Xunit.csproj" />
     <ProjectReference Include="../../src/MinVer.Lib/MinVer.Lib.csproj" />
   </ItemGroup>
 

@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
 using Xunit;
 
-namespace Fixtures;
+namespace Fixtures.Xunit;
 
 public static class Extensions
 {

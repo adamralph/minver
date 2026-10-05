@@ -3,15 +3,21 @@
   <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)..\'))" />
 
   <PropertyGroup>
+    <LangVersion>latest</LangVersion>
     <OutputType>Exe</OutputType>
     <RollForward>major</RollForward>
     <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
   </PropertyGroup>
 
   <PropertyGroup>
-    <NoWarn>$(NoWarn);CA1062</NoWarn><!-- Validate arguments of public methods -->
-    <NoWarn>$(NoWarn);CA1515</NoWarn><!-- Consider making public types internal -->
+    <NoWarn>$(NoWarn);CA1034</NoWarn>    <!-- Nested types should not be visible -->
+    <NoWarn>$(NoWarn);CA1062</NoWarn>    <!-- Validate arguments of public methods -->
+    <NoWarn>$(NoWarn);CA1515</NoWarn>    <!-- Consider making public types internal --><!-- workaround for https://github.com/dotnet/roslyn-analyzers/issues/7734 -->
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)/AssemblyAttributes.cs" Link="AssemblyAttributes.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="GitHubActionsTestLogger" />

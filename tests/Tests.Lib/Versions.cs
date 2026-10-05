@@ -1,7 +1,8 @@
 using System.Reflection;
 using Fixtures;
+using Fixtures.Xunit;
 using MinVer.Lib;
-using Tests.Lib.Infra;
+using Tests.Lib.Fixtures;
 using Xunit;
 using static Fixtures.FileSystem;
 using static Fixtures.Git;

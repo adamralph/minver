@@ -1,6 +1,6 @@
 using Fixtures;
 
-namespace Testing;
+namespace Tests.Packages.Fixtures;
 
 public static class MinVerCli
 {

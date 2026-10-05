@@ -1,6 +1,6 @@
 using MinVer.Lib;
 
-namespace Tests.Lib.Infra;
+namespace Tests.Lib.Fixtures;
 
 internal sealed class NullLogger : ILogger
 {

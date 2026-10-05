@@ -6,7 +6,7 @@ using Fixtures;
 using Microsoft.Extensions.FileSystemGlobbing;
 using Microsoft.VisualStudio.Threading;
 
-namespace Testing;
+namespace Tests.Packages.Fixtures;
 
 public static class DotNetCli
 {

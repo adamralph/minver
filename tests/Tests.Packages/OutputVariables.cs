@@ -1,6 +1,6 @@
 using System.Reflection;
 using Fixtures;
-using Testing;
+using Tests.Packages.Fixtures;
 using Xunit;
 
 namespace Tests.Packages;

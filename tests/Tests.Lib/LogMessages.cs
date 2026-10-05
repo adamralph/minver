@@ -1,7 +1,8 @@
 using System.Reflection;
 using Fixtures;
+using Fixtures.Xunit;
 using MinVer.Lib;
-using Tests.Lib.Infra;
+using Tests.Lib.Fixtures;
 using Xunit;
 using static Fixtures.Git;
 using static SimpleExec.Command;
@@ -116,8 +117,9 @@ git tag 1.0.0-foo.1
         var shas = (await ReadAsync("git", "log --pretty=format:\"%H\"", path))
             .StandardOutput
             .ToNonEmptyLines()
-            .Reverse()
             .ToList();
+
+        shas.Reverse();
 
         foreach (var item in shas.Select((sha, index) => new { Sha = sha, Index = index, }))
         {

@@ -1,15 +1,13 @@
 <Solution>
   <Folder Name="/fixtures/">
     <Project Path="fixtures/Fixtures/Fixtures.csproj" />
+    <Project Path="fixtures/Fixtures.Xunit/Fixtures.Xunit.csproj" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/minver-cli/minver-cli.csproj" />
     <Project Path="src/MinVer.Lib/MinVer.Lib.csproj" />
     <Project Path="src/MinVer/MinVer.csproj" />
     <Project Path="src/MSBuild.Caching/MSBuild.Caching.csproj" />
-  </Folder>
-  <Folder Name="/testing/">
-    <Project Path="testing/Testing/Testing.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Tests.Lib/Tests.Lib.csproj" />

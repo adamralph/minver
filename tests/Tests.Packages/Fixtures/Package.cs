@@ -1,4 +1,4 @@
-namespace Testing;
+namespace Tests.Packages.Fixtures;
 
 public record Package(string Version, AssemblyVersion AssemblyVersion, FileVersion FileVersion, string InformationalVersion)
 {

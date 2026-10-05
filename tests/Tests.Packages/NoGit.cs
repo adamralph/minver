@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Fixtures;
-using Testing;
+using Tests.Packages.Fixtures;
 using Xunit;
 
 namespace Tests.Packages;

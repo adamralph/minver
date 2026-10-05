@@ -1,4 +1,4 @@
-namespace Tests.Lib.Infra;
+namespace Tests.Lib.Fixtures;
 
 internal enum LogLevel
 {

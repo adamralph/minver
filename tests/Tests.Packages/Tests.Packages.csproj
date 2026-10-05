@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="LogMessages.*.verified.txt">
+    <None Update="LogMessages.*.expected.txt">
       <DependentUpon>LogMessages.cs</DependentUpon>
     </None>
   </ItemGroup>

@@ -7,10 +7,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="LogMessages.*.verified.txt">
+    <None Update="LogMessages.*.expected.txt">
       <DependentUpon>LogMessages.cs</DependentUpon>
     </None>
-    <None Update="Versions.*.verified.txt">
+    <None Update="Versions.*.expected.txt">
       <DependentUpon>Versions.cs</DependentUpon>
     </None>
   </ItemGroup>

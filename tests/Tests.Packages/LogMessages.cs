@@ -46,7 +46,7 @@ public static class LogMessages
         messages = messages.Replace(GetPhysicalPath(path), "{path}", StringComparison.Ordinal);
         messages = await ReplaceShas(messages, Solution.GetFullPath("."));
         messages = await ReplaceShas(messages, path);
-        await messages.Verify();
+        await Assert.Expected(messages);
     }
 
     [Fact]
@@ -65,7 +65,7 @@ public static class LogMessages
         // assert
         standardError = await ReplaceShas(standardError, Solution.GetFullPath("."));
         standardError = await ReplaceShas(standardError, path);
-        await standardError.Verify();
+        await Assert.Expected(standardError);
     }
 
     private static string GetPhysicalPath(string path)

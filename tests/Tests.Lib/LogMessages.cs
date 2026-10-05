@@ -71,7 +71,7 @@ git merge bar baz --no-edit --no-ff --strategy=octopus
 
         // assert
         var logMessages = await ReplaceShas(log.ToString(), path);
-        await logMessages.Verify($"_minMajorMinor={minMajorMinor}");
+        await Assert.Expected(logMessages, [minMajorMinor]);
     }
 
     [Theory]
@@ -109,7 +109,7 @@ git tag 1.0.0-foo.1
 
         // assert
         var logMessages = await ReplaceShas(log.ToString(), path);
-        await logMessages.Verify($"_{nameof(minMajorMinor)}={minMajorMinor}");
+        await Assert.Expected(logMessages, [minMajorMinor]);
     }
 
     private static async Task<string> ReplaceShas(string logMessages, string path)

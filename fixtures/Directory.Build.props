@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <NoWarn>$(NoWarn);CA1034</NoWarn>    <!-- Nested types should not be visible --><!-- workaround for https://github.com/dotnet/roslyn-analyzers/issues/7734 -->
     <NoWarn>$(NoWarn);CA1062</NoWarn>    <!-- Validate arguments of public methods -->
     <NoWarn>$(NoWarn);CA1515</NoWarn>    <!-- Consider making public types internal --><!-- workaround for https://github.com/dotnet/roslyn-analyzers/issues/7734 -->
   </PropertyGroup>

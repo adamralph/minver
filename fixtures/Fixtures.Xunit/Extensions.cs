@@ -16,34 +16,41 @@ public static class Extensions
         return candidate?.FullName ?? throw new InvalidOperationException("Project root not found.");
     });
 
-    public static async Task Verify(
-        this string received,
-        string suffix = "",
-        [CallerMemberName] string callerMemberName = "",
-        [CallerFilePath] string callerFilePath = "")
+    extension(Assert)
     {
-        var inferredClassName = Path.GetFileNameWithoutExtension(callerFilePath);
-
-        var receivedPath = Path.Combine(
-            ProjectRoot.Value, $"{inferredClassName}.{callerMemberName}{suffix}.received.txt");
-
-        var verifiedPath = Path.Combine(
-            ProjectRoot.Value, $"{inferredClassName}.{callerMemberName}{suffix}.verified.txt");
-
-        var verified = File.Exists(verifiedPath) ? await File.ReadAllTextAsync(verifiedPath) : "";
-
-        var receivedNormalized = received.ReplaceLineEndings().Trim();
-        var verifiedNormalized = verified.ReplaceLineEndings().Trim();
-
-        if (receivedNormalized != verifiedNormalized)
+        public static async Task Expected(
+            string actual,
+            IReadOnlyCollection<object>? discriminators = null,
+            [CallerMemberName] string callerMemberName = "",
+            [CallerFilePath] string callerFilePath = "")
         {
-            await File.WriteAllTextAsync(receivedPath, receivedNormalized);
-        }
-        else if (File.Exists(receivedPath))
-        {
-            File.Delete(receivedPath);
-        }
+            var inferredClassName = Path.GetFileNameWithoutExtension(callerFilePath);
 
-        Assert.Equal(verifiedNormalized, receivedNormalized);
+            var discriminator = discriminators != null && discriminators.Count != 0
+                ? "_" + string.Join("_", discriminators)
+                : "";
+
+            var actualPath = Path.Combine(
+                ProjectRoot.Value, $"{inferredClassName}.{callerMemberName}{discriminator}.actual.txt");
+
+            var expectedPath = Path.Combine(
+                ProjectRoot.Value, $"{inferredClassName}.{callerMemberName}{discriminator}.expected.txt");
+
+            var expected = File.Exists(expectedPath) ? await File.ReadAllTextAsync(expectedPath) : "";
+
+            var actualNormalized = actual.ReplaceLineEndings().Trim();
+            var expectedNormalized = expected.ReplaceLineEndings().Trim();
+
+            if (actualNormalized != expectedNormalized)
+            {
+                await File.WriteAllTextAsync(actualPath, actualNormalized);
+            }
+            else if (File.Exists(actualPath))
+            {
+                File.Delete(actualPath);
+            }
+
+            Assert.Equal(expectedNormalized, actualNormalized);
+        }
     }
 }

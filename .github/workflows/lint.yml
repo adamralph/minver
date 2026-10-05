@@ -21,7 +21,7 @@ jobs:
       - uses: super-linter/super-linter@4ce20838b8ab83717e78138c5b3a1407148e0918 # v8.7.0
         env:
           DEFAULT_BRANCH: main
-          FILTER_REGEX_EXCLUDE: \bLICENSE$|\.verified\.txt$
+          FILTER_REGEX_EXCLUDE: \bLICENSE$|\.expected\.txt$
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_ANSIBLE: false
           VALIDATE_ARM: false

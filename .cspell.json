@@ -7,7 +7,7 @@
       "language": "en-US"
     },
     {
-      "filename": "{*.svg,*.verified.txt,.cspell.json,packages.lock.json}",
+      "filename": "{*.svg,*.expected.txt,.cspell.json,packages.lock.json}",
       "enabled": false
     }
   ],

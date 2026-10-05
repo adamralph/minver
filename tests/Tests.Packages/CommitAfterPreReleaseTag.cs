@@ -14,10 +14,10 @@ public static class CommitAfterPreReleaseTag
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
         await DotNetCli.CreateProject(path);
 
-        await Git.Init(path);
-        await Git.Commit(path);
-        await Git.Tag(path, "2.3.4-alpha.5");
-        await Git.Commit(path);
+        await Git.InitAsync(path);
+        await Git.CommitAsync(path);
+        await Git.TagAsync(path, "2.3.4-alpha.5");
+        await Git.CommitAsync(path);
 
         var expected = Package.WithVersion(2, 3, 4, ["alpha", "5",], 1);
 

@@ -7,13 +7,13 @@ Target("format", dependsOn: ["restore",], () => RunAsync("dotnet", "format --ver
 
 Target("build", dependsOn: ["restore",], () => RunAsync("dotnet", "build --configuration Release --no-restore"));
 
-Target("pack", dependsOn: ["build",], () => RunAsync("dotnet", "pack --configuration Release --output artifacts --no-build"));
-
 Target(
     "test-lib",
     "test the MinVer.Lib library",
     dependsOn: ["build",],
     () => RunAsync("dotnet", $"test --project ./tests/Tests.Lib --configuration Release --no-build"));
+
+Target("pack", dependsOn: ["build",], () => RunAsync("dotnet", "pack --configuration Release --output artifacts --no-build"));
 
 Target(
     "test-packages",

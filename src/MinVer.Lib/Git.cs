@@ -4,12 +4,12 @@ internal static class Git
 {
     private static readonly char[] NewLineChars = ['\r', '\n',];
 
-    public static async Task<bool> IsWorkingDirectory(string directory, ILogger log) =>
-        await GitCommand.TryRun("status --porcelain", directory, log) is not null;
+    public static async Task<bool> IsWorkingDirectoryAsync(string directory, ILogger log) =>
+        await GitCommand.TryRunAsync("status --porcelain", directory, log) is not null;
 
-    public static async Task<Commit?> TryGetHead(string directory, ILogger log)
+    public static async Task<Commit?> TryGetHeadAsync(string directory, ILogger log)
     {
-        if (await GitCommand.TryRun("log --pretty=format:\"%H %P\"", directory, log) is not { } output)
+        if (await GitCommand.TryRunAsync("log --pretty=format:\"%H %P\"", directory, log) is not { } output)
         {
             return null;
         }
@@ -33,8 +33,8 @@ internal static class Git
         return commits.Values.First();
     }
 
-    public static async Task<IEnumerable<(string Name, string Sha)>> GetTags(string directory, ILogger log) =>
-        await GitCommand.TryRun("show-ref --tags --dereference", directory, log) is { } output
+    public static async Task<IEnumerable<(string Name, string Sha)>> GetTagsAsync(string directory, ILogger log) =>
+        await GitCommand.TryRunAsync("show-ref --tags --dereference", directory, log) is { } output
             ? output
                 .Split(NewLineChars, StringSplitOptions.RemoveEmptyEntries)
                 .Select(line => line.Split(" ", 2))

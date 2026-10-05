@@ -15,10 +15,10 @@ public static class OptionMasking
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
         FileSystem.EnsureEmptyDirectory(path);
 
-        await Git.Init(path);
-        await Git.Commit(path);
-        await Git.Tag(path, "2.3.4");
-        await Git.Commit(path);
+        await Git.InitAsync(path);
+        await Git.CommitAsync(path);
+        await Git.TagAsync(path, "2.3.4");
+        await Git.CommitAsync(path);
 
         var envVars = ("MinVerAutoIncrement".ToAltCase(), "minor");
         var args = $"--auto-increment {value}";
@@ -61,10 +61,10 @@ public static class OptionMasking
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
         FileSystem.EnsureEmptyDirectory(path);
 
-        await Git.Init(path);
-        await Git.Commit(path);
-        await Git.Tag(path, "2.3.4");
-        await Git.Commit(path);
+        await Git.InitAsync(path);
+        await Git.CommitAsync(path);
+        await Git.TagAsync(path, "2.3.4");
+        await Git.CommitAsync(path);
 
         var envVars = ("MinVerDefaultPreReleaseIdentifiers".ToAltCase(), "preview.0");
         var args = $"--default-pre-release-identifiers {value}";
@@ -86,9 +86,9 @@ public static class OptionMasking
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
         FileSystem.EnsureEmptyDirectory(path);
 
-        await Git.Init(path);
-        await Git.Commit(path);
-        await Git.Tag(path, "2.3.4");
+        await Git.InitAsync(path);
+        await Git.CommitAsync(path);
+        await Git.TagAsync(path, "2.3.4");
 
         var envVars = ("MinVerMinimumMajorMinor".ToAltCase(), "3.0");
         var args = $"--minimum-major-minor {value}";
@@ -110,9 +110,9 @@ public static class OptionMasking
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
         FileSystem.EnsureEmptyDirectory(path);
 
-        await Git.Init(path);
-        await Git.Commit(path);
-        await Git.Tag(path, "2.3.4-alpha.5");
+        await Git.InitAsync(path);
+        await Git.CommitAsync(path);
+        await Git.TagAsync(path, "2.3.4-alpha.5");
 
         var envVars = ("MinVerTagPrefix", "v.");
         var args = $"--tag-prefix {value}";

@@ -13,7 +13,7 @@ public static class EmptyRepo
         // arrange
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
         await DotNetCli.CreateProject(path);
-        await Git.Init(path);
+        await Git.InitAsync(path);
         var expected = Package.WithVersion(0, 0, 0, ["alpha", "0",]);
 
         // act

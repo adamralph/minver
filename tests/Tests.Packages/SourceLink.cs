@@ -14,9 +14,9 @@ public static class SourceLink
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
         await DotNetCli.CreateProject(path);
 
-        await Git.Init(path);
-        await Git.Commit(path);
-        var sha = (await Git.GetCommitShas(path)).Single();
+        await Git.InitAsync(path);
+        await Git.CommitAsync(path);
+        var sha = (await Git.GetCommitShasAsync(path)).Single();
 
         var buildMetadata = "build.123";
         (string, string)[] envVars = [

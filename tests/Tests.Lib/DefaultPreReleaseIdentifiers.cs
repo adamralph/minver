@@ -16,11 +16,11 @@ public static class DefaultPreReleaseIdentifiers
     {
         // arrange
         var path = MethodBase.GetCurrentMethod().GetTestDirectory(identifiers);
-        await EnsureEmptyRepositoryAndCommit(path);
+        await EnsureEmptyRepositoryAndCommitAsync(path);
         var identifierList = identifiers.Split('.');
 
         // act
-        var actualVersion = await Versioner.GetVersion(path, "", MajorMinor.Default, "", default, identifierList, false, NullLogger.Instance);
+        var actualVersion = await Versioner.GetVersionAsync(path, "", MajorMinor.Default, "", default, identifierList, false, NullLogger.Instance);
 
         // assert
         Assert.Equal(expectedVersion, actualVersion.ToString());

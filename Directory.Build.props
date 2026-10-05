@@ -7,15 +7,14 @@
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <RestoreLockedMode Condition="'$(CI)' != ''">true</RestoreLockedMode>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup>
     <NoWarn>$(NoWarn);CA1014</NoWarn>    <!-- Mark assemblies with CLSCompliantAttribute -->
-    <NoWarn>$(NoWarn);CA2007</NoWarn>    <!-- Do not directly await a Task -->
     <NoWarn>$(NoWarn);EnableGenerateDocumentationFile</NoWarn>    <!-- workaround for https://github.com/dotnet/roslyn/issues/41640 -->
-    <NoWarn>$(NoWarn);VSTHRD111</NoWarn>    <!-- Add .ConfigureAwait(bool) to your await expression -->
-    <NoWarn>$(NoWarn);VSTHRD200</NoWarn>    <!-- Use "Async" suffix in names of methods that return an awaitable type -->
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">

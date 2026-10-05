@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "dependencies": {
+    "net10.0": {
+      "Bullseye": {
+        "type": "Direct",
+        "requested": "[6.3.0-rc.1, )",
+        "resolved": "6.3.0-rc.1",
+        "contentHash": "r5gfYGJnEhC4CAfe1N+RzisKfLv0nFGnm3xI8SxwxUZ24+Bj+iBlPnsFeuu+t1Xxl+1I53yi2iqmipTcJTrAsg=="
+      },
+      "Microsoft.VisualStudio.Threading.Analyzers": {
+        "type": "Direct",
+        "requested": "[18.7.23, )",
+        "resolved": "18.7.23",
+        "contentHash": "dyj6z8m+LFjpeH69hdnciCcRCmD0YgMlvuQEywiEshjqj/blgQ+PuWX8Vd5gkWQFoBN4e+TFxx6DvGNSv/gIKg=="
+      },
+      "SimpleExec": {
+        "type": "Direct",
+        "requested": "[13.1.0, )",
+        "resolved": "13.1.0",
+        "contentHash": "Q/xUWjrB98Aq+guCJtGFAHmnH00J3Ux7Q/gbnVkuh1U4FHZ2/3PgBHTcZuuhs2cSv5pNgZeHEmGwLgSjjbFlrw=="
+      }
+    }
+  }
+}

@@ -14,8 +14,8 @@ public static class FirstCommit
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
         await DotNetCli.CreateProject(path);
 
-        await Git.Init(path);
-        await Git.Commit(path);
+        await Git.InitAsync(path);
+        await Git.CommitAsync(path);
 
         var expected = Package.WithVersion(0, 0, 0, ["alpha", "0",]);
 

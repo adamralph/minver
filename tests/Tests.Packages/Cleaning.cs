@@ -22,9 +22,9 @@ public static class Cleaning
         var path = MethodBase.GetCurrentMethod().GetTestDirectory(multiTarget);
         await DotNetCli.CreateProject(path, multiTarget: multiTarget);
 
-        await Git.Init(path);
-        await Git.Commit(path);
-        await Git.Tag(path, "2.3.4");
+        await Git.InitAsync(path);
+        await Git.CommitAsync(path);
+        await Git.TagAsync(path, "2.3.4");
 
         _ = await DotNetCli.BuildProject(path);
 

@@ -31,10 +31,10 @@ public class MultipleProjects
         await File.WriteAllTextAsync(Path.Combine(path, "project1", "Directory.Build.props"), props, Ct);
         await File.WriteAllTextAsync(Path.Combine(path, "project3", "Directory.Build.props"), props, Ct);
 
-        await Git.Init(path);
-        await Git.Commit(path);
-        await Git.Tag(path, "2.3.4");
-        await Git.Tag(path, "v5.6.7");
+        await Git.InitAsync(path);
+        await Git.CommitAsync(path);
+        await Git.TagAsync(path, "2.3.4");
+        await Git.TagAsync(path, "v5.6.7");
 
         var expected0 = Package.WithVersion(2, 3, 4);
         var expected1 = Package.WithVersion(5, 6, 7);

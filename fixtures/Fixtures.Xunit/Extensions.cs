@@ -18,7 +18,7 @@ public static class Extensions
 
     extension(Assert)
     {
-        public static async Task Expected(
+        public static async Task ExpectedAsync(
             string actual,
             IReadOnlyCollection<object>? discriminators = null,
             [CallerMemberName] string callerMemberName = "",

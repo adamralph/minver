@@ -17,12 +17,12 @@ public static class AutoIncrement
     {
         // arrange
         var path = MethodBase.GetCurrentMethod().GetTestDirectory((tag, autoIncrement));
-        await EnsureEmptyRepositoryAndCommit(path);
-        await Tag(path, tag);
-        await Commit(path);
+        await EnsureEmptyRepositoryAndCommitAsync(path);
+        await TagAsync(path, tag);
+        await CommitAsync(path);
 
         // act
-        var actualVersion = await Versioner.GetVersion(path, "", MajorMinor.Default, "", autoIncrement, PreReleaseIdentifiers.Default, false, NullLogger.Instance);
+        var actualVersion = await Versioner.GetVersionAsync(path, "", MajorMinor.Default, "", autoIncrement, PreReleaseIdentifiers.Default, false, NullLogger.Instance);
 
         // assert
         Assert.Equal(expectedVersion, actualVersion.ToString());

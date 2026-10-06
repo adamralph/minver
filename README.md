@@ -446,4 +446,4 @@ If you still can't figure it out, increase [`MinVerVerbosity`](#can-i-get-log-ou
 
 ---
 
-<sup>[Tag](https://thenounproject.com/term/tag/938952) by [Ananth](https://thenounproject.com/ananthshas/) from [the Noun Project](https://thenounproject.com/).</sup>
+<sup>[Tag](https://thenounproject.com/icon/tag-938952/) by [Ananth](https://thenounproject.com/creator/ananthshas/) from [the Noun Project](https://thenounproject.com/).</sup>

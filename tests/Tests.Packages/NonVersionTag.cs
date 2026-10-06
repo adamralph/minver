@@ -14,9 +14,9 @@ public static class NonVersionTag
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
         await DotNetCli.CreateProject(path);
 
-        await Git.Init(path);
-        await Git.Commit(path);
-        await Git.Tag(path, "foo");
+        await Git.InitAsync(path);
+        await Git.CommitAsync(path);
+        await Git.TagAsync(path, "foo");
 
         var expected = Package.WithVersion(0, 0, 0, ["alpha", "0",]);
 

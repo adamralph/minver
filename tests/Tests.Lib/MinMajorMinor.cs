@@ -14,10 +14,10 @@ public static class MinMajorMinor
     {
         // arrange
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
-        await EnsureEmptyRepository(path);
+        await EnsureEmptyRepositoryAsync(path);
 
         // act
-        var actualVersion = await Versioner.GetVersion(path, "", new MajorMinor(1, 2), "", default, PreReleaseIdentifiers.Default, false, NullLogger.Instance);
+        var actualVersion = await Versioner.GetVersionAsync(path, "", new MajorMinor(1, 2), "", default, PreReleaseIdentifiers.Default, false, NullLogger.Instance);
 
         // assert
         Assert.Equal("1.2.0-alpha.0", actualVersion.ToString());
@@ -31,12 +31,12 @@ public static class MinMajorMinor
     {
         // arrange
         var path = MethodBase.GetCurrentMethod().GetTestDirectory((tag, major, minor));
-        await EnsureEmptyRepositoryAndCommit(path);
-        await Tag(path, tag);
+        await EnsureEmptyRepositoryAndCommitAsync(path);
+        await TagAsync(path, tag);
         var logger = new TestLogger();
 
         // act
-        var actualVersion = await Versioner.GetVersion(path, "", new MajorMinor(major, minor), "", default, PreReleaseIdentifiers.Default, false, logger);
+        var actualVersion = await Versioner.GetVersionAsync(path, "", new MajorMinor(major, minor), "", default, PreReleaseIdentifiers.Default, false, logger);
 
         // assert
         Assert.Equal(expectedVersion, actualVersion.ToString());
@@ -49,10 +49,10 @@ public static class MinMajorMinor
     {
         // arrange
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
-        await EnsureEmptyRepositoryAndCommit(path);
+        await EnsureEmptyRepositoryAndCommitAsync(path);
 
         // act
-        var actualVersion = await Versioner.GetVersion(path, "", new MajorMinor(1, 0), "", default, PreReleaseIdentifiers.Default, false, NullLogger.Instance);
+        var actualVersion = await Versioner.GetVersionAsync(path, "", new MajorMinor(1, 0), "", default, PreReleaseIdentifiers.Default, false, NullLogger.Instance);
 
         // assert
         Assert.Equal("1.0.0-alpha.0", actualVersion.ToString());

@@ -17,11 +17,11 @@ public static class TagPrefixes
     {
         // act
         var path = MethodBase.GetCurrentMethod().GetTestDirectory((tag, prefix));
-        await EnsureEmptyRepositoryAndCommit(path);
-        await Tag(path, tag);
+        await EnsureEmptyRepositoryAndCommitAsync(path);
+        await TagAsync(path, tag);
 
         // act
-        var actualVersion = await Versioner.GetVersion(path, prefix, MajorMinor.Default, "", default, PreReleaseIdentifiers.Default, false, NullLogger.Instance);
+        var actualVersion = await Versioner.GetVersionAsync(path, prefix, MajorMinor.Default, "", default, PreReleaseIdentifiers.Default, false, NullLogger.Instance);
 
         // assert
         Assert.Equal(expectedVersion, actualVersion.ToString());

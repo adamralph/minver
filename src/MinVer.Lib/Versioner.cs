@@ -4,11 +4,11 @@ namespace MinVer.Lib;
 
 public static class Versioner
 {
-    public static async Task<Version> GetVersion(string workDir, string tagPrefix, MajorMinor minMajorMinor, string buildMeta, VersionPart autoIncrement, IReadOnlyCollection<string> defaultPreReleaseIdentifiers, bool ignoreHeight, ILogger log)
+    public static async Task<Version> GetVersionAsync(string workDir, string tagPrefix, MajorMinor minMajorMinor, string buildMeta, VersionPart autoIncrement, IReadOnlyCollection<string> defaultPreReleaseIdentifiers, bool ignoreHeight, ILogger log)
     {
         log = log ?? throw new ArgumentNullException(nameof(log));
 
-        var (version, height, isFromTag) = await GetVersion(workDir, tagPrefix, defaultPreReleaseIdentifiers, log);
+        var (version, height, isFromTag) = await GetVersionAsync(workDir, tagPrefix, defaultPreReleaseIdentifiers, log);
 
         _ = height.HasValue && ignoreHeight && log.IsDebugEnabled && log.Debug("Ignoring height.");
         version = !height.HasValue || ignoreHeight ? version : version.WithHeight(height.Value, autoIncrement, defaultPreReleaseIdentifiers);
@@ -33,9 +33,9 @@ public static class Versioner
         return calculatedVersion;
     }
 
-    private static async Task<(Version Version, int? Height, bool IsFromTag)> GetVersion(string workDir, string tagPrefix, IReadOnlyCollection<string> defaultPreReleaseIdentifiers, ILogger log)
+    private static async Task<(Version Version, int? Height, bool IsFromTag)> GetVersionAsync(string workDir, string tagPrefix, IReadOnlyCollection<string> defaultPreReleaseIdentifiers, ILogger log)
     {
-        if (!await Git.IsWorkingDirectory(workDir, log))
+        if (!await Git.IsWorkingDirectoryAsync(workDir, log))
         {
             var version = new Version(defaultPreReleaseIdentifiers);
 
@@ -44,7 +44,7 @@ public static class Versioner
             return (version, null, false);
         }
 
-        if (await Git.TryGetHead(workDir, log) is not { } head)
+        if (await Git.TryGetHeadAsync(workDir, log) is not { } head)
         {
             var version = new Version(defaultPreReleaseIdentifiers);
 
@@ -53,7 +53,7 @@ public static class Versioner
             return (version, null, false);
         }
 
-        var tags = await Git.GetTags(workDir, log);
+        var tags = await Git.GetTagsAsync(workDir, log);
 
         var orderedCandidates = GetCandidates(head, tags, tagPrefix, defaultPreReleaseIdentifiers, log)
             .OrderBy(candidate => candidate.Version)

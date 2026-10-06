@@ -16,9 +16,9 @@ public static class LogMessages
         // arrange
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
         await DotNetCli.CreateProject(path);
-        await Git.Init(path);
-        await Git.Commit(path);
-        await Git.Tag(path, "v2.3.4-alpha-x.5");
+        await Git.InitAsync(path);
+        await Git.CommitAsync(path);
+        await Git.TagAsync(path, "v2.3.4-alpha-x.5");
         var envVars = new (string, string)[]
         {
             ("MinVerAutoIncrement", "minor"),
@@ -46,7 +46,7 @@ public static class LogMessages
         messages = messages.Replace(GetPhysicalPath(path), "{path}", StringComparison.Ordinal);
         messages = await ReplaceShas(messages, Solution.GetFullPath("."));
         messages = await ReplaceShas(messages, path);
-        await Assert.Expected(messages);
+        await Assert.ExpectedAsync(messages);
     }
 
     [Fact]
@@ -55,9 +55,9 @@ public static class LogMessages
         // arrange
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
         await DotNetCli.CreateProject(path);
-        await Git.Init(path);
-        await Git.Commit(path);
-        await Git.Tag(path, "2.3.4-alpha-x.5+build.6");
+        await Git.InitAsync(path);
+        await Git.CommitAsync(path);
+        await Git.TagAsync(path, "2.3.4-alpha-x.5+build.6");
 
         // act
         var (_, standardError) = await Fixtures.MinVerCli.ReadAsync(path);
@@ -65,7 +65,7 @@ public static class LogMessages
         // assert
         standardError = await ReplaceShas(standardError, Solution.GetFullPath("."));
         standardError = await ReplaceShas(standardError, path);
-        await Assert.Expected(standardError);
+        await Assert.ExpectedAsync(standardError);
     }
 
     private static string GetPhysicalPath(string path)

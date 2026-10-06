@@ -5,7 +5,7 @@ namespace MinVer.Lib;
 
 internal static class GitCommand
 {
-    public static async Task<string?> TryRun(string args, string workingDirectory, ILogger log)
+    public static async Task<string?> TryRunAsync(string args, string workingDirectory, ILogger log)
     {
         using var process = new Process();
 

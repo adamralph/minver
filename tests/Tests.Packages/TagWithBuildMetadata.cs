@@ -14,9 +14,9 @@ public static class TagWithBuildMetadata
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
         await DotNetCli.CreateProject(path);
 
-        await Git.Init(path);
-        await Git.Commit(path);
-        await Git.Tag(path, "2.3.4-alpha.5+build.6");
+        await Git.InitAsync(path);
+        await Git.CommitAsync(path);
+        await Git.TagAsync(path, "2.3.4-alpha.5+build.6");
 
         var expected = Package.WithVersion(2, 3, 4, ["alpha", "5",], 0, "build.6");
 

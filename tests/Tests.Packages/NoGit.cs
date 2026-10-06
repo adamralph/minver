@@ -17,8 +17,8 @@ public static class NoGit
         // arrange
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
         await DotNetCli.CreateProject(path);
-        await Git.Init(path);
-        await Git.Commit(path);
+        await Git.InitAsync(path);
+        await Git.CommitAsync(path);
 
         var pathEnvVar = Environment.GetEnvironmentVariable("PATH") ?? "";
         pathEnvVar = pathEnvVar.Replace("git", "not-git", true, CultureInfo.InvariantCulture);

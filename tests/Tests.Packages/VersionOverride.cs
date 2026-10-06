@@ -14,9 +14,9 @@ public static class VersionOverride
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();
         await DotNetCli.CreateProject(path);
 
-        await Git.Init(path);
-        await Git.Commit(path);
-        await Git.Tag(path, "2.3.4");
+        await Git.InitAsync(path);
+        await Git.CommitAsync(path);
+        await Git.TagAsync(path, "2.3.4");
 
         var envVars = ("MinVerVersionOverride".ToAltCase(), "3.4.5-alpha.6+build.7");
 

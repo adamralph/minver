@@ -41,7 +41,7 @@ git merge bar baz --no-edit --no-ff --strategy=octopus
 
         var path = MethodBase.GetCurrentMethod().GetTestDirectory(minMajorMinor);
 
-        await EnsureEmptyRepository(path);
+        await EnsureEmptyRepositoryAsync(path);
 
         foreach (var item in historicalCommands
             .ToNonEmptyLines()
@@ -67,11 +67,11 @@ git merge bar baz --no-edit --no-ff --strategy=octopus
         var log = new TestLogger();
 
         // act
-        _ = await Versioner.GetVersion(path, "", minMajorMinor, "", default, PreReleaseIdentifiers.Default, false, log);
+        _ = await Versioner.GetVersionAsync(path, "", minMajorMinor, "", default, PreReleaseIdentifiers.Default, false, log);
 
         // assert
         var logMessages = await ReplaceShas(log.ToString(), path);
-        await Assert.Expected(logMessages, [minMajorMinor]);
+        await Assert.ExpectedAsync(logMessages, [minMajorMinor]);
     }
 
     [Theory]
@@ -92,7 +92,7 @@ git tag 1.0.0-foo.1
 
         var path = MethodBase.GetCurrentMethod().GetTestDirectory(minMajorMinor);
 
-        await EnsureEmptyRepository(path);
+        await EnsureEmptyRepositoryAsync(path);
 
         foreach (var item in historicalCommands
             .ToNonEmptyLines()
@@ -105,11 +105,11 @@ git tag 1.0.0-foo.1
         var log = new TestLogger();
 
         // act
-        _ = await Versioner.GetVersion(path, "", minMajorMinor, "", default, PreReleaseIdentifiers.Default, false, log);
+        _ = await Versioner.GetVersionAsync(path, "", minMajorMinor, "", default, PreReleaseIdentifiers.Default, false, log);
 
         // assert
         var logMessages = await ReplaceShas(log.ToString(), path);
-        await Assert.Expected(logMessages, [minMajorMinor]);
+        await Assert.ExpectedAsync(logMessages, [minMajorMinor]);
     }
 
     private static async Task<string> ReplaceShas(string logMessages, string path)

@@ -15,10 +15,4 @@
     <PackageReference Include="Microsoft.VisualStudio.Threading" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="LogMessages.*.expected.txt">
-      <DependentUpon>LogMessages.cs</DependentUpon>
-    </None>
-  </ItemGroup>
-
 </Project>

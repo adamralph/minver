@@ -1,0 +1,7 @@
+<Project>
+
+  <ItemGroup>
+    <None Update="*.expected.txt" DependentUpon="$([System.String]::Copy('%(Filename)').Split('.')[0]).cs" />
+  </ItemGroup>
+
+</Project>

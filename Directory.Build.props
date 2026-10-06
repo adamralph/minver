@@ -5,6 +5,7 @@
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>    <!-- workaround for https://github.com/dotnet/roslyn/issues/41640 -->
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RestoreLockedMode Condition="'$(CI)' != ''">true</RestoreLockedMode>
@@ -14,7 +15,6 @@
 
   <PropertyGroup>
     <NoWarn>$(NoWarn);CA1014</NoWarn>    <!-- Mark assemblies with CLSCompliantAttribute -->
-    <NoWarn>$(NoWarn);EnableGenerateDocumentationFile</NoWarn>    <!-- workaround for https://github.com/dotnet/roslyn/issues/41640 -->
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">

@@ -4,4 +4,4 @@
     <PackageReference Include="SimpleExec" />
   </ItemGroup>
 
-  </Project>
+</Project>

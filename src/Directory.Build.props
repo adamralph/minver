@@ -5,11 +5,14 @@
   <Sdk Name="DotNet.ReproducibleBuilds.Isolated" Version="2.0.5" />
 
   <PropertyGroup>
+    <Authors>Adam Ralph</Authors>
+    <Copyright>Copyright © Adam Ralph</Copyright>
     <PackageIcon>icon.png</PackageIcon>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/adamralph/minver</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>https://github.com/adamralph/minver/blob/main/CHANGELOG.md</PackageReleaseNotes>
+    <Product>MinVer</Product>
   </PropertyGroup>
 
   <!-- MinVer doesn't use MinVer for versioning because

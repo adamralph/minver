@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using System.IO.Compression;
 using System.Reflection;
-using System.Runtime.Loader;
 using Fixtures;
 using Microsoft.Extensions.FileSystemGlobbing;
 using Microsoft.VisualStudio.Threading;
@@ -24,6 +23,9 @@ public static class DotNetCli
 
     public static Task<string> GetVersionInUse() => VersionInUse.GetValueAsync();
 
+    public static async Task<string> GetVersionForTestProjects() =>
+        !string.IsNullOrWhiteSpace(RequiredVersion) ? RequiredVersion : await VersionInUse.GetValueAsync().ConfigureAwait(false);
+
     public static async Task CreateSolution(string path, string[] projectNames)
     {
         projectNames = projectNames ?? throw new ArgumentNullException(nameof(projectNames));
@@ -45,7 +47,8 @@ public static class DotNetCli
 
             FileSystem.EnsureEmptyDirectory(projectPath);
 
-            await CreateProject(projectPath, projectName, minVerPackageVersion).ConfigureAwait(false);
+            // as with the default global packages folder, the projects use the same copy of the MinVer package
+            await CreateProject(projectPath, projectName, minVerPackageVersion, packagesPath: Path.Combine(path, "packages")).ConfigureAwait(false);
 
             // ensure deterministic build order
             if (!string.IsNullOrEmpty(previousProjectName))
@@ -80,11 +83,11 @@ public static class DotNetCli
     private static string GetMinVerPackageVersion(string source) =>
         Path.GetFileNameWithoutExtension(Directory.EnumerateFiles(source, "MinVer.*.nupkg").First()).Split("MinVer.", 2)[1];
 
-    private static async Task CreateProject(string path, string name, string minVerPackageVersion, bool multiTarget = false)
+    private static async Task CreateProject(string path, string name, string minVerPackageVersion, bool multiTarget = false, string packagesPath = "packages")
     {
         _ = await Read($"new classlib --name {name} --output {path}{(multiTarget ? " --langVersion 12.0" : "")}", path).ConfigureAwait(false);
 
-        _ = await Read($"add package MinVer --version {minVerPackageVersion} --package-directory packages", path).ConfigureAwait(false);
+        _ = await Read($"add package MinVer --version {minVerPackageVersion} --package-directory {packagesPath}", path).ConfigureAwait(false);
 
         var project = Path.Combine(path, $"{name}.csproj");
         var lines = await File.ReadAllLinesAsync(project).ConfigureAwait(false);
@@ -97,12 +100,12 @@ public static class DotNetCli
 
         await File.WriteAllLinesAsync(project, editedLines).ConfigureAwait(false);
 
-        _ = await Read("restore --packages packages", path).ConfigureAwait(false);
+        _ = await Read($"restore --packages {packagesPath}", path).ConfigureAwait(false);
     }
 
     private static async Task CreateGlobalJson(string path)
     {
-        var version = !string.IsNullOrWhiteSpace(RequiredVersion) ? RequiredVersion : await VersionInUse.GetValueAsync().ConfigureAwait(false);
+        var version = await GetVersionForTestProjects().ConfigureAwait(false);
 
         var text =
 $$"""
@@ -142,7 +145,19 @@ $"""
         return (packages.SingleOrDefault(), standardOutput, standardError);
     }
 
-    public static async Task<(List<Package>, string StandardOutput, string StandardError)> Build(string path, Func<int, bool>? handleExitCode = null, params (string, string)[] envVars)
+    public static Task<(List<Package>, string StandardOutput, string StandardError)> Build(string path, Func<int, bool>? handleExitCode = null, params (string, string)[] envVars) =>
+        // -maxCpuCount:1 is required to prevent massive execution times in GitHub Actions
+        Build("build -maxCpuCount:1 --no-restore", path, handleExitCode, envVars);
+
+    public static Task<(List<Package>, string StandardOutput, string StandardError)> BuildMultiProcess(string path) =>
+        Build("build -maxCpuCount:4 -nodeReuse:false --no-restore", path, null, []);
+
+    // only supported by SDK 11 and later
+    public static Task<(List<Package>, string StandardOutput, string StandardError)> BuildMultiThreaded(string path) =>
+        // the MSBuild server is otherwise started implicitly, and outlives the test
+        Build("build -mt -maxCpuCount:4 -warnAsError:MSB4286,MSB4287,MSB4288 --no-restore", path, null, [("MSBUILDUSESERVER", "0"),]);
+
+    private static async Task<(List<Package>, string StandardOutput, string StandardError)> Build(string args, string path, Func<int, bool>? handleExitCode, (string, string)[] envVars)
     {
         var environmentVariables = envVars.ToDictionary(envVar => envVar.Item1, envVar => envVar.Item2, StringComparer.OrdinalIgnoreCase);
         _ = environmentVariables.TryAdd("MinVerVerbosity".ToAltCase(), "diagnostic");
@@ -150,9 +165,8 @@ $"""
         _ = environmentVariables.TryAdd("IncludeSourceRevisionInInformationalVersion", "false");
         _ = environmentVariables.TryAdd("NoPackageAnalysis", "true");
 
-        // -maxCpuCount:1 is required to prevent massive execution times in GitHub Actions
         var (standardOutput, standardError) = await Read(
-            "build -maxCpuCount:1 --no-restore",
+            args,
             path,
             environmentVariables,
             handleExitCode).ConfigureAwait(false);
@@ -210,32 +224,14 @@ $"""
 
         var assemblyFileName = Directory.EnumerateFiles(extractedDirectoryName, "*.dll", new EnumerationOptions { RecurseSubdirectories = true, }).First();
 
-        var (systemAssemblyVersion, informationalVersion) = GetAssemblyVersions(assemblyFileName);
+        // read from metadata, since a newer SDK may produce an assembly for a newer runtime than this one
+        var systemAssemblyVersion = AssemblyName.GetAssemblyName(assemblyFileName).Version ?? throw new InvalidOperationException("The assembly version is null.");
         var assemblyVersion = new AssemblyVersion(systemAssemblyVersion.Major, systemAssemblyVersion.Minor, systemAssemblyVersion.Build, systemAssemblyVersion.Revision);
 
         var fileVersionInfo = FileVersionInfo.GetVersionInfo(assemblyFileName);
-        var fileVersion = new FileVersion(fileVersionInfo.FileMajorPart, fileVersionInfo.FileMinorPart, fileVersionInfo.FileBuildPart, fileVersionInfo.FilePrivatePart, fileVersionInfo.ProductVersion ?? "");
+        var informationalVersion = fileVersionInfo.ProductVersion ?? throw new InvalidOperationException("The assembly has no informational version.");
+        var fileVersion = new FileVersion(fileVersionInfo.FileMajorPart, fileVersionInfo.FileMinorPart, fileVersionInfo.FileBuildPart, fileVersionInfo.FilePrivatePart, informationalVersion);
 
         return new Package(nuspecVersion, assemblyVersion, fileVersion, informationalVersion);
-    }
-
-    private static (Version Version, string InformationalVersion) GetAssemblyVersions(string assemblyFileName)
-    {
-        var assemblyLoadContext = new AssemblyLoadContext(null, true);
-        var assembly = assemblyLoadContext.LoadFromAssemblyPath(assemblyFileName);
-
-        try
-        {
-            var version = assembly.GetName().Version ?? throw new InvalidOperationException("The assembly version is null.");
-            var informationalVersion =
-                assembly.GetCustomAttributes().OfType<AssemblyInformationalVersionAttribute>().FirstOrDefault()?.InformationalVersion ??
-                throw new InvalidOperationException("The assembly has no informational version.");
-
-            return (version, informationalVersion);
-        }
-        finally
-        {
-            assemblyLoadContext.Unload();
-        }
     }
 }

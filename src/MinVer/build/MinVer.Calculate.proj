@@ -1,0 +1,32 @@
+<Project>
+
+  <!-- Called by MinVer.targets. See the comment there. -->
+  <Target Name="MinVerCalculate" Returns="$(MinVerVersion)">
+    <ItemGroup>
+      <MinVerInputs Include="--auto-increment &quot;$(MinVerAutoIncrement)&quot;" />
+      <MinVerInputs Include="--build-metadata &quot;$(MinVerBuildMetadata)&quot;" />
+      <MinVerInputs Include="--default-pre-release-identifiers &quot;$(MinVerDefaultPreReleaseIdentifiers)&quot;" />
+      <MinVerInputs Include="--default-pre-release-phase &quot;$(MinVerDefaultPreReleasePhase)&quot;" />
+      <MinVerInputs Include="--ignore-height" Condition="'$(MinVerIgnoreHeight)' == 'true'" />
+      <MinVerInputs Include="--minimum-major-minor &quot;$(MinVerMinimumMajorMinor)&quot;" />
+      <MinVerInputs Include="--tag-prefix &quot;$(MinVerTagPrefix)&quot;" />
+      <MinVerInputs Include="--verbosity &quot;$(MinVerVerbosity)&quot;" />
+      <MinVerInputs Include="--version-override &quot;$(MinVerVersionOverride)&quot;" />
+    </ItemGroup>
+    <!-- A Windows drive root ends in a backslash, which would escape the closing quote of the argument. -->
+    <PropertyGroup>
+      <_MinVerWorkDirArg>$(_MinVerWorkDir)</_MinVerWorkDirArg>
+      <_MinVerWorkDirArg Condition="$(_MinVerWorkDir.EndsWith('\'))">$(_MinVerWorkDir).</_MinVerWorkDirArg>
+    </PropertyGroup>
+    <Exec Command="&quot;$(_MinVerDotNetPath)&quot; &quot;$(MSBuildThisFileDirectory)bin/$(_MinVerTargetFramework)/MinVer.dll&quot; &quot;$(_MinVerWorkDirArg)&quot; @(MinVerInputs->'%(Identity)', ' ')" WorkingDirectory="$(_MinVerWorkDir)" ConsoleToMSBuild="true" StandardOutputImportance="Low">
+      <Output TaskParameter="ConsoleOutput" ItemName="MinVerConsoleOutput" />
+    </Exec>
+    <ItemGroup>
+      <MinVerOutputVersion Include="@(MinVerConsoleOutput)" Condition="'$([System.String]::new(`%(Identity)`).StartsWith(`MinVer:`))' != 'true'" />
+    </ItemGroup>
+    <PropertyGroup>
+      <MinVerVersion>@(MinVerOutputVersion)</MinVerVersion>
+    </PropertyGroup>
+  </Target>
+
+</Project>

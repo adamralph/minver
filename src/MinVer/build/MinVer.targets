@@ -4,12 +4,7 @@
     <MSBuildAllProjects Condition="'$(MSBuildAssemblyVersion)' == '' Or '$(MSBuildAssemblyVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);MinVer</GenerateNuspecDependsOn>
     <GetPackageVersionDependsOn>$(GetPackageVersionDependsOn);MinVer</GetPackageVersionDependsOn>
-    <MinVerMSBuildCachingPath Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)bin\net8.0\MSBuild.Caching.dll</MinVerMSBuildCachingPath>
-    <MinVerMSBuildCachingPath Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)bin\net472\MSBuild.Caching.dll</MinVerMSBuildCachingPath>
   </PropertyGroup>
-
-  <UsingTask TaskName="MSBuild.Caching.CacheGet" AssemblyFile="$(MinVerMSBuildCachingPath)" />
-  <UsingTask TaskName="MSBuild.Caching.CacheSet" AssemblyFile="$(MinVerMSBuildCachingPath)" />
 
   <PropertyGroup>
     <MinVerDetailed>low</MinVerDetailed>
@@ -27,6 +22,11 @@
     <DotNetPath Condition=" '$(DotNetPath)' == '' ">dotnet</DotNetPath>
   </PropertyGroup>
 
+  <!-- Allows the MSBuild task in the MinVer target to work in builds with graph isolation (-graph -isolate). -->
+  <ItemGroup>
+    <GraphIsolationExemptReference Include="$(MSBuildThisFileDirectory)MinVer.Calculate.proj" />
+  </ItemGroup>
+
   <Target Name="_MinVerClean" BeforeTargets="Clean" DependsOnTargets="MinVer" Condition="'$(GeneratePackageOnBuild)' == 'true'" />
 
   <Target Name="MinVer" BeforeTargets="BeforeCompile;GetAssemblyVersion;CoreCompile" Condition="'$(DesignTimeBuild)' != 'true' AND '$(MinVerSkip)' != 'true'">
@@ -41,34 +41,48 @@
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerTagPrefix=$(MinVerTagPrefix)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerVerbosity=$(MinVerVerbosity)" />
     <Message Importance="$(MinVerDetailed)" Text="MinVer: [input] MinVerVersionOverride=$(MinVerVersionOverride)" />
-    <ItemGroup>
-      <MinVerInputs Remove="@(MinVerInputs)" />
-      <MinVerConsoleOutput Remove="@(MinVerConsoleOutput)" />
-      <MinVerOutputVersion Remove="@(MinVerOutputVersion)" />
-    </ItemGroup>
-    <ItemGroup>
-      <MinVerInputs Include="--auto-increment &quot;$(MinVerAutoIncrement)&quot;" />
-      <MinVerInputs Include="--build-metadata &quot;$(MinVerBuildMetadata)&quot;" />
-      <MinVerInputs Include="--default-pre-release-identifiers &quot;$(MinVerDefaultPreReleaseIdentifiers)&quot;" />
-      <MinVerInputs Include="--default-pre-release-phase &quot;$(MinVerDefaultPreReleasePhase)&quot;" />
-      <MinVerInputs Include="--ignore-height" Condition="'$(MinVerIgnoreHeight)' == 'true'" />
-      <MinVerInputs Include="--minimum-major-minor &quot;$(MinVerMinimumMajorMinor)&quot;" />
-      <MinVerInputs Include="--tag-prefix &quot;$(MinVerTagPrefix)&quot;" />
-      <MinVerInputs Include="--verbosity &quot;$(MinVerVerbosity)&quot;" />
-      <MinVerInputs Include="--version-override &quot;$(MinVerVersionOverride)&quot;" />
-    </ItemGroup>
-    <CacheGet Key="@(MinVerInputs->'%(Identity)', ' ')"><Output TaskParameter="Value" PropertyName="MinVerVersion" /></CacheGet>
-    <Message Condition="'$(MinVerVersion)' != ''" Importance="$(MinVerDetailed)" Text="MinVer: Using cached MinVerVersion $(MinVerVersion)" />
-    <Exec Condition="'$(MinVerVersion)' == ''" Command="&quot;$(DotNetPath)&quot; &quot;$(MSBuildThisFileDirectory)bin/$(MinVerTargetFramework)/MinVer.dll&quot; &quot;$(MSBuildProjectDirectory)&quot; @(MinVerInputs->'%(Identity)', ' ')" ConsoleToMSBuild="true" StandardOutputImportance="Low" >
-      <Output TaskParameter="ConsoleOutput" ItemName="MinVerConsoleOutput" />
-    </Exec>
-    <ItemGroup Condition="'$(MinVerVersion)' == ''" >
-      <MinVerOutputVersion Include="@(MinVerConsoleOutput)" Condition="'$([System.String]::new(`%(Identity)`).StartsWith(`MinVer:`))' != 'true'" />
-    </ItemGroup>
-    <PropertyGroup Condition="'$(MinVerVersion)' == ''" >
-      <MinVerVersion>@(MinVerOutputVersion)</MinVerVersion>
+    <!-- Git resolves a repo from the nearest ".git", which is a directory, or a file in a worktree or submodule. -->
+    <PropertyGroup>
+      <_MinVerGitDirectoryParent>$([MSBuild]::GetDirectoryNameOfFileAbove('$(MSBuildProjectDirectory)', '.git/HEAD'))</_MinVerGitDirectoryParent>
+      <_MinVerGitFileParent>$([MSBuild]::GetDirectoryNameOfFileAbove('$(MSBuildProjectDirectory)', '.git'))</_MinVerGitFileParent>
+      <_MinVerWorkDir>$(_MinVerGitDirectoryParent)</_MinVerWorkDir>
+      <_MinVerWorkDir Condition="$(_MinVerGitFileParent.Length) &gt; $(_MinVerGitDirectoryParent.Length)">$(_MinVerGitFileParent)</_MinVerWorkDir>
+      <_MinVerWorkDir Condition="'$(_MinVerWorkDir)' == ''">$(MSBuildProjectDirectory)</_MinVerWorkDir>
     </PropertyGroup>
-    <CacheSet Key="@(MinVerInputs->'%(Identity)', ' ')" Value="$(MinVerVersion)" />
+    <!-- MSBuild applies these per project, so MinVer's own warning codes must be passed on. Other codes are removed to maximise sharing. -->
+    <PropertyGroup>
+      <_MinVerWarningsAsMessages>$([System.Text.RegularExpressions.Regex]::Replace('$(MSBuildWarningsAsMessages)', '(?i)(^|[;,\s]+)(?!MINVER)[^;,\s]+|[;,\s]+$', ''))</_MinVerWarningsAsMessages>
+      <_MinVerWarningsAsErrors>$([System.Text.RegularExpressions.Regex]::Replace('$(MSBuildWarningsAsErrors)', '(?i)(^|[;,\s]+)(?!MINVER)[^;,\s]+|[;,\s]+$', ''))</_MinVerWarningsAsErrors>
+      <_MinVerWarningsNotAsErrors>$([System.Text.RegularExpressions.Regex]::Replace('$(MSBuildWarningsNotAsErrors)', '(?i)(^|[;,\s]+)(?!MINVER)[^;,\s]+|[;,\s]+$', ''))</_MinVerWarningsNotAsErrors>
+    </PropertyGroup>
+    <!--
+      MSBuild runs a target once per build for each combination of project file and global properties, across all nodes,
+      and returns the same result to every caller, so the version is calculated once per repo and combination of options.
+      Properties which vary between projects, but do not affect the version, are removed to maximise sharing.
+    -->
+    <MSBuild
+      Projects="$(MSBuildThisFileDirectory)MinVer.Calculate.proj"
+      Targets="MinVerCalculate"
+      RemoveProperties="BuildProjectReferences;Configuration;NoBuild;Platform;RuntimeIdentifier;SelfContained;TargetFramework;TargetFrameworks"
+      Properties="
+        _MinVerWorkDir=$([MSBuild]::Escape('$(_MinVerWorkDir)'));
+        _MinVerDotNetPath=$([MSBuild]::Escape('$(DotNetPath)'));
+        _MinVerTargetFramework=$(MinVerTargetFramework);
+        MSBuildTreatWarningsAsErrors=$(MSBuildTreatWarningsAsErrors);
+        MSBuildWarningsAsMessages=$([MSBuild]::Escape('$(_MinVerWarningsAsMessages)'));
+        MSBuildWarningsAsErrors=$([MSBuild]::Escape('$(_MinVerWarningsAsErrors)'));
+        MSBuildWarningsNotAsErrors=$([MSBuild]::Escape('$(_MinVerWarningsNotAsErrors)'));
+        MinVerAutoIncrement=$([MSBuild]::Escape('$(MinVerAutoIncrement)'));
+        MinVerBuildMetadata=$([MSBuild]::Escape('$(MinVerBuildMetadata)'));
+        MinVerDefaultPreReleaseIdentifiers=$([MSBuild]::Escape('$(MinVerDefaultPreReleaseIdentifiers)'));
+        MinVerDefaultPreReleasePhase=$([MSBuild]::Escape('$(MinVerDefaultPreReleasePhase)'));
+        MinVerIgnoreHeight=$([MSBuild]::Escape('$(MinVerIgnoreHeight)'));
+        MinVerMinimumMajorMinor=$([MSBuild]::Escape('$(MinVerMinimumMajorMinor)'));
+        MinVerTagPrefix=$([MSBuild]::Escape('$(MinVerTagPrefix)'));
+        MinVerVerbosity=$([MSBuild]::Escape('$(MinVerVerbosity)'));
+        MinVerVersionOverride=$([MSBuild]::Escape('$(MinVerVersionOverride)'))">
+      <Output TaskParameter="TargetOutputs" PropertyName="MinVerVersion" />
+    </MSBuild>
     <PropertyGroup>
       <MinVerMajor>$(MinVerVersion.Split(`.`)[0])</MinVerMajor>
       <MinVerMinor>$(MinVerVersion.Split(`.`)[1])</MinVerMinor>

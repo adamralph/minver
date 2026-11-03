@@ -7,7 +7,6 @@
     <Project Path="src/minver-cli/minver-cli.csproj" />
     <Project Path="src/MinVer.Lib/MinVer.Lib.csproj" />
     <Project Path="src/MinVer/MinVer.csproj" />
-    <Project Path="src/MSBuild.Caching/MSBuild.Caching.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Tests.Lib/Tests.Lib.csproj" />

@@ -26,4 +26,32 @@ public static class NoRepo
         Assert.Equal(expected.Version, cliStandardOutput.Trim());
         Assert.Contains("not a valid Git working directory", cliStandardError, StringComparison.Ordinal);
     }
+
+    [Fact]
+    public static async Task WarningCanBeSuppressed()
+    {
+        // arrange
+        var path = MethodBase.GetCurrentMethod().GetTestDirectory();
+        await DotNetCli.CreateProject(path);
+
+        // act
+        var (_, standardOutput, _) = await DotNetCli.BuildProject(path, envVars: ("NoWarn", "CS1591;MINVER1001"));
+
+        // assert
+        Assert.DoesNotContain("warning MINVER1001", standardOutput, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task WarningCanBeTreatedAsError()
+    {
+        // arrange
+        var path = MethodBase.GetCurrentMethod().GetTestDirectory();
+        await DotNetCli.CreateProject(path);
+
+        // act
+        var (_, standardOutput, _) = await DotNetCli.BuildProject(path, exitCode => exitCode == 1, ("WarningsAsErrors", "CS1591;MINVER1001"));
+
+        // assert
+        Assert.Contains("error MINVER1001", standardOutput, StringComparison.Ordinal);
+    }
 }

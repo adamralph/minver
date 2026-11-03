@@ -21,6 +21,8 @@ jobs:
             sdk: "9.0.319"
           - os: ubuntu-24.04
             sdk: "10.0.402"
+          - os: ubuntu-24.04
+            sdk: "11.0.100-rc.3.26522.148"
           - os: ubuntu-24.04-arm
             sdk: "8.0.426"
           - os: ubuntu-24.04-arm
@@ -28,6 +30,8 @@ jobs:
           - os: ubuntu-24.04-arm
             sdk: "10.0.402"
             upload-packages: true
+          - os: ubuntu-24.04-arm
+            sdk: "11.0.100-rc.3.26522.148"
           - os: windows-2025
             sdk: "10.0.402"
           - os: windows-11-arm

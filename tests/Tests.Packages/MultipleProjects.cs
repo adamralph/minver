@@ -5,12 +5,12 @@ using Xunit;
 
 namespace Tests.Packages;
 
-public class MultipleProjects
+public static class MultipleProjects
 {
     private static Ct Ct => TestContext.Current.CancellationToken;
 
     [Fact]
-    public async Task MultipleTagPrefixes()
+    public static async Task MultipleTagPrefixes()
     {
         // arrange
         var path = MethodBase.GetCurrentMethod().GetTestDirectory();

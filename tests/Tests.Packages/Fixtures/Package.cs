@@ -1,6 +1,6 @@
 namespace Tests.Packages.Fixtures;
 
-public record Package(string Version, AssemblyVersion AssemblyVersion, FileVersion FileVersion, string InformationalVersion)
+public sealed record Package(string Version, AssemblyVersion AssemblyVersion, FileVersion FileVersion, string InformationalVersion)
 {
     public static Package WithVersion(int major, int minor, int patch, IReadOnlyCollection<string>? preReleaseIdentifiers = null, int height = 0, string buildMetadata = "", string? informationalVersionAdditionalBuildMetadata = "")
     {

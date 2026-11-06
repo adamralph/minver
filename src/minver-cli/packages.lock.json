@@ -20,6 +20,12 @@
         "resolved": "18.7.23",
         "contentHash": "dyj6z8m+LFjpeH69hdnciCcRCmD0YgMlvuQEywiEshjqj/blgQ+PuWX8Vd5gkWQFoBN4e+TFxx6DvGNSv/gIKg=="
       },
+      "Sealant": {
+        "type": "Direct",
+        "requested": "[1.0.0-alpha.1, )",
+        "resolved": "1.0.0-alpha.1",
+        "contentHash": "oSalFpOPozrev7Oka7DwQu/A0uX7yDfnXcn6pkQq1jVc+/XOauHZ3ukNiqmm+hjyGlTDarYrh5gbuDzUQYp/SA=="
+      },
       "System.CommandLine": {
         "type": "Direct",
         "requested": "[2.0.12, )",
@@ -57,6 +63,12 @@
         "requested": "[18.7.23, )",
         "resolved": "18.7.23",
         "contentHash": "dyj6z8m+LFjpeH69hdnciCcRCmD0YgMlvuQEywiEshjqj/blgQ+PuWX8Vd5gkWQFoBN4e+TFxx6DvGNSv/gIKg=="
+      },
+      "Sealant": {
+        "type": "Direct",
+        "requested": "[1.0.0-alpha.1, )",
+        "resolved": "1.0.0-alpha.1",
+        "contentHash": "oSalFpOPozrev7Oka7DwQu/A0uX7yDfnXcn6pkQq1jVc+/XOauHZ3ukNiqmm+hjyGlTDarYrh5gbuDzUQYp/SA=="
       },
       "System.CommandLine": {
         "type": "Direct",

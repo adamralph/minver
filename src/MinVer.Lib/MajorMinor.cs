@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace MinVer.Lib;
 
-public class MajorMinor
+public sealed class MajorMinor
 {
     public static MajorMinor Default { get; } = new(0, 0);
 

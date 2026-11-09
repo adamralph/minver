@@ -14,32 +14,33 @@ jobs:
       matrix:
         include:
           - os: macos-26
-            sdk: "10.0.402"
+            sdk: "10.0.403"
           - os: ubuntu-24.04
-            sdk: "8.0.426"
+            sdk: "8.0.427"
           - os: ubuntu-24.04
-            sdk: "9.0.319"
+            sdk: "9.0.320"
           - os: ubuntu-24.04
-            sdk: "10.0.402"
+            sdk: "10.0.403"
           - os: ubuntu-24.04-arm
-            sdk: "8.0.426"
+            sdk: "8.0.427"
           - os: ubuntu-24.04-arm
-            sdk: "9.0.319"
+            sdk: "9.0.320"
           - os: ubuntu-24.04-arm
-            sdk: "10.0.402"
+            sdk: "10.0.403"
             upload-packages: true
           - os: windows-2025
-            sdk: "10.0.402"
+            sdk: "10.0.403"
           - os: windows-11-arm
-            sdk: "10.0.402"
+            sdk: "10.0.403"
     name: ${{ matrix.os }}-sdk-${{ matrix.sdk }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+      - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
         with:
           dotnet-version: |
             ${{ matrix.sdk }}
-            10.0.402
+            10.0.403
+          check-latest: false
       - run: dotnet --info
       - run: git --version
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

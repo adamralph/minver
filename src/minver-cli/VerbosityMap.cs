@@ -4,7 +4,11 @@ namespace MinVer;
 
 internal static class VerbosityMap
 {
+#if NET10_0
     private static readonly Dictionary<string, Verbosity?> Map = new(StringComparer.OrdinalIgnoreCase);
+#else
+    private static readonly Dictionary<string, Verbosity?> Map = [with(StringComparer.OrdinalIgnoreCase)];
+#endif
 
     static VerbosityMap()
     {

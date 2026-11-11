@@ -20,6 +20,7 @@ Option<string?> versionOverrideOption = new("--version-override", "-o");
 #endif
 
 var informationalVersion = typeof(Versioner).Assembly.GetCustomAttributes<AssemblyInformationalVersionAttribute>().Single().InformationalVersion;
+#if NET10_0
 RootCommand cmd = new($"MinVer CLI {informationalVersion}")
 {
     workDirArg,
@@ -35,6 +36,24 @@ RootCommand cmd = new($"MinVer CLI {informationalVersion}")
     versionOverrideOption,
 #endif
 };
+#else
+RootCommand cmd =
+[
+    with($"MinVer CLI {informationalVersion}"),
+    workDirArg,
+    autoIncrementOption,
+    buildMetaOption,
+    defaultPreReleaseIdentifiersOption,
+    defaultPreReleasePhaseOption,
+    ignoreHeightOption,
+    minMajorMinorOption,
+    tagPrefixOption,
+    verbosityOption,
+#if MINVER
+    versionOverrideOption,
+#endif
+];
+#endif
 
 cmd.SetAction(async cmdLine =>
 {

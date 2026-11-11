@@ -4,7 +4,7 @@
     <MSBuildAllProjects Condition="'$(MSBuildAssemblyVersion)' == '' Or '$(MSBuildAssemblyVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);MinVer</GenerateNuspecDependsOn>
     <GetPackageVersionDependsOn>$(GetPackageVersionDependsOn);MinVer</GetPackageVersionDependsOn>
-    <MinVerMSBuildCachingPath Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)bin\net8.0\MSBuild.Caching.dll</MinVerMSBuildCachingPath>
+    <MinVerMSBuildCachingPath Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)bin\net10.0\MSBuild.Caching.dll</MinVerMSBuildCachingPath>
     <MinVerMSBuildCachingPath Condition="'$(MSBuildRuntimeType)' != 'Core'">$(MSBuildThisFileDirectory)bin\net472\MSBuild.Caching.dll</MinVerMSBuildCachingPath>
   </PropertyGroup>
 
@@ -14,10 +14,9 @@
   <PropertyGroup>
     <MinVerDetailed>low</MinVerDetailed>
     <MinVerDetailed Condition="'$(MinVerVerbosity)' == 'detailed' Or '$(MinVerVerbosity)' == 'd' Or '$(MinVerVerbosity)' == 'diagnostic' Or '$(MinVerVerbosity)' == 'diag'">high</MinVerDetailed>
-    <MinVerTargetFramework>net8.0</MinVerTargetFramework>
-    <!-- https://learn.microsoft.com/en-us/dotnet/core/porting/versioning-sdk-msbuild-vs#supported-net-versions -->
-    <MinVerTargetFramework Condition="'$(MSBuildAssemblyVersion)' &gt;= '17.12'">net9.0</MinVerTargetFramework>
-    <MinVerTargetFramework Condition="'$(MSBuildAssemblyVersion)' &gt;= '18.0'">net10.0</MinVerTargetFramework>
+    <MinVerTargetFramework>net10.0</MinVerTargetFramework>
+    <!-- https://learn.microsoft.com/en-us/dotnet/core/porting/versioning-sdk-msbuild-vs -->
+    <MinVerTargetFramework Condition="'$(MSBuildAssemblyVersion)' &gt;= '18.10'">net11.0</MinVerTargetFramework>
     <!-- The version property specified contains SemVer 2.0.0 components or SemVer 1.0.0 components that may not be supported on NuGet clients older than v4.3 -->
     <NoWarn>$(NoWarn);NU5105</NoWarn>
   </PropertyGroup>

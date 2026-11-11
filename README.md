@@ -27,7 +27,7 @@ minver-cli is a minimalist [.NET tool](#can-i-use-minver-to-version-software-whi
 
 ## Prerequisites
 
-- [.NET SDK 8.0 or later](https://dot.net)
+- [.NET SDK 10.0 or later](https://dot.net)
 - [Git](https://git-scm.com/)
 
 ## Quick start

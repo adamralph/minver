@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Fixtures.Xunit;
 
-public static class Extensions
+public static class AssertExtensions
 {
     private static readonly Lazy<string> ProjectRoot = new(() =>
     {

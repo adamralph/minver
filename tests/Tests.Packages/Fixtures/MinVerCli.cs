@@ -24,9 +24,8 @@ public static class MinVerCli
         var sdkVersionInUse = await DotNetCli.GetVersionInUse().ConfigureAwait(false);
         return sdkVersionInUse.Split('.', 2)[0] switch
         {
-            "8" => "net8.0",
-            "9" => "net9.0",
-            _ => "net10.0",
+            "10" => "net10.0",
+            _ => "net11.0",
         };
     }
 }

@@ -4,6 +4,7 @@
 
 ### Enhancements
 
+- [#1306: [2026-11-10] Upgrade from Microsoft.Build.Utilities.Core 17.8.x to 18.0.x](https://github.com/adamralph/minver/issues/1306)
 - [#1411: **[BREAKING]** Target .NET 11 and remove .NET 8 and .NET 9 targets](https://github.com/adamralph/minver/pull/1411)
 
 ## 8.0.0

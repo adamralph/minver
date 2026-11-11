@@ -6,9 +6,9 @@
     <PackageVersion Include="Bullseye" Version="6.3.0-rc.1" />
     <PackageVersion Include="DotNet.ReproducibleBuilds" Version="2.0.5" />
     <PackageVersion Include="GitHubActionsTestLogger" Version="3.0.5" />
-    <PackageVersion Include="Microsoft.Build.Utilities.Core" Version="17.8.43" />    <!-- determine which version to reference using https://aka.ms/dotnet/matrixofpaine -->
+    <PackageVersion Include="Microsoft.Build.Utilities.Core" Version="18.0.2" />    <!-- https://learn.microsoft.com/en-us/dotnet/core/porting/versioning-sdk-msbuild-vs -->
     <PackageVersion Include="Microsoft.Extensions.FileSystemGlobbing" Version="10.0.12" />
-    <PackageVersion Include="Microsoft.IO.Redist" Version="6.0.1" />
+    <PackageVersion Include="Microsoft.IO.Redist" Version="6.1.0" />
     <PackageVersion Include="Microsoft.Sbom.Targets" Version="4.1.13" />
     <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="18.7.23" />
     <PackageVersion Include="Microsoft.VisualStudio.Threading" Version="18.7.23" />

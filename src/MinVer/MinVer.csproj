@@ -36,7 +36,7 @@
     <Content Include="build\**\*" PackagePath="build" />
     <Content Include="buildMultiTargeting\**\*" PackagePath="buildMultiTargeting" />
     <None Include="..\MSBuild.Caching\bin\$(Configuration)\net472\MSBuild.Caching.dll" Pack="true" PackagePath="build\bin\net472" Visible="false" />
-    <None Include="..\MSBuild.Caching\bin\$(Configuration)\net8.0\MSBuild.Caching.dll" Pack="true" PackagePath="build\bin\net8.0" Visible="false" />
+    <None Include="..\MSBuild.Caching\bin\$(Configuration)\net10.0\MSBuild.Caching.dll" Pack="true" PackagePath="build\bin\net10.0" Visible="false" />
   </ItemGroup>
 
   <Target Name="AddMinVerOutput" BeforeTargets="_GetPackageFiles">

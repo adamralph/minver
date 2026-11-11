@@ -197,11 +197,7 @@ $"""
     {
         var extractedDirectoryName = Path.Combine(Path.GetDirectoryName(fileName) ?? "", Path.GetFileNameWithoutExtension(fileName));
 
-#if NET10_0_OR_GREATER
         await ZipFile.ExtractToDirectoryAsync(fileName, extractedDirectoryName).ConfigureAwait(false);
-#else
-        ZipFile.ExtractToDirectory(fileName, extractedDirectoryName);
-#endif
 
         var nuspecFileName = Directory.EnumerateFiles(extractedDirectoryName, "*.nuspec").First();
 

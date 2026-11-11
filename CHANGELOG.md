@@ -1,5 +1,11 @@
 # Changelog
 
+## 9.0.0
+
+### Enhancements
+
+- [#1411: **[BREAKING]** Target .NET 11 and remove .NET 8 and .NET 9 targets](https://github.com/adamralph/minver/pull/1411)
+
 ## 8.0.0
 
 ### Enhancements

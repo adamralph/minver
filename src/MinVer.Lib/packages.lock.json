@@ -25,6 +25,12 @@
         "requested": "[7.3.0, )",
         "resolved": "7.3.0",
         "contentHash": "iOQPAdnVgj2U+K3AcdGGGcdS1tWyh3nvr64eqTDFCsDuHySBXSHRhl7eR8hdc0BZHxDjacRstbuaJKCurt2oPw=="
+      },
+      "Sealant": {
+        "type": "Direct",
+        "requested": "[1.0.0-alpha.1, )",
+        "resolved": "1.0.0-alpha.1",
+        "contentHash": "oSalFpOPozrev7Oka7DwQu/A0uX7yDfnXcn6pkQq1jVc+/XOauHZ3ukNiqmm+hjyGlTDarYrh5gbuDzUQYp/SA=="
       }
     },
     "net11.0": {
@@ -51,6 +57,12 @@
         "requested": "[7.3.0, )",
         "resolved": "7.3.0",
         "contentHash": "iOQPAdnVgj2U+K3AcdGGGcdS1tWyh3nvr64eqTDFCsDuHySBXSHRhl7eR8hdc0BZHxDjacRstbuaJKCurt2oPw=="
+      },
+      "Sealant": {
+        "type": "Direct",
+        "requested": "[1.0.0-alpha.1, )",
+        "resolved": "1.0.0-alpha.1",
+        "contentHash": "oSalFpOPozrev7Oka7DwQu/A0uX7yDfnXcn6pkQq1jVc+/XOauHZ3ukNiqmm+hjyGlTDarYrh5gbuDzUQYp/SA=="
       }
     }
   }

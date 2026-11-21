@@ -3,7 +3,7 @@ using Task = Microsoft.Build.Utilities.Task;
 
 namespace MSBuild.Caching
 {
-    public class CacheSet : Task
+    public sealed class CacheSet : Task
     {
         [Required]
         public string Key { get; set; }

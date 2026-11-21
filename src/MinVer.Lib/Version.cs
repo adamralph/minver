@@ -4,7 +4,7 @@ using NuGet.Versioning;
 
 namespace MinVer.Lib;
 
-public class Version : SemanticVersion
+public sealed class Version : SemanticVersion
 {
     private readonly IReadOnlyCollection<string> _preReleaseIdentifiers;
     private readonly int _height;

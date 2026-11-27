@@ -10,9 +10,9 @@
       },
       "Sealant": {
         "type": "Direct",
-        "requested": "[1.0.0-alpha.1, )",
-        "resolved": "1.0.0-alpha.1",
-        "contentHash": "oSalFpOPozrev7Oka7DwQu/A0uX7yDfnXcn6pkQq1jVc+/XOauHZ3ukNiqmm+hjyGlTDarYrh5gbuDzUQYp/SA=="
+        "requested": "[1.0.0-alpha.2, )",
+        "resolved": "1.0.0-alpha.2",
+        "contentHash": "H7VYarv8m8bRAWrL8CwTHPWl9NihI7JEBVy5cSbbSAbq3wua7SzVbNH2Goy/X+XhkHjgh+9p1/IZ5nTyvlc8Tw=="
       },
       "xunit.v3.assert": {
         "type": "Direct",
@@ -30,9 +30,9 @@
       },
       "Sealant": {
         "type": "Direct",
-        "requested": "[1.0.0-alpha.1, )",
-        "resolved": "1.0.0-alpha.1",
-        "contentHash": "oSalFpOPozrev7Oka7DwQu/A0uX7yDfnXcn6pkQq1jVc+/XOauHZ3ukNiqmm+hjyGlTDarYrh5gbuDzUQYp/SA=="
+        "requested": "[1.0.0-alpha.2, )",
+        "resolved": "1.0.0-alpha.2",
+        "contentHash": "H7VYarv8m8bRAWrL8CwTHPWl9NihI7JEBVy5cSbbSAbq3wua7SzVbNH2Goy/X+XhkHjgh+9p1/IZ5nTyvlc8Tw=="
       },
       "xunit.v3.assert": {
         "type": "Direct",
